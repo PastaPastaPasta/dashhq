@@ -117,19 +117,20 @@ code{font-family:var(--mono);font-size:.9em}
 /* drawing border, inset like a real sheet */
 .sheet-inner{position:relative;margin:10px;border:1px solid var(--hair)}
 .mapscroll{overflow-x:auto;overscroll-behavior-x:contain;padding:clamp(10px,1.4vw,20px) clamp(10px,1.4vw,20px) 4px}
-.mapscroll svg{display:block;min-width:1100px;width:100%;height:auto}
+.mapscroll svg{display:block;min-width:1060px;width:100%;height:auto}
 
 /* --- map internals --- */
 .hsvg *{vector-effect:non-scaling-stroke}
 .hsvg .hrail{stroke:var(--line);stroke-width:1;opacity:.6}
 .hsvg .hstem{fill:none;stroke:var(--line);stroke-width:1;opacity:.45}
 .hsvg .hcross{fill:none;stroke:var(--amber);stroke-width:1.4;opacity:.85}
-.hsvg .hroute{fill:none;stroke:var(--amber);stroke-width:2.4;stroke-dasharray:6 5;stroke-linejoin:round;opacity:0;transition:opacity .25s ease}
-.hsvg .hband{fill:var(--line-hi);font-family:var(--draft);font-weight:700;font-size:18px}
+.hsvg .hband{fill:var(--line-hi);font-family:var(--draft);font-weight:700;font-size:19px}
 .hsvg .hnote{fill:var(--line-2);font-family:var(--text);font-size:13.5px}
 .hsvg .hbox{fill:var(--plate);stroke:var(--line);stroke-width:1;stroke-opacity:.65}
-.hsvg .hby{fill:var(--line-2);font-family:var(--text);font-size:12px}
-.hsvg .hnm{fill:var(--line-hi);font-family:var(--draft);font-weight:600;font-size:16px}
+.hsvg .hby{fill:var(--line-2);font-family:var(--text);font-size:12.5px}
+.hsvg .hnm{fill:var(--line-hi);font-family:var(--draft);font-weight:600;font-size:17px}
+.hsvg .hnm2{font-size:15.5px}
+.hsvg .hstep{fill:var(--amber);font-family:var(--draft);font-weight:700;font-size:16px;opacity:0}
 .hsvg .hnode{cursor:pointer;transition:opacity .25s ease}
 .hsvg .hnode:hover .hbox{stroke:var(--amber);stroke-opacity:1}
 .hsvg .hnode:hover .hnm{fill:var(--amber)}
@@ -137,10 +138,10 @@ code{font-family:var(--mono);font-size:.9em}
 .hsvg .hnode:focus-visible .hbox{stroke:var(--amber);stroke-width:2;stroke-opacity:1}
 .hsvg .htest .hbox{stroke-dasharray:4 3}
 /* a route is showing: dim everything off it */
-.hsvg.routing .hroute{opacity:1}
 .hsvg.routing .hnode{opacity:.35}
 .hsvg.routing .hnode.on{opacity:1}
-.hsvg.routing .hnode.on .hbox{stroke:var(--amber);stroke-opacity:1}
+.hsvg.routing .hnode.on .hbox{stroke:var(--amber);stroke-opacity:1;stroke-width:1.6}
+.hsvg.routing .hnode.on .hstep{opacity:1}
 
 @media (prefers-reduced-motion:no-preference){
   .hsvg .hrail{stroke-dasharray:1300;animation:draw 1s cubic-bezier(.2,.7,.3,1) both}
@@ -166,24 +167,30 @@ code{font-family:var(--mono);font-size:.9em}
 .titleblock{display:grid;grid-template-columns:minmax(0,1fr) 230px;border-top:1px solid var(--hair)}
 .tb-main{padding:18px 20px 20px}
 .tb-stats{border-left:1px solid var(--hair);display:flex;flex-direction:column}
-.tb-stats p{padding:14px 18px;border-top:1px solid var(--hair)}
-.tb-stats p:first-child{border-top:0}
+.tb-stats > *{padding:14px 18px;border-top:1px solid var(--hair)}
+.tb-stats > :first-child{border-top:0}
 .titleblock h1{
   font-family:var(--draft);font-weight:700;font-size:clamp(1.7rem,2.6vw,2.2rem);
   line-height:1.05;letter-spacing:.005em;color:var(--line-hi);
 }
 .sub{margin-top:8px;font-size:1rem;color:var(--line-2);max-width:62ch}
-.rhead{margin-top:14px;font-family:var(--draft);font-weight:600;font-size:1.0625rem;color:var(--line-hi)}
-.routes{margin-top:4px;display:grid;gap:4px}
-.route{font-size:.9375rem;color:var(--line-2);line-height:1.45;padding:3px 8px 3px 10px;margin-left:-10px;border-left:2px solid transparent;cursor:pointer}
+.rhead{margin-top:16px;font-size:.9375rem;color:var(--line-2)}
+.routes{margin-top:8px;display:grid;gap:6px}
+.route{padding:6px 10px 7px 12px;margin-left:-12px;border-left:2px solid transparent}
 .route.on,.route:hover{border-left-color:var(--amber)}
-.rname{font-family:var(--draft);font-weight:600;color:var(--line-hi);margin-right:6px}
-.route a{color:var(--line);text-underline-offset:3px;text-decoration-color:rgba(166,216,247,.45)}
-.route a:hover{color:var(--amber);text-decoration-color:var(--amber)}
+.rname{
+  font:600 1.0625rem/1.2 var(--draft);color:var(--line-hi);background:none;cursor:pointer;
+  border:1px solid rgba(166,216,247,.55);border-radius:3px;padding:2px 10px;margin-right:10px;
+}
+.rname:hover,.rname[aria-pressed="true"]{border-color:var(--amber);color:var(--amber)}
+.rwhy{font-size:.9375rem;color:var(--line-2)}
+.rstops{margin-top:5px;font-size:.9375rem;line-height:1.5;color:var(--line-2)}
+.rstops a{color:var(--line);text-underline-offset:3px;text-decoration-color:rgba(166,216,247,.45)}
+.rstops a:hover{color:var(--amber);text-decoration-color:var(--amber)}
 .sep{color:var(--amber)}
 .tb-k{display:block;font-size:.875rem;color:var(--line-2)}
 .tb-v{display:block;margin-top:3px;font-family:var(--draft);font-weight:600;font-size:1.1875rem;color:var(--line-hi);line-height:1.25}
-.legend{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:14px;font-size:.875rem;color:var(--line-2)}
+.legend{display:flex;flex-direction:column;gap:5px;margin-top:6px;font-size:.875rem;color:var(--line-2)}
 .legend span{display:inline-flex;align-items:center;gap:8px}
 .sw{display:inline-block;width:22px;height:12px;border:1px solid var(--line);border-radius:2px}
 .sw.dash{border-style:dashed}
@@ -212,10 +219,10 @@ code{font-family:var(--mono);font-size:.9em}
 .card:hover .plate::before{opacity:.2}
 .card:hover .cname a{color:var(--link)}
 
-.tags{order:1;display:flex;justify-content:space-between;gap:12px;font-size:.875rem;color:var(--ink-2);line-height:1.3;margin-top:4px}
+.tags{order:3;display:flex;flex-wrap:wrap;gap:2px 18px;font-size:.875rem;color:var(--ink-2);line-height:1.3;margin-top:2px}
 .plate{order:0;border-radius:3px;aspect-ratio:4/3;padding:30px clamp(22px,9%,74px) 26px;transition:border-color .22s ease}
 .plate::before{background-size:14px 14px;opacity:.11;transition:opacity .22s ease}
-.meta{order:2;display:flex;flex-direction:column;gap:4px}
+.meta{order:2;display:flex;flex-direction:column;gap:4px;margin-top:4px}
 .pnet{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
 .pnet::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--link);opacity:.85}
 .pnet.test::before{background:none;border:1.5px dashed var(--link)}
@@ -303,20 +310,30 @@ code{font-family:var(--mono);font-size:.9em}
    ============================================================ */
 @media (max-width:1060px){
   .titleblock{grid-template-columns:1fr}
-  .tb-stats{border-left:0;border-top:1px solid var(--hair);flex-direction:row}
-  .tb-stats p{flex:1;border-top:0;border-left:1px solid var(--hair)}
-  .tb-stats p:first-child{border-left:0}
+  .tb-stats{border-left:0;border-top:1px solid var(--hair);flex-direction:row;flex-wrap:wrap}
+  .tb-stats > *{flex:1 1 180px;border-top:0;border-left:1px solid var(--hair)}
+  .tb-stats > :first-child{border-left:0}
 }
 @media (max-width:640px){
   body{font-size:16px}
-  .masthead .wrap{padding-block:10px}
-  .sheet-inner{margin:6px}
+  .masthead .wrap{padding-block:10px;gap:6px 14px}
+  .wordmark{flex-basis:100%}
+  .mnav{gap:4px 13px;margin-right:auto}
+  .mnav a{font-size:.9375rem}
+  #themebtn{padding:2px 9px;font-size:.875rem}
+  .sheet-inner{margin:6px;display:flex;flex-direction:column}
+  .titleblock{order:-1;border-top:0;border-bottom:1px solid var(--hair)}
+  .rhead{display:none}
+  .mk .tx,.mk .txs{display:none}
   .mapscroll{display:none}
   .mapchips{display:block}
   .tb-main{padding:12px 14px 16px}
   .tb-stats{flex-direction:column}
-  .tb-stats p{display:flex;justify-content:space-between;align-items:baseline;border-left:0;border-top:1px solid var(--hair);padding:8px 14px}
-  .tb-stats p:first-child{border-top:0}
+  .tb-stats{display:block}
+  .tb-stats > *{border-left:0;border-top:1px solid var(--hair);padding:8px 14px}
+  .tb-stats > p{display:flex;justify-content:space-between;align-items:baseline}
+  .legend{flex-direction:row;flex-wrap:wrap;gap:4px 16px}
+  .tb-stats > :first-child{border-top:1px solid var(--hair)}
   .tb-v{margin-top:0}
   .sechead .note{margin-left:0;flex-basis:100%}
   .grid{grid-template-columns:1fr}
@@ -357,49 +374,48 @@ code{font-family:var(--mono);font-size:.9em}
   <div class="sheet">
     <div class="sheet-inner">
       <div class="mapscroll">
-      <svg class="hsvg" viewBox="0 0 1320 516" role="group" aria-labelledby="maptitle">
+      <svg class="hsvg" viewBox="0 0 1220 522" role="group" aria-labelledby="maptitle">
         <title id="maptitle">Map of the Dash Platform ecosystem. Each project sits on the layer it works with; select one to jump to it.</title>
-        <line class="hrail" x1="150" y1="56" x2="1300" y2="56"/>
-        <line class="hrail" x1="150" y1="196" x2="1300" y2="196" style="animation-delay:.16s"/>
-        <line class="hrail" x1="150" y1="430" x2="1300" y2="430" style="animation-delay:.32s"/>
-        <text class="hband" x="24" y="62">Apps</text>
-        <text class="hband" x="24" y="202" style="animation-delay:.16s">Platform</text>
-        <text class="hband" x="24" y="436" style="animation-delay:.32s">Network</text>
-        <text class="hnote" x="1300" y="44" text-anchor="end" style="animation-delay:.5s">what people install and use</text>
-        <text class="hnote" x="1300" y="184" text-anchor="end" style="animation-delay:.6s">reads and writes Platform data</text>
-        <text class="hnote" x="1300" y="452" text-anchor="end" style="animation-delay:.7s">masternodes and Dash Core</text>
-        <text class="hnote" x="966" y="375" text-anchor="end" style="animation-delay:1.3s">these two fund Platform from Core DASH</text>
-        <path class="hstem" d="M238 122 V196 M402 122 V196 M566 122 V196 M730 122 V196 M894 122 V196 M1058 122 V196 M1222 122 V196 M238 196 V212 M402 196 V212 M566 196 V212 M730 196 V212 M894 196 V212 M238 430 V446 M402 430 V446 M566 430 V446 M730 430 V446"/>
-        <path class="hcross" d="M1006 196 V346 M1006 396 V430 M1170 196 V346 M1170 396 V430"/>
-        <path class="hroute" id="route" d=""/>
-        <a class="hnode" href="#dashpay" aria-label="DashPay wallet, by Dash Core Group" data-above="64" data-below="160" style="animation-delay:0.40s"><rect class="hbox" x="160" y="72" width="156" height="50" rx="3"/><text class="hby" x="172" y="91">Dash Core Group</text><text class="hnm" x="172" y="111">DashPay wallet</text></a>
-        <a class="hnode" href="#extension" aria-label="Dash Platform Extension, by pshenmic" data-above="64" data-below="160" style="animation-delay:0.44s"><rect class="hbox" x="324" y="72" width="156" height="50" rx="3"/><text class="hby" x="336" y="91">pshenmic</text><text class="hnm" x="336" y="111">Platform Extension</text></a>
-        <a class="hnode" href="#evotool" aria-label="Dash Evo Tool, by Dash Core Group" data-above="64" data-below="160" style="animation-delay:0.48s"><rect class="hbox" x="488" y="72" width="156" height="50" rx="3"/><text class="hby" x="500" y="91">Dash Core Group</text><text class="hnm" x="500" y="111">Dash Evo Tool</text></a>
-        <a class="hnode" href="#evovote" aria-label="EvoVote, by pasta" data-above="64" data-below="160" style="animation-delay:0.52s"><rect class="hbox" x="652" y="72" width="156" height="50" rx="3"/><text class="hby" x="664" y="91">pasta</text><text class="hnm" x="664" y="111">EvoVote</text></a>
-        <a class="hnode htest" href="#yappr" aria-label="Yappr, by pasta, testnet only" data-above="64" data-below="160" style="animation-delay:0.56s"><rect class="hbox" x="816" y="72" width="156" height="50" rx="3"/><text class="hby" x="828" y="91">pasta</text><text class="hnm" x="828" y="111">Yappr</text></a>
-        <a class="hnode htest" href="#pollr" aria-label="Pollr, by pasta, testnet only" data-above="64" data-below="160" style="animation-delay:0.60s"><rect class="hbox" x="980" y="72" width="156" height="50" rx="3"/><text class="hby" x="992" y="91">pasta</text><text class="hnm" x="992" y="111">Pollr</text></a>
-        <a class="hnode htest" href="#forge" aria-label="Dash Forge, by pasta, testnet only" data-above="64" data-below="160" style="animation-delay:0.64s"><rect class="hbox" x="1144" y="72" width="156" height="50" rx="3"/><text class="hby" x="1156" y="91">pasta</text><text class="hnm" x="1156" y="111">Dash Forge</text></a>
-        <a class="hnode" href="#platform-explorer" aria-label="Platform Explorer, by pshenmic" data-above="160" data-below="268" style="animation-delay:0.60s"><rect class="hbox" x="160" y="212" width="156" height="50" rx="3"/><text class="hby" x="172" y="231">pshenmic</text><text class="hnm" x="172" y="251">Platform Explorer</text></a>
-        <a class="hnode" href="#native-explorer" aria-label="Native Platform Explorer, by pasta" data-above="160" data-below="268" style="animation-delay:0.64s"><rect class="hbox" x="324" y="212" width="156" height="50" rx="3"/><text class="hby" x="336" y="231">pasta</text><text class="hnm" x="336" y="251">Native Explorer</text></a>
-        <a class="hnode" href="#evo-sdk" aria-label="Evo SDK, by Dash Core Group" data-above="160" data-below="268" style="animation-delay:0.68s"><rect class="hbox" x="488" y="212" width="156" height="50" rx="3"/><text class="hby" x="500" y="231">Dash Core Group</text><text class="hnm" x="500" y="251">Evo SDK</text></a>
-        <a class="hnode" href="#docs" aria-label="Platform docs, by Dash Core Group" data-above="160" data-below="268" style="animation-delay:0.72s"><rect class="hbox" x="652" y="212" width="156" height="50" rx="3"/><text class="hby" x="664" y="231">Dash Core Group</text><text class="hnm" x="664" y="251">Platform docs</text></a>
-        <a class="hnode htest" href="#tutorials" aria-label="Tutorial apps, by Dash Core Group, testnet only" data-above="160" data-below="268" style="animation-delay:0.76s"><rect class="hbox" x="816" y="212" width="156" height="50" rx="3"/><text class="hby" x="828" y="231">Dash Core Group</text><text class="hnm" x="828" y="251">Tutorial apps</text></a>
-        <a class="hnode" href="#dapi" aria-label="DAPI Explorer, by pasta" data-above="268" data-below="335" style="animation-delay:0.78s"><rect class="hbox" x="160" y="274" width="156" height="50" rx="3"/><text class="hby" x="172" y="293">pasta</text><text class="hnm" x="172" y="313">DAPI Explorer</text></a>
-        <a class="hnode" href="#fees" aria-label="Contract Fee Estimator, by pasta" data-above="268" data-below="335" style="animation-delay:0.82s"><rect class="hbox" x="324" y="274" width="156" height="50" rx="3"/><text class="hby" x="336" y="293">pasta</text><text class="hnm" x="336" y="313">Fee Estimator</text></a>
-        <a class="hnode" href="#contract-visualizer" aria-label="Contract Visualizer, by Dash Core Group" data-above="268" data-below="335" style="animation-delay:0.86s"><rect class="hbox" x="488" y="274" width="156" height="50" rx="3"/><text class="hby" x="500" y="293">Dash Core Group</text><text class="hnm" x="500" y="313">Contract Visualizer</text></a>
-        <a class="hnode" href="#grovedb" aria-label="GroveDB Structure Viewer, by Dash Core Group" data-above="268" data-below="335" style="animation-delay:0.90s"><rect class="hbox" x="652" y="274" width="156" height="50" rx="3"/><text class="hby" x="664" y="293">Dash Core Group</text><text class="hnm" x="664" y="313">GroveDB Viewer</text></a>
-        <a class="hnode" href="#arch" aria-label="Platform Architecture Map, by pasta" data-above="268" data-below="335" style="animation-delay:0.94s"><rect class="hbox" x="816" y="274" width="156" height="50" rx="3"/><text class="hby" x="828" y="293">pasta</text><text class="hnm" x="828" y="313">Architecture Map</text></a>
-        <a class="hnode" href="#bridge" aria-label="Dash Bridge, by pasta" data-above="335" data-below="413" style="animation-delay:1.20s"><rect class="hbox" x="980" y="346" width="156" height="50" rx="3"/><text class="hby" x="992" y="365">pasta</text><text class="hnm" x="992" y="385">Dash Bridge</text></a>
-        <a class="hnode" href="#faucet" aria-label="Dash Faucet, by pasta" data-above="335" data-below="413" style="animation-delay:1.24s"><rect class="hbox" x="1144" y="346" width="156" height="50" rx="3"/><text class="hby" x="1156" y="365">pasta</text><text class="hnm" x="1156" y="385">Dash Faucet</text></a>
-        <a class="hnode" href="#mnmap" aria-label="Masternode Map, by pasta" data-above="413" data-below="508" style="animation-delay:1.00s"><rect class="hbox" x="160" y="446" width="156" height="50" rx="3"/><text class="hby" x="172" y="465">pasta</text><text class="hnm" x="172" y="485">Masternode Map</text></a>
-        <a class="hnode" href="#payments" aria-label="Evonode Payments, by Dash Core Group" data-above="413" data-below="508" style="animation-delay:1.04s"><rect class="hbox" x="324" y="446" width="156" height="50" rx="3"/><text class="hby" x="336" y="465">Dash Core Group</text><text class="hnm" x="336" y="485">Evonode Payments</text></a>
-        <a class="hnode" href="#upgrade" aria-label="Upgrade Vote Status, by Dash Core Group" data-above="413" data-below="508" style="animation-delay:1.08s"><rect class="hbox" x="488" y="446" width="156" height="50" rx="3"/><text class="hby" x="500" y="465">Dash Core Group</text><text class="hnm" x="500" y="485">Upgrade Vote Status</text></a>
-        <a class="hnode" href="#dashmate" aria-label="dashmate, by Dash Core Group" data-above="413" data-below="508" style="animation-delay:1.12s"><rect class="hbox" x="652" y="446" width="156" height="50" rx="3"/><text class="hby" x="664" y="465">Dash Core Group</text><text class="hnm" x="664" y="485">dashmate</text></a>
+        <line class="hrail" x1="40" y1="56" x2="1180" y2="56"/>
+        <line class="hrail" x1="40" y1="196" x2="1180" y2="196" style="animation-delay:.16s"/>
+        <line class="hrail" x1="40" y1="440" x2="1180" y2="440" style="animation-delay:.32s"/>
+        <text class="hband" x="40" y="46">Apps</text>
+        <text class="hband" x="40" y="186" style="animation-delay:.16s">Platform</text>
+        <text class="hband" x="40" y="430" style="animation-delay:.32s">Network</text>
+        <text class="hnote" x="1180" y="46" text-anchor="end" style="animation-delay:.5s">what people install and use</text>
+        <text class="hnote" x="872" y="186" text-anchor="end" style="animation-delay:.6s">reads and writes Platform data</text>
+        <text class="hnote" x="852" y="476" text-anchor="end" style="animation-delay:.7s">masternodes and Dash Core</text>
+        <text class="hnote" x="846" y="386" text-anchor="end" style="animation-delay:1.3s">these two fund Platform from Core DASH</text>
+        <path class="hstem" d="M118 122 V196 M282 122 V196 M446 122 V196 M610 122 V196 M774 122 V196 M938 122 V196 M1102 122 V196 M118 196 V212 M282 196 V212 M446 196 V212 M610 196 V212 M774 196 V212 M118 440 V456 M282 440 V456 M446 440 V456 M610 440 V456"/>
+        <path class="hcross" d="M886 196 V356 M886 406 V440 M1050 196 V356 M1050 406 V440"/>
+        <a class="hnode" href="#dashpay" aria-label="DashPay wallet, by Dash Core Group" style="animation-delay:0.40s"><rect class="hbox" x="40" y="72" width="156" height="50" rx="3"/><text class="hby" x="52" y="91">Dash Core Group</text><text class="hnm" x="52" y="111">DashPay wallet</text><text class="hstep" x="187" y="90" text-anchor="end"></text></a>
+        <a class="hnode" href="#extension" aria-label="Platform Extension, by pshenmic" style="animation-delay:0.44s"><rect class="hbox" x="204" y="72" width="156" height="50" rx="3"/><text class="hby" x="216" y="91">pshenmic</text><text class="hnm" x="216" y="111">Platform Extension</text><text class="hstep" x="351" y="90" text-anchor="end"></text></a>
+        <a class="hnode" href="#evotool" aria-label="Dash Evo Tool, by Dash Core Group" style="animation-delay:0.48s"><rect class="hbox" x="368" y="72" width="156" height="50" rx="3"/><text class="hby" x="380" y="91">Dash Core Group</text><text class="hnm" x="380" y="111">Dash Evo Tool</text><text class="hstep" x="515" y="90" text-anchor="end"></text></a>
+        <a class="hnode" href="#evovote" aria-label="EvoVote, by pasta" style="animation-delay:0.52s"><rect class="hbox" x="532" y="72" width="156" height="50" rx="3"/><text class="hby" x="544" y="91">pasta</text><text class="hnm" x="544" y="111">EvoVote</text><text class="hstep" x="679" y="90" text-anchor="end"></text></a>
+        <a class="hnode htest" href="#yappr" aria-label="Yappr, by pasta, testnet only" style="animation-delay:0.56s"><rect class="hbox" x="696" y="72" width="156" height="50" rx="3"/><text class="hby" x="708" y="91">pasta</text><text class="hnm" x="708" y="111">Yappr</text><text class="hstep" x="843" y="90" text-anchor="end"></text></a>
+        <a class="hnode htest" href="#pollr" aria-label="Pollr, by pasta, testnet only" style="animation-delay:0.60s"><rect class="hbox" x="860" y="72" width="156" height="50" rx="3"/><text class="hby" x="872" y="91">pasta</text><text class="hnm" x="872" y="111">Pollr</text><text class="hstep" x="1007" y="90" text-anchor="end"></text></a>
+        <a class="hnode htest" href="#forge" aria-label="Dash Forge, by pasta, testnet only" style="animation-delay:0.64s"><rect class="hbox" x="1024" y="72" width="156" height="50" rx="3"/><text class="hby" x="1036" y="91">pasta</text><text class="hnm" x="1036" y="111">Dash Forge</text><text class="hstep" x="1171" y="90" text-anchor="end"></text></a>
+        <a class="hnode" href="#platform-explorer" aria-label="Platform Explorer, by pshenmic" style="animation-delay:0.60s"><rect class="hbox" x="40" y="212" width="156" height="58" rx="3"/><text class="hby" x="52" y="231">pshenmic</text><text class="hnm" x="52" y="251">Platform Explorer</text><text class="hstep" x="187" y="230" text-anchor="end"></text></a>
+        <a class="hnode" href="#native-explorer" aria-label="Native Platform Explorer, by pasta" style="animation-delay:0.64s"><rect class="hbox" x="204" y="212" width="156" height="58" rx="3"/><text class="hby" x="216" y="229">pasta</text><text class="hnm hnm2" x="216" y="246">Native Platform</text><text class="hnm hnm2" x="216" y="262">Explorer</text><text class="hstep" x="351" y="230" text-anchor="end"></text></a>
+        <a class="hnode" href="#evo-sdk" aria-label="Evo SDK, by Dash Core Group" style="animation-delay:0.68s"><rect class="hbox" x="368" y="212" width="156" height="58" rx="3"/><text class="hby" x="380" y="231">Dash Core Group</text><text class="hnm" x="380" y="251">Evo SDK</text><text class="hstep" x="515" y="230" text-anchor="end"></text></a>
+        <a class="hnode" href="#docs" aria-label="Platform docs, by Dash Core Group" style="animation-delay:0.72s"><rect class="hbox" x="532" y="212" width="156" height="58" rx="3"/><text class="hby" x="544" y="231">Dash Core Group</text><text class="hnm" x="544" y="251">Platform docs</text><text class="hstep" x="679" y="230" text-anchor="end"></text></a>
+        <a class="hnode htest" href="#tutorials" aria-label="Tutorial apps, by Dash Core Group, testnet only" style="animation-delay:0.76s"><rect class="hbox" x="696" y="212" width="156" height="58" rx="3"/><text class="hby" x="708" y="231">Dash Core Group</text><text class="hnm" x="708" y="251">Tutorial apps</text><text class="hstep" x="843" y="230" text-anchor="end"></text></a>
+        <a class="hnode" href="#dapi" aria-label="DAPI Explorer, by pasta" style="animation-delay:0.78s"><rect class="hbox" x="40" y="280" width="156" height="58" rx="3"/><text class="hby" x="52" y="299">pasta</text><text class="hnm" x="52" y="319">DAPI Explorer</text><text class="hstep" x="187" y="298" text-anchor="end"></text></a>
+        <a class="hnode" href="#fees" aria-label="Contract Fee Estimator, by pasta" style="animation-delay:0.82s"><rect class="hbox" x="204" y="280" width="156" height="58" rx="3"/><text class="hby" x="216" y="297">pasta</text><text class="hnm hnm2" x="216" y="314">Contract Fee</text><text class="hnm hnm2" x="216" y="330">Estimator</text><text class="hstep" x="351" y="298" text-anchor="end"></text></a>
+        <a class="hnode" href="#contract-visualizer" aria-label="Contract Visualizer, by Dash Core Group" style="animation-delay:0.86s"><rect class="hbox" x="368" y="280" width="156" height="58" rx="3"/><text class="hby" x="380" y="299">Dash Core Group</text><text class="hnm" x="380" y="319">Contract Visualizer</text><text class="hstep" x="515" y="298" text-anchor="end"></text></a>
+        <a class="hnode" href="#grovedb" aria-label="GroveDB Structure Viewer, by Dash Core Group" style="animation-delay:0.90s"><rect class="hbox" x="532" y="280" width="156" height="58" rx="3"/><text class="hby" x="544" y="297">Dash Core Group</text><text class="hnm hnm2" x="544" y="314">GroveDB Structure</text><text class="hnm hnm2" x="544" y="330">Viewer</text><text class="hstep" x="679" y="298" text-anchor="end"></text></a>
+        <a class="hnode" href="#arch" aria-label="Platform Architecture Map, by pasta" style="animation-delay:0.94s"><rect class="hbox" x="696" y="280" width="156" height="58" rx="3"/><text class="hby" x="708" y="297">pasta</text><text class="hnm hnm2" x="708" y="314">Platform</text><text class="hnm hnm2" x="708" y="330">Architecture Map</text><text class="hstep" x="843" y="298" text-anchor="end"></text></a>
+        <a class="hnode" href="#bridge" aria-label="Dash Bridge, by pasta" style="animation-delay:1.20s"><rect class="hbox" x="860" y="356" width="156" height="50" rx="3"/><text class="hby" x="872" y="375">pasta</text><text class="hnm" x="872" y="395">Dash Bridge</text><text class="hstep" x="1007" y="374" text-anchor="end"></text></a>
+        <a class="hnode" href="#faucet" aria-label="Dash Faucet, by pasta" style="animation-delay:1.24s"><rect class="hbox" x="1024" y="356" width="156" height="50" rx="3"/><text class="hby" x="1036" y="375">pasta</text><text class="hnm" x="1036" y="395">Dash Faucet</text><text class="hstep" x="1171" y="374" text-anchor="end"></text></a>
+        <a class="hnode" href="#mnmap" aria-label="Masternode Map, by pasta" style="animation-delay:1.00s"><rect class="hbox" x="40" y="456" width="156" height="50" rx="3"/><text class="hby" x="52" y="475">pasta</text><text class="hnm" x="52" y="495">Masternode Map</text><text class="hstep" x="187" y="474" text-anchor="end"></text></a>
+        <a class="hnode" href="#payments" aria-label="Evonode Payments, by Dash Core Group" style="animation-delay:1.04s"><rect class="hbox" x="204" y="456" width="156" height="50" rx="3"/><text class="hby" x="216" y="475">Dash Core Group</text><text class="hnm" x="216" y="495">Evonode Payments</text><text class="hstep" x="351" y="474" text-anchor="end"></text></a>
+        <a class="hnode" href="#upgrade" aria-label="Upgrade Vote Status, by Dash Core Group" style="animation-delay:1.08s"><rect class="hbox" x="368" y="456" width="156" height="50" rx="3"/><text class="hby" x="380" y="475">Dash Core Group</text><text class="hnm" x="380" y="495">Upgrade Vote Status</text><text class="hstep" x="515" y="474" text-anchor="end"></text></a>
+        <a class="hnode" href="#dashmate" aria-label="dashmate, by Dash Core Group" style="animation-delay:1.12s"><rect class="hbox" x="532" y="456" width="156" height="50" rx="3"/><text class="hby" x="544" y="475">Dash Core Group</text><text class="hnm" x="544" y="495">dashmate</text><text class="hstep" x="679" y="474" text-anchor="end"></text></a>
       </svg>
       </div>
       <nav class="mapchips" aria-label="Projects by layer">
         <p class="chiprow"><span class="chiplabel">Apps</span><a class="chip" href="#dashpay">DashPay wallet</a><a class="chip" href="#extension">Platform Extension</a><a class="chip" href="#evotool">Dash Evo Tool</a><a class="chip" href="#evovote">EvoVote</a><a class="chip test" href="#yappr">Yappr</a><a class="chip test" href="#pollr">Pollr</a><a class="chip test" href="#forge">Dash Forge</a></p>
-        <p class="chiprow"><span class="chiplabel">Platform</span><a class="chip" href="#platform-explorer">Platform Explorer</a><a class="chip" href="#native-explorer">Native Explorer</a><a class="chip" href="#evo-sdk">Evo SDK</a><a class="chip" href="#docs">Platform docs</a><a class="chip test" href="#tutorials">Tutorial apps</a><a class="chip" href="#dapi">DAPI Explorer</a><a class="chip" href="#fees">Fee Estimator</a><a class="chip" href="#contract-visualizer">Contract Visualizer</a><a class="chip" href="#grovedb">GroveDB Viewer</a><a class="chip" href="#arch">Architecture Map</a><a class="chip" href="#bridge">Dash Bridge</a><a class="chip" href="#faucet">Dash Faucet</a></p>
+        <p class="chiprow"><span class="chiplabel">Platform</span><a class="chip" href="#platform-explorer">Platform Explorer</a><a class="chip" href="#native-explorer">Native Platform Explorer</a><a class="chip" href="#evo-sdk">Evo SDK</a><a class="chip" href="#docs">Platform docs</a><a class="chip test" href="#tutorials">Tutorial apps</a><a class="chip" href="#dapi">DAPI Explorer</a><a class="chip" href="#fees">Contract Fee Estimator</a><a class="chip" href="#contract-visualizer">Contract Visualizer</a><a class="chip" href="#grovedb">GroveDB Structure Viewer</a><a class="chip" href="#arch">Platform Architecture Map</a><a class="chip" href="#bridge">Dash Bridge</a><a class="chip" href="#faucet">Dash Faucet</a></p>
         <p class="chiprow"><span class="chiplabel">Network</span><a class="chip" href="#mnmap">Masternode Map</a><a class="chip" href="#payments">Evonode Payments</a><a class="chip" href="#upgrade">Upgrade Vote Status</a><a class="chip" href="#dashmate">dashmate</a></p>
       </nav>
 
@@ -407,22 +423,22 @@ code{font-family:var(--mono);font-size:.9em}
         <div class="tb-main">
           <h1 id="title">Dash Ecosystem</h1>
           <p class="sub">Dash Platform is the data layer run by Dash's masternodes: identities, usernames, documents and tokens. This map places each working app, tool and document on the layer it uses.</p>
-          <p class="rhead">New here? Pick a route.</p>
+          <p class="rhead">New here? Pick a route and its stops are numbered on the map.</p>
           <ol class="routes">
-            <li class="route" data-route="faucet dashpay platform-explorer evovote"><b class="rname">Use it</b> <a href="#faucet">Dash Faucet</a><span class="sep" aria-hidden="true"> → </span><a href="#dashpay">DashPay wallet</a><span class="sep" aria-hidden="true"> → </span><a href="#platform-explorer">Platform Explorer</a><span class="sep" aria-hidden="true"> → </span><a href="#evovote">EvoVote</a></li>
-            <li class="route" data-route="docs evo-sdk faucet bridge tutorials fees"><b class="rname">Build on it</b> <a href="#docs">Platform docs</a><span class="sep" aria-hidden="true"> → </span><a href="#evo-sdk">Evo SDK</a><span class="sep" aria-hidden="true"> → </span><a href="#faucet">Dash Faucet</a><span class="sep" aria-hidden="true"> → </span><a href="#bridge">Dash Bridge</a><span class="sep" aria-hidden="true"> → </span><a href="#tutorials">Tutorial apps</a><span class="sep" aria-hidden="true"> → </span><a href="#fees">Contract Fee Estimator</a></li>
-            <li class="route" data-route="dashmate upgrade payments mnmap"><b class="rname">Run a node</b> <a href="#dashmate">dashmate</a><span class="sep" aria-hidden="true"> → </span><a href="#upgrade">Upgrade Vote Status</a><span class="sep" aria-hidden="true"> → </span><a href="#payments">Evonode Payments</a><span class="sep" aria-hidden="true"> → </span><a href="#mnmap">Masternode Map</a></li>
+            <li class="route" data-route="faucet dashpay extension platform-explorer"><p><button type="button" class="rname" aria-pressed="false">Use it</button><span class="rwhy">Get a username and pay people by name.</span></p><p class="rstops"><a href="#faucet">Dash Faucet</a><span class="sep" aria-hidden="true"> → </span><a href="#dashpay">DashPay wallet</a><span class="sep" aria-hidden="true"> → </span><a href="#extension">Platform Extension</a><span class="sep" aria-hidden="true"> → </span><a href="#platform-explorer">Platform Explorer</a></p></li>
+            <li class="route" data-route="docs faucet evo-sdk tutorials fees"><p><button type="button" class="rname" aria-pressed="false">Build on it</button><span class="rwhy">From the docs to your first contract.</span></p><p class="rstops"><a href="#docs">Platform docs</a><span class="sep" aria-hidden="true"> → </span><a href="#faucet">Dash Faucet</a><span class="sep" aria-hidden="true"> → </span><a href="#evo-sdk">Evo SDK</a><span class="sep" aria-hidden="true"> → </span><a href="#tutorials">Tutorial apps</a><span class="sep" aria-hidden="true"> → </span><a href="#fees">Contract Fee Estimator</a></p></li>
+            <li class="route" data-route="dashmate upgrade payments evovote mnmap"><p><button type="button" class="rname" aria-pressed="false">Run a node</button><span class="rwhy">Set up, upgrade, earn and vote.</span></p><p class="rstops"><a href="#dashmate">dashmate</a><span class="sep" aria-hidden="true"> → </span><a href="#upgrade">Upgrade Vote Status</a><span class="sep" aria-hidden="true"> → </span><a href="#payments">Evonode Payments</a><span class="sep" aria-hidden="true"> → </span><a href="#evovote">EvoVote</a><span class="sep" aria-hidden="true"> → </span><a href="#mnmap">Masternode Map</a></p></li>
           </ol>
-          <p class="legend">
-            <span><i class="sw" aria-hidden="true"></i> Live on mainnet</span>
-            <span><i class="sw dash" aria-hidden="true"></i> Testnet only for now</span>
-            <span><i class="sw cross" aria-hidden="true"></i> Funds Platform from Core</span>
-          </p>
           <p class="panhint">Drag the map sideways to see all of it.</p>
         </div>
         <div class="tb-stats">
           <p><span class="tb-k">On the map</span><span class="tb-v"><span data-count="card">23</span> projects</span></p>
           <p><span class="tb-k">In the directory</span><span class="tb-v"><span data-count="entry">40</span> more</span></p>
+          <div class="tb-key"><span class="tb-k">Key</span><p class="legend">
+            <span><i class="sw" aria-hidden="true"></i> Live on mainnet</span>
+            <span><i class="sw dash" aria-hidden="true"></i> Testnet only for now</span>
+            <span><i class="sw cross" aria-hidden="true"></i> Funds Platform from Core</span>
+          </p></div>
           <p><span class="tb-k">Checked</span><span class="tb-v"><time datetime="2026-09-22">22 Sep 2026</time></span></p>
         </div>
       </div>
@@ -847,7 +863,7 @@ code{font-family:var(--mono);font-size:.9em}
         <div class="meta">
           <h3 class="cname"><a href="https://faucet.dashhq.org">Dash Faucet</a></h3>
           <p class="host"><a href="https://faucet.dashhq.org">faucet.dashhq.org</a></p>
-          <p class="desc">Free testnet DASH for development, plus mainnet invitations that Dash Wallet turns into an identity and a username.</p>
+          <p class="desc">Free testnet DASH for development, plus mainnet invitations that the DashPay wallet turns into an identity and a username.</p>
         </div>
       </article>
 
@@ -1205,54 +1221,38 @@ code{font-family:var(--mono);font-size:.9em}
     if(a && a.getAttribute('href').length > 1) flash(a.getAttribute('href').slice(1));
   });
 
-  // Routes: hovering or focusing a route draws it on the map along the rails.
+  // Routes: numbers each stop on the map and dims the rest.
+  // Hover and keyboard focus preview a route; the button pins it, which is the path on touch screens.
   var svg = document.querySelector('.hsvg');
-  var path = document.getElementById('route');
-  if(!svg || !path) return;
+  var list = document.querySelector('.routes');
+  if(!svg || !list) return;
   var nodes = {};
   svg.querySelectorAll('.hnode').forEach(function(a){ nodes[a.getAttribute('href').slice(1)] = a; });
-
-  function port(id){
-    var a = nodes[id], b = a.querySelector('rect');
-    var x = +b.getAttribute('x'), y = +b.getAttribute('y'), w = +b.getAttribute('width'), h = +b.getAttribute('height');
-    // gutter: the narrow gap just right of the box, clear of every row because the columns line up
-    return {cx: x + w / 2, top: y, bottom: y + h, gutter: x + w + 4, above: +a.dataset.above, below: +a.dataset.below};
-  }
-  // Travel between boxes along the lanes between rows and the gutters between columns, never through a box.
-  function draw(ids){
-    var d = '', prev = null;
-    ids.forEach(function(id){
-      var p = port(id);
-      if(prev){
-        var down = p.top > prev.top, same = p.top === prev.top;
-        if(!d) d = 'M' + prev.cx + ' ' + (down || same ? prev.bottom : prev.top);
-        else d += ' V' + (down || same ? prev.bottom : prev.top);
-        if(same){ d += ' V' + prev.below + ' H' + p.cx + ' V' + p.bottom; }
-        // adjacent rows share a lane, so the route can turn straight into the next box
-        else if(down){ d += ' V' + prev.below + (prev.below === p.above ? '' : ' H' + p.gutter + ' V' + p.above) + ' H' + p.cx + ' V' + p.top; }
-        else { d += ' V' + prev.above + (prev.above === p.below ? '' : ' H' + p.gutter + ' V' + p.below) + ' H' + p.cx + ' V' + p.bottom; }
-      }
-      prev = p;
-    });
-    return d;
-  }
-  var routes = document.querySelectorAll('.route');
+  var routes = list.querySelectorAll('.route');
+  var pinned = null;
   function show(li){
-    routes.forEach(function(o){ o.classList.toggle('on', o === li); });
-    if(!li){ svg.classList.remove('routing'); return; }
-    var ids = li.dataset.route.split(' ');
-    Object.keys(nodes).forEach(function(id){ nodes[id].classList.toggle('on', ids.indexOf(id) > -1); });
-    path.setAttribute('d', draw(ids));
-    svg.classList.add('routing');
+    routes.forEach(function(o){
+      o.classList.toggle('on', o === li);
+      o.querySelector('.rname').setAttribute('aria-pressed', String(o === pinned));
+    });
+    var ids = li ? li.dataset.route.split(' ') : [];
+    Object.keys(nodes).forEach(function(id){
+      var i = ids.indexOf(id);
+      nodes[id].classList.toggle('on', i > -1);
+      nodes[id].querySelector('.hstep').textContent = i > -1 ? i + 1 : '';
+    });
+    svg.classList.toggle('routing', !!li);
   }
   routes.forEach(function(li){
     li.addEventListener('mouseenter', function(){ show(li); });
     li.addEventListener('focusin', function(){ show(li); });
+    li.querySelector('.rname').addEventListener('click', function(){
+      pinned = pinned === li ? null : li;
+      show(pinned || li);
+    });
   });
-  document.querySelector('.routes').addEventListener('mouseleave', function(){ show(null); });
-  document.querySelector('.routes').addEventListener('focusout', function(e){
-    if(!e.currentTarget.contains(e.relatedTarget)) show(null);
-  });
+  list.addEventListener('mouseleave', function(){ show(pinned); });
+  list.addEventListener('focusout', function(e){ if(!list.contains(e.relatedTarget)) show(pinned); });
 })();
 </script>
 </body>
