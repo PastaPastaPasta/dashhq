@@ -7,7 +7,7 @@
 <meta name="description" content="Apps, wallets, explorers, SDKs and docs built on Dash Platform, drawn on one map and placed on the layer they work with.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%275%27 fill=%27%230A2A3D%27/%3E%3Cpath d=%27M5 10H27M5 22H27%27 stroke=%27%23A6D8F7%27 stroke-width=%272%27/%3E%3Cpath d=%27M16 10V22%27 stroke=%27%23F5A73C%27 stroke-width=%273%27/%3E%3C/svg%3E">
-<script>try{var t=localStorage.getItem("dashhq-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<script>document.documentElement.className="js";try{var t=localStorage.getItem("dashhq-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <link rel="preload" href="fonts/barlow-sc-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -38,6 +38,7 @@
   --line-hi:#E4F3FC;   /* primary text on plate */
   --hair:rgba(166,216,247,.22);
   --amber:#F5A73C;     /* the part you act on, identical in both themes */
+  --focus:var(--link);
   --shadow:0 1px 0 rgba(11,30,40,.08), 0 18px 34px -26px rgba(11,30,40,.55);
 
   --text:"Barlow",-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
@@ -77,7 +78,8 @@ code{font-family:var(--mono);font-size:.9em}
 .wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--gut)}
 .skip{position:absolute;left:-9999px;top:0;background:var(--plate);color:var(--line);padding:12px 18px;z-index:50}
 .skip:focus{left:12px;top:12px}
-:focus-visible{outline:2px solid var(--amber);outline-offset:3px;border-radius:2px}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:2px}
+.sheet :focus-visible,.plate :focus-visible{outline-color:var(--amber)}
 
 /* ============================================================
    MASTHEAD: one quiet line
@@ -115,9 +117,10 @@ code{font-family:var(--mono);font-size:.9em}
 .sheet{margin-top:clamp(8px,1.4vw,18px);border-radius:4px;color:var(--line)}
 .sheet::before{background-size:16px 16px;opacity:.08}
 /* drawing border, inset like a real sheet */
-.sheet-inner{position:relative;margin:10px;border:1px solid var(--hair)}
+.sheet-inner{position:relative;margin:10px;border:1px solid var(--hair);display:flex;flex-direction:column}
+.mapscroll{order:-1}
 .mapscroll{overflow-x:auto;overscroll-behavior-x:contain;padding:clamp(10px,1.4vw,20px) clamp(10px,1.4vw,20px) 4px}
-.mapscroll svg{display:block;min-width:1060px;width:100%;height:auto}
+.mapscroll svg{display:block;min-width:1040px;width:100%;height:auto}
 
 /* --- map internals --- */
 .hsvg *{vector-effect:non-scaling-stroke}
@@ -125,7 +128,7 @@ code{font-family:var(--mono);font-size:.9em}
 .hsvg .hstem{fill:none;stroke:var(--line);stroke-width:1;opacity:.45}
 .hsvg .hcross{fill:none;stroke:var(--amber);stroke-width:1.4;opacity:.85}
 .hsvg .hband{fill:var(--line-hi);font-family:var(--draft);font-weight:700;font-size:19px}
-.hsvg .hnote{fill:var(--line-2);font-family:var(--text);font-size:13.5px}
+.hsvg .hnote{fill:var(--line-2);font-family:var(--text);font-size:13.5px;paint-order:stroke;stroke:var(--plate);stroke-width:5px;stroke-linejoin:round}
 .hsvg .hbox{fill:var(--plate);stroke:var(--line);stroke-width:1;stroke-opacity:.65}
 .hsvg .hby{fill:var(--line-2);font-family:var(--text);font-size:12.5px}
 .hsvg .hnm{fill:var(--line-hi);font-family:var(--draft);font-weight:600;font-size:17px}
@@ -135,19 +138,20 @@ code{font-family:var(--mono);font-size:.9em}
 .hsvg .hnode:hover .hbox{stroke:var(--amber);stroke-opacity:1}
 .hsvg .hnode:hover .hnm{fill:var(--amber)}
 .hsvg .hnode:focus-visible{outline:none}
-.hsvg .hnode:focus-visible .hbox{stroke:var(--amber);stroke-width:2;stroke-opacity:1}
+.hsvg .hnode:focus-visible .hbox{stroke:var(--line-hi);stroke-width:3;stroke-opacity:1}
+.hsvg.routing .hnode:focus-visible{opacity:1}
 .hsvg .htest .hbox{stroke-dasharray:4 3}
 /* a route is showing: dim everything off it */
-.hsvg.routing .hnode{opacity:.35}
+.hsvg.routing .hnode{opacity:.5}
 .hsvg.routing .hnode.on{opacity:1}
 .hsvg.routing .hnode.on .hbox{stroke:var(--amber);stroke-opacity:1;stroke-width:1.6}
 .hsvg.routing .hnode.on .hstep{opacity:1}
 
 @media (prefers-reduced-motion:no-preference){
-  .hsvg .hrail{stroke-dasharray:1300;animation:draw 1s cubic-bezier(.2,.7,.3,1) both}
-  .hsvg .hstem{animation:fade .5s ease-out .8s both}
-  .hsvg .hcross{animation:fade .5s ease-out 1.25s both}
-  .hsvg .hnode,.hsvg .hnote,.hsvg .hband{animation:rise .5s cubic-bezier(.2,.7,.3,1) both}
+  .hsvg .hrail{stroke-dasharray:1300;animation:draw 1s cubic-bezier(.2,.7,.3,1) backwards}
+  .hsvg .hstem{animation:fade .5s ease-out .8s backwards}
+  .hsvg .hcross{animation:fade .5s ease-out 1.25s backwards}
+  .hsvg .hnode,.hsvg .hnote,.hsvg .hband{animation:rise .5s cubic-bezier(.2,.7,.3,1) backwards}
   @keyframes draw{from{stroke-dashoffset:1300}to{stroke-dashoffset:0}}
   @keyframes fade{from{opacity:0}}
   @keyframes rise{from{opacity:0;transform:translateY(7px)}}
@@ -162,7 +166,7 @@ code{font-family:var(--mono);font-size:.9em}
   border:1px solid rgba(166,216,247,.6);border-radius:3px;padding:3px 9px;
 }
 .chip.test{border-style:dashed}
-.mapchips.routing .chip:not(.on){opacity:.4}
+.mapchips.routing .chip:not(.on){opacity:.55}
 .chip.on{border-color:var(--amber)}
 .chip.on::before{content:attr(data-step) " ";color:var(--amber);font-weight:700}
 
@@ -180,14 +184,17 @@ code{font-family:var(--mono);font-size:.9em}
 .rhead{margin-top:16px;font-size:.9375rem;color:var(--line-2)}
 .routes{margin-top:8px;display:grid;gap:6px}
 .route{padding:6px 10px 7px 12px;margin-left:-12px;border-left:2px solid transparent}
-.route.on,.route:hover{border-left-color:var(--amber)}
+.route.on{border-left-color:var(--amber)}
+@media (hover:hover){.route:hover{border-left-color:var(--amber)}.rname:hover{border-color:var(--amber);color:var(--amber)}}
 .rname{
   font:600 1.0625rem/1.2 var(--draft);color:var(--line-hi);background:none;cursor:pointer;
   border:1px solid rgba(166,216,247,.55);border-radius:3px;padding:2px 10px;flex:none;
 }
-.rname:hover,.rname[aria-pressed="true"]{border-color:var(--amber);color:var(--amber)}
+.rname[aria-pressed="true"]{border-color:var(--amber);color:var(--amber)}
 .route > p:first-child{display:flex;align-items:baseline;gap:10px}
 .rwhy{font-size:.9375rem;color:var(--line-2)}
+html:not(.js) .rhead{display:none}
+html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
 .rstops{margin-top:5px;font-size:.9375rem;line-height:1.5;color:var(--line-2)}
 .rstops a{color:var(--line);text-underline-offset:3px;text-decoration-color:rgba(166,216,247,.45)}
 .rstops a:hover{color:var(--amber);text-decoration-color:var(--amber)}
@@ -325,18 +332,16 @@ code{font-family:var(--mono);font-size:.9em}
   .mnav{gap:4px 13px;margin-right:auto}
   .mnav a{font-size:.9375rem}
   #themebtn{padding:2px 9px;font-size:.875rem}
-  .sheet-inner{margin:6px;display:flex;flex-direction:column}
-  .titleblock{order:-1;border-top:0;border-bottom:1px solid var(--hair)}
+  .sheet-inner{margin:6px}
+  .titleblock{border-top:0;border-bottom:1px solid var(--hair)}
   .mk .tx,.mk .txs{display:none}
   .mapscroll{display:none}
   .mapchips{display:block}
   .tb-main{padding:12px 14px 16px}
-  .tb-stats{flex-direction:column}
   .tb-stats{display:block}
   .tb-stats > *{border-left:0;border-top:1px solid var(--hair);padding:8px 14px}
   .tb-stats > p{display:flex;justify-content:space-between;align-items:baseline}
   .legend{flex-direction:row;flex-wrap:wrap;gap:4px 16px}
-  .tb-stats > :first-child{border-top:1px solid var(--hair)}
   .tb-v{margin-top:0}
   .sechead .note{margin-left:0;flex-basis:100%}
   .grid{grid-template-columns:1fr}
@@ -376,6 +381,29 @@ code{font-family:var(--mono);font-size:.9em}
 <section class="wrap" aria-labelledby="title">
   <div class="sheet">
     <div class="sheet-inner">
+      <div class="titleblock">
+        <div class="tb-main">
+          <h1 id="title">Dash Ecosystem</h1>
+          <p class="sub">Dash Platform is the data layer run by Dash's masternodes: identities, usernames, documents and tokens. This map places each working app, tool and document on the layer it uses.</p>
+          <p class="rhead">New here? Pick a route to number its stops on the map.</p>
+          <ol class="routes">
+            <li class="route" data-route="faucet dashpay extension platform-explorer"><p><button type="button" class="rname" aria-pressed="false">Use it</button><span class="rwhy">Get a username and pay people by name.</span></p><p class="rstops"><a href="#faucet">Dash Faucet</a><span class="sep" aria-hidden="true"> → </span><a href="#dashpay">DashPay wallet</a><span class="sep" aria-hidden="true"> → </span><a href="#extension">Platform Extension</a><span class="sep" aria-hidden="true"> → </span><a href="#platform-explorer">Platform Explorer</a></p></li>
+            <li class="route" data-route="docs faucet evo-sdk tutorials fees"><p><button type="button" class="rname" aria-pressed="false">Build on it</button><span class="rwhy">From the docs to your first contract.</span></p><p class="rstops"><a href="#docs">Platform docs</a><span class="sep" aria-hidden="true"> → </span><a href="#faucet">Dash Faucet</a><span class="sep" aria-hidden="true"> → </span><a href="#evo-sdk">Evo SDK</a><span class="sep" aria-hidden="true"> → </span><a href="#tutorials">Tutorial apps</a><span class="sep" aria-hidden="true"> → </span><a href="#fees">Contract Fee Estimator</a></p></li>
+            <li class="route" data-route="dashmate upgrade payments evovote mnmap"><p><button type="button" class="rname" aria-pressed="false">Run a node</button><span class="rwhy">Set up, upgrade, earn and vote.</span></p><p class="rstops"><a href="#dashmate">dashmate</a><span class="sep" aria-hidden="true"> → </span><a href="#upgrade">Upgrade Vote Status</a><span class="sep" aria-hidden="true"> → </span><a href="#payments">Evonode Payments</a><span class="sep" aria-hidden="true"> → </span><a href="#evovote">EvoVote</a><span class="sep" aria-hidden="true"> → </span><a href="#mnmap">Masternode Map</a></p></li>
+          </ol>
+          <p class="panhint">Drag the map sideways to see all of it.</p>
+        </div>
+        <div class="tb-stats">
+          <p><span class="tb-k">On the map</span><span class="tb-v"><span data-count="card">23</span> projects</span></p>
+          <p><span class="tb-k">In the directory</span><span class="tb-v"><span data-count="entry">40</span> more</span></p>
+          <div class="tb-key"><span class="tb-k">Key</span><p class="legend">
+            <span><i class="sw" aria-hidden="true"></i> Live on mainnet</span>
+            <span><i class="sw dash" aria-hidden="true"></i> Testnet only for now</span>
+            <span><i class="sw cross" aria-hidden="true"></i> Funds Platform from Core</span>
+          </p></div>
+          <p><span class="tb-k">Checked</span><span class="tb-v"><time datetime="2026-09-22">22 Sep 2026</time></span></p>
+        </div>
+      </div>
       <div class="mapscroll">
       <svg class="hsvg" viewBox="0 0 1220 522" role="group" aria-labelledby="maptitle">
         <title id="maptitle">Map of the Dash Platform ecosystem. Each project sits on the layer it works with; select one to jump to it.</title>
@@ -422,29 +450,6 @@ code{font-family:var(--mono);font-size:.9em}
         <p class="chiprow"><span class="chiplabel">Network</span><a class="chip" href="#mnmap">Masternode Map</a><a class="chip" href="#payments">Evonode Payments</a><a class="chip" href="#upgrade">Upgrade Vote Status</a><a class="chip" href="#dashmate">dashmate</a></p>
       </nav>
 
-      <div class="titleblock">
-        <div class="tb-main">
-          <h1 id="title">Dash Ecosystem</h1>
-          <p class="sub">Dash Platform is the data layer run by Dash's masternodes: identities, usernames, documents and tokens. This map places each working app, tool and document on the layer it uses.</p>
-          <p class="rhead">New here? Pick a route and its stops are numbered on the map.</p>
-          <ol class="routes">
-            <li class="route" data-route="faucet dashpay extension platform-explorer"><p><button type="button" class="rname" aria-pressed="false">Use it</button><span class="rwhy">Get a username and pay people by name.</span></p><p class="rstops"><a href="#faucet">Dash Faucet</a><span class="sep" aria-hidden="true"> → </span><a href="#dashpay">DashPay wallet</a><span class="sep" aria-hidden="true"> → </span><a href="#extension">Platform Extension</a><span class="sep" aria-hidden="true"> → </span><a href="#platform-explorer">Platform Explorer</a></p></li>
-            <li class="route" data-route="docs faucet evo-sdk tutorials fees"><p><button type="button" class="rname" aria-pressed="false">Build on it</button><span class="rwhy">From the docs to your first contract.</span></p><p class="rstops"><a href="#docs">Platform docs</a><span class="sep" aria-hidden="true"> → </span><a href="#faucet">Dash Faucet</a><span class="sep" aria-hidden="true"> → </span><a href="#evo-sdk">Evo SDK</a><span class="sep" aria-hidden="true"> → </span><a href="#tutorials">Tutorial apps</a><span class="sep" aria-hidden="true"> → </span><a href="#fees">Contract Fee Estimator</a></p></li>
-            <li class="route" data-route="dashmate upgrade payments evovote mnmap"><p><button type="button" class="rname" aria-pressed="false">Run a node</button><span class="rwhy">Set up, upgrade, earn and vote.</span></p><p class="rstops"><a href="#dashmate">dashmate</a><span class="sep" aria-hidden="true"> → </span><a href="#upgrade">Upgrade Vote Status</a><span class="sep" aria-hidden="true"> → </span><a href="#payments">Evonode Payments</a><span class="sep" aria-hidden="true"> → </span><a href="#evovote">EvoVote</a><span class="sep" aria-hidden="true"> → </span><a href="#mnmap">Masternode Map</a></p></li>
-          </ol>
-          <p class="panhint">Drag the map sideways to see all of it.</p>
-        </div>
-        <div class="tb-stats">
-          <p><span class="tb-k">On the map</span><span class="tb-v"><span data-count="card">23</span> projects</span></p>
-          <p><span class="tb-k">In the directory</span><span class="tb-v"><span data-count="entry">40</span> more</span></p>
-          <div class="tb-key"><span class="tb-k">Key</span><p class="legend">
-            <span><i class="sw" aria-hidden="true"></i> Live on mainnet</span>
-            <span><i class="sw dash" aria-hidden="true"></i> Testnet only for now</span>
-            <span><i class="sw cross" aria-hidden="true"></i> Funds Platform from Core</span>
-          </p></div>
-          <p><span class="tb-k">Checked</span><span class="tb-v"><time datetime="2026-09-22">22 Sep 2026</time></span></p>
-        </div>
-      </div>
     </div>
   </div>
 </section>
@@ -1207,8 +1212,11 @@ code{font-family:var(--mono);font-size:.9em}
   media.addEventListener('change', sync);
   btn.addEventListener('click', function(){
     var next = isDark() ? 'light' : 'dark';
-    r.dataset.theme = next;
-    try { localStorage.setItem('dashhq-theme', next); } catch(e){}
+    // choosing what the system already shows goes back to following the system
+    try {
+      if((next === 'dark') === media.matches){ delete r.dataset.theme; localStorage.removeItem('dashhq-theme'); }
+      else { r.dataset.theme = next; localStorage.setItem('dashhq-theme', next); }
+    } catch(e){ r.dataset.theme = next; }
     sync();
   });
 
@@ -1216,7 +1224,7 @@ code{font-family:var(--mono);font-size:.9em}
   var amber = getComputedStyle(r).getPropertyValue('--amber').trim();
   function flash(id){
     var el = document.getElementById(id);
-    var plate = el && el.querySelector('.plate');
+    var plate = el && el.classList.contains('card') && el.querySelector('.plate');
     if(plate && plate.animate) plate.animate([{borderColor:amber},{borderColor:amber, offset:.5}], {duration:1400, easing:'ease-out'});
   }
   document.addEventListener('click', function(e){
@@ -1234,7 +1242,8 @@ code{font-family:var(--mono);font-size:.9em}
   var chipbox = document.querySelector('.mapchips');
   var chips = chipbox ? chipbox.querySelectorAll('.chip') : [];
   var routes = list.querySelectorAll('.route');
-  var pinned = null;
+  var pinned = null, lastPointer = 'mouse';
+  list.addEventListener('pointerdown', function(e){ lastPointer = e.pointerType; });
   function show(li){
     routes.forEach(function(o){
       o.classList.toggle('on', o === li);
@@ -1263,7 +1272,9 @@ code{font-family:var(--mono);font-size:.9em}
     li.querySelectorAll('.rstops a').forEach(function(a){ a.addEventListener('click', unpin); });
     li.querySelector('.rname').addEventListener('click', function(){
       pinned = pinned === li ? null : li;
-      show(pinned || li);
+      // a mouse still hovers the route after unpinning; a finger does not
+      show(pinned || (lastPointer === 'mouse' ? li : null));
+      if(!pinned && lastPointer !== 'mouse') this.blur();
     });
   });
   list.addEventListener('mouseleave', function(){ show(pinned); });
