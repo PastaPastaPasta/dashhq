@@ -162,6 +162,9 @@ code{font-family:var(--mono);font-size:.9em}
   border:1px solid rgba(166,216,247,.6);border-radius:3px;padding:3px 9px;
 }
 .chip.test{border-style:dashed}
+.mapchips.routing .chip:not(.on){opacity:.4}
+.chip.on{border-color:var(--amber)}
+.chip.on::before{content:attr(data-step) " ";color:var(--amber);font-weight:700}
 
 /* title block: the drawing's caption; carries the h1 */
 .titleblock{display:grid;grid-template-columns:minmax(0,1fr) 230px;border-top:1px solid var(--hair)}
@@ -180,9 +183,10 @@ code{font-family:var(--mono);font-size:.9em}
 .route.on,.route:hover{border-left-color:var(--amber)}
 .rname{
   font:600 1.0625rem/1.2 var(--draft);color:var(--line-hi);background:none;cursor:pointer;
-  border:1px solid rgba(166,216,247,.55);border-radius:3px;padding:2px 10px;margin-right:10px;
+  border:1px solid rgba(166,216,247,.55);border-radius:3px;padding:2px 10px;flex:none;
 }
 .rname:hover,.rname[aria-pressed="true"]{border-color:var(--amber);color:var(--amber)}
+.route > p:first-child{display:flex;align-items:baseline;gap:10px}
 .rwhy{font-size:.9375rem;color:var(--line-2)}
 .rstops{margin-top:5px;font-size:.9375rem;line-height:1.5;color:var(--line-2)}
 .rstops a{color:var(--line);text-underline-offset:3px;text-decoration-color:rgba(166,216,247,.45)}
@@ -323,7 +327,6 @@ code{font-family:var(--mono);font-size:.9em}
   #themebtn{padding:2px 9px;font-size:.875rem}
   .sheet-inner{margin:6px;display:flex;flex-direction:column}
   .titleblock{order:-1;border-top:0;border-bottom:1px solid var(--hair)}
-  .rhead{display:none}
   .mk .tx,.mk .txs{display:none}
   .mapscroll{display:none}
   .mapchips{display:block}
@@ -383,8 +386,8 @@ code{font-family:var(--mono);font-size:.9em}
         <text class="hband" x="40" y="186" style="animation-delay:.16s">Platform</text>
         <text class="hband" x="40" y="430" style="animation-delay:.32s">Network</text>
         <text class="hnote" x="1180" y="46" text-anchor="end" style="animation-delay:.5s">what people install and use</text>
-        <text class="hnote" x="872" y="186" text-anchor="end" style="animation-delay:.6s">reads and writes Platform data</text>
-        <text class="hnote" x="852" y="476" text-anchor="end" style="animation-delay:.7s">masternodes and Dash Core</text>
+        <text class="hnote" x="846" y="186" text-anchor="end" style="animation-delay:.6s">reads and writes Platform data</text>
+        <text class="hnote" x="846" y="430" text-anchor="end" style="animation-delay:.7s">masternodes and Dash Core</text>
         <text class="hnote" x="846" y="386" text-anchor="end" style="animation-delay:1.3s">these two fund Platform from Core DASH</text>
         <path class="hstem" d="M118 122 V196 M282 122 V196 M446 122 V196 M610 122 V196 M774 122 V196 M938 122 V196 M1102 122 V196 M118 196 V212 M282 196 V212 M446 196 V212 M610 196 V212 M774 196 V212 M118 440 V456 M282 440 V456 M446 440 V456 M610 440 V456"/>
         <path class="hcross" d="M886 196 V356 M886 406 V440 M1050 196 V356 M1050 406 V440"/>
@@ -1228,6 +1231,8 @@ code{font-family:var(--mono);font-size:.9em}
   if(!svg || !list) return;
   var nodes = {};
   svg.querySelectorAll('.hnode').forEach(function(a){ nodes[a.getAttribute('href').slice(1)] = a; });
+  var chipbox = document.querySelector('.mapchips');
+  var chips = chipbox ? chipbox.querySelectorAll('.chip') : [];
   var routes = list.querySelectorAll('.route');
   var pinned = null;
   function show(li){
@@ -1241,11 +1246,21 @@ code{font-family:var(--mono);font-size:.9em}
       nodes[id].classList.toggle('on', i > -1);
       nodes[id].querySelector('.hstep').textContent = i > -1 ? i + 1 : '';
     });
+    // phones show chips instead of the map; number those the same way
+    chips.forEach(function(c){
+      var i = ids.indexOf(c.getAttribute('href').slice(1));
+      c.classList.toggle('on', i > -1);
+      if(i > -1) c.dataset.step = i + 1; else delete c.dataset.step;
+    });
     svg.classList.toggle('routing', !!li);
+    if(chipbox) chipbox.classList.toggle('routing', !!li);
   }
+  function unpin(){ if(pinned){ pinned = null; show(null); } }
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') unpin(); });
   routes.forEach(function(li){
     li.addEventListener('mouseenter', function(){ show(li); });
     li.addEventListener('focusin', function(){ show(li); });
+    li.querySelectorAll('.rstops a').forEach(function(a){ a.addEventListener('click', unpin); });
     li.querySelector('.rname').addEventListener('click', function(){
       pinned = pinned === li ? null : li;
       show(pinned || li);
