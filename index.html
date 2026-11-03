@@ -1303,7 +1303,24 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
   var btn = document.getElementById('themebtn');
   var media = window.matchMedia('(prefers-color-scheme: dark)');
   function isDark(){ var t = r.dataset.theme; return t ? t === 'dark' : media.matches; }
-  function sync(){ btn.setAttribute('aria-pressed', String(isDark())); }
+
+  // The two theme-color tags are written against the device preference. The
+  // button can contradict the device, and then the browser's own toolbar has
+  // to follow the button instead. Read the colours out of the markup first so
+  // they live in one place.
+  var chrome = [].map.call(document.querySelectorAll('meta[name="theme-color"]'), function(m){
+    var q = m.getAttribute('media') || '';
+    return {el: m, media: q, dark: q.indexOf('dark') > -1, color: m.getAttribute('content')};
+  });
+  function paintChrome(){
+    var pick = r.dataset.theme, want;
+    chrome.forEach(function(c){ if(pick && c.dark === (pick === 'dark')) want = c.color; });
+    chrome.forEach(function(c){
+      if(want){ c.el.removeAttribute('media'); c.el.setAttribute('content', want); }
+      else { if(c.media) c.el.setAttribute('media', c.media); c.el.setAttribute('content', c.color); }
+    });
+  }
+  function sync(){ btn.setAttribute('aria-pressed', String(isDark())); paintChrome(); }
   btn.hidden = false;
   sync();
   media.addEventListener('change', sync);
@@ -1340,6 +1357,15 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
   // Where the project a map link points at sits in ids, or -1.
   function stopOf(ids, a){ return ids ? ids.indexOf(a.getAttribute('href').slice(1)) : -1; }
 
+  // A link to a card the finder has hidden goes nowhere, so take it out of the
+  // tab order and out of the accessibility tree. tabindex has to come first:
+  // aria-hidden on something still focusable is its own failure. `inert` would
+  // be tidier but it is an HTML attribute, and half of these are SVG links.
+  function hideLink(el, hide){
+    if(hide){ el.setAttribute('tabindex', '-1'); el.setAttribute('aria-hidden', 'true'); }
+    else { el.removeAttribute('aria-hidden'); el.removeAttribute('tabindex'); }
+  }
+
   // ids: the projects to light up, or null for "all of them, undimmed".
   function highlight(ids, numbered){
     // filtering removes the cards the dimmed nodes point at, so take those
@@ -1349,13 +1375,13 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
       var i = stopOf(ids, a);
       a.classList.toggle('on', i > -1);
       a.querySelector('.hstep').textContent = (numbered && i > -1) ? i + 1 : '';
-      if(gone && i < 0) a.setAttribute('tabindex', '-1'); else a.removeAttribute('tabindex');
+      hideLink(a, gone && i < 0);
     });
     chips.forEach(function(c){
       var i = stopOf(ids, c);
       c.classList.toggle('on', i > -1);
       if(numbered && i > -1) c.dataset.step = i + 1; else delete c.dataset.step;
-      if(gone && i < 0) c.setAttribute('tabindex', '-1'); else c.removeAttribute('tabindex');
+      hideLink(c, gone && i < 0);
     });
     if(svg){ svg.classList.toggle('routing', !!ids); svg.classList.toggle('filtering', gone); }
     if(chipbox){ chipbox.classList.toggle('routing', !!ids); chipbox.classList.toggle('filtering', gone); }
