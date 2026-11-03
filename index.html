@@ -4,7 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dash Ecosystem · dashhq.org</title>
-<meta name="description" content="Apps, wallets, explorers, SDKs and docs built on Dash Platform, drawn on one map and placed on the layer they work with.">
+<meta name="description" content="A map of the Dash ecosystem: the apps, explorers, governance tools, SDKs and docs that are actually live, each placed on the layer it works with.">
+<link rel="canonical" href="https://dashhq.org/">
+<meta name="theme-color" content="#EDF2F5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#06131B" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dashhq.org/">
+<meta property="og:site_name" content="dashhq.org">
+<meta property="og:title" content="Dash Ecosystem · dashhq.org">
+<meta property="og:description" content="A map of the Dash ecosystem: the apps, explorers, governance tools, SDKs and docs that are actually live, each placed on the layer it works with.">
+<meta property="og:image" content="https://dashhq.org/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A blueprint map of the Dash ecosystem, with each project drawn on the layer it works with: apps, Platform, network.">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%275%27 fill=%27%230A2A3D%27/%3E%3Cpath d=%27M5 10H27M5 22H27%27 stroke=%27%23A6D8F7%27 stroke-width=%272%27/%3E%3Cpath d=%27M16 10V22%27 stroke=%27%23F5A73C%27 stroke-width=%273%27/%3E%3C/svg%3E">
 <script>document.documentElement.className="js";try{var t=localStorage.getItem("dashhq-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
@@ -65,6 +78,7 @@
 }
 
 *,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none !important}
 html{-webkit-text-size-adjust:100%;scroll-padding-top:24px}
 body{
   margin:0;background:var(--paper);color:var(--ink);
@@ -146,6 +160,9 @@ code{font-family:var(--mono);font-size:.9em}
 .hsvg.routing .hnode.on{opacity:1}
 .hsvg.routing .hnode.on .hbox{stroke:var(--amber);stroke-opacity:1;stroke-width:1.6}
 .hsvg.routing .hnode.on .hstep{opacity:1}
+/* a route preview still has every card on the page, so its dimmed nodes stay
+   clickable. A filtered-out card is gone, so its node must not be. */
+.hsvg.filtering .hnode:not(.on),.mapchips.filtering .chip:not(.on){pointer-events:none}
 
 @media (prefers-reduced-motion:no-preference){
   .hsvg .hrail{stroke-dasharray:1300;animation:draw 1s cubic-bezier(.2,.7,.3,1) backwards}
@@ -181,6 +198,29 @@ code{font-family:var(--mono);font-size:.9em}
   line-height:1.05;letter-spacing:.005em;color:var(--line-hi);
 }
 .sub{margin-top:8px;font-size:1rem;color:var(--line-2);max-width:62ch}
+/* the finder: one field over everything on the page */
+.finder{display:none;margin-top:16px;align-items:center;gap:8px 10px;flex-wrap:wrap}
+html.finder-on .finder{display:flex}
+.finder label{font-family:var(--draft);font-weight:600;font-size:1rem;color:var(--line-hi)}
+.finder input{
+  flex:1 1 220px;min-width:0;max-width:420px;
+  background:rgba(166,216,247,.05);color:var(--line-hi);
+  border:1px solid rgba(166,216,247,.45);border-radius:3px;padding:7px 11px;
+  font-family:var(--text);font-size:1rem;line-height:1.2;
+  -webkit-appearance:none;appearance:none;
+}
+.finder input::placeholder{color:var(--line-2);opacity:1}
+.finder input:focus-visible{outline-offset:2px;border-color:var(--amber)}
+.finder input::-webkit-search-cancel-button{display:none}
+#qclear,#noclear{
+  font:600 .9375rem/1.2 var(--draft);color:var(--line-hi);background:none;cursor:pointer;
+  border:1px solid rgba(166,216,247,.55);border-radius:3px;padding:6px 11px;
+}
+#qclear:hover,#noclear:hover{border-color:var(--amber);color:var(--amber)}
+.fin-c{flex-basis:100%;font-size:.875rem;color:var(--line-2);min-height:1.1em}
+/* nothing matched: say so where the plates would have been */
+.noresult{font-size:1.0625rem;color:var(--ink-2);padding:8px 0 4px}
+
 .rhead{margin-top:16px;font-size:.9375rem;color:var(--line-2)}
 .routes{margin-top:8px;display:grid;gap:6px}
 .route{padding:6px 10px 7px 12px;margin-left:-12px;border-left:2px solid transparent}
@@ -331,7 +371,7 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
   .wordmark{flex-basis:100%}
   .mnav{gap:4px 13px;margin-right:auto}
   .mnav a{font-size:.9375rem}
-  #themebtn{padding:2px 9px;font-size:.875rem}
+  #themebtn{padding:4px 10px;font-size:.875rem}
   .sheet-inner{margin:6px}
   .titleblock{border-top:0;border-bottom:1px solid var(--hair)}
   .mk .tx,.mk .txs{display:none}
@@ -353,6 +393,9 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
   .tags{grid-area:tags;justify-content:flex-start;flex-wrap:wrap;gap:2px 14px;margin-top:0;font-size:.8125rem}
   .cname{font-size:1.25rem}
   .desc{font-size:.9375rem}
+  /* secondary links are small type; pad them to a 24px target */
+  .host a,.rstops a,.dgroup a{display:inline-block;padding-block:3px}
+  .chip{padding:5px 10px}
 }
 </style>
 </head>
@@ -365,6 +408,7 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
     <nav class="mnav" aria-label="Sections">
       <a href="#apps">Apps</a>
       <a href="#explore">Explore</a>
+      <a href="#govern">Govern</a>
       <a href="#build">Build</a>
       <a href="#learn">Learn</a>
       <a href="#directory">Directory</a>
@@ -385,23 +429,30 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
         <div class="tb-main">
           <h1 id="title">Dash Ecosystem</h1>
           <p class="sub">Dash Platform is the data layer run by Dash's masternodes: identities, usernames, documents and tokens. This map places each working app, tool and document on the layer it uses.</p>
+          <search class="finder" role="search">
+            <label for="q">Find</label>
+            <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="wallet, explorer, treasury, Rust, testnet…">
+            <button type="button" id="qclear" hidden>Clear</button>
+            <p class="fin-c" id="qcount" role="status" aria-live="polite"></p>
+          </search>
           <p class="rhead">New here? Pick a route to number its stops on the map.</p>
           <ol class="routes">
             <li class="route" data-route="faucet dashpay extension platform-explorer"><p><button type="button" class="rname" aria-pressed="false">Use it</button><span class="rwhy">Get a username and pay people by name.</span></p><p class="rstops"><a href="#faucet">Dash Faucet</a><span class="sep" aria-hidden="true"> → </span><a href="#dashpay">DashPay wallet</a><span class="sep" aria-hidden="true"> → </span><a href="#extension">Platform Extension</a><span class="sep" aria-hidden="true"> → </span><a href="#platform-explorer">Platform Explorer</a></p></li>
             <li class="route" data-route="docs faucet evo-sdk tutorials fees"><p><button type="button" class="rname" aria-pressed="false">Build on it</button><span class="rwhy">From the docs to your first contract.</span></p><p class="rstops"><a href="#docs">Platform docs</a><span class="sep" aria-hidden="true"> → </span><a href="#faucet">Dash Faucet</a><span class="sep" aria-hidden="true"> → </span><a href="#evo-sdk">Evo SDK</a><span class="sep" aria-hidden="true"> → </span><a href="#tutorials">Tutorial apps</a><span class="sep" aria-hidden="true"> → </span><a href="#fees">Contract Fee Estimator</a></p></li>
-            <li class="route" data-route="dashmate upgrade payments evovote mnmap"><p><button type="button" class="rname" aria-pressed="false">Run a node</button><span class="rwhy">Set up, upgrade, earn and vote.</span></p><p class="rstops"><a href="#dashmate">dashmate</a><span class="sep" aria-hidden="true"> → </span><a href="#upgrade">Upgrade Vote Status</a><span class="sep" aria-hidden="true"> → </span><a href="#payments">Evonode Payments</a><span class="sep" aria-hidden="true"> → </span><a href="#evovote">EvoVote</a><span class="sep" aria-hidden="true"> → </span><a href="#mnmap">Dash Nodes</a></p></li>
+            <li class="route" data-route="dashmate radar payments upgrade"><p><button type="button" class="rname" aria-pressed="false">Run a node</button><span class="rwhy">Set it up, then watch how it does.</span></p><p class="rstops"><a href="#dashmate">dashmate</a><span class="sep" aria-hidden="true"> → </span><a href="#radar">DashHQ Radar</a><span class="sep" aria-hidden="true"> → </span><a href="#payments">Evonode Payments</a><span class="sep" aria-hidden="true"> → </span><a href="#upgrade">Upgrade Vote Status</a></p></li>
+            <li class="route" data-route="govhub evovote upgrade"><p><button type="button" class="rname" aria-pressed="false">Have a say</button><span class="rwhy">Spend the treasury, settle a name, pick a version.</span></p><p class="rstops"><a href="#govhub">govhub</a><span class="sep" aria-hidden="true"> → </span><a href="#evovote">EvoVote</a><span class="sep" aria-hidden="true"> → </span><a href="#upgrade">Upgrade Vote Status</a></p></li>
           </ol>
           <p class="panhint">Drag the map sideways to see all of it.</p>
         </div>
         <div class="tb-stats">
-          <p><span class="tb-k">On the map</span><span class="tb-v"><span data-count="card">23</span> projects</span></p>
-          <p><span class="tb-k">In the directory</span><span class="tb-v"><span data-count="entry">40</span> more</span></p>
+          <p><span class="tb-k">On the map</span><span class="tb-v"><span data-count="card">24</span> projects</span></p>
+          <p><span class="tb-k">In the directory</span><span class="tb-v"><span data-count="entry">41</span> more</span></p>
           <div class="tb-key"><span class="tb-k">Key</span><p class="legend">
             <span><i class="sw" aria-hidden="true"></i> Live on mainnet</span>
             <span><i class="sw dash" aria-hidden="true"></i> Testnet only for now</span>
             <span><i class="sw cross" aria-hidden="true"></i> Funds Platform from Core</span>
           </p></div>
-          <p><span class="tb-k">Checked</span><span class="tb-v"><time datetime="2026-09-22">22 Sep 2026</time></span></p>
+          <p><span class="tb-k">Links checked</span><span class="tb-v"><time datetime="2026-11-03">3 Nov 2026</time></span></p>
         </div>
       </div>
       <div class="mapscroll">
@@ -417,37 +468,38 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
         <text class="hnote" x="846" y="186" text-anchor="end" style="animation-delay:.6s">reads and writes Platform data</text>
         <text class="hnote" x="846" y="430" text-anchor="end" style="animation-delay:.7s">masternodes and Dash Core</text>
         <text class="hnote" x="846" y="386" text-anchor="end" style="animation-delay:1.3s">these two fund Platform from Core DASH</text>
-        <path class="hstem" d="M118 122 V196 M282 122 V196 M446 122 V196 M610 122 V196 M774 122 V196 M938 122 V196 M1102 122 V196 M118 196 V212 M282 196 V212 M446 196 V212 M610 196 V212 M774 196 V212 M118 440 V456 M282 440 V456 M446 440 V456 M610 440 V456"/>
+        <path class="hstem" d="M118 122 V196 M282 122 V196 M446 122 V196 M610 122 V196 M774 122 V196 M938 122 V196 M1102 122 V196 M118 196 V212 M282 196 V212 M446 196 V212 M610 196 V212 M774 196 V212 M118 440 V456 M282 440 V456 M446 440 V456 M610 440 V456 M774 440 V456"/>
         <path class="hcross" d="M886 196 V356 M886 406 V440 M1050 196 V356 M1050 406 V440"/>
-        <a class="hnode" href="#dashpay" aria-label="DashPay wallet, by Dash Core Group" style="animation-delay:0.40s"><rect class="hbox" x="40" y="72" width="156" height="50" rx="3"/><text class="hby" x="52" y="91">Dash Core Group</text><text class="hnm" x="52" y="111">DashPay wallet</text><text class="hstep" x="187" y="90" text-anchor="end"></text></a>
-        <a class="hnode" href="#extension" aria-label="Platform Extension, by pshenmic" style="animation-delay:0.44s"><rect class="hbox" x="204" y="72" width="156" height="50" rx="3"/><text class="hby" x="216" y="91">pshenmic</text><text class="hnm" x="216" y="111">Platform Extension</text><text class="hstep" x="351" y="90" text-anchor="end"></text></a>
-        <a class="hnode" href="#evotool" aria-label="Dash Evo Tool, by Dash Core Group" style="animation-delay:0.48s"><rect class="hbox" x="368" y="72" width="156" height="50" rx="3"/><text class="hby" x="380" y="91">Dash Core Group</text><text class="hnm" x="380" y="111">Dash Evo Tool</text><text class="hstep" x="515" y="90" text-anchor="end"></text></a>
-        <a class="hnode" href="#evovote" aria-label="EvoVote, by pasta" style="animation-delay:0.52s"><rect class="hbox" x="532" y="72" width="156" height="50" rx="3"/><text class="hby" x="544" y="91">pasta</text><text class="hnm" x="544" y="111">EvoVote</text><text class="hstep" x="679" y="90" text-anchor="end"></text></a>
-        <a class="hnode htest" href="#yappr" aria-label="Yappr, by pasta, testnet only" style="animation-delay:0.56s"><rect class="hbox" x="696" y="72" width="156" height="50" rx="3"/><text class="hby" x="708" y="91">pasta</text><text class="hnm" x="708" y="111">Yappr</text><text class="hstep" x="843" y="90" text-anchor="end"></text></a>
-        <a class="hnode htest" href="#pollr" aria-label="Pollr, by pasta, testnet only" style="animation-delay:0.60s"><rect class="hbox" x="860" y="72" width="156" height="50" rx="3"/><text class="hby" x="872" y="91">pasta</text><text class="hnm" x="872" y="111">Pollr</text><text class="hstep" x="1007" y="90" text-anchor="end"></text></a>
-        <a class="hnode htest" href="#forge" aria-label="Dash Forge, by pasta, testnet only" style="animation-delay:0.64s"><rect class="hbox" x="1024" y="72" width="156" height="50" rx="3"/><text class="hby" x="1036" y="91">pasta</text><text class="hnm" x="1036" y="111">Dash Forge</text><text class="hstep" x="1171" y="90" text-anchor="end"></text></a>
-        <a class="hnode" href="#platform-explorer" aria-label="Platform Explorer, by pshenmic" style="animation-delay:0.60s"><rect class="hbox" x="40" y="212" width="156" height="58" rx="3"/><text class="hby" x="52" y="231">pshenmic</text><text class="hnm" x="52" y="251">Platform Explorer</text><text class="hstep" x="187" y="230" text-anchor="end"></text></a>
-        <a class="hnode" href="#native-explorer" aria-label="Native Platform Explorer, by pasta" style="animation-delay:0.64s"><rect class="hbox" x="204" y="212" width="156" height="58" rx="3"/><text class="hby" x="216" y="229">pasta</text><text class="hnm hnm2" x="216" y="246">Native Platform</text><text class="hnm hnm2" x="216" y="262">Explorer</text><text class="hstep" x="351" y="230" text-anchor="end"></text></a>
-        <a class="hnode" href="#evo-sdk" aria-label="Evo SDK, by Dash Core Group" style="animation-delay:0.68s"><rect class="hbox" x="368" y="212" width="156" height="58" rx="3"/><text class="hby" x="380" y="231">Dash Core Group</text><text class="hnm" x="380" y="251">Evo SDK</text><text class="hstep" x="515" y="230" text-anchor="end"></text></a>
-        <a class="hnode" href="#docs" aria-label="Platform docs, by Dash Core Group" style="animation-delay:0.72s"><rect class="hbox" x="532" y="212" width="156" height="58" rx="3"/><text class="hby" x="544" y="231">Dash Core Group</text><text class="hnm" x="544" y="251">Platform docs</text><text class="hstep" x="679" y="230" text-anchor="end"></text></a>
-        <a class="hnode htest" href="#tutorials" aria-label="Tutorial apps, by Dash Core Group, testnet only" style="animation-delay:0.76s"><rect class="hbox" x="696" y="212" width="156" height="58" rx="3"/><text class="hby" x="708" y="231">Dash Core Group</text><text class="hnm" x="708" y="251">Tutorial apps</text><text class="hstep" x="843" y="230" text-anchor="end"></text></a>
-        <a class="hnode" href="#dapi" aria-label="DAPI Explorer, by pasta" style="animation-delay:0.78s"><rect class="hbox" x="40" y="280" width="156" height="58" rx="3"/><text class="hby" x="52" y="299">pasta</text><text class="hnm" x="52" y="319">DAPI Explorer</text><text class="hstep" x="187" y="298" text-anchor="end"></text></a>
-        <a class="hnode" href="#fees" aria-label="Contract Fee Estimator, by pasta" style="animation-delay:0.82s"><rect class="hbox" x="204" y="280" width="156" height="58" rx="3"/><text class="hby" x="216" y="297">pasta</text><text class="hnm hnm2" x="216" y="314">Contract Fee</text><text class="hnm hnm2" x="216" y="330">Estimator</text><text class="hstep" x="351" y="298" text-anchor="end"></text></a>
-        <a class="hnode" href="#contract-visualizer" aria-label="Contract Visualizer, by Dash Core Group" style="animation-delay:0.86s"><rect class="hbox" x="368" y="280" width="156" height="58" rx="3"/><text class="hby" x="380" y="299">Dash Core Group</text><text class="hnm" x="380" y="319">Contract Visualizer</text><text class="hstep" x="515" y="298" text-anchor="end"></text></a>
-        <a class="hnode" href="#grovedb" aria-label="GroveDB Structure Viewer, by Dash Core Group" style="animation-delay:0.90s"><rect class="hbox" x="532" y="280" width="156" height="58" rx="3"/><text class="hby" x="544" y="297">Dash Core Group</text><text class="hnm hnm2" x="544" y="314">GroveDB Structure</text><text class="hnm hnm2" x="544" y="330">Viewer</text><text class="hstep" x="679" y="298" text-anchor="end"></text></a>
-        <a class="hnode" href="#arch" aria-label="Platform Architecture Map, by pasta" style="animation-delay:0.94s"><rect class="hbox" x="696" y="280" width="156" height="58" rx="3"/><text class="hby" x="708" y="297">pasta</text><text class="hnm hnm2" x="708" y="314">Platform</text><text class="hnm hnm2" x="708" y="330">Architecture Map</text><text class="hstep" x="843" y="298" text-anchor="end"></text></a>
-        <a class="hnode" href="#bridge" aria-label="Dash Bridge, by pasta" style="animation-delay:1.20s"><rect class="hbox" x="860" y="356" width="156" height="50" rx="3"/><text class="hby" x="872" y="375">pasta</text><text class="hnm" x="872" y="395">Dash Bridge</text><text class="hstep" x="1007" y="374" text-anchor="end"></text></a>
-        <a class="hnode" href="#faucet" aria-label="Dash Faucet, by pasta" style="animation-delay:1.24s"><rect class="hbox" x="1024" y="356" width="156" height="50" rx="3"/><text class="hby" x="1036" y="375">pasta</text><text class="hnm" x="1036" y="395">Dash Faucet</text><text class="hstep" x="1171" y="374" text-anchor="end"></text></a>
-        <a class="hnode" href="#mnmap" aria-label="Dash Nodes, by pasta" style="animation-delay:1.00s"><rect class="hbox" x="40" y="456" width="156" height="50" rx="3"/><text class="hby" x="52" y="475">pasta</text><text class="hnm" x="52" y="495">Dash Nodes</text><text class="hstep" x="187" y="474" text-anchor="end"></text></a>
-        <a class="hnode" href="#payments" aria-label="Evonode Payments, by Dash Core Group" style="animation-delay:1.04s"><rect class="hbox" x="204" y="456" width="156" height="50" rx="3"/><text class="hby" x="216" y="475">Dash Core Group</text><text class="hnm" x="216" y="495">Evonode Payments</text><text class="hstep" x="351" y="474" text-anchor="end"></text></a>
-        <a class="hnode" href="#upgrade" aria-label="Upgrade Vote Status, by Dash Core Group" style="animation-delay:1.08s"><rect class="hbox" x="368" y="456" width="156" height="50" rx="3"/><text class="hby" x="380" y="475">Dash Core Group</text><text class="hnm" x="380" y="495">Upgrade Vote Status</text><text class="hstep" x="515" y="474" text-anchor="end"></text></a>
-        <a class="hnode" href="#dashmate" aria-label="dashmate, by Dash Core Group" style="animation-delay:1.12s"><rect class="hbox" x="532" y="456" width="156" height="50" rx="3"/><text class="hby" x="544" y="475">Dash Core Group</text><text class="hnm" x="544" y="495">dashmate</text><text class="hstep" x="679" y="474" text-anchor="end"></text></a>
+        <a class="hnode" href="#dashpay" aria-label="Dash Core Group, DashPay wallet" style="animation-delay:0.40s"><rect class="hbox" x="40" y="72" width="156" height="50" rx="3"/><text class="hby" x="52" y="91">Dash Core Group </text><text class="hnm" x="52" y="111">DashPay wallet </text><text class="hstep" aria-hidden="true" x="187" y="90" text-anchor="end"></text></a>
+        <a class="hnode" href="#extension" aria-label="pshenmic, Platform Extension" style="animation-delay:0.44s"><rect class="hbox" x="204" y="72" width="156" height="50" rx="3"/><text class="hby" x="216" y="91">pshenmic </text><text class="hnm" x="216" y="111">Platform Extension </text><text class="hstep" aria-hidden="true" x="351" y="90" text-anchor="end"></text></a>
+        <a class="hnode" href="#evotool" aria-label="Dash Core Group, Dash Evo Tool" style="animation-delay:0.48s"><rect class="hbox" x="368" y="72" width="156" height="50" rx="3"/><text class="hby" x="380" y="91">Dash Core Group </text><text class="hnm" x="380" y="111">Dash Evo Tool </text><text class="hstep" aria-hidden="true" x="515" y="90" text-anchor="end"></text></a>
+        <a class="hnode" href="#evovote" aria-label="pasta, EvoVote" style="animation-delay:0.52s"><rect class="hbox" x="532" y="72" width="156" height="50" rx="3"/><text class="hby" x="544" y="91">pasta </text><text class="hnm" x="544" y="111">EvoVote </text><text class="hstep" aria-hidden="true" x="679" y="90" text-anchor="end"></text></a>
+        <a class="hnode htest" href="#yappr" aria-label="pasta, Yappr, testnet only" style="animation-delay:0.56s"><rect class="hbox" x="696" y="72" width="156" height="50" rx="3"/><text class="hby" x="708" y="91">pasta </text><text class="hnm" x="708" y="111">Yappr </text><text class="hstep" aria-hidden="true" x="843" y="90" text-anchor="end"></text></a>
+        <a class="hnode htest" href="#pollr" aria-label="pasta, Pollr, testnet only" style="animation-delay:0.60s"><rect class="hbox" x="860" y="72" width="156" height="50" rx="3"/><text class="hby" x="872" y="91">pasta </text><text class="hnm" x="872" y="111">Pollr </text><text class="hstep" aria-hidden="true" x="1007" y="90" text-anchor="end"></text></a>
+        <a class="hnode htest" href="#forge" aria-label="pasta, Dash Forge, testnet only" style="animation-delay:0.64s"><rect class="hbox" x="1024" y="72" width="156" height="50" rx="3"/><text class="hby" x="1036" y="91">pasta </text><text class="hnm" x="1036" y="111">Dash Forge </text><text class="hstep" aria-hidden="true" x="1171" y="90" text-anchor="end"></text></a>
+        <a class="hnode" href="#platform-explorer" aria-label="pshenmic, Platform Explorer" style="animation-delay:0.60s"><rect class="hbox" x="40" y="212" width="156" height="58" rx="3"/><text class="hby" x="52" y="231">pshenmic </text><text class="hnm" x="52" y="251">Platform Explorer </text><text class="hstep" aria-hidden="true" x="187" y="230" text-anchor="end"></text></a>
+        <a class="hnode" href="#native-explorer" aria-label="pasta, Native Platform Explorer" style="animation-delay:0.64s"><rect class="hbox" x="204" y="212" width="156" height="58" rx="3"/><text class="hby" x="216" y="229">pasta </text><text class="hnm hnm2" x="216" y="246">Native Platform </text><text class="hnm hnm2" x="216" y="262">Explorer </text><text class="hstep" aria-hidden="true" x="351" y="230" text-anchor="end"></text></a>
+        <a class="hnode" href="#evo-sdk" aria-label="Dash Core Group, Evo SDK" style="animation-delay:0.68s"><rect class="hbox" x="368" y="212" width="156" height="58" rx="3"/><text class="hby" x="380" y="231">Dash Core Group </text><text class="hnm" x="380" y="251">Evo SDK </text><text class="hstep" aria-hidden="true" x="515" y="230" text-anchor="end"></text></a>
+        <a class="hnode" href="#docs" aria-label="Dash Core Group, Platform docs" style="animation-delay:0.72s"><rect class="hbox" x="532" y="212" width="156" height="58" rx="3"/><text class="hby" x="544" y="231">Dash Core Group </text><text class="hnm" x="544" y="251">Platform docs </text><text class="hstep" aria-hidden="true" x="679" y="230" text-anchor="end"></text></a>
+        <a class="hnode htest" href="#tutorials" aria-label="Dash Core Group, Tutorial apps, testnet only" style="animation-delay:0.76s"><rect class="hbox" x="696" y="212" width="156" height="58" rx="3"/><text class="hby" x="708" y="231">Dash Core Group </text><text class="hnm" x="708" y="251">Tutorial apps </text><text class="hstep" aria-hidden="true" x="843" y="230" text-anchor="end"></text></a>
+        <a class="hnode" href="#dapi" aria-label="pasta, DAPI Explorer" style="animation-delay:0.78s"><rect class="hbox" x="40" y="280" width="156" height="58" rx="3"/><text class="hby" x="52" y="299">pasta </text><text class="hnm" x="52" y="319">DAPI Explorer </text><text class="hstep" aria-hidden="true" x="187" y="298" text-anchor="end"></text></a>
+        <a class="hnode" href="#fees" aria-label="pasta, Contract Fee Estimator" style="animation-delay:0.82s"><rect class="hbox" x="204" y="280" width="156" height="58" rx="3"/><text class="hby" x="216" y="297">pasta </text><text class="hnm hnm2" x="216" y="314">Contract Fee </text><text class="hnm hnm2" x="216" y="330">Estimator </text><text class="hstep" aria-hidden="true" x="351" y="298" text-anchor="end"></text></a>
+        <a class="hnode" href="#contract-visualizer" aria-label="Dash Core Group, Contract Visualizer" style="animation-delay:0.86s"><rect class="hbox" x="368" y="280" width="156" height="58" rx="3"/><text class="hby" x="380" y="299">Dash Core Group </text><text class="hnm" x="380" y="319">Contract Visualizer </text><text class="hstep" aria-hidden="true" x="515" y="298" text-anchor="end"></text></a>
+        <a class="hnode" href="#grovedb" aria-label="Dash Core Group, GroveDB Structure Viewer" style="animation-delay:0.90s"><rect class="hbox" x="532" y="280" width="156" height="58" rx="3"/><text class="hby" x="544" y="297">Dash Core Group </text><text class="hnm hnm2" x="544" y="314">GroveDB Structure </text><text class="hnm hnm2" x="544" y="330">Viewer </text><text class="hstep" aria-hidden="true" x="679" y="298" text-anchor="end"></text></a>
+        <a class="hnode" href="#arch" aria-label="pasta, Platform Architecture Map" style="animation-delay:0.94s"><rect class="hbox" x="696" y="280" width="156" height="58" rx="3"/><text class="hby" x="708" y="297">pasta </text><text class="hnm hnm2" x="708" y="314">Platform </text><text class="hnm hnm2" x="708" y="330">Architecture Map </text><text class="hstep" aria-hidden="true" x="843" y="298" text-anchor="end"></text></a>
+        <a class="hnode" href="#bridge" aria-label="pasta, Dash Bridge" style="animation-delay:1.20s"><rect class="hbox" x="860" y="356" width="156" height="50" rx="3"/><text class="hby" x="872" y="375">pasta </text><text class="hnm" x="872" y="395">Dash Bridge </text><text class="hstep" aria-hidden="true" x="1007" y="374" text-anchor="end"></text></a>
+        <a class="hnode" href="#faucet" aria-label="pasta, Dash Faucet" style="animation-delay:1.24s"><rect class="hbox" x="1024" y="356" width="156" height="50" rx="3"/><text class="hby" x="1036" y="375">pasta </text><text class="hnm" x="1036" y="395">Dash Faucet </text><text class="hstep" aria-hidden="true" x="1171" y="374" text-anchor="end"></text></a>
+        <a class="hnode" href="#radar" aria-label="pasta, DashHQ Radar" style="animation-delay:1.00s"><rect class="hbox" x="40" y="456" width="156" height="50" rx="3"/><text class="hby" x="52" y="475">pasta </text><text class="hnm" x="52" y="495">DashHQ Radar </text><text class="hstep" aria-hidden="true" x="187" y="474" text-anchor="end"></text></a>
+        <a class="hnode" href="#payments" aria-label="Dash Core Group, Evonode Payments" style="animation-delay:1.04s"><rect class="hbox" x="204" y="456" width="156" height="50" rx="3"/><text class="hby" x="216" y="475">Dash Core Group </text><text class="hnm" x="216" y="495">Evonode Payments </text><text class="hstep" aria-hidden="true" x="351" y="474" text-anchor="end"></text></a>
+        <a class="hnode" href="#upgrade" aria-label="Dash Core Group, Upgrade Vote Status" style="animation-delay:1.08s"><rect class="hbox" x="368" y="456" width="156" height="50" rx="3"/><text class="hby" x="380" y="475">Dash Core Group </text><text class="hnm" x="380" y="495">Upgrade Vote Status </text><text class="hstep" aria-hidden="true" x="515" y="474" text-anchor="end"></text></a>
+        <a class="hnode" href="#dashmate" aria-label="Dash Core Group, dashmate" style="animation-delay:1.12s"><rect class="hbox" x="532" y="456" width="156" height="50" rx="3"/><text class="hby" x="544" y="475">Dash Core Group </text><text class="hnm" x="544" y="495">dashmate </text><text class="hstep" aria-hidden="true" x="679" y="474" text-anchor="end"></text></a>
+        <a class="hnode" href="#govhub" aria-label="pasta, govhub" style="animation-delay:1.16s"><rect class="hbox" x="696" y="456" width="156" height="50" rx="3"/><text class="hby" x="708" y="475">pasta </text><text class="hnm" x="708" y="495">govhub </text><text class="hstep" aria-hidden="true" x="843" y="474" text-anchor="end"></text></a>
       </svg>
       </div>
       <nav class="mapchips" aria-label="Projects by layer">
         <p class="chiprow"><span class="chiplabel">Apps</span><a class="chip" href="#dashpay">DashPay wallet</a><a class="chip" href="#extension">Platform Extension</a><a class="chip" href="#evotool">Dash Evo Tool</a><a class="chip" href="#evovote">EvoVote</a><a class="chip test" href="#yappr">Yappr</a><a class="chip test" href="#pollr">Pollr</a><a class="chip test" href="#forge">Dash Forge</a></p>
         <p class="chiprow"><span class="chiplabel">Platform</span><a class="chip" href="#platform-explorer">Platform Explorer</a><a class="chip" href="#native-explorer">Native Platform Explorer</a><a class="chip" href="#evo-sdk">Evo SDK</a><a class="chip" href="#docs">Platform docs</a><a class="chip test" href="#tutorials">Tutorial apps</a><a class="chip" href="#dapi">DAPI Explorer</a><a class="chip" href="#fees">Contract Fee Estimator</a><a class="chip" href="#contract-visualizer">Contract Visualizer</a><a class="chip" href="#grovedb">GroveDB Structure Viewer</a><a class="chip" href="#arch">Platform Architecture Map</a><a class="chip" href="#bridge">Dash Bridge</a><a class="chip" href="#faucet">Dash Faucet</a></p>
-        <p class="chiprow"><span class="chiplabel">Network</span><a class="chip" href="#mnmap">Dash Nodes</a><a class="chip" href="#payments">Evonode Payments</a><a class="chip" href="#upgrade">Upgrade Vote Status</a><a class="chip" href="#dashmate">dashmate</a></p>
+        <p class="chiprow"><span class="chiplabel">Network</span><a class="chip" href="#radar">DashHQ Radar</a><a class="chip" href="#payments">Evonode Payments</a><a class="chip" href="#upgrade">Upgrade Vote Status</a><a class="chip" href="#dashmate">dashmate</a><a class="chip" href="#govhub">govhub</a></p>
       </nav>
 
     </div>
@@ -465,7 +517,7 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
     </div>
     <div class="grid">
 
-      <article class="card span3" id="dashpay">
+      <article class="card span2" id="dashpay">
         <p class="tags"><span class="pby">Dash Core Group</span><span class="pnet">Mainnet</span></p>
           <div class="plate">
           <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
@@ -487,59 +539,6 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
           <h3 class="cname"><a href="https://play.google.com/store/apps/details?id=hashengineering.darkcoin.wallet">DashPay wallet</a></h3>
           <p class="host"><a class="lbl" href="https://play.google.com/store/apps/details?id=hashengineering.darkcoin.wallet">Google Play</a><a class="lbl" href="https://apps.apple.com/app/id1206647026">App Store</a></p>
           <p class="desc">The mobile wallet from Dash Core Group. Register a username, add contacts by name and pay them without an address. Masternode owners can also vote on contested names.</p>
-        </div>
-      </article>
-
-      <article class="card span3" id="evovote">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet">Mainnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- masternode quorum ring, two identities contesting one name -->
-            <circle class="lt" cx="60" cy="60" r="48"/>
-            <g class="dq"><circle cx="108" cy="60" r="2.6"/><circle cx="104.3" cy="78.4" r="2.6"/><circle cx="78.4" cy="104.3" r="2.6"/><circle cx="60" cy="108" r="2.6"/><circle cx="41.6" cy="104.3" r="2.6"/><circle cx="26" cy="94" r="2.6"/><circle cx="15.7" cy="78.4" r="2.6"/><circle cx="12" cy="60" r="2.6"/><circle cx="15.7" cy="41.6" r="2.6"/><circle cx="26" cy="26" r="2.6"/><circle cx="41.6" cy="15.7" r="2.6"/><circle cx="60" cy="12" r="2.6"/><circle cx="78.4" cy="15.7" r="2.6"/><circle cx="93.9" cy="26" r="2.6"/><circle cx="104.3" cy="41.6" r="2.6"/></g>
-            <circle class="af" cx="93.9" cy="94" r="3.4"/>
-            <path class="a" d="M90.5 92.5 L66 88"/>
-            <rect class="l" x="24" y="37" width="26" height="13" rx="2"/><path class="lt" d="M32 44 H42"/>
-            <rect class="l" x="70" y="37" width="26" height="13" rx="2"/><path class="lt" d="M78 44 H88"/>
-            <path class="lt" d="M37 50 L52 60 M83 50 L68 60"/>
-            <rect class="sh" x="34" y="59" width="52" height="18" rx="2"/>
-            <rect class="l" x="34" y="59" width="52" height="18" rx="2"/>
-            <text class="tx" x="60" y="71" text-anchor="middle">alice</text>
-            <rect class="lt" x="32" y="85" width="56" height="6" rx="3"/>
-            <rect class="af mvr mv-tally" x="32" y="85" width="33" height="6" rx="3"/>
-            <path class="lt" d="M60 81 V95"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname"><a href="https://vote.dashhq.org">EvoVote</a></h3>
-          <p class="host"><a href="https://vote.dashhq.org">vote.dashhq.org</a></p>
-          <p class="desc">Live tallies for every contested username, and a way for masternode owners to vote on them. Votes are signed in your browser and your key never leaves the page.</p>
-        </div>
-      </article>
-
-      <article class="card span2" id="extension">
-        <p class="tags"><span class="pby">pshenmic</span><span class="pnet">Mainnet and testnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- a browser; the extension drops a signing prompt over the page -->
-            <rect class="l" x="6" y="14" width="108" height="92" rx="3"/>
-            <path class="lt" d="M6 27 H114"/>
-            <circle class="dq" cx="13" cy="20.5" r="1.6"/><circle class="dq" cx="19" cy="20.5" r="1.6"/>
-            <rect class="lt" x="26" y="17.5" width="54" height="6" rx="3"/>
-            <rect class="af" x="98" y="17" width="7" height="7" rx="1.5"/>
-            <path class="lt" d="M14 40 H52 M14 48 H46 M14 56 H50 M14 72 H44 M14 80 H52 M14 88 H38"/>
-            <path class="ad" d="M101.5 24 V32"/>
-            <rect class="sh" x="60" y="32" width="48" height="60" rx="3"/>
-            <rect class="a" x="60" y="32" width="48" height="60" rx="3"/>
-            <circle class="df" cx="72" cy="45" r="4.5"/><path class="lt" d="M80 43 H100 M80 48 H94"/>
-            <path class="l" d="M68 60 H100"/><path class="lt" d="M68 67 H92"/>
-            <rect class="af mvr mv-down" x="68" y="76" width="32" height="9" rx="2"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname"><a href="https://chromewebstore.google.com/detail/dash-platform-extension/odmphbcnlldggfhcpdjgnlhbehoicdnf">Dash Platform Extension</a></h3>
-          <p class="host"><a class="lbl" href="https://chromewebstore.google.com/detail/dash-platform-extension/odmphbcnlldggfhcpdjgnlhbehoicdnf">Chrome Web Store</a></p>
-          <p class="desc">A browser wallet for Platform identities. Hold credits and tokens, and approve each transaction a website asks you to sign.</p>
         </div>
       </article>
 
@@ -569,6 +568,58 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
         </div>
       </article>
 
+      <article class="card span2" id="extension">
+        <p class="tags"><span class="pby">pshenmic</span><span class="pnet">Mainnet and testnet</span></p>
+          <div class="plate">
+          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
+            <!-- a browser; the extension drops a signing prompt over the page -->
+            <rect class="l" x="6" y="14" width="108" height="92" rx="3"/>
+            <path class="lt" d="M6 27 H114"/>
+            <circle class="dq" cx="13" cy="20.5" r="1.6"/><circle class="dq" cx="19" cy="20.5" r="1.6"/>
+            <rect class="lt" x="26" y="17.5" width="54" height="6" rx="3"/>
+            <rect class="af" x="98" y="17" width="7" height="7" rx="1.5"/>
+            <path class="lt" d="M14 40 H52 M14 48 H46 M14 56 H50 M14 72 H44 M14 80 H52 M14 88 H38"/>
+            <path class="ad" d="M101.5 24 V32"/>
+            <rect class="sh" x="60" y="32" width="48" height="60" rx="3"/>
+            <rect class="a" x="60" y="32" width="48" height="60" rx="3"/>
+            <circle class="df" cx="72" cy="45" r="4.5"/><path class="lt" d="M80 43 H100 M80 48 H94"/>
+            <path class="l" d="M68 60 H100"/><path class="lt" d="M68 67 H92"/>
+            <rect class="af mvr mv-down" x="68" y="76" width="32" height="9" rx="2"/>
+          </svg>
+        </div>
+        <div class="meta">
+          <h3 class="cname"><a href="https://chromewebstore.google.com/detail/dash-platform-extension/odmphbcnlldggfhcpdjgnlhbehoicdnf">Dash Platform Extension</a></h3>
+          <p class="host"><a class="lbl" href="https://chromewebstore.google.com/detail/dash-platform-extension/odmphbcnlldggfhcpdjgnlhbehoicdnf">Chrome Web Store</a></p>
+          <p class="desc">A browser wallet for Platform identities. Hold credits and tokens, and approve each transaction a website asks you to sign.</p>
+        </div>
+      </article>
+
+      <article class="card span2" id="forge">
+        <p class="tags"><span class="pby">pasta</span><span class="pnet test">Testnet</span></p>
+          <div class="plate">
+          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
+            <!-- git history; the merge's ref is proved by Platform -->
+            <text class="tx" x="12" y="30">dash://alice/app</text>
+            <path class="l" d="M12 62 H108"/>
+            <path class="l" d="M42 62 C52 62 52 42 62 42 H76 C86 42 86 62 96 62"/>
+            <circle class="df" cx="22" cy="62" r="3"/><circle class="df" cx="42" cy="62" r="3"/>
+            <circle class="dq" cx="69" cy="62" r="3"/>
+            <circle class="df" cx="62" cy="42" r="3"/><circle class="df" cx="76" cy="42" r="3"/>
+            <circle class="af" cx="96" cy="62" r="4.2"/>
+            <circle class="a mvr mv-ping" cx="96" cy="62" r="9"/>
+            <path class="ad" d="M96 72 V84"/>
+            <rect class="lt" x="80" y="84" width="32" height="26" rx="2"/>
+            <path class="lt" d="M96 90 L88 100 M96 90 L104 100"/>
+            <circle class="df" cx="96" cy="90" r="2"/><circle class="dq" cx="88" cy="101" r="2"/><circle class="af" cx="104" cy="101" r="2"/>
+          </svg>
+        </div>
+        <div class="meta">
+          <h3 class="cname"><a href="https://forge.dashhq.org">Dash Forge</a></h3>
+          <p class="host"><a href="https://forge.dashhq.org">forge.dashhq.org</a></p>
+          <p class="desc">A git forge with no server: repositories, pull requests, issues and releases on Platform. Clone with <code>git clone dash://owner/repo</code>.</p>
+        </div>
+      </article>
+
       <article class="card span2" id="yappr">
         <p class="tags"><span class="pby">pasta</span><span class="pnet test">Testnet</span></p>
           <div class="plate">
@@ -595,7 +646,7 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
         </div>
       </article>
 
-      <article class="card span3" id="pollr">
+      <article class="card span2" id="pollr">
         <p class="tags"><span class="pby">pasta</span><span class="pnet test">Testnet</span></p>
           <div class="plate">
           <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
@@ -617,32 +668,6 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
         </div>
       </article>
 
-      <article class="card span3" id="forge">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet test">Testnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- git history; the merge's ref is proved by Platform -->
-            <text class="tx" x="12" y="30">dash://alice/app</text>
-            <path class="l" d="M12 62 H108"/>
-            <path class="l" d="M42 62 C52 62 52 42 62 42 H76 C86 42 86 62 96 62"/>
-            <circle class="df" cx="22" cy="62" r="3"/><circle class="df" cx="42" cy="62" r="3"/>
-            <circle class="dq" cx="69" cy="62" r="3"/>
-            <circle class="df" cx="62" cy="42" r="3"/><circle class="df" cx="76" cy="42" r="3"/>
-            <circle class="af" cx="96" cy="62" r="4.2"/>
-            <circle class="a mvr mv-ping" cx="96" cy="62" r="9"/>
-            <path class="ad" d="M96 72 V84"/>
-            <rect class="lt" x="80" y="84" width="32" height="26" rx="2"/>
-            <path class="lt" d="M96 90 L88 100 M96 90 L104 100"/>
-            <circle class="df" cx="96" cy="90" r="2"/><circle class="dq" cx="88" cy="101" r="2"/><circle class="af" cx="104" cy="101" r="2"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname"><a href="https://forge.dashhq.org">Dash Forge</a></h3>
-          <p class="host"><a href="https://forge.dashhq.org">forge.dashhq.org</a></p>
-          <p class="desc">A git forge with no server: repositories, pull requests, issues and releases on Platform. Clone with <code>git clone dash://owner/repo</code>.</p>
-        </div>
-      </article>
-
     </div>
   </div>
 </section>
@@ -657,6 +682,34 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
       <p class="note">See what is on Platform and how the masternodes are doing.</p>
     </div>
     <div class="grid">
+
+      <article class="card span3" id="radar">
+        <p class="tags"><span class="pby">pasta</span><span class="pnet">Mainnet</span></p>
+          <div class="plate">
+          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
+            <rect class="lt" x="8" y="20" width="104" height="80" rx="2"/>
+            <path class="lt" d="M8 40 H112 M8 60 H112 M8 80 H112"/>
+            <path class="lt" d="M34 20 C26 46 26 74 34 100 M60 20 V100 M86 20 C94 46 94 74 86 100"/>
+            <g class="dq">
+              <circle cx="24" cy="48" r="2"/><circle cx="30" cy="54" r="2"/><circle cx="36" cy="46" r="2"/>
+              <circle cx="33" cy="60" r="2"/><circle cx="27" cy="66" r="2"/><circle cx="41" cy="55" r="2"/>
+              <circle cx="62" cy="42" r="2"/><circle cx="68" cy="46" r="2"/><circle cx="58" cy="50" r="2"/>
+              <circle cx="72" cy="52" r="2"/><circle cx="65" cy="55" r="2"/><circle cx="75" cy="44" r="2"/>
+              <circle cx="56" cy="38" r="2"/><circle cx="88" cy="58" r="2"/><circle cx="94" cy="64" r="2"/>
+              <circle cx="90" cy="72" r="2"/><circle cx="46" cy="76" r="2"/><circle cx="38" cy="86" r="2"/>
+              <circle cx="80" cy="84" r="2"/><circle cx="99" cy="52" r="2"/><circle cx="19" cy="58" r="2"/>
+            </g>
+            <circle class="af" cx="66" cy="50" r="3"/>
+            <circle class="a mvr mv-ping" cx="66" cy="50" r="9"/>
+            <path class="a" d="M66 34 V42 M66 58 V66 M50 50 H58 M74 50 H82" opacity=".55"/>
+          </svg>
+        </div>
+        <div class="meta">
+          <h3 class="cname"><a href="https://radar.dashhq.org">DashHQ Radar</a></h3>
+          <p class="host"><a href="https://radar.dashhq.org">radar.dashhq.org</a><a href="https://radar.dashhq.org/map">map</a><a href="https://radar.dashhq.org/api">API</a></p>
+          <p class="desc">The whole Dash network, crawled continuously: which masternodes answer, what they run, where they are hosted, what they earn, and whether they are ready for the next Core release. With a world map and a JSON API.</p>
+        </div>
+      </article>
 
       <article class="card span3" id="platform-explorer">
         <p class="tags"><span class="pby">pshenmic</span><span class="pnet">Mainnet and testnet</span></p>
@@ -706,39 +759,11 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
         <div class="meta">
           <h3 class="cname"><a href="https://explorer.dashhq.org">Native Platform Explorer</a></h3>
           <p class="host"><a href="https://explorer.dashhq.org">explorer.dashhq.org</a></p>
-          <p class="desc">An explorer with no server behind it. Your browser fetches each value from the network and checks its proof, and you can open any proof to see how it was verified.</p>
+          <p class="desc">An explorer with no server behind it. Your browser fetches each value from the network and checks its proof, and you can open any proof to see how it was verified. It opens on testnet; mainnet and devnets are in the network menu.</p>
         </div>
       </article>
 
-      <article class="card span2" id="mnmap">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet">Mainnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <rect class="lt" x="8" y="20" width="104" height="80" rx="2"/>
-            <path class="lt" d="M8 40 H112 M8 60 H112 M8 80 H112"/>
-            <path class="lt" d="M34 20 C26 46 26 74 34 100 M60 20 V100 M86 20 C94 46 94 74 86 100"/>
-            <g class="dq">
-              <circle cx="24" cy="48" r="2"/><circle cx="30" cy="54" r="2"/><circle cx="36" cy="46" r="2"/>
-              <circle cx="33" cy="60" r="2"/><circle cx="27" cy="66" r="2"/><circle cx="41" cy="55" r="2"/>
-              <circle cx="62" cy="42" r="2"/><circle cx="68" cy="46" r="2"/><circle cx="58" cy="50" r="2"/>
-              <circle cx="72" cy="52" r="2"/><circle cx="65" cy="55" r="2"/><circle cx="75" cy="44" r="2"/>
-              <circle cx="56" cy="38" r="2"/><circle cx="88" cy="58" r="2"/><circle cx="94" cy="64" r="2"/>
-              <circle cx="90" cy="72" r="2"/><circle cx="46" cy="76" r="2"/><circle cx="38" cy="86" r="2"/>
-              <circle cx="80" cy="84" r="2"/><circle cx="99" cy="52" r="2"/><circle cx="19" cy="58" r="2"/>
-            </g>
-            <circle class="af" cx="66" cy="50" r="3"/>
-            <circle class="a mvr mv-ping" cx="66" cy="50" r="9"/>
-            <path class="a" d="M66 34 V42 M66 58 V66 M50 50 H58 M74 50 H82" opacity=".55"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname"><a href="https://nodes.dashhq.org">Dash Nodes</a></h3>
-          <p class="host"><a href="https://nodes.dashhq.org">nodes.dashhq.org</a></p>
-          <p class="desc">Every masternode on a live map and list, with port checks, uptime, versions and payments, plus the whole P2P network crawled every 15 minutes.</p>
-        </div>
-      </article>
-
-      <article class="card span2" id="payments">
+      <article class="card span3" id="payments">
         <p class="tags"><span class="pby">Dash Core Group</span><span class="pnet">Mainnet</span></p>
           <div class="plate">
           <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
@@ -763,6 +788,75 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
           <h3 class="cname"><a href="https://dashpay.github.io/evonode-payments/">Evonode Payments</a></h3>
           <p class="host"><a href="https://dashpay.github.io/evonode-payments/">dashpay.github.io</a></p>
           <p class="desc">What each evonode earned from Platform in the last epoch: blocks proposed, DASH paid, a monthly estimate and when it next proposes.</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================
+     GOVERN
+     ========================================================== -->
+<section class="section" id="govern">
+  <div class="wrap">
+    <div class="sechead">
+      <h2>Govern and vote</h2>
+      <p class="note">Masternodes decide the treasury, contested names and protocol upgrades.</p>
+    </div>
+    <div class="grid">
+
+      <article class="card span2" id="govhub">
+        <p class="tags"><span class="pby">pasta</span><span class="pnet">Mainnet</span></p>
+          <div class="plate">
+          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
+            <!-- proposals ranked by net votes; the dashed line is where the budget runs out -->
+            <path class="lt" d="M8 102 H112"/>
+            <g class="af">
+              <rect x="12" y="28" width="12" height="74" rx="1.5"/>
+              <rect x="30" y="40" width="12" height="62" rx="1.5"/>
+              <rect x="48" y="52" width="12" height="50" rx="1.5"/>
+              <rect x="66" y="60" width="12" height="42" rx="1.5"/>
+            </g>
+            <g class="df" opacity=".45">
+              <rect x="84" y="76" width="12" height="26" rx="1.5"/>
+              <rect x="102" y="88" width="10" height="14" rx="1.5"/>
+            </g>
+            <path class="ad mvr mv-down" d="M6 68 H114"/>
+            <text class="txs" x="113" y="62" text-anchor="end">budget</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <h3 class="cname"><a href="https://gov.dashhq.org">govhub</a></h3>
+          <p class="host"><a href="https://gov.dashhq.org">gov.dashhq.org</a></p>
+          <p class="desc">Dash's treasury: every proposal with its tally, where it sits in the budget and what it still gets paid, plus contested usernames and comments. Read from Platform and rechecked in your browser against the chain. Masternode owners sign in to vote.</p>
+        </div>
+      </article>
+
+      <article class="card span2" id="evovote">
+        <p class="tags"><span class="pby">pasta</span><span class="pnet">Mainnet</span></p>
+          <div class="plate">
+          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
+            <!-- masternode quorum ring, two identities contesting one name -->
+            <circle class="lt" cx="60" cy="60" r="48"/>
+            <g class="dq"><circle cx="108" cy="60" r="2.6"/><circle cx="104.3" cy="78.4" r="2.6"/><circle cx="78.4" cy="104.3" r="2.6"/><circle cx="60" cy="108" r="2.6"/><circle cx="41.6" cy="104.3" r="2.6"/><circle cx="26" cy="94" r="2.6"/><circle cx="15.7" cy="78.4" r="2.6"/><circle cx="12" cy="60" r="2.6"/><circle cx="15.7" cy="41.6" r="2.6"/><circle cx="26" cy="26" r="2.6"/><circle cx="41.6" cy="15.7" r="2.6"/><circle cx="60" cy="12" r="2.6"/><circle cx="78.4" cy="15.7" r="2.6"/><circle cx="93.9" cy="26" r="2.6"/><circle cx="104.3" cy="41.6" r="2.6"/></g>
+            <circle class="af" cx="93.9" cy="94" r="3.4"/>
+            <path class="a" d="M90.5 92.5 L66 88"/>
+            <rect class="l" x="24" y="37" width="26" height="13" rx="2"/><path class="lt" d="M32 44 H42"/>
+            <rect class="l" x="70" y="37" width="26" height="13" rx="2"/><path class="lt" d="M78 44 H88"/>
+            <path class="lt" d="M37 50 L52 60 M83 50 L68 60"/>
+            <rect class="sh" x="34" y="59" width="52" height="18" rx="2"/>
+            <rect class="l" x="34" y="59" width="52" height="18" rx="2"/>
+            <text class="tx" x="60" y="71" text-anchor="middle">alice</text>
+            <rect class="lt" x="32" y="85" width="56" height="6" rx="3"/>
+            <rect class="af mvr mv-tally" x="32" y="85" width="33" height="6" rx="3"/>
+            <path class="lt" d="M60 81 V95"/>
+          </svg>
+        </div>
+        <div class="meta">
+          <h3 class="cname"><a href="https://vote.dashhq.org">EvoVote</a></h3>
+          <p class="host"><a href="https://vote.dashhq.org">vote.dashhq.org</a></p>
+          <p class="desc">A single page for contested usernames: live tallies and a way for masternode owners to vote on them. Votes are signed in your browser and your key never leaves the page.</p>
         </div>
       </article>
 
@@ -870,8 +964,8 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
         </div>
         <div class="meta">
           <h3 class="cname"><a href="https://faucet.dashhq.org">Dash Faucet</a></h3>
-          <p class="host"><a href="https://faucet.dashhq.org">faucet.dashhq.org</a></p>
-          <p class="desc">Free testnet DASH for development, plus mainnet invitations that the DashPay wallet turns into an identity and a username.</p>
+          <p class="host"><a href="https://faucet.dashhq.org">faucet.dashhq.org</a><a href="https://faucet.dashhq.org/keys">API keys</a></p>
+          <p class="desc">Free testnet DASH for development, plus mainnet invitations that the DashPay wallet turns into an identity and a username. Create an API key and your scripts and CI can ask for it without a captcha.</p>
         </div>
       </article>
 
@@ -1128,6 +1222,7 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
           <li><a href="https://github.com/247bas/evo-cookbook">evo-cookbook</a><span class="dby">247bas</span><p class="dd">Tested Evo SDK recipes, and <code>npm create evo-app</code> to start a project.</p></li>
           <li><a href="https://github.com/hilawe/dash-rawkey-signer">dash-rawkey-signer</a><span class="dby">hilawe</span><p class="dd">Sign state transitions from a single private key, for servers and recovery.</p></li>
           <li><a href="https://github.com/PastaPastaPasta/platform-auth">platform-auth</a><span class="dby">pasta</span><p class="dd">Login for Platform web apps: identity, password or passkey unlock, and session restore. Source only.</p></li>
+          <li><a href="https://github.com/PastaPastaPasta/dash-platform-workers">dash-platform-workers</a><span class="dby">pasta</span><p class="dd">Proof-verified Platform reads and writes from a Cloudflare Worker, sized to fit the free plan.</p></li>
           <li><a href="https://github.com/PastaPastaPasta/grovedb-proof-parser">grovedb-proof-parser</a><span class="dby">pasta</span><p class="dd">Turn raw GroveDB proof bytes into a readable tree, in the browser.</p></li>
           <li><a href="https://github.com/lklimek/claudash">claudash</a><span class="dby">lklimek</span><p class="dd">A Claude Code plugin that teaches the assistant Platform's contracts, SDKs and API.</p></li>
         </ul>
@@ -1185,6 +1280,8 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
   </div>
 </section>
 
+<p class="noresult wrap" id="noresult" tabindex="-1" hidden>Nothing here matches that. <button type="button" id="noclear">Clear the filter</button></p>
+
 </main>
 
 <footer class="foot">
@@ -1206,7 +1303,24 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
   var btn = document.getElementById('themebtn');
   var media = window.matchMedia('(prefers-color-scheme: dark)');
   function isDark(){ var t = r.dataset.theme; return t ? t === 'dark' : media.matches; }
-  function sync(){ btn.setAttribute('aria-pressed', String(isDark())); }
+
+  // The two theme-color tags are written against the device preference. The
+  // button can contradict the device, and then the browser's own toolbar has
+  // to follow the button instead. Read the colours out of the markup first so
+  // they live in one place.
+  var chrome = [].map.call(document.querySelectorAll('meta[name="theme-color"]'), function(m){
+    var q = m.getAttribute('media') || '';
+    return {el: m, media: q, dark: q.indexOf('dark') > -1, color: m.getAttribute('content')};
+  });
+  function paintChrome(){
+    var pick = r.dataset.theme, want;
+    chrome.forEach(function(c){ if(pick && c.dark === (pick === 'dark')) want = c.color; });
+    chrome.forEach(function(c){
+      if(want){ c.el.removeAttribute('media'); c.el.setAttribute('content', want); }
+      else { if(c.media) c.el.setAttribute('media', c.media); c.el.setAttribute('content', c.color); }
+    });
+  }
+  function sync(){ btn.setAttribute('aria-pressed', String(isDark())); paintChrome(); }
   btn.hidden = false;
   sync();
   media.addEventListener('change', sync);
@@ -1232,53 +1346,169 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
     if(a && a.getAttribute('href').length > 1) flash(a.getAttribute('href').slice(1));
   });
 
-  // Routes: numbers each stop on the map and dims the rest.
-  // Hover and keyboard focus preview a route; the button pins it, which is the path on touch screens.
+  // The map has one highlight layer. Routes drive it with numbers; the finder
+  // drives it without. Both go through highlight(), so they cannot fight.
   var svg = document.querySelector('.hsvg');
-  var list = document.querySelector('.routes');
-  if(!svg || !list) return;
-  var nodes = {};
-  svg.querySelectorAll('.hnode').forEach(function(a){ nodes[a.getAttribute('href').slice(1)] = a; });
   var chipbox = document.querySelector('.mapchips');
+  var nodes = svg ? svg.querySelectorAll('.hnode') : [];
   var chips = chipbox ? chipbox.querySelectorAll('.chip') : [];
-  var routes = list.querySelectorAll('.route');
-  var pinned = null, lastPointer = 'mouse';
-  list.addEventListener('pointerdown', function(e){ lastPointer = e.pointerType; });
+  var pinned = null, filtering = false;
+
+  // Where the project a map link points at sits in ids, or -1.
+  function stopOf(ids, a){ return ids ? ids.indexOf(a.getAttribute('href').slice(1)) : -1; }
+
+  // A link to a card the finder has hidden goes nowhere, so take it out of the
+  // tab order and out of the accessibility tree. tabindex has to come first:
+  // aria-hidden on something still focusable is its own failure. `inert` would
+  // be tidier but it is an HTML attribute, and half of these are SVG links.
+  function hideLink(el, hide){
+    if(hide){ el.setAttribute('tabindex', '-1'); el.setAttribute('aria-hidden', 'true'); }
+    else { el.removeAttribute('aria-hidden'); el.removeAttribute('tabindex'); }
+  }
+
+  // ids: the projects to light up, or null for "all of them, undimmed".
+  function highlight(ids, numbered){
+    // filtering removes the cards the dimmed nodes point at, so take those
+    // nodes out of the tab order too. A route preview leaves every card there.
+    var gone = !!ids && !numbered;
+    nodes.forEach(function(a){
+      var i = stopOf(ids, a);
+      a.classList.toggle('on', i > -1);
+      a.querySelector('.hstep').textContent = (numbered && i > -1) ? i + 1 : '';
+      hideLink(a, gone && i < 0);
+    });
+    chips.forEach(function(c){
+      var i = stopOf(ids, c);
+      c.classList.toggle('on', i > -1);
+      if(numbered && i > -1) c.dataset.step = i + 1; else delete c.dataset.step;
+      hideLink(c, gone && i < 0);
+    });
+    if(svg){ svg.classList.toggle('routing', !!ids); svg.classList.toggle('filtering', gone); }
+    if(chipbox){ chipbox.classList.toggle('routing', !!ids); chipbox.classList.toggle('filtering', gone); }
+  }
+
+  // Routes: hover or focus previews one, the button pins it, which is the path
+  // on touch screens.
+  var list = document.querySelector('.routes');
+  var routes = list ? list.querySelectorAll('.route') : [];
   function show(li){
+    // Hiding the route list under the cursor makes the browser fire a late
+    // mouseleave. Without this guard that stray event wipes the finder's
+    // highlight a frame after the finder drew it.
+    if(filtering) return;
     routes.forEach(function(o){
       o.classList.toggle('on', o === li);
       o.querySelector('.rname').setAttribute('aria-pressed', String(o === pinned));
     });
-    var ids = li ? li.dataset.route.split(' ') : [];
-    Object.keys(nodes).forEach(function(id){
-      var i = ids.indexOf(id);
-      nodes[id].classList.toggle('on', i > -1);
-      nodes[id].querySelector('.hstep').textContent = i > -1 ? i + 1 : '';
-    });
-    // phones show chips instead of the map; number those the same way
-    chips.forEach(function(c){
-      var i = ids.indexOf(c.getAttribute('href').slice(1));
-      c.classList.toggle('on', i > -1);
-      if(i > -1) c.dataset.step = i + 1; else delete c.dataset.step;
-    });
-    svg.classList.toggle('routing', !!li);
-    if(chipbox) chipbox.classList.toggle('routing', !!li);
+    highlight(li ? li.dataset.route.split(' ') : null, true);
   }
   function unpin(){ if(pinned){ pinned = null; show(null); } }
-  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') unpin(); });
-  routes.forEach(function(li){
-    li.addEventListener('mouseenter', function(){ show(li); });
-    li.addEventListener('focusin', function(){ show(li); });
-    li.querySelectorAll('.rstops a').forEach(function(a){ a.addEventListener('click', unpin); });
-    li.querySelector('.rname').addEventListener('click', function(){
-      pinned = pinned === li ? null : li;
-      // a mouse still hovers the route after unpinning; a finger does not
-      show(pinned || (lastPointer === 'mouse' ? li : null));
-      if(!pinned && lastPointer !== 'mouse') this.blur();
+  if(list && svg){
+    var lastPointer = 'mouse';
+    list.addEventListener('pointerdown', function(e){ lastPointer = e.pointerType; });
+    routes.forEach(function(li){
+      li.addEventListener('mouseenter', function(){ show(li); });
+      li.addEventListener('focusin', function(){ show(li); });
+      li.querySelectorAll('.rstops a').forEach(function(a){ a.addEventListener('click', unpin); });
+      li.querySelector('.rname').addEventListener('click', function(){
+        pinned = pinned === li ? null : li;
+        // a mouse still hovers the route after unpinning; a finger does not
+        show(pinned || (lastPointer === 'mouse' ? li : null));
+        if(!pinned && lastPointer !== 'mouse') this.blur();
+      });
     });
-  });
-  list.addEventListener('mouseleave', function(){ show(pinned); });
-  list.addEventListener('focusout', function(e){ if(!list.contains(e.relatedTarget)) show(pinned); });
+    list.addEventListener('mouseleave', function(){ show(pinned); });
+    list.addEventListener('focusout', function(e){ if(!list.contains(e.relatedTarget)) show(pinned); });
+  }
+
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') unpin(); });
+
+  // The finder: one field over every plate and every directory entry.
+  var q = document.getElementById('q');
+  if(!q) return;
+  var qclear = document.getElementById('qclear');
+  var qcount = document.getElementById('qcount');
+  var none = document.getElementById('noresult');
+  var rhead = document.querySelector('.rhead');
+  var mnav = document.querySelectorAll('.mnav a');
+  var skip = document.querySelector('.skip');
+  var countTimer;
+
+  function index(els){
+    return [].map.call(els, function(el){
+      return {el: el, text: (el.textContent + ' ' + el.id).toLowerCase().replace(/\s+/g, ' ')};
+    });
+  }
+  var cards = index(document.querySelectorAll('.card'));
+  var entries = index(document.querySelectorAll('.dgroup li'));
+  var groups = document.querySelectorAll('.dgroup');
+  var allSections = document.querySelectorAll('.section');
+
+  function matches(text, terms){
+    for(var i = 0; i < terms.length; i++){ if(text.indexOf(terms[i]) < 0) return false; }
+    return true;
+  }
+
+  // Hides the items that do not match and returns the ones that do.
+  function filter(items, terms){
+    return items.filter(function(it){
+      var hit = matches(it.text, terms);
+      it.el.hidden = !hit;
+      return hit;
+    });
+  }
+
+  function run(){
+    var raw = q.value.trim().toLowerCase();
+    var terms = raw ? raw.split(/\s+/) : [];
+    qclear.hidden = !q.value;
+
+    var shown = filter(cards, terms);
+    var shownEntries = filter(entries, terms);
+    groups.forEach(function(g){ g.hidden = !g.querySelector('li:not([hidden])'); });
+    var first = null;
+    allSections.forEach(function(sec){
+      sec.hidden = !sec.querySelector('.card:not([hidden]), .dgroup:not([hidden])');
+      if(!sec.hidden && !first) first = sec;
+    });
+    // a jump link to a section that is filtered away does nothing, so take the
+    // masthead links with it and send the skip link somewhere that still exists
+    mnav.forEach(function(a){
+      var target = document.getElementById(a.getAttribute('href').slice(1));
+      a.hidden = !!(target && target.hidden);
+    });
+    if(skip) skip.setAttribute('href', '#' + (first ? first.id : 'noresult'));
+
+    // The routes walk through plates, so they only make sense on the whole page.
+    // Unpin before locking them out, or the route is left reading pressed when
+    // it is not.
+    filtering = false;
+    if(raw) unpin();
+    filtering = !!raw;
+    if(list) list.hidden = !!raw;
+    if(rhead) rhead.hidden = !!raw;
+
+    highlight(raw ? shown.map(function(c){ return c.el.id; }) : null, false);
+    none.hidden = !raw || shown.length > 0 || shownEntries.length > 0;
+    // the count is a live region, so let typing settle before it is announced
+    clearTimeout(countTimer);
+    if(!raw) qcount.textContent = '';
+    else countTimer = setTimeout(function(){
+      qcount.textContent = shown.length + ' of ' + cards.length + ' projects, '
+        + shownEntries.length + ' of ' + entries.length + ' directory entries';
+    }, 300);
+  }
+
+  function clearQ(){ q.value = ''; run(); q.focus(); }
+
+  q.addEventListener('input', run);
+  qclear.addEventListener('click', clearQ);
+  document.getElementById('noclear').addEventListener('click', clearQ);
+  q.addEventListener('keydown', function(e){ if(e.key === 'Escape' && q.value){ e.stopPropagation(); clearQ(); } });
+  // a reload, or a step back through history, can keep what was typed
+  window.addEventListener('pageshow', run);
+  r.classList.add('finder-on');
+  run();
 })();
 </script>
 </body>
