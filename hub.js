@@ -164,7 +164,7 @@
   }
   addEventListener('hashchange', revealHash);
   document.addEventListener('click', function(event){
-    var a = event.target.closest('a[href]');
+    var a = event.composedPath().find(function(node){ return node instanceof HTMLAnchorElement; });
     if(!a || a.origin !== location.origin || a.pathname !== location.pathname || !a.hash) return;
     revealHash(a.hash);
   });
