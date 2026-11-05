@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://radar.dashhq.org; base-uri 'none'; form-action 'self'; object-src 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/dashhq/dashhq-shell.js"></script>
+<link rel="preload" href="/dashhq/fonts/archivo-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/dashhq/dashhq-tokens.css">
+<link rel="stylesheet" href="/dashhq/dashhq-shell.css">
+<link rel="stylesheet" href="/dashhq/dashhq-components.css">
+<link rel="icon" href="/dashhq/mark/favicon.svg" type="image/svg+xml">
+
+<link rel="stylesheet" href="/hub.css">
+<title>Directory · dashhq</title>
+<meta name="description" content="The DashHQ family and the Dash ecosystem: the apps, explorers, governance tools, SDKs and docs that are actually live, each placed on the layer it works with.">
+<link rel="canonical" href="https://dashhq.org/directory/">
+<meta name="theme-color" content="#EDF2F5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#06131B" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dashhq.org/directory/">
+<meta property="og:site_name" content="dashhq.org">
+<meta property="og:title" content="Dash ecosystem · dashhq">
+<meta property="og:description" content="The DashHQ family and the Dash ecosystem: the apps, explorers, governance tools, SDKs and docs that are actually live, each placed on the layer it works with.">
+<meta property="og:image" content="https://dashhq.org/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A blueprint map of the Dash ecosystem, with each project drawn on the layer it works with: apps, Platform, network.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+
+
+
+
+
+</head>
+<body><a class="skip" href="#directory">Skip to the directory</a><dashhq-bar product="home" sticky><nav slot="nav" aria-label="Family tools"><a href="https://radar.dashhq.org/" data-family="radar">Radar</a><a href="https://gov.dashhq.org/" data-family="gov">Governance</a><a href="https://explorer.dashhq.org/" data-family="explorer">Explorer</a><a href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet" data-family="bridge" data-path="/?mode=create&amp;journey=start" data-network="testnet">Start</a><a href="/#apps">Apps</a><a href="/directory/">Directory</a></nav></dashhq-bar><main class="dh-container dh-page"><header class="dh-page-header"><p class="dh-crumbs"><a href="/">dashhq</a> / Directory</p><h1 class="dh-page-header__title">Dash tools and resources</h1><p class="dh-page-header__lede">Wallets, libraries, specifications and services, with links to their maintainers.</p></header><section class="directory-page" id="directory">
+  <div class="dh-container">
+    <div class="sechead dh-section__head">
+      <h2 class="dh-section__title">Directory</h2>
+      <p class="dh-section__desc">Libraries, references, services and smaller tools.</p>
+    </div>
+
+    <details class="directory-fold" open><summary>Browse the full directory of wallets, developer tools and resources</summary>
+    <div class="dir">
+      <details class="dgroup" open><summary>Wallets and apps <span class="dh-count">5</span></summary>
+        <ul>
+          <li><a href="https://github.com/pshenmic/dash-desktop">Dash Desktop</a><span class="dby">pshenmic</span><p class="dd">Desktop wallet that shows Core balances next to your Platform identities and names. Beta, read-only for now.</p></li>
+          <li><a href="https://evonext.app">EvoNext</a><span class="dby">Sansbank DAO</span><p class="dd">A social app and a studio for small apps published to Platform. The web app runs on testnet.</p></li>
+          <li><a href="https://evotools.dev">evotools</a><span class="dby">247bas</span><p class="dd">Browser tools for getting started: key generation, identities, names, tokens and a contested-name tracker.</p></li>
+          <li><a href="https://scolvr.github.io/Dash-Data-Contract-Web-Wizard/">Token Wizard</a><span class="dby">Scolvr</span><p class="dd">Step-by-step builder for a token contract: supply, permissions and distribution rules.</p></li>
+          <li><a href="https://dash.vote">Dash Vote</a><span class="dby">MNOwatch</span><p class="dd">Which masternodes voted for each side of every contested username.</p></li>
+        </ul>
+      </details>
+
+      <details class="dgroup" open><summary>Libraries <span class="dh-count">11</span></summary>
+        <ul>
+          <li><a href="https://docs.dash.org/projects/platform/en/stable/docs/sdk-rs/overview.html">Rust SDK</a><span class="dby">Dash Core Group</span><p class="dd">Typed, proof-checked access to Platform from Rust. The base for the mobile and WASM SDKs.</p></li>
+          <li><a href="https://github.com/dashpay/platform/tree/HEAD/packages/swift-sdk">Swift SDK</a> and <a href="https://github.com/dashpay/platform/tree/HEAD/packages/kotlin-sdk">Kotlin SDK</a><span class="dby">Dash Core Group</span><p class="dd">Native mobile SDKs, each with an example app. Build from source.</p></li>
+          <li><a href="https://github.com/dashpay/rust-dashcore">rust-dashcore</a><span class="dby">Dash Core Group</span><p class="dd">Core primitives, an SPV client and an HD wallet in Rust, used by the Platform SDKs.</p></li>
+          <li><a href="https://github.com/dashpay/platform/tree/HEAD/packages/wasm-sdk">WASM SDK</a><span class="dby">Dash Core Group</span><p class="dd">The layer under the Evo SDK, for raw queries and state transitions.</p></li>
+          <li><a href="https://github.com/pshenmic/dash-platform-sdk">dash-platform-sdk</a><span class="dby">pshenmic</span><p class="dd">A lightweight JavaScript SDK, used by Platform Explorer and the extension.</p></li>
+          <li><a href="https://github.com/247bas/evo-cookbook">evo-cookbook</a><span class="dby">247bas</span><p class="dd">Tested Evo SDK recipes, and <code>npm create evo-app</code> to start a project.</p></li>
+          <li><a href="https://github.com/hilawe/dash-rawkey-signer">dash-rawkey-signer</a><span class="dby">hilawe</span><p class="dd">Sign state transitions from a single private key, for servers and recovery.</p></li>
+          <li><a href="https://github.com/PastaPastaPasta/platform-auth">platform-auth</a><span class="dby">pasta</span><p class="dd">Login for Platform web apps: identity, password or passkey unlock, and session restore. Source only.</p></li>
+          <li><a href="https://github.com/PastaPastaPasta/dash-platform-workers">dash-platform-workers</a><span class="dby">pasta</span><p class="dd">Proof-verified Platform reads and writes from a Cloudflare Worker, sized to fit the free plan.</p></li>
+          <li><a href="https://github.com/PastaPastaPasta/grovedb-proof-parser">grovedb-proof-parser</a><span class="dby">pasta</span><p class="dd">Turn raw GroveDB proof bytes into a readable tree, in the browser.</p></li>
+          <li><a href="https://github.com/lklimek/claudash">claudash</a><span class="dby">lklimek</span><p class="dd">A Claude Code plugin that teaches the assistant Platform's contracts, SDKs and API.</p></li>
+        </ul>
+      </details>
+
+      <details class="dgroup" open><summary>Specs and reference <span class="dh-count">8</span></summary>
+        <ul>
+          <li><a href="https://github.com/dashpay/platform">Platform source</a><span class="dby">Dash Core Group</span><p class="dd">One repository for Drive, DAPI, every SDK, dashmate and the system contracts.</p></li>
+          <li><a href="https://docs.dash.org/projects/core/en/stable/docs/dips/README.html">Dash Improvement Proposals</a><span class="dby">Dash Core Group</span><p class="dd">The protocol specs, including identities, usernames, DashPay and evonodes.</p></li>
+          <li><a href="https://docs.dash.org/projects/platform/en/stable/docs/reference/dapi-endpoints.html">DAPI endpoint reference</a><span class="dby">Dash Core Group</span><p class="dd">Every request and response the evonode API accepts.</p></li>
+          <li><a href="https://dashpay.github.io/platform/">Platform Book</a><span class="dby">Dash Core Group</span><p class="dd">How the Platform codebase is organized, for contributors.</p></li>
+          <li><a href="https://dashpay.github.io/grovedb/">GroveDB Book</a><span class="dby">Dash Core Group</span><p class="dd">How Platform's storage proves a whole query result, with worked diagrams.</p></li>
+          <li><a href="https://dashpay.github.io/grovedb-proof-visualizer-widget/">GroveDB Proof Visualizer</a><span class="dby">Dash Core Group</span><p class="dd">Paste a proof and see it drawn as a tree.</p></li>
+          <li><a href="https://github.com/dashpay/tenderdash">Tenderdash</a><span class="dby">Dash Core Group</span><p class="dd">The consensus engine that orders Platform blocks.</p></li>
+          <li><a href="https://github.com/dashpay/platform/tree/HEAD/packages">System contracts</a><span class="dby">Dash Core Group</span><p class="dd">Built-in contracts such as DPNS, DashPay, withdrawals and token history.</p></li>
+        </ul>
+      </details>
+
+      <details class="dgroup" open><summary>Network services <span class="dh-count">7</span></summary>
+        <ul>
+          <li><a href="https://faucet.testnet.networks.dash.org/">Testnet faucet</a><span class="dby">Dash Core Group</span><p class="dd">Testnet DASH, or a testnet identity in one click.</p></li>
+          <li><a href="https://insight.testnet.networks.dash.org/insight/">Testnet Insight</a><span class="dby">Dash Core Group</span><p class="dd">Core-chain explorer for testnet. Check the asset lock behind an identity.</p></li>
+          <li><a href="https://status.testnet.networks.dash.org/">Testnet status</a><span class="dby">Dash Core Group</span><p class="dd">Health of Dash Core Group's own testnet masternodes.</p></li>
+          <li><a href="https://quorums.mainnet.networks.dash.org/masternodes">Evonode list</a><span class="dby">Dash Core Group</span><p class="dd">Current evonodes and their Platform ports, as JSON.</p></li>
+          <li><a href="https://dashscan.io">Dashscan</a><span class="dby">pshenmic</span><p class="dd">Explorer for the Core chain: blocks, masternodes and governance.</p></li>
+          <li><a href="https://github.com/pshenmic/dash-platform-mass-send">Mass Send</a><span class="dby">pshenmic</span><p class="dd">Sweep credits from many identities at once, for operators.</p></li>
+          <li><a href="https://github.com/sansbankdao/btcpay-dash-evolution">BTCPay plugin</a><span class="dby">Sansbank DAO</span><p class="dd">Accept Platform and shielded payments in a BTCPay Server store.</p></li>
+        </ul>
+      </details>
+
+      <details class="dgroup" open><summary>Dash Core development <span class="dh-count">7</span></summary>
+        <ul>
+          <li><a href="https://github.com/dashpay/dash-dev-branches/releases">Nightly and PR builds</a><span class="dby">pasta</span><p class="dd">Signed Guix builds of Dash Core's develop branch and of labelled pull requests.</p></li>
+          <li><a href="https://flathub.org/apps/org.dash.dash-core">Dash Core on Flathub</a><span class="dby">pasta</span><p class="dd">Install Dash Core on Linux with <code>flatpak install flathub org.dash.dash-core</code>.</p></li>
+          <li><a href="https://thepastaclaw.github.io/backport-delta/">backport-delta</a><span class="dby">pasta</span><p class="dd">Reports where a Dash backport differs from the Bitcoin commit it came from.</p></li>
+          <li><a href="https://github.com/PastaPastaPasta/dash-backport-review-skill">Backport review checker</a><span class="dby">pasta</span><p class="dd">Checks, hunk by hunk, that a backport PR really contains its upstream changes.</p></li>
+          <li><a href="https://github.com/PastaPastaPasta/dash-platform-e2e">dash-platform-e2e</a><span class="dby">pasta</span><p class="dd">Registers a real testnet identity and username through Dash Core's C++ Platform client.</p></li>
+          <li><a href="https://github.com/PastaPastaPasta/dash-platform-test-vectors">dash-platform-test-vectors</a><span class="dby">pasta</span><p class="dd">Fixtures that keep Dash Core's C++ Platform code in step with the Rust implementation.</p></li>
+          <li><a href="https://thepastaclaw.github.io/dash-subsidy-calculator/">Block Subsidy Calculator</a><span class="dby">pasta</span><p class="dd">The Core block reward at any height, and how it splits between miners, masternodes and treasury.</p></li>
+        </ul>
+      </details>
+
+      <details class="dgroup" open><summary>Plans and talks <span class="dh-count">3</span></summary>
+        <ul>
+          <li><a href="https://pastapastapasta.github.io/dashvm-plan/">DashVM plan board</a><span class="dby">pasta</span><p class="dd">Live progress of the smart-contract work in the Platform repo.</p></li>
+          <li><a href="https://pastapastapasta.github.io/dash-v24-presentation/">Dash Core v24</a><span class="dby">pasta</span><p class="dd">Slides from DashCon Amsterdam, September 2026.</p></li>
+          <li><a href="https://pastapastapasta.github.io/yappr-presentation/">Yappr and Dash Platform</a><span class="dby">pasta</span><p class="dd">DashCon talk slides, opening with the live app.</p></li>
+        </ul>
+      </details>
+    </div>
+    </details>
+  </div>
+</section></main><dashhq-footer product="home" source="https://github.com/PastaPastaPasta/dashhq"></dashhq-footer></body></html>

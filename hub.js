@@ -17,7 +17,8 @@
   paintChrome();
 
   // Counts in the title block come from the page itself, so they cannot drift.
-  var n = {card: document.querySelectorAll('.card').length, entry: document.querySelectorAll('.dgroup li').length};
+  var directoryEntries = document.getElementById('directory-index')?.content.querySelectorAll('.dgroup li') || [];
+  var n = {card: document.querySelectorAll('.card').length, entry: directoryEntries.length};
   document.querySelectorAll('[data-count]').forEach(function(el){ el.textContent = n[el.dataset.count]; });
 
   // Jumping to a plate flashes its border so you can see where you landed.
@@ -40,7 +41,7 @@
   var pinned = null;
 
   // Where the project a map link points at sits in ids, or -1.
-  function stopOf(ids, a){ return ids ? ids.indexOf(a.getAttribute('href').slice(1)) : -1; }
+  function stopOf(ids, a){ return ids ? ids.indexOf((a.dataset.project || a.getAttribute('href').slice(1))) : -1; }
 
   // ids: the projects to light up, or null for "all of them, undimmed".
   function highlight(ids){
@@ -104,7 +105,8 @@
     });
   }
   var cards = index(document.querySelectorAll('.card'));
-  var entries = index(document.querySelectorAll('.dgroup li'));
+  var entries = index(directoryEntries);
+  entries.forEach(function(item) { item.el.querySelectorAll("[data-family]").forEach(function(link) { link.href = dashhq.href(link.dataset.family, link.dataset.path || "/"); }); });
 
   function matches(text, terms){
     for(var i = 0; i < terms.length; i++){ if(text.indexOf(terms[i]) < 0) return false; }
@@ -148,9 +150,6 @@
     var fold = target && target.closest('details');
     while(fold){ fold.open = true; fold = fold.parentElement.closest("details"); }
   }
-  var directory = document.querySelector('.directory-fold');
-  if(directory) directory.open = matchMedia('(min-width: 761px)').matches;
-  document.querySelectorAll('.dgroup').forEach(function(group){ group.open = matchMedia('(min-width: 761px)').matches; });
   addEventListener('hashchange', revealHash);
   document.addEventListener('click', function(event){
     var a = event.target.closest('a[href^="#"]');
