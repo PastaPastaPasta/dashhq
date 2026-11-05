@@ -1,0 +1,6 @@
+#identity ul, #identity ol { padding-left: var(--dh-5); }
+#identity ul { list-style: disc; }
+#identity ol { list-style: decimal; }
+#identity li + li { margin-top: var(--dh-3); }
+#identity .dh-card > p, #identity .dh-card > ul, #identity .dh-card > ol,
+#identity .dh-card > .dh-actions, #identity .dh-card > .dh-btn { margin-top: var(--dh-4); }
