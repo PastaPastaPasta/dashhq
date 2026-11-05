@@ -65,7 +65,7 @@
      </div>
      <div class="dh-page-header__meta"> badges, proof badge, freshness </div>
    </header> */
-.dh-page-header { display: grid; gap: var(--dh-3); margin: 0 0 var(--dh-6); min-width: 0; }
+.dh-page-header { display: grid; gap: var(--dh-3); margin-block: 0 var(--dh-6); min-width: 0; }
 .dh-page-header__row { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: var(--dh-4) var(--dh-6); }
 .dh-page-header__text { display: grid; gap: var(--dh-2); flex: 1 1 420px; min-width: 0; }
 .dh-page-header__kicker { margin: 0; font-size: var(--dh-fs-sm); font-weight: var(--dh-w-ui); color: var(--dh-ink-2);

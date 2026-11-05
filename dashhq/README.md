@@ -1,4 +1,4 @@
-# dashhq shell 1.4.0
+# dashhq shell 1.4.1
 
 The shared shell for the dashhq.org family: the family bar, the footer, the hash display, the theme, and the
 tokens they all draw with. Read `../DESIGN.md` for the rules and `../MIGRATION.md` for your site's plan.
