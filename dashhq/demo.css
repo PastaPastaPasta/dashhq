@@ -71,3 +71,15 @@ p { margin: 0; }
   .filters .dh-field:not(.grow) { flex: 1 1 140px; }
   .row-actions .dh-btn { flex: 1 1 auto; }
 }
+
+/* bars.html and app.html: stand-in icons and app glyphs (each app draws its own) */
+.demo-ic { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.logo-forge, .logo-pollr { fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.logo-forge { stroke: var(--dh-accent-forge); }
+.logo-pollr { stroke: var(--dh-accent-pollr); }
+/* bars.html: real bar widths (edge to edge), so the lockup is measured as phones see it */
+.bars--bleed { margin-inline: calc(-1 * var(--dh-gutter)); gap: 10px; }
+.bars--bleed dashhq-bar { border-radius: 0; border-width: 1px 0; overflow: visible; }
+/* app.html */
+.demo-polls { --dh-grid-min: 340px; }
+.demo-app { --dh-accent: var(--dh-accent-pollr); }

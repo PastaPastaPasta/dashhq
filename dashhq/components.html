@@ -220,6 +220,56 @@
     </div>
   </section>
 
+  <section class="dh-section" id="signin" aria-labelledby="h-signin">
+    <div class="dh-section__head">
+      <h2 class="dh-section__title" id="h-signin">Sign-in: explanation and choices</h2>
+      <p class="dh-section__desc">Every app's sign-in opens the same way: title, one lede, <code class="dh-mono">&lt;dashhq-signin-help&gt;</code>,
+        then the app's own ways in as choice cards, available ones first.</p>
+    </div>
+    <div class="dh-grid signin-demos">
+      <div class="dh-dialog signin-frame" role="group" aria-labelledby="gov-signin">
+        <div class="dh-dialog__head"><h3 class="dh-dialog__title" id="gov-signin">Sign in to Governance</h3></div>
+        <p class="dh-dialog__lede">Reading is free. Sign in to comment, react, or vote with your masternodes.</p>
+        <div class="dh-dialog__body">
+          <dashhq-signin-help product="gov" network="mainnet" asks="passkey phrase key voting-key" kept="memory"
+            kept-note="A passkey you add keeps an encrypted copy on Platform, so you can sign in again with it.">
+            <button slot="start" class="dh-btn dh-btn--link" type="button">Create an account</button>
+          </dashhq-signin-help>
+          <div class="dh-choices">
+            <button class="dh-choice" type="button"><span class="dh-choice__title">Use a passkey <span class="dh-badge dh-badge--info">Fastest</span></span>
+              <span class="dh-choice__desc">If you added one to your account on this device or another.</span></button>
+            <button class="dh-choice" type="button"><span class="dh-choice__title">I have a recovery phrase</span>
+              <span class="dh-choice__desc">The 12 or 24 words of an account you made for Governance.</span>
+              <span class="dh-choice__meta">Use a phrase just for Governance, never one that holds real money.</span></button>
+            <button class="dh-choice" type="button"><span class="dh-choice__title">Paste a key</span>
+              <span class="dh-choice__desc">For developers: a High or Critical key of your identity.</span></button>
+            <button class="dh-choice" type="button" disabled><span class="dh-choice__title">Approve in a Dash wallet <span class="dh-badge">Coming soon</span></span>
+              <span class="dh-choice__desc">DashPay approval, with no phrase typed here.</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="dh-dialog signin-frame" role="group" aria-labelledby="forge-signin">
+        <div class="dh-dialog__head"><h3 class="dh-dialog__title" id="forge-signin">Sign in to Forge</h3></div>
+        <p class="dh-dialog__lede">Reading and cloning need no sign-in. Sign in to push, open issues and review.</p>
+        <div class="dh-dialog__body">
+          <dashhq-signin-help product="forge" network="testnet" asks="wallet passkey phrase key" kept="sealed"
+            kept-note="This browser gets its own limited key: at most 0.05 DASH, only on Forge, for 90 days. A phrase you import is used once and not stored."></dashhq-signin-help>
+          <div class="dh-choices">
+            <button class="dh-choice" type="button" aria-pressed="true">
+              <svg class="dh-choice__icon ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 6h13v9h-13zM3.5 6l1.5-2.5h9.5L16.5 6M13 10.5h1.5"/></svg>
+              <span class="dh-choice__title">Use my Dash wallet <span class="dh-badge dh-badge--info">Recommended</span></span>
+              <span class="dh-choice__desc">Scan a QR code with DashPay and approve once for all of Forge.</span>
+              <span class="dh-choice__meta">Kept: a limited key, sealed in this browser</span></button>
+            <button class="dh-choice" type="button">
+              <svg class="dh-choice__icon ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v12M4 10h12"/></svg>
+              <span class="dh-choice__title">Create a new identity</span>
+              <span class="dh-choice__desc">12 words you write down, then fund it from any Dash wallet.</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="dh-section" id="tables" aria-labelledby="h-tables">
     <div class="dh-section__head">
       <h2 class="dh-section__title" id="h-tables">Tables</h2>

@@ -7,6 +7,10 @@ export type DashhqProduct =
 /** 'mainnet' | 'testnet' | `devnet-${name}` */
 export type DashhqNetwork = 'mainnet' | 'testnet' | `devnet-${string}`;
 export type DashhqThemePref = 'system' | 'light' | 'dark';
+/** What an app's sign-in asks for, in <dashhq-signin-help asks="…"> (space-separated, in the order the app offers them). */
+export type DashhqSigninAsk = 'wallet' | 'passkey' | 'phrase' | 'key' | 'password' | 'voting-key';
+/** Where the app keeps what it asks for, in <dashhq-signin-help kept="…">. */
+export type DashhqSigninKept = 'memory' | 'tab' | 'browser' | 'sealed';
 
 export interface DashhqApi {
   readonly version: string;

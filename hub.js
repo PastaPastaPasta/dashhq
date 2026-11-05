@@ -104,7 +104,7 @@
 
   function index(els){
     return [].map.call(els, function(el){
-      return {el: el, text: (el.textContent + ' ' + el.id).toLowerCase().replace(/\s+/g, ' ')};
+      return {el: el, text: (el.textContent + ' ' + el.id + ' ' + (el.dataset.search || '')).toLowerCase().replace(/\s+/g, ' ')};
     });
   }
   var cards = index(document.querySelectorAll('.card'));
@@ -128,6 +128,7 @@
       var title = a.textContent.trim();
       return {title:title, href:a.href, score:title.toLowerCase() === text ? 100 : a.dataset.family ? 10 : 0};
     }).sort(function(a,b){ return b.score - a.score; }) : [];
+    if (/identity|identities|sign in|login|key|recovery phrase|passkey|wallet/.test(text)) destinations.unshift({title:'Your Dash identity: sign-ins, keys and where they stay', href:'/identity/'});
     if (/platform|identity|identities|username|learn|beginner/.test(text)) destinations.unshift({title:'What is Platform? A plain-language walkthrough', href:dashhq.href('arch', '/')});
     if (/masternode|evonode|my node/.test(text)) destinations.unshift({title:'Find your masternode in Radar', href:dashhq.href('radar', '/masternodes')});
     if (/^[a-f0-9]{64}$/i.test(raw)) destinations.unshift({title:'Inspect this masternode in Radar', href:dashhq.href('radar', '/mn/' + raw)});

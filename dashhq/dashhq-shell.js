@@ -1,4 +1,4 @@
-/*! dashhq-shell 1.4.1 | family bar, footer, hash display and theme for dashhq.org tools | MIT */
+/*! dashhq-shell 1.5.3 | family bar, footer, hash display, sign-in help and theme for dashhq.org tools | MIT */
 /* Load as a classic, blocking script in <head>, before any stylesheet that depends on [data-theme]:
      <script src="/dashhq/dashhq-shell.js"></script>
    CSP: needs only script-src 'self'. No inline script, no eval, no innerHTML, no style attributes,
@@ -7,7 +7,7 @@
   'use strict';
   if (window.dashhq && window.dashhq.version) return;
 
-  const VERSION = '1.4.1';
+  const VERSION = '1.5.3';
   const doc = document;
   const root = doc.documentElement;
   const host = location.hostname;
@@ -24,7 +24,7 @@
     faucet:   { name: 'Faucet',        url: 'https://faucet.dashhq.org',   door: 'start',      net: true },
     bridge:   { name: 'Bridge',        url: 'https://bridge.thepasta.org', door: 'start',      net: true },
     arch:     { name: 'Architecture',  url: 'https://arch.dashhq.org',     door: 'platform' },
-    fees:     { name: 'Fee estimator', url: 'https://fees.dashhq.org',     door: 'platform',   net: true },
+    fees:     { name: 'Fee estimator', url: 'https://explorer.dashhq.org',     door: 'platform',   net: true },
     dapi:     { name: 'DAPI console',  url: 'https://dapi.dashhq.org',     door: 'platform',   net: true },
     vote:     { name: 'EvoVote',       url: 'https://vote.dashhq.org',     door: 'governance', net: true },
     basics:   { name: 'Basics',        url: 'https://basics.dashhq.org',   door: 'platform' },
@@ -38,16 +38,21 @@
     { door: 'network',    key: 'radar',    label: 'Radar',      desc: 'Live network health, masternodes and evonodes' },
     { door: 'governance', key: 'gov',      label: 'Governance', desc: 'Proposals, votes, name contests' },
     { door: 'platform',   key: 'explorer', label: 'Explorer',   desc: 'Identities, names, contracts, proof-checked' },
-    { door: 'start',      key: 'bridge',   label: 'Start',      desc: 'Address, testnet DASH, identity, username', steps: ['bridge', 'faucet'] }
+    { door: 'start',      key: 'bridge',   label: 'Start on Testnet', desc: 'Address, testnet DASH, identity, username', steps: ['bridge', 'faucet'] }
   ];
   const APPS = ['forge', 'pollr', 'yappr'];
   const ALSO = ['arch', 'fees', 'dapi'];
+  // Products folded into another one: family menus link straight to the new home instead of the old host's notice.
+  const MOVED = { fees: ['explorer', '/tools/fees/'] };
+  // The hub's page that explains identities, keys and each app's sign-in (linked from <dashhq-signin-help>).
+  const IDENTITY_PATH = '/identity/';
 
   /* ---------------------------------------------------------------- local lab */
   // On dashhq.localhost and *.dashhq.localhost every family link stays in the lab: same scheme, same port.
   const LAB = host === 'dashhq.localhost' || host.endsWith('.dashhq.localhost');
 
   function origin(key) {
+    if (MOVED[key]) key = MOVED[key][0];
     if (key === 'nodes') key = 'radar';
     const p = PRODUCTS[key];
     if (!p) throw new Error(`dashhq: unknown product "${key}"`);
@@ -109,6 +114,7 @@
     const base = origin(key);
     const u = new URL(path || '/', base + '/');
     if (u.origin !== new URL(base).origin) throw new Error(`dashhq: href("${key}") must stay on ${base}`);
+    if (MOVED[key]) u.pathname = MOVED[key][1];
     const p = PRODUCTS[key];
     const fallback = p.door === 'start' ? parseNetwork(u.searchParams.get('network')) || 'testnet' : activeNetwork();
     const n = parseNetwork(opts && 'network' in opts ? opts.network : fallback);
@@ -120,6 +126,7 @@
   }
 
   function doorHref(key, network) {
+    if (MOVED[key]) return href(MOVED[key][0], MOVED[key][1], network ? { network } : undefined);
     if (PRODUCTS[key].door === 'start') {
       return href(key, key === 'bridge' ? '/?mode=create&journey=start' : '/?journey=start', { network: 'testnet' });
     }
@@ -221,6 +228,7 @@
     const t = resolved();
     if (root.getAttribute('data-theme') !== t || root.getAttribute('data-theme-pref') !== pref ||
       root.style.colorScheme !== t) applyTheme(false);
+    syncTabs();
   }).observe(root, { attributes: true, attributeFilter: ['data-theme', 'data-theme-pref', 'style'] });
   mq.addEventListener('change', () => { if (pref === 'system') applyTheme(true); });
   // Another subdomain may have changed the shared cookie while this tab sat in the background.
@@ -251,7 +259,9 @@
     sun: ['M10 6.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7z',
       'M10 1.8v2M10 16.2v2M1.8 10h2M16.2 10h2M4.2 4.2l1.4 1.4M14.4 14.4l1.4 1.4M4.2 15.8l1.4-1.4M14.4 5.6l1.4-1.4'],
     copy: ['M7 7h8.5v8.5H7z', 'M4.5 12.5V4.5h8'],
-    check: ['M4.5 10.5l3.5 3.5 7.5-8']
+    check: ['M4.5 10.5l3.5 3.5 7.5-8'],
+    identity: ['M2.5 4.5h15v11h-15z', 'M8.6 9.2a1.8 1.8 0 1 1-3.6 0 1.8 1.8 0 0 1 3.6 0z', 'M4.4 13.3c.6-1.2 1.4-1.8 2.4-1.8s1.8.6 2.4 1.8',
+      'M11.5 8.5h3.8M11.5 11.5h2.8']
   };
   const icon = (name, size) =>
     h('svg:svg', { viewBox: '0 0 20 20', width: size, height: size, 'aria-hidden': 'true', focusable: 'false', class: 'ic' },
@@ -284,7 +294,9 @@
     ':host{display:block;position:relative;z-index:40}' +
     ':host([sticky]){position:sticky;top:0}' +
     '.bar{background:var(--dh-surface);border-bottom:1px solid var(--dh-line);' +
-    '--dh-nav-dir:row;--dh-nav-h:32px;--dh-nav-fs:14px;--dh-nav-pad:10px;--dh-nav-align:center}' +
+    '--dh-nav-dir:row;--dh-nav-h:32px;--dh-nav-fs:14px;--dh-nav-pad:10px;--dh-nav-align:center;' +
+    '--dh-nav-only-phone:none;--dh-nav-only-desk:flex}' +
+    '.bar.compact{--dh-nav-only-phone:flex;--dh-nav-only-desk:none}' +
     '.bar.test,.bar.dev{border-bottom:1px dashed var(--dh-line-2)}' +
     '.row{position:relative;max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;' +
     'padding:0 var(--dh-gutter);height:var(--dh-bar-h);display:flex;align-items:center;gap:2px;overflow:hidden}' +
@@ -294,6 +306,8 @@
     '.slash{color:var(--dh-line-2);font-size:19px;font-weight:300;margin:0 3px 0 5px;flex:none;line-height:1}' +
     '.product{display:flex;align-items:center;gap:7px;font-weight:580;font-size:15px;height:34px;padding:0 4px;' +
     'border-radius:var(--dh-r2);white-space:nowrap;flex:none}' +
+    '.pl{display:flex;align-items:center;gap:7px;min-width:0}' +
+    '.fam{display:none}' +
     '.product:hover .pn{text-decoration:underline;text-decoration-color:var(--dh-line-2);text-underline-offset:4px}' +
     '.switch{width:28px;height:32px;display:grid;place-items:center;border-radius:var(--dh-r2);' +
     'color:var(--dh-ink-2);flex:none}' +
@@ -323,7 +337,7 @@
     '.pop{position:absolute;top:calc(100% + 6px);z-index:2;background:var(--dh-surface);border-radius:var(--dh-r3);' +
     'box-shadow:var(--dh-shadow-pop);padding:6px}' +
     '.doorpop{left:var(--dh-gutter);width:min(440px,calc(100vw - 2 * var(--dh-gutter)))}' +
-    '.netpop{right:0;min-width:200px;max-width:min(300px,calc(100vw - 2 * var(--dh-gutter)))}' +
+    '.netpop{right:0;width:max-content;min-width:200px;max-width:min(300px,calc(100vw - 2 * var(--dh-gutter)))}' +
     '.nnote{margin:4px 0 0;padding:8px 10px 4px;border-top:1px solid var(--dh-line);font-size:13px;line-height:1.4;' +
     'color:var(--dh-ink-2)}' +
     '.opt{display:flex;align-items:center;gap:10px;min-height:36px;padding:6px 10px;border-radius:var(--dh-r2);' +
@@ -332,6 +346,10 @@
     '.opt .tick{width:16px;color:var(--dh-brand-ink);flex:none}' +
     '.opt.more{color:var(--dh-brand-ink);border-top:1px solid var(--dh-line);border-radius:0 0 var(--dh-r2) var(--dh-r2);' +
     'margin-top:4px}' +
+    /* devnets sit behind one toggle unless the page is on one: internal networks are not for every visitor */
+    'button.opt{width:100%;text-align:left;color:var(--dh-ink-2)}' +
+    'button.opt .ic{margin-left:auto;transition:transform var(--dh-dur-2) var(--dh-ease)}' +
+    'button.opt[aria-expanded=true] .ic{transform:rotate(180deg)}' +
     /* the doors list, used in the desktop popover and the phone sheet */
     '.doors{list-style:none;margin:0;padding:0}' +
     '.door{position:relative;display:grid;gap:1px;padding:9px 12px 9px 14px;border-radius:var(--dh-r2)}' +
@@ -348,13 +366,13 @@
     '.steps a:hover{text-decoration:underline}' +
     '.grp{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;padding:10px 14px;border-top:1px solid var(--dh-line);' +
     'margin-top:6px;font-size:14px}' +
-    '.gl{font-size:13px;color:var(--dh-ink-2);min-width:52px}' +
+    '.gl{font-size:13px;color:var(--dh-ink-2);min-width:92px}' +
     '.grp a{font-weight:540}' +
     '.only{margin-left:6px;padding:1px 5px;border:1px dashed var(--dh-line-2);border-radius:var(--dh-r1);' +
     'font-size:12px;font-weight:520;color:var(--dh-ink-2);vertical-align:1px}' +
     '.grp a:hover{color:var(--dh-brand-ink)}' +
     '.grp a[aria-current]{color:var(--dh-brand-ink);text-decoration:underline;text-underline-offset:3px}' +
-    '.themes{display:flex;align-items:center;gap:12px;padding:10px 14px 6px;border-top:1px solid var(--dh-line);' +
+    '.themes{display:flex;align-items:center;gap:14px;padding:10px 14px 6px;border-top:1px solid var(--dh-line);' +
     'margin-top:6px}' +
     '.seg{display:inline-flex;padding:2px;background:var(--dh-sunken);border-radius:var(--dh-r2);gap:2px}' +
     '.seg button{height:28px;padding:0 11px;border-radius:4px;font-size:13px;font-weight:520;color:var(--dh-ink-2)}' +
@@ -363,17 +381,29 @@
     'box-shadow:0 0 0 1px var(--dh-line),0 1px 2px rgba(8,24,36,.08)}' +
     /* compact: phones, and any width where the row would not fit */
     '.bar.compact .switch,.bar.compact .tbtn{display:none}' +
-    '.bar.compact .wm{font-size:15px}.bar.compact .slash{margin:0 1px 0 3px}' +
-    '.bar.compact.tight .wm,.bar.compact.tight .slash{display:none}' +
-    '.bar.compact .home{padding-right:2px}' +
-    '.bar.compact.is-home .wm{display:inline}' +
-    '.bar.compact .product{padding-left:6px}' +
+    /* The phone lockup, the same on every site: the mark, then "dashhq" set small over the product name. It never
+       drops the family. Short of room, the network pill loses its word (squeeze), then the product name truncates. */
+    '.bar.compact .wm,.bar.compact .slash{display:none}' +
+    '.bar.compact.is-home .wm{display:inline;font-size:15px}' +
+    '.bar.compact .home{height:44px;padding-right:0}' +
+    '.bar.compact:not(.is-home) .home .mark{width:26px;height:26px}' +
+    '.bar.compact .product{flex:0 1 auto;min-width:3.4em;height:44px;padding:0 4px 0 8px;flex-direction:column;' +
+    'align-items:flex-start;justify-content:center;gap:3px}' +
+    '.bar.compact .fam{display:block;font-size:11.5px;font-weight:650;font-stretch:112%;letter-spacing:.01em;' +
+    'line-height:1;color:var(--dh-ink-2)}' +
+    '.bar.compact .pl{max-width:100%;gap:6px}' +
+    '.bar.compact .pn{min-width:0;overflow:hidden;text-overflow:ellipsis;line-height:1.15}' +
+    '.bar.compact .end{padding-left:8px}' +
+    '.bar.compact .net{padding:0 9px;gap:6px}.bar.compact button.net{padding-right:5px}' +
+    '.bar.squeeze .nl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}' +
+    '.bar.squeeze .net{gap:4px;padding:0 10px}.bar.squeeze button.net{padding-right:6px}' +
     '.bar.compact .menu{display:grid}' +
     '.bar.compact .sheet{display:none;--dh-nav-dir:column;--dh-nav-h:44px;--dh-nav-fs:16px;--dh-nav-pad:12px;' +
     '--dh-nav-align:stretch}' +
     '.bar.compact.open .sheet{display:block;position:absolute;left:0;right:0;top:100%;z-index:2;' +
     'background:var(--dh-surface);border-bottom:1px solid var(--dh-line);box-shadow:0 18px 30px -18px rgba(8,24,36,.45);' +
-    'max-height:calc(100vh - var(--dh-bar-h));max-height:calc(100dvh - var(--dh-bar-h));overflow:auto;' +
+    'max-height:calc(100vh - var(--dh-bar-h) - var(--dh-tabs-h, 0px));' +
+    'max-height:calc(100dvh - var(--dh-bar-h) - var(--dh-tabs-h, 0px));overflow:auto;' +
     'overscroll-behavior:contain;padding:8px var(--dh-gutter) 20px}' +
     '.bar.compact .nav{display:block;margin:0 0 6px}' +
     '.bar.compact .nav.empty{display:none}' +
@@ -382,7 +412,30 @@
     '.bar.compact .family .doors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px}' +
     '.bar.compact .family .door{display:flex;align-items:center;min-height:44px;padding:0 12px 0 14px}' +
     '.bar.compact .family .dd,.bar.compact .family .steps{display:none}' +
-    '.bar.compact .grp,.bar.compact .themes{padding-left:14px;padding-right:0}' +
+    /* Start keeps its explanation and both destinations on phones: it is where newcomers go */
+    '.bar.compact .family .door.start{grid-column:1/-1;display:grid;gap:1px;padding:9px 12px 2px 14px}' +
+    '.bar.compact .family .door.start .dd{display:block}' +
+    '.bar.compact .family .door.start .steps{display:flex;gap:0;margin:0 0 0 -10px}' +
+    '.bar.compact .steps a{display:inline-flex;align-items:center;min-height:40px;padding:0 10px}' +
+    /* Apps and Also: 44px rows in two columns, like the doors, not packed inline links */
+    '.bar.compact .grp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 2px;padding:6px 0 0}' +
+    '.bar.compact .gl{grid-column:1/-1;padding:6px 14px 2px}' +
+    '.bar.compact .grp.g3{grid-template-columns:repeat(3,minmax(0,1fr))}' +
+    '.bar.compact .grp a{display:flex;align-items:center;min-height:44px;padding:0 12px 0 14px;border-radius:var(--dh-r2);' +
+    'font-size:15px}' +
+    '.bar.compact .grp a:hover{background:var(--dh-hover);color:var(--dh-ink)}' +
+    '.bar.compact .grp a[aria-current]{background:var(--dh-sunken);color:var(--dh-ink);text-decoration:none}' +
+    '.bar.compact .themes{padding-left:14px;padding-right:0}' +
+    /* phone-nav="tabs": the product's sections become a bottom tab bar; the menu then holds only the family */
+    '.bar.compact.tabs .nav{position:fixed;left:0;right:0;bottom:0;z-index:3;margin:0;' +
+    'padding:0 max(env(safe-area-inset-right,0px),4px) env(safe-area-inset-bottom,0px) max(env(safe-area-inset-left,0px),4px);' +
+    'background:var(--dh-surface);border-top:1px solid var(--dh-line);' +
+    '--dh-nav-dir:row;--dh-nav-h:56px;--dh-nav-fs:12px;--dh-nav-pad:4px;--dh-nav-align:stretch;--dh-nav-gap:0;' +
+    '--dh-nav-item:1 1 0;--dh-nav-item-dir:column;--dh-nav-item-gap:4px;--dh-nav-item-justify:center;--dh-nav-ws:normal;' +
+    '--dh-nav-icon:block;--dh-nav-radius:0;--dh-nav-current-bg:transparent;--dh-nav-current-ink:var(--dh-brand-ink);' +
+    '--dh-nav-current-mark:inset 0 2px 0 var(--dh-brand)}' +
+    '.bar.compact.tabs .nav.empty{display:none}' +
+    '.bar.compact.tabs .family{border-top:0;padding-top:0}' +
     '.bar.compact .net{height:36px}' +
     '.bar.compact .menu{width:40px;height:40px;margin-right:-4px}' +
     '.bar.compact .seg button{height:40px;padding:0 14px}' +
@@ -392,7 +445,7 @@
     '@keyframes dh-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}';
 
   const FOOT_CSS = BASE_CSS +
-    ':host{display:block;margin-top:var(--dh-7)}' +
+    ':host{display:block;margin-top:var(--dh-7);padding-bottom:var(--dh-tabs-h,0px)}' +
     '.f{border-top:1px solid var(--dh-line);font-size:13px;color:var(--dh-ink-2)}' +
     '.in{max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;padding:var(--dh-5) var(--dh-gutter) var(--dh-6);' +
     'display:grid;gap:14px}' +
@@ -423,6 +476,42 @@
     '.cp:hover{background:var(--dh-hover);color:var(--dh-ink)}' +
     '.cp.done{color:var(--dh-good)}' +
     '@media (pointer:coarse){.cp{width:40px;height:40px;margin:-8px -8px -8px 0}}';
+
+  // A well (sunken, no border) so it sits inside a dialog or card without becoming a card in a card.
+  const SIGNIN_CSS = BASE_CSS +
+    ':host{display:block}' +
+    '.w{container-type:inline-size;display:grid;gap:10px;padding:14px 16px;background:var(--dh-page);' +
+    'border:1px solid var(--dh-line);border-radius:var(--dh-r3);font-size:14px;line-height:1.45;color:var(--dh-ink);text-align:left}' +
+    'p{margin:0}' +
+    '.t{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:620;line-height:1.3}' +
+    '.t .ic{color:var(--dh-brand-ink);flex:none}' +
+    '.p,.q,.nn{color:var(--dh-ink-2)}' +
+    '.nn{font-size:13px}' +
+    '.p a{color:var(--dh-brand-ink);font-weight:600;white-space:nowrap}' +
+    '.p a:hover{text-decoration:underline;text-underline-offset:3px}' +
+    'dl{margin:0;display:grid;grid-template-columns:max-content minmax(0,1fr);gap:6px 14px}' +
+    'dl>div{display:contents}' +
+    'dt{font-size:13px;font-weight:520;color:var(--dh-ink-2);padding-top:1px}' +
+    'dd{margin:0}' +
+    /* Narrow (a phone dialog): each fact is one paragraph with its label as a lead-in, so the ways in stay close. */
+    '@container (max-width:360px){dl{grid-template-columns:minmax(0,1fr);gap:8px}dl>div{display:block}' +
+    'dt{display:inline;padding:0;font-size:14px;font-weight:600;color:var(--dh-ink)}dt::after{content:":"}' +
+    'dd{display:inline;margin-left:.3em}}' +
+    '.f{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;padding-top:10px;border-top:1px solid var(--dh-line)}' +
+    '.f a{color:var(--dh-brand-ink);font-weight:600}' +
+    '.f a:hover{text-decoration:underline;text-underline-offset:3px}' +
+    '.nt{color:var(--dh-ink-2);font-size:13px}' +
+    '.ar{margin-left:.3em}' +
+    /* An app's own create action in the start slot (Governance: "Create an account") looks like the default link,
+       whatever classes or framework resets it brings. */
+    '::slotted([slot=start]){all:unset!important;display:inline-flex!important;align-items:center!important;' +
+    'color:var(--dh-brand-ink)!important;font:600 14px/1.45 var(--dh-font)!important;cursor:pointer!important}' +
+    '::slotted([slot=start][hidden]){display:none!important}' +
+    '::slotted([slot=start]:hover){text-decoration:underline!important;text-underline-offset:3px!important}' +
+    '::slotted([slot=start]:focus-visible){outline:2px solid var(--dh-focus)!important;outline-offset:2px!important;' +
+    'border-radius:var(--dh-r1)!important}' +
+    '@media (pointer:coarse){.f a{display:inline-flex;align-items:center;min-height:40px}' +
+    '::slotted([slot=start]){min-height:40px!important}}';
 
   /* ---------------------------------------------------------------- base element */
   // Shadow root + one adopted stylesheet per element class; re-render on any observed attribute change.
@@ -462,14 +551,42 @@
   /* ---------------------------------------------------------------- <dashhq-bar> */
   let openBar = null; // only one bar menu open on the page
 
+  // A bar drawing its sections as a bottom tab bar publishes the tab bar's height as --dh-tabs-h on <html>, so the
+  // footer (and any fixed element of the app's own) keeps clear of it. Only presence is compared, so restoring the
+  // property after a framework wipes <html style> can't loop with the observer above.
+  const tabBars = new Set();
+  const TABS_H = 'calc(57px + env(safe-area-inset-bottom, 0px))';
+  function syncTabs() {
+    const has = root.style.getPropertyValue('--dh-tabs-h') !== '';
+    if (tabBars.size && !has) root.style.setProperty('--dh-tabs-h', TABS_H);
+    else if (!tabBars.size && has) root.style.removeProperty('--dh-tabs-h');
+  }
+
+  // Custom states let product CSS follow the bar's layout without the element writing attributes on itself:
+  // dashhq-bar:state(compact) { … }. Older engines spell custom states with a leading "--".
+  function setState(el, name, on) {
+    const s = el._internals && el._internals.states;
+    if (!s) return;
+    // Old engines throw only from add() for the unprefixed name, so setting stops at the first spelling that
+    // works and removal clears both.
+    for (const n of [name, '--' + name]) {
+      try {
+        if (on) { s.add(n); return; }
+        s.delete(n);
+      } catch { /* spelling not supported */ }
+    }
+  }
+
   class DashhqBar extends ShellElement {
     static get observedAttributes() {
-      return ['product', 'product-name', 'product-href', 'network', 'networks', 'network-settings', 'network-note', 'no-theme'];
+      return ['product', 'product-name', 'product-href', 'network', 'networks', 'network-settings', 'network-note',
+        'no-theme', 'phone-nav'];
     }
     static css = BAR_CSS;
 
     constructor() {
       super();
+      try { this._internals = this.attachInternals(); } catch { this._internals = null; }
       this._fit = this._fit.bind(this);
       this._onDoc = this._onDoc.bind(this);
       this._onPointer = this._onPointer.bind(this);
@@ -494,6 +611,8 @@
       doc.removeEventListener('keydown', this._onKey);
       this._ro.disconnect();
       this.close();
+      tabBars.delete(this);
+      syncTabs();
       if (this._net) { this._net = null; netChanged(); }
     }
 
@@ -513,10 +632,14 @@
         this._family(key, net));
       switchBtn.addEventListener('click', () => this._toggle('door', switchBtn, doorPop));
 
+      // One section nav per product. The bar places it: in the row on wide screens; on phones at the top of the menu,
+      // or (phone-nav="tabs") as a bottom tab bar, leaving the menu to the family.
+      this._tabs = this.getAttribute('phone-nav') === 'tabs';
       this._navSlot = h('slot', { name: 'nav' });
       this._navSlot.addEventListener('slotchange', this._fit);
       this._nav = h('div', { class: 'nav empty', part: 'nav' }, this._navSlot);
-      const sheetEl = h('div', { class: 'sheet', id: 'dh-sheet' }, this._nav, h('div', { class: 'family' }, this._family(key, net)));
+      const sheetEl = h('div', { class: 'sheet', id: 'dh-sheet' }, !this._tabs && this._nav,
+        h('div', { class: 'family' }, this._family(key, net)));
 
       const end = h('div', { class: 'end' }, net && this._netControl(net, kind));
       if (!this.hasAttribute('no-theme')) {
@@ -538,14 +661,19 @@
       end.append(h('slot', { name: 'actions' }), menuBtn);
 
       const productHref = this.getAttribute('product-href') || '/';
+      // .fam is the phone lockup's small "dashhq" over the product name; desktop shows the inline wordmark instead.
+      this._pn = h('span', { class: 'pn' }, this.getAttribute('product-name') || PRODUCTS[key].name);
       const product = key !== 'home' && h('a', { class: 'product', href: net ? withNetwork(productHref, net) : productHref },
-        h('slot', { name: 'logo' }), h('span', { class: 'pn' }, this.getAttribute('product-name') || PRODUCTS[key].name));
+        h('span', { class: 'fam', 'aria-hidden': 'true' }, 'dashhq'),
+        h('span', { class: 'pl' }, h('slot', { name: 'logo' }), this._pn));
+      this._product = product || null;
       this._row = h('div', { class: 'row' },
         h('a', { class: 'home', href: href('home'), 'aria-label': 'dashhq.org home' },
           mark(22), h('span', { class: 'wm', 'aria-hidden': 'true' }, 'dashhq')),
         product && [h('span', { class: 'slash', 'aria-hidden': 'true' }, '/'), product],
-        switchBtn, doorPop, sheetEl, end);
-      this._bar = h('header', { class: `bar ${kind}${key === 'home' ? ' is-home' : ''}`, part: 'bar' }, this._row);
+        switchBtn, doorPop, this._tabs && this._nav, sheetEl, end);
+      this._bar = h('header', { class: `bar ${kind}${key === 'home' ? ' is-home' : ''}${this._tabs ? ' tabs' : ''}`,
+        part: 'bar' }, this._row);
       // Following any link inside the bar (including the product's slotted nav) closes what is open.
       this._bar.addEventListener('click', (e) => { if (e.target.closest && e.target.closest('a')) this.close(); });
       this._paint(this._bar);
@@ -561,14 +689,23 @@
     _family(key, net) {
       const cur = PRODUCTS[key].door;
       const to = (k) => doorHref(k, net);
-      const link = (k) => h('a', { href: to(k), 'aria-current': current(key === k, 'page') }, PRODUCTS[k].name,
-        PRODUCTS[k].only && h('span', { class: 'only' }, PRODUCTS[k].only));
+      const link = (k, tag = true) => h('a', { href: to(k), 'aria-current': current(key === k, 'page') }, PRODUCTS[k].name,
+        tag && PRODUCTS[k].only && h('span', { class: 'only' }, PRODUCTS[k].only));
       const doors = h('ul', { class: 'doors' }, DOORS.map((d) =>
-        h('li', { class: 'door', 'aria-current': current(cur === d.door) },
+        h('li', { class: d.steps ? 'door start' : 'door', 'aria-current': current(cur === d.door) },
           h('a', { class: 'dn', href: to(d.key) }, d.label),
           h('span', { class: 'dd' }, d.desc),
           d.steps && h('span', { class: 'steps' }, link(d.steps[0]), h('span', { 'aria-hidden': 'true' }, '→'), link(d.steps[1])))));
-      const group = (label, keys) => h('div', { class: 'grp' }, h('span', { class: 'gl' }, label), keys.map((k) => link(k)));
+      // A group whose products all run on one network says so once, beside its label, instead of on every link.
+      const group = (label, keys) => {
+        const only = new Set(keys.map((k) => PRODUCTS[k].only));
+        const shared = only.size === 1 ? [...only][0] : null;
+        // Short names (Forge, Pollr, Yappr) share one row of three on phones; longer ones take two columns.
+        const cls = keys.every((k) => PRODUCTS[k].name.length <= 6) ? 'grp g3' : 'grp';
+        return h('div', { class: cls, role: 'group', 'aria-label': shared ? `${label}, ${shared} only` : label },
+          h('span', { class: 'gl', 'aria-hidden': 'true' }, label, shared && h('span', { class: 'only' }, shared)),
+          keys.map((k) => link(k, !shared)));
+      };
 
       const btns = [['system', 'System'], ['light', 'Light'], ['dark', 'Dark']].map(([p, label]) => {
         const b = h('button', { type: 'button' }, label);
@@ -587,12 +724,13 @@
     _netControl(net, kind) {
       const label = networkLabel(net);
       const list = (this.getAttribute('networks') || '').split(/[\s,]+/).map(parseNetwork).filter(Boolean);
-      const face = [h('span', { class: 'dot', 'aria-hidden': 'true' }), h('span', { class: 'sr' }, 'Network: '), label];
+      const face = [h('span', { class: 'dot', 'aria-hidden': 'true' }), h('span', { class: 'sr' }, 'Network: '),
+        h('span', { class: 'nl' }, label)];
       if (list.length < 2) return h('span', { class: 'net ' + kind, title: 'Network: ' + label }, face);
 
       const btn = h('button', { class: 'net ' + kind, type: 'button', 'aria-expanded': 'false', 'aria-controls': 'dh-net',
-        'data-f': 'net' }, face, icon('chevron', 14));
-      const options = list.map((n) => {
+        'data-f': 'net', title: 'Network: ' + label }, face, icon('chevron', 14));
+      const option = (n) => {
         const a = h('a', { class: 'opt', href: withNetwork(location.href, n), 'aria-current': current(n === net) },
           h('span', { class: 'tick' }, n === net && icon('check', 16)), networkLabel(n));
         // SPAs change the URL after render, so rebuild the target from the current URL whenever it is used.
@@ -606,10 +744,24 @@
           if (!proceed) e.preventDefault();
         });
         return a;
-      });
+      };
+      // Devnets are internal: unless this page is on one, they wait behind a toggle instead of sitting beside Mainnet.
+      const devs = kind === 'dev' ? [] : list.filter((n) => networkKind(n) === 'dev');
+      let devGroup = null;
+      if (devs.length) {
+        const box = h('div', { id: 'dh-devnets', hidden: true }, devs.map(option));
+        const toggle = h('button', { class: 'opt', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'dh-devnets' },
+          h('span', { class: 'tick' }), 'Developer networks', icon('chevron', 14));
+        toggle.addEventListener('click', () => {
+          box.hidden = !box.hidden;
+          toggle.setAttribute('aria-expanded', String(!box.hidden));
+        });
+        devGroup = [toggle, box];
+      }
       const settings = this.getAttribute('network-settings');
       const note = this.getAttribute('network-note');
-      const pop = h('nav', { class: 'pop netpop', id: 'dh-net', hidden: true, 'aria-label': 'Network' }, options,
+      const pop = h('nav', { class: 'pop netpop', id: 'dh-net', hidden: true, 'aria-label': 'Network' },
+        list.filter((n) => !devs.includes(n)).map(option), devGroup,
         note && h('p', { class: 'nnote' }, note),
         settings && h('a', { class: 'opt more', href: settings }, 'Network settings'));
       btn.addEventListener('click', () => this._toggle('net', btn, pop));
@@ -638,8 +790,9 @@
       this._setOpen(this._open, true);
       if (which === 'sheet') {
         // The sheet comes before the menu button in DOM order, so put keyboard focus on its first link.
-        const first = this._navSlot.assignedElements().map((el) => (el.matches('a') ? el : el.querySelector('a')))
-          .find((a) => a && a.getClientRects().length) || panel.querySelector('a');
+        const first = (!this._tabs && this._navSlot.assignedElements()
+          .map((el) => (el.matches('a') ? el : el.querySelector('a')))
+          .find((a) => a && a.getClientRects().length)) || panel.querySelector('a');
         if (first) first.focus();
       }
     }
@@ -654,6 +807,8 @@
     _outside(e) {
       if (!this._open) return false;
       const path = e.composedPath();
+      // The tab bar stays visible under the open menu; a tab is a real destination, not a tap to dismiss.
+      if (this._tabs && path.includes(this._nav)) return false;
       return !path.includes(this._open.panel) && !path.includes(this._open.trigger);
     }
     _onPointer(e) {
@@ -685,17 +840,30 @@
     _fit() {
       const bar = this._bar, row = this._row;
       if (!bar) return;
-      // A product may hide its slotted nav (an app with its own bottom nav on phones); treat that as no nav.
-      const shown = this._navSlot.assignedElements().some((el) => getComputedStyle(el).display !== 'none');
-      this._nav.classList.toggle('empty', !shown);
       const w = this.getBoundingClientRect().width;
       const was = bar.classList.contains('compact');
-      bar.classList.remove('compact', 'tight');
+      // Measure the wide row as the wide row: product CSS keyed to :state(compact) must not still apply, or the
+      // bar would flip back and forth between layouts.
+      bar.classList.remove('compact', 'squeeze');
+      setState(this, 'compact', false);
       const over = () => row.scrollWidth > row.clientWidth + 1;
       const compact = w > 0 && (w < 600 || over());
       bar.classList.toggle('compact', compact);
-      // On phones the family wordmark stays when the row has room for it, so shared links still say dashhq.
-      if (compact && over()) bar.classList.add('tight');
+      setState(this, 'compact', compact);
+      // A product may hide its slotted nav in one layout; treat that as no nav (read after the final state is set).
+      const shown = this._navSlot.assignedElements().some((el) => getComputedStyle(el).display !== 'none');
+      this._nav.classList.toggle('empty', !shown);
+      // The phone lockup keeps "dashhq" and the product at any width. Short of room, the network pill drops its word
+      // first; only then does the product name truncate (with the full name as its tooltip).
+      const pn = this._product && this._pn;
+      const cut = () => !!pn && pn.scrollWidth > pn.clientWidth + 1;
+      if (compact && (over() || cut())) bar.classList.add('squeeze');
+      if (pn) {
+        if (compact && cut()) this._product.setAttribute('title', pn.textContent);
+        else this._product.removeAttribute('title');
+      }
+      if (compact && this._tabs && shown) tabBars.add(this); else tabBars.delete(this);
+      syncTabs();
       if (this._open && was !== compact && (this._open.which === 'sheet') !== compact) this.close();
     }
   }
@@ -772,8 +940,90 @@
     }
   }
 
+  /* ---------------------------------------------------------------- <dashhq-signin-help> */
+  // One explanation of signing in, worded the same in every app: what a Dash identity is, what this app asks for and
+  // where it keeps it, and where to get an identity. The app's own ways in (its forms and choices) stay the app's.
+  const ASKS = {
+    wallet: 'an approval in your Dash wallet',
+    passkey: 'a passkey',
+    phrase: 'your recovery phrase (12 or 24 words)',
+    key: 'a private key (High or Critical)',
+    password: (name) => `a password you set in ${name}`
+  };
+  const KEPT = {
+    memory: 'In memory only, never saved in this browser. Closing the tab signs you out.',
+    tab: 'In this tab until you close it or sign out.',
+    browser: 'In this browser until you sign out. On a shared computer, sign out when you finish.',
+    sealed: 'In this browser, encrypted with your passkey or passphrase. You unlock it when you come back.'
+  };
+  const listOf = (items) => (items.length < 2 ? items[0] : `${items.slice(0, -1).join(', ')} or ${items[items.length - 1]}`);
+  const sentence = (s) => s.charAt(0).toUpperCase() + s.slice(1) + '.';
+  // A margin, not a space: touch screens lay these links out as flex boxes, which drop a leading space.
+  const arrow = () => h('span', { class: 'ar', 'aria-hidden': 'true' }, '→');
+  function pageProduct() {
+    let key = null;
+    for (const b of bars) key = PRODUCTS[b.getAttribute('product')] ? b.getAttribute('product') : key;
+    return key;
+  }
+
+  class DashhqSigninHelp extends ShellElement {
+    static get observedAttributes() { return ['product', 'network', 'asks', 'why', 'kept', 'kept-note']; }
+    static css = SIGNIN_CSS;
+
+    render() {
+      this._drop();
+      // Without its own attributes it follows the page's bar, which may connect or switch networks later.
+      if (!this.hasAttribute('network') || !this.hasAttribute('product')) this._on(netListeners, () => this.render());
+      const key = PRODUCTS[this.getAttribute('product')] ? this.getAttribute('product') : pageProduct();
+      const name = key && key !== 'home' ? PRODUCTS[key].name : null;
+      // An app that runs on one network explains that network, whatever page or bar it sits under.
+      const net = parseNetwork(this.getAttribute('network')) || (key && parseNetwork(PRODUCTS[key].only)) || activeNetwork();
+      const netName = networkLabel(net);
+
+      const tokens = [...new Set((this.getAttribute('asks') || '').split(/[\s,]+/).filter(Boolean))];
+      const ways = tokens.filter((t) => Object.hasOwn(ASKS, t))
+        .map((t) => (typeof ASKS[t] === 'function' ? ASKS[t](name || 'this app') : ASKS[t]));
+      const voting = tokens.includes('voting-key');
+      const asks = [];
+      if (ways.length) asks.push(sentence(listOf(ways)));
+      if (voting) {
+        asks.push(ways.length ? 'To vote as a masternode, also its voting key: never the owner, payout or collateral key.'
+          : 'Your masternode\'s voting key: never the owner, payout or collateral key.');
+      }
+      const why = (this.getAttribute('why') || '').trim();
+      if (why && asks.length) asks.push(why);
+      const keptKey = this.getAttribute('kept');
+      const several = ways.length + (voting ? 1 : 0) > 1;
+      let keptLine = null;
+      if (Object.hasOwn(KEPT, keptKey)) keptLine = KEPT[keptKey];
+      else if (several) keptLine = 'Each way below says what it keeps and for how long.';
+      const note = (this.getAttribute('kept-note') || '').trim();
+
+      const facts = [];
+      if (asks.length) facts.push(h('div', null, h('dt', null, `${name || 'This app'} asks for`), h('dd', null, asks.join(' '))));
+      if (asks.length && (keptLine || note)) {
+        facts.push(h('div', null, h('dt', null, 'Where it\'s kept'),
+          h('dd', null, keptLine, keptLine && note && ' ', note && h('span', { class: 'nn' }, note))));
+      }
+
+      // Testnet starts the family's Start journey; Mainnet and devnets create one in Bridge on that network.
+      const start = net === 'testnet' ? h('a', { href: doorHref('bridge') }, 'Start on Testnet', arrow())
+        : [h('a', { href: href('bridge', '/?mode=create', { network: net }) }, 'Create one in Bridge', arrow()),
+          h('span', { class: 'nt' }, net === 'mainnet' ? 'Mainnet, real DASH' : netName)];
+
+      this._paint(h('div', { class: 'w' },
+        h('p', { class: 't' }, icon('identity', 20), 'You sign in with a Dash identity'),
+        h('p', { class: 'p' }, `Your account on Dash Platform. One ${netName} identity works across the dashhq apps on ` +
+          `${netName}; each app signs you in on its own. ` + (net === 'mainnet' ? 'Saving data on Mainnet costs real DASH. ' : ''),
+        h('a', { class: 'lk', href: href('home', IDENTITY_PATH) }, 'How identities work', arrow())),
+        facts.length ? h('dl', null, facts) : null,
+        h('p', { class: 'f' }, h('span', { class: 'q' }, 'No identity yet?'), h('slot', { name: 'start' }, start))));
+    }
+  }
+
   /* ---------------------------------------------------------------- register + public API */
-  for (const [name, cls] of [['dashhq-bar', DashhqBar], ['dashhq-footer', DashhqFooter], ['dashhq-hash', DashhqHash]]) {
+  for (const [name, cls] of [['dashhq-bar', DashhqBar], ['dashhq-footer', DashhqFooter], ['dashhq-hash', DashhqHash],
+    ['dashhq-signin-help', DashhqSigninHelp]]) {
     if (!customElements.get(name)) customElements.define(name, cls);
   }
 

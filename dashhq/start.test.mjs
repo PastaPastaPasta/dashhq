@@ -19,9 +19,9 @@ try {
       await page.goto(`http://${product}.dashhq.localhost:8787/?network=mainnet`);
       const result = await page.evaluate(() => {
         const bar = document.querySelector('dashhq-bar').shadowRoot;
-        const starts = [...bar.querySelectorAll('.door')].filter(el => el.querySelector('.dn').textContent === 'Start');
+        const starts = [...bar.querySelectorAll('.door')].filter(el => el.querySelector('.dn').textContent === 'Start on Testnet');
         const links = starts.flatMap(el => [...el.querySelectorAll('a')].map(a => a.href));
-        links.push([...document.querySelector('dashhq-footer').shadowRoot.querySelectorAll('a')].find(a => a.textContent === 'Start').href);
+        links.push([...document.querySelector('dashhq-footer').shadowRoot.querySelectorAll('a')].find(a => a.textContent === 'Start on Testnet').href);
         return { links, first: starts[0].querySelector('a').href,
           defaultBridge: dashhq.href('bridge'), defaultFaucet: dashhq.href('faucet'),
           explicit: dashhq.href('bridge', '/', { network: 'mainnet' }),

@@ -22,3 +22,6 @@ p { margin: 0; }
 :root[data-accent="forge"] { --dh-accent: var(--dh-accent-forge); }
 :root[data-accent="pollr"] { --dh-accent: var(--dh-accent-pollr); }
 :root[data-accent="yappr"] { --dh-accent: var(--dh-accent-yappr); }
+/* Sign-in frames: dialogs shown in place, side by side */
+.signin-demos { --dh-grid-min: 380px; align-items: start; }
+.signin-frame { width: auto; max-height: none; margin: 0; box-shadow: none; border: 1px solid var(--dh-line); }

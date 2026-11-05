@@ -1,7 +1,23 @@
-# dashhq shell 1.4.1
+# dashhq shell 1.5.3
 
-The shared shell for the dashhq.org family: the family bar, the footer, the hash display, the theme, and the
-tokens they all draw with. Read `../DESIGN.md` for the rules and `../MIGRATION.md` for your site's plan.
+The shared shell for the dashhq.org family: the family bar, the footer, the hash display, the sign-in explanation,
+the theme, and the tokens they all draw with. Read `../DESIGN.md` for the rules and `../ADOPTION-r4.md` for your
+site's changes this round.
+
+## New in 1.5 (round 4)
+
+| What | Who acts | How |
+|---|---|---|
+| **One phone lockup.** Every compact bar shows the mark and a small `dashhq` over the product name. The wordmark is never dropped; short of room the network pill loses its word first, then the product name truncates. | Nobody: re-vendor. Delete any CSS that hides or restyles the bar's lockup. | `bars.html` shows all 14 bars. |
+| **One section nav per app.** `slot="nav"` is the app's only section nav. With `phone-nav="tabs"` the bar draws it as a bottom tab bar on phones, and the menu keeps only the family. | Pollr, Yappr (tabs); Forge (menu) | Delete your own bottom nav and sidebars' section lists; see *Navigation layers*. |
+| **`<dashhq-signin-help>`.** One explanation of signing in: what a Dash identity is, what this app asks for, where it is kept, Start, and the hub's `/identity/` page. | Governance, Pollr, Forge, Yappr | Put it at the top of your sign-in surface; see the element's section. |
+| **`.dh-choice` and `.dh-dialog`.** Choice cards for the ways in (and any "new or existing" choice), and the dialog frame. | Same apps; Bridge for its contract import choice | `components.html#signin`. |
+| **Phone menu.** Start is "Start on Testnet" with its explanation and Bridge → Faucet; Apps and Also are 44px rows. | Nobody | |
+| **Devnets** in a `networks` list sit behind "Developer networks" unless the page is on a devnet. | Nobody (Explorer: no change needed) | |
+| **`:state(compact)`** on the bar and **`--dh-tabs-h`** on `<html>` let product CSS follow the bar. | Optional | |
+| **1.5.1:** the family menus' Fee estimator opens Explorer's `/tools/fees/` (with the network) instead of the retired host. Review fixes: the bar no longer oscillates when product CSS hides its nav with `:state(compact)`; `hidden` works on nav items and on the help's `start` slot; a tab works while the menu is open; the sign-in help explains the app's own network (Testnet for the apps, even under a Mainnet bar) and offers Bridge on that network off Testnet. | Everyone: re-vendor 1.5.1 | |
+| **1.5.3:** the sign-in help is shorter on phones: one sentence about identities with "How identities work →" inline, facts as lead-in paragraphs, `kept-note` in secondary ink. The door switcher's group labels line up; the network menu sizes to its content ("Developer networks" on one line). | Everyone: re-vendor 1.5.3 | |
+| **1.5.2:** `asks="password"` reads "a password you set in *Product*" (Yappr's backup password, Forge's unlock passphrase). On phones a done step's link in `.dh-steps` covers its disc, and its label lines up with the others (it sat lower in Faucet). | Everyone: re-vendor 1.5.2 | |
 
 | File | What | Required |
 |---|---|---|
@@ -14,6 +30,8 @@ tokens they all draw with. Read `../DESIGN.md` for the rules and `../MIGRATION.m
 | `mark/` | The mark as SVG, and the favicon | yes |
 | `dashhq-shell.d.ts`, `dashhq-shell.react.d.ts` | Types for `window.dashhq` and the events; JSX types for the elements (React only) | TS sites |
 | `demo.html` | Every piece on one page; also a CSP test (open it through a server, not `file://`) | no |
+| `bars.html` | All fourteen bars with each site's real attributes, logo and actions: the phone lockup reference | no |
+| `app.html` | An app page: section nav as phone tabs, the sign-in dialog with `<dashhq-signin-help>`, one footer | no |
 | `components.html` | Every component in every state, with the app accents; `?accent=forge\|pollr\|yappr` previews one page-wide | no |
 
 ## Vendor it
@@ -95,16 +113,17 @@ Then, in `<body>`:
 | `product-name` | Override the shown name (rare). |
 | `product-href` | Where the product name links. Default `/`. Set it if you have a base path. |
 | `network` | The network this page shows: `mainnet`, `testnet`, `devnet-<name>`. Omit on pages that are not about one network. Testnet and devnet draw the bar's bottom rule dashed. |
-| `networks` | Space-separated list. With two or more, the network pill becomes a menu. Choosing one navigates to the same URL with `?network=` (including mainnet) unless you cancel the `dashhq-network` event. |
+| `networks` | Space-separated list. With two or more, the network pill becomes a menu. Choosing one navigates to the same URL with `?network=` (including mainnet) unless you cancel the `dashhq-network` event. Devnets in the list wait behind "Developer networks" unless the page is on a devnet. |
 | `network-settings` | URL of an advanced network page; adds "Network settings" to the network menu (gov). |
+| `phone-nav` | `menu` (default) or `tabs`. Where the slotted nav goes on phones: the top of the menu, or a bottom tab bar the bar draws (apps whose sections people switch between constantly: Pollr, Yappr). |
 | `network-note` | One sentence shown under the network choices. Set it on record pages, where a record exists on one network only: "This masternode is on Mainnet; Testnet opens Testnet's list." Pair it with routing that lands on the other network's list or search instead of a dead end. |
 | `sticky` | Sticks the bar to the top. Use it on the core tools. |
 | `no-theme` | Hides the theme button (the menu still has System / Light / Dark). |
 
 | Slot | Content |
 |---|---|
-| `nav` | One element (`<nav>`, `<ul>` or `<div>`) holding your top-level links. Mark the current one `aria-current="page"`. 3 to 6 links. In the phone menu they stack as 44px rows. |
-| `actions` | Sign in, account, notifications. Keep it to one or two compact controls; it stays visible on phones. |
+| `nav` | One element (`<nav>`, `<ul>` or `<div>`) holding your top-level sections: your only section nav. Mark the current one `aria-current="page"`. 3 to 6 links (3 to 5 with `phone-nav="tabs"`). A plain `<button>` may stand in for a link that opens something (Yappr's Post). On phones they stack as 44px menu rows, or become tabs. Inside an item, an element with `class="dh-nav-icon"` (a 22px icon) shows only in the tab bar. `data-dh-phone` on an item shows it only in the phone layouts; `data-dh-desktop` only in the wide row. |
+| `actions` | Sign in or the account menu, and at most one more control (search, notifications). It stays visible on phones: keep it to 100px there ("Sign in", or 40px icon buttons). The account menu holds the app's personal pages (profile, bookmarks, settings, sign out). |
 | `logo` | Apps only: your own glyph (20×20) before your name. |
 
 Events and API:
@@ -120,12 +139,47 @@ Events and API:
 - `window.dashhq.network.fromUrl()`, `.withNetwork(url, n)`, `.canonicalize()`: the one network vocabulary.
 - `window.dashhq.theme.set('dark' | 'light' | 'system')`, `.toggle()`, `.pref`, `.resolved`.
 
-The bar decides its own layout: it collapses to the phone layout (mark, `dashhq /`, product name, network pill, menu
-button) whenever the full row would not fit, not at a fixed breakpoint, and drops the `dashhq /` wordmark only when
-even that row would not fit. You do not need a media query for it. In the phone menu the five doors are a compact
-grid of names; the desktop switcher keeps their descriptions. Apps are tagged with the one network they run on
-(Testnet), so nobody crosses from a Mainnet tool into a practice app unawares. The Fee estimator and DAPI console
-receive the page's network like the other network-aware tools.
+The bar decides its own layout: it collapses to the phone layout whenever the full row would not fit, not at a fixed
+breakpoint. You do not need a media query for it. The phone lockup is the same on every site: the mark, then
+`dashhq` set small over the product name (and the app's logo). It never drops the family name. If the row is still
+short of room (a long name, a network menu and an account control at 320px), the network pill keeps its dot and
+chevron but loses its word, and only then does the product name truncate, with the full name as its tooltip. At 360px
+and wider every product fits whole (`bars.html`, checked by `render-demo.mjs`).
+
+In the phone menu, the doors are a grid of names, except Start, which keeps its line ("Address, testnet DASH,
+identity, username") and its Bridge → Faucet links; Apps and Also are 44px rows. The desktop switcher keeps every
+description. A group whose products all run on one network says so once, beside its label ("Apps · Testnet"), so
+nobody crosses from a Mainnet tool into a practice app unawares. The Fee estimator and DAPI console receive the page's
+network like the other network-aware tools.
+
+**Following the bar from product CSS.** The bar never writes attributes on itself. It exposes its layout as a custom
+state, `dashhq-bar:state(compact)`, for the rare control in your actions slot that must change with it. With
+`phone-nav="tabs"` on a phone it also sets `--dh-tabs-h` on `<html>` (the tab bar's height, including the safe area);
+`<dashhq-footer>` already pads itself by it, and anything of yours fixed to the bottom (a toast, a compose button)
+should sit at `bottom: var(--dh-tabs-h, 0px)`.
+
+`:state()` is recent (Chrome 125, Firefox 126, Safari 17.4). Older engines reject the whole selector list it appears
+in, and `el.matches(':state(compact)')` throws there, so keep it in a rule of its own or behind
+`@supports selector(:state(a))`. Hide a nav item with the `hidden` attribute (or `data-dh-phone` / `data-dh-desktop`):
+the bar's item rules outrank utility classes such as Tailwind's `.hidden`. The tab bar is `position: fixed`, so the
+bar must not sit inside an element with `transform`, `filter`, `backdrop-filter`, `will-change` or `contain`; that
+would pin the tab bar inside the header instead of the screen's bottom edge. Tab labels are one or two short words
+("Polls", "My polls"); they wrap under the icon rather than overflow.
+
+### Navigation layers
+
+One owner per job, at every width (`../DESIGN.md` §5 has the full rule):
+
+| Layer | Owns | Desktop | Phone |
+|---|---|---|---|
+| Family bar | The family (doors, apps, theme), the network, and the account (`actions`) | The row | Mark, lockup, network, actions, menu (≡) |
+| The product's sections (`slot="nav"`) | The app's 3 to 6 top-level sections | In the bar's row, after the product name | Top of the menu, or the bottom tab bar (`phone-nav="tabs"`) |
+| Page | Tabs, filters, sub-navigation of one page or record | In the page | In the page |
+| Footer (`<dashhq-footer>`) | The family links plus your own lines (terms, privacy, data sources) | One footer | One footer |
+
+So: no second header, no sidebar that repeats the sections, no app bottom bar of your own, no second footer in a
+side column. A sidebar may hold things that belong to the page (compose, filters, who to follow), never the section
+list. Personal pages (profile, bookmarks, followers, settings) go in the account menu in `actions`.
 
 ## `<dashhq-hash>`
 
@@ -143,6 +197,43 @@ element's text, which is what shows if the script never runs.
   Display-only addresses in lists (proposal payees, payout addresses) may truncate.
 - **Never secrets.** The value ends up in an attribute, a tooltip and the accessibility tree. Mnemonics, WIF keys
   and voting keys never go in `<dashhq-hash>`.
+
+## `<dashhq-signin-help>`
+
+One explanation of signing in, worded the same in every app. Put it at the top of every sign-in surface, under the
+title and one lede, above your own ways in:
+
+```html
+<div class="dh-dialog__head"><h2 class="dh-dialog__title">Sign in to Pollr</h2> … close … </div>
+<p class="dh-dialog__lede">Reading is free. Sign in to create a poll or vote.</p>
+<dashhq-signin-help asks="key" kept="tab" why="It signs the polls you create and your votes."></dashhq-signin-help>
+… your form, or your ways in as .dh-choice cards …
+```
+
+It says what a Dash identity is (network-aware: "One Testnet identity works across the dashhq apps on Testnet; each
+app signs you in on its own"), what this app asks for and where it keeps it, "No identity yet? Start on Testnet →"
+(Mainnet and devnets: "Create one in Bridge →" on that network, with "Mainnet, real DASH" on Mainnet), and links
+"How identities work →" to the hub's `/identity/` page. Your
+implementation, your security model and your forms stay exactly as they are; this only explains them.
+
+| Attribute | Meaning |
+|---|---|
+| `asks` | What you accept, space-separated, in the order you offer them. `wallet` (an approval in a Dash wallet), `passkey`, `phrase` (recovery phrase, 12 or 24 words), `key` (a private key, High or Critical), `password` (a password or passphrase set in this app: Yappr's backup password, Forge's unlock passphrase), `voting-key` (a masternode's voting key; said separately, with "never the owner, payout or collateral key"). Unknown words are ignored. |
+| `kept` | Where it ends up and for how long. `memory` (never saved in the browser; closing the tab signs you out), `tab` (this tab until it closes or you sign out), `browser` (this browser until you sign out, with the shared-computer advice), `sealed` (this browser, encrypted with a passkey or passphrase). Omit it when your ways differ; the help then says each way below says what it keeps, and each `.dh-choice` says so in its meta line. Update it live if the user flips a "keep me signed in" switch. |
+| `kept-note` | One or two sentences of specifics: limits, expiry, encrypted copies on Platform. "This browser gets its own limited key: at most 0.05 DASH, only on Forge, for 90 days." |
+| `why` | One sentence: what the credential signs here. |
+| `product`, `network` | Default to the page bar's. An app that runs on one network (Forge, Pollr, Yappr) explains that network even without `network`. Set `network` if the dialog is about a different network than the page. |
+
+| Slot | Content |
+|---|---|
+| `start` | Your own create action instead of the default Start link, when you have one (Governance's "Create an account"). A plain `<button>` or `<a>`; the help styles it like its own link. |
+
+It is a well (page ground, hairline border), so it sits inside a dialog or a card without becoming a card in a
+card. Under 360px of width (a phone dialog) each fact becomes one paragraph with its label as a lead-in ("Pollr asks
+for: …"), and `kept-note` is set smaller in secondary ink, so the first way in stays on the first screen. Keep `why`
+to about 12 words. Copy is fixed on purpose: if a sentence is wrong for your app, request a
+change in `REQUESTS/` rather than working around it. Accurate values for each app are in `../ADOPTION-r4.md`, and the
+page it links to is `../IDENTITY-PAGE.md`.
 
 ## Components (`dashhq-components.css`)
 
@@ -182,6 +273,8 @@ The three accents are tokens, checked against the navy ink at rest, on hover and
 | Fields | `dh-field`, `dh-field__label`, `__optional`, `__help`, `__error`; `dh-input` (`--mono`, `--sm`), `dh-select`, `dh-textarea`; `dh-input-group` + `__addon`; `dh-inline-form`; `dh-form`, `dh-form__row`, `dh-fieldset`; `dh-check` | Label above. Mark invalid fields with `aria-invalid="true"` and `aria-describedby` pointing at the error. On touch, text is 16px so iOS doesn't zoom. |
 | Segmented / tabs | `dh-seg` (`--block`) with `aria-pressed` buttons or `aria-current` links; `dh-tabs` with `aria-current` / `aria-selected`; `dh-count` | Segmented control: views of the same data. Tabs: sections of one record. Both change the URL. |
 | Cards | `dh-card` (`--flush`, `--link`), `__head`, `__title`, `__desc`, `__foot`, `__rule`; `dh-panel` = `dh-card` | No shadow, no card inside a card. |
+| Choices | `dh-choices` (`--2`), `dh-choice`, `__icon`, `__title`, `__desc`, `__meta` | One whole-card `<button>` or `<a>` per way to do a thing (sign-in methods, new or existing identity). Recommended first, with a `dh-badge` if you say so; unavailable ways last and `disabled` (dashed). `aria-pressed`/`aria-checked`/`aria-current` mark the chosen one. The meta line says what it keeps ("Kept: this tab only"). |
+| Dialog | `dh-dialog` (on `<dialog>` or a framework's dialog content), `__head`, `__title`, `__lede`, `__body` | Title left, close top right (`dh-btn--quiet dh-btn--icon`), one lede. 520px wide. |
 | Stats | `dh-stats`, `dh-stat` (`--key`, `--good`, `--warn`), `__label`, `__value`, `__note` | |
 | Tables | `dh-table` (`--compact`, `--cards`, `--stack`), `dh-table-wrap`, `dh-r`, `dh-sub`; row cards: `dh-rc-title`, `dh-rc-end`, `dh-rc-line`, `dh-rc-actions`, `dh-rc-hide` | Every `td` gets `data-label`. `--cards` turns list tables into Radar-style row cards under 640px: the title's link covers the card, controls in any cell stay clickable above it, and `dh-rc-actions` cells (buttons, checkboxes) move to the card's last line without a label. `--stack` turns record tables (keys, checks) into label/value blocks. Captions stay for screen readers. |
 | Key/value | `dh-kv` (`--ruled`, `--grid`) | `<dt>`/`<dd>` pairs, optionally wrapped in `<div>`. Long values wrap; they never overflow. |

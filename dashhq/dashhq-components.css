@@ -12,7 +12,7 @@
      uppercase a label; the words themselves must be written in sentence case ("Create identity", "Sign in").
    - Primary: the one committing action in view, filled with --dh-accent (amber; an app's accent in apps).
 
-   Contents: layout · page header · section · buttons · fields · segmented control · tabs · cards · stats ·
+   Contents: layout · page header · section · buttons · fields · segmented control · tabs · cards · choices · stats ·
    tables (+ phone row cards) · key/value · badges · notices · states · stepper · misc */
 
 /* ================================================================ layout */
@@ -312,6 +312,54 @@
   .dh-card--flush > .dh-card__foot { padding: var(--dh-3) var(--dh-4); }
 }
 
+/* ================================================================ choice cards
+   Ways to do one thing, side by side: sign-in methods, "new identity or one I have". Each is one button or link
+   with a title, a line or two of description and an optional facts line ("Kept: this tab only"). Comparable
+   choices share one shape; the recommended one comes first and may carry a dh-badge. A way that isn't available
+   yet goes last, disabled (dashed, like everything not real yet), and says why.
+   <div class="dh-choices"> <button class="dh-choice" type="button"> <svg class="dh-choice__icon">
+     <span class="dh-choice__title">Use a passkey</span> <span class="dh-choice__desc">…</span>
+     <span class="dh-choice__meta">…</span> </button> </div> */
+.dh-choices { display: grid; gap: var(--dh-2); }
+.dh-choices--2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+.dh-choice { box-sizing: border-box; display: grid; grid-template-columns: auto minmax(0, 1fr); align-content: start;
+  row-gap: 2px; width: 100%; min-width: 0; min-height: 44px; margin: 0; padding: var(--dh-3) var(--dh-4);
+  appearance: none; background: var(--dh-surface); border: 1px solid var(--dh-line); border-radius: var(--dh-r3);
+  color: var(--dh-ink); font: var(--dh-w-body) var(--dh-fs-ui)/1.45 var(--dh-font); text-align: left;
+  text-decoration: none; text-transform: none; letter-spacing: 0; cursor: pointer;
+  transition: border-color var(--dh-dur-1) var(--dh-ease); -webkit-tap-highlight-color: transparent; }
+.dh-choice > * { grid-column: 2; min-width: 0; }
+.dh-choice > .dh-choice__icon { grid-column: 1; grid-row: 1 / span 3; width: 20px; height: 20px; margin: 1px var(--dh-3) 0 0;
+  color: var(--dh-brand-ink); }
+.dh-choice__title { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: var(--dh-fs-body);
+  font-weight: var(--dh-w-strong); line-height: 1.3; color: var(--dh-ink); }
+.dh-choice__desc { color: var(--dh-ink-2); }
+.dh-choice__meta { margin-top: 4px; font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
+.dh-choice:hover { border-color: var(--dh-line-2); text-decoration: none; }
+.dh-choice:hover .dh-choice__title { color: var(--dh-brand-ink); }
+.dh-choice:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
+.dh-choice:is([aria-pressed="true"], [aria-checked="true"], [aria-current]:not([aria-current="false"])) {
+  border-color: var(--dh-brand); box-shadow: 0 0 0 1px var(--dh-brand); }
+.dh-choice:is(:disabled, [aria-disabled="true"]) { cursor: default; background: var(--dh-sunken); border-style: dashed;
+  border-color: var(--dh-line-2); }
+.dh-choice:is(:disabled, [aria-disabled="true"]) :is(.dh-choice__title, .dh-choice__icon) { color: var(--dh-ink-2); }
+
+/* ================================================================ dialog
+   The frame for a modal (a native <dialog>, or a framework's dialog content): title left, close top right, one
+   lede, then the body. Sign-in uses it: title "Sign in to Pollr", a lede saying what signing in lets you do,
+   <dashhq-signin-help>, then the ways in. */
+.dh-dialog { box-sizing: border-box; width: min(520px, calc(100vw - 2 * var(--dh-gutter))); max-height: calc(100dvh - 32px);
+  margin: auto; padding: var(--dh-5); overflow: auto; background: var(--dh-surface); color: var(--dh-ink);
+  border: 0; border-radius: var(--dh-r3); box-shadow: var(--dh-shadow-pop); font: var(--dh-w-body) var(--dh-fs-body)/var(--dh-lh-body) var(--dh-font); }
+.dh-dialog::backdrop { background: rgba(6, 19, 27, .52); }
+.dh-dialog__head { display: flex; align-items: flex-start; gap: var(--dh-3); margin-bottom: var(--dh-2); }
+.dh-dialog__title { flex: 1; margin: 0; font: var(--dh-w-head) var(--dh-fs-h2)/var(--dh-lh-head) var(--dh-font);
+  font-stretch: var(--dh-stretch-head); letter-spacing: -.015em; text-transform: none; }
+.dh-dialog__head > .dh-btn { margin: -4px -8px 0 0; }
+.dh-dialog__lede { margin: 0 0 var(--dh-4); color: var(--dh-ink-2); }
+.dh-dialog__body { display: grid; gap: var(--dh-4); }
+@media (max-width: 640px) { .dh-dialog { padding: var(--dh-4); } }
+
 /* ================================================================ stats */
 .dh-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--dh-4) var(--dh-5); }
 .dh-stat { display: grid; gap: 2px; align-content: start; padding-left: 12px; border-left: 1px solid var(--dh-line); min-width: 0; }
@@ -573,7 +621,8 @@
   .dh-steps { align-items: flex-start; font-size: var(--dh-fs-xs); }
   .dh-steps > li, .dh-steps > li:last-child { position: relative; flex: 1 1 0; flex-direction: column; gap: 6px; text-align: center; white-space: normal; }
   .dh-steps > li:not(:last-child)::after { position: absolute; top: 12px; left: calc(50% + 16px); right: calc(-50% + 16px); min-width: 0; margin: 0; }
-  .dh-steps > li > a { padding: 2px 0; }
+  /* A done step's link covers its disc and its label: a 46px target whose text lines up with the other labels. */
+  .dh-steps > li > a:where(:not(.dh-btn)) { display: block; min-height: 0; margin-top: -30px; padding: 30px 2px 0; }
 }
 
 /* ================================================================ misc */
