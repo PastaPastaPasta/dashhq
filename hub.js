@@ -38,6 +38,9 @@
   var chipbox = document.querySelector('.mapchips');
   var nodes = svg ? svg.querySelectorAll('.hnode') : [];
   var chips = chipbox ? chipbox.querySelectorAll('.chip') : [];
+  nodes.forEach(function(link) {
+    if(link.dataset.family) link.setAttribute('href', dashhq.href(link.dataset.family, link.dataset.path || '/', link.dataset.network ? {network:link.dataset.network} : undefined));
+  });
   var pinned = null;
 
   // Where the project a map link points at sits in ids, or -1.

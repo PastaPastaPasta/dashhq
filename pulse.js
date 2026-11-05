@@ -10,7 +10,7 @@
     const old = Date.now() / 1000 - crawl.finished > 3600;
     document.getElementById('pulse-core').textContent = crawl.mn_total ? `${(crawl.mn_reachable / crawl.mn_total * 100).toFixed(1)}% answered` : 'Not checked';
     document.getElementById('pulse-core-note').textContent = `${fmt(crawl.mn_reachable)} of ${fmt(crawl.mn_total)} enabled masternodes`;
-    document.getElementById('pulse-platform').textContent = platform?.checked ? `${fmt(platform.healthy)} of ${fmt(platform.checked)} passed` : 'Not checked';
+    document.getElementById('pulse-platform').textContent = platform?.checked ? `${Date.now() / 1000 - platform.updated > 2700 ? "Check overdue · " : ""}${fmt(platform.healthy)} of ${fmt(platform.checked)} passed` : 'Not checked';
     document.getElementById('pulse-platform-note').textContent = platform?.checked ? `Tenderdash P2P + DAPI · ${new Date(platform.updated * 1000).toLocaleString('en-GB', { timeZone: 'UTC' })} UTC` : 'No Platform observations published';
     age.textContent = `Radar observations · ${old ? 'Crawl is over an hour old · ' : ''}Core ${new Date(crawl.finished * 1000).toLocaleString('en-GB', { timeZone: 'UTC' })} UTC. Open Radar for diagnostics.`;
   }
