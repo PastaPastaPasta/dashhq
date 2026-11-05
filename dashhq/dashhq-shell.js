@@ -87,6 +87,7 @@
   function canonicalizeNetworkParam() {
     const sp = new URL(location.href).searchParams;
     if (!sp.has('net') && !sp.has('network')) return;
+    if (!parseNetwork(sp.get('network') ?? sp.get('net'))) return;
     const next = withNetwork(location.href, networkFromUrl());
     if (next !== location.href) history.replaceState(history.state, '', next);
   }
@@ -646,7 +647,8 @@
         e.preventDefault();
         e.stopImmediatePropagation();
       }
-      this.close();
+      const trigger = this.close();
+      if (e.detail > 0 && trigger) trigger.focus();
     }
     _onKey(e) {
       if (e.key !== 'Escape' || !this._open) return;
