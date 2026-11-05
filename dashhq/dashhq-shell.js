@@ -37,7 +37,7 @@
     { door: 'network',    key: 'radar',    label: 'Radar',      desc: 'Live network health, masternodes and evonodes' },
     { door: 'governance', key: 'gov',      label: 'Governance', desc: 'Proposals, votes, name contests' },
     { door: 'platform',   key: 'explorer', label: 'Explorer',   desc: 'Identities, names, contracts, proof-checked' },
-    { door: 'start',      key: 'bridge',   label: 'Start',      desc: 'Address, testnet DASH, identity, username', steps: ['bridge', 'faucet'] }
+    { door: 'start',      key: 'bridge',   label: 'Start · Testnet',      desc: 'Address, testnet DASH, identity, username', steps: ['bridge', 'faucet'] }
   ];
   const APPS = ['forge', 'pollr', 'yappr'];
   const ALSO = ['arch', 'fees', 'dapi'];
@@ -109,7 +109,7 @@
     const u = new URL(path || '/', base + '/');
     if (u.origin !== new URL(base).origin) throw new Error(`dashhq: href("${key}") must stay on ${base}`);
     const p = PRODUCTS[key];
-    const fallback = p.door === 'start' ? parseNetwork(u.searchParams.get('network')) || 'testnet' : activeNetwork();
+    const fallback = parseNetwork(u.searchParams.get('network')) || activeNetwork();
     const n = p.door === 'apps' ? 'testnet' : parseNetwork(opts && 'network' in opts ? opts.network : fallback);
     if (p.net && n) {
       u.searchParams.delete('net');
