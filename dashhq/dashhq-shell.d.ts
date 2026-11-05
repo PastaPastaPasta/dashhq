@@ -15,7 +15,7 @@ export interface DashhqApi {
   readonly products: Readonly<Record<DashhqProduct, { name: string; url: string; door: string; net?: boolean }>>;
   /** Origin of a family product, production or lab. */
   origin(product: DashhqProduct): string;
-  /** URL of a page in another family product. Carries an explicit ?network= for every network-aware product. Throws if path would leave the product's origin (e.g. "//evil.example"). */
+  /** URL of a page in another family product. Carries an explicit ?network= for every network-aware product. Bridge/Faucet default to Testnet unless a network is explicit. Throws if path would leave the product's origin (e.g. "//evil.example"). */
   href(product: DashhqProduct, path?: string, opts?: { network?: DashhqNetwork | null }): string;
   readonly theme: {
     readonly pref: DashhqThemePref;

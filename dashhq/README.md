@@ -1,4 +1,4 @@
-# dashhq shell 1.1.0
+# dashhq shell 1.2.0
 
 The shared shell for the dashhq.org family: the family bar, the footer, the hash display, the theme, and the
 tokens they all draw with. Read `../DESIGN.md` for the rules and `../MIGRATION.md` for your site's plan.
@@ -188,3 +188,9 @@ the authored fallback. Keep a real production `href` for no-JavaScript browsing.
 Outside pointer taps dismiss an open door switcher, network menu or phone sheet and
 consume that tap, including pointer focus. Escape restores trigger focus; Tab still
 moves normally. A second tap can activate the underlying control.
+
+Start is a Testnet itinerary: Bridge address → Faucet funding → Bridge identity → username.
+The Start door, its step links and the footer always open Testnet, beginning in Bridge.
+`href()` and declarative links to Bridge/Faucet default to Testnet. Explicit
+`{ network: "mainnet" }` / `data-network="mainnet"` still support real-funds flows.
+A Bridge URL can use `?mode=create&journey=start&network=testnet` to begin at address creation.

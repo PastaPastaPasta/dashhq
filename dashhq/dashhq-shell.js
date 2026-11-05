@@ -1,4 +1,4 @@
-/*! dashhq-shell 1.1.0 | family bar, footer, hash display and theme for dashhq.org tools | MIT */
+/*! dashhq-shell 1.2.0 | family bar, footer, hash display and theme for dashhq.org tools | MIT */
 /* Load as a classic, blocking script in <head>, before any stylesheet that depends on [data-theme]:
      <script src="/dashhq/dashhq-shell.js"></script>
    CSP: needs only script-src 'self'. No inline script, no eval, no innerHTML, no style attributes,
@@ -7,7 +7,7 @@
   'use strict';
   if (window.dashhq && window.dashhq.version) return;
 
-  const VERSION = '1.1.0';
+  const VERSION = '1.2.0';
   const doc = document;
   const root = doc.documentElement;
   const host = location.hostname;
@@ -20,7 +20,7 @@
     radar:    { name: 'Radar',         url: 'https://radar.dashhq.org',    door: 'network',    net: true },
     gov:      { name: 'Governance',    url: 'https://gov.dashhq.org',      door: 'governance', net: true },
     explorer: { name: 'Explorer',      url: 'https://explorer.dashhq.org', door: 'platform',   net: true },
-    faucet:   { name: 'Faucet',        url: 'https://faucet.dashhq.org',   door: 'start' },
+    faucet:   { name: 'Faucet',        url: 'https://faucet.dashhq.org',   door: 'start',      net: true },
     bridge:   { name: 'Bridge',        url: 'https://bridge.thepasta.org', door: 'start',      net: true },
     arch:     { name: 'Architecture',  url: 'https://arch.dashhq.org',     door: 'platform' },
     fees:     { name: 'Fee estimator', url: 'https://fees.dashhq.org',     door: 'platform' },
@@ -37,7 +37,7 @@
     { door: 'network',    key: 'radar',    label: 'Radar',      desc: 'Live network health, masternodes and evonodes' },
     { door: 'governance', key: 'gov',      label: 'Governance', desc: 'Proposals, votes, name contests' },
     { door: 'platform',   key: 'explorer', label: 'Explorer',   desc: 'Identities, names, contracts, proof-checked' },
-    { door: 'start',      key: 'faucet',   label: 'Start',      desc: 'Testnet DASH, then an identity', steps: ['faucet', 'bridge'] }
+    { door: 'start',      key: 'bridge',   label: 'Start',      desc: 'Address, testnet DASH, identity, username', steps: ['bridge', 'faucet'] }
   ];
   const APPS = ['forge', 'pollr', 'yappr'];
   const ALSO = ['arch', 'fees'];
@@ -109,12 +109,20 @@
     const u = new URL(path || '/', base + '/');
     if (u.origin !== new URL(base).origin) throw new Error(`dashhq: href("${key}") must stay on ${base}`);
     const p = PRODUCTS[key];
-    const n = parseNetwork(opts && 'network' in opts ? opts.network : activeNetwork());
+    const fallback = p.door === 'start' ? parseNetwork(u.searchParams.get('network')) || 'testnet' : activeNetwork();
+    const n = parseNetwork(opts && 'network' in opts ? opts.network : fallback);
     if (p.net && n) {
       u.searchParams.delete('net');
       u.searchParams.set('network', n);
     }
     return u.href;
+  }
+
+  function doorHref(key, network) {
+    if (PRODUCTS[key].door === 'start') {
+      return href(key, key === 'bridge' ? '/?mode=create&journey=start' : '/?journey=start', { network: 'testnet' });
+    }
+    return href(key, '/', network ? { network } : undefined);
   }
 
   // Keep production hrefs as the no-script fallback; resolve only explicitly opted-in anchors.
@@ -543,7 +551,7 @@
     // Doors, Apps, Also and the theme choice: the desktop popover and the phone sheet each get a copy.
     _family(key, net) {
       const cur = PRODUCTS[key].door;
-      const to = (k) => href(k, '/', net ? { network: net } : undefined);
+      const to = (k) => doorHref(k, net);
       const link = (k) => h('a', { href: to(k), 'aria-current': current(key === k, 'page') }, PRODUCTS[k].name);
       const doors = h('ul', { class: 'doors' }, DOORS.map((d) =>
         h('li', { class: 'door', 'aria-current': current(cur === d.door) },
@@ -689,7 +697,7 @@
       const cur = PRODUCTS[key].door;
       const src = this.getAttribute('source');
       const doorLinks = DOORS.slice(1).map((d) =>
-        h('li', null, h('a', { href: href(d.key), 'aria-current': current(cur === d.door) }, d.label)));
+        h('li', null, h('a', { href: doorHref(d.key), 'aria-current': current(cur === d.door) }, d.label)));
       doorLinks.push(h('li', null, h('a', { href: href('home', '/#apps'), 'aria-current': current(cur === 'apps') }, 'Apps')));
       this._paint(h('footer', { class: 'f', part: 'footer' },
         h('div', { class: 'in' },
