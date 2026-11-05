@@ -146,17 +146,18 @@
   function revealHash(){
     var target = document.getElementById(location.hash.slice(1));
     var fold = target && target.closest('details');
-    if(fold) fold.open = true;
+    while(fold){ fold.open = true; fold = fold.parentElement.closest("details"); }
   }
   var directory = document.querySelector('.directory-fold');
   if(directory) directory.open = matchMedia('(min-width: 761px)').matches;
+  document.querySelectorAll('.dgroup').forEach(function(group){ group.open = matchMedia('(min-width: 761px)').matches; });
   addEventListener('hashchange', revealHash);
   document.addEventListener('click', function(event){
     var a = event.target.closest('a[href^="#"]');
     if(!a) return;
     var target = document.getElementById(a.hash.slice(1));
     var fold = target && target.closest('details');
-    if(fold) fold.open = true;
+    while(fold){ fold.open = true; fold = fold.parentElement.closest("details"); }
   });
   revealHash();
 

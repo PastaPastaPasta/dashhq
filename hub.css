@@ -6,7 +6,6 @@
    technical plate per project, then a plain directory.
    ============================================================ */
 
-
 /* ---------- tokens: light (cool plan paper) ---------- */
 :root{
   --paper:var(--dh-page);--ink:var(--dh-ink);--ink-2:var(--dh-ink-2);
@@ -15,9 +14,9 @@
   --line-2:var(--dh-plate-ink-2);--line-hi:var(--dh-plate-ink);
   --hair:color-mix(in srgb,var(--dh-plate-line) 22%,transparent);
   --amber:var(--dh-act);--focus:var(--dh-focus);
-  --shadow:0 1px 0 color-mix(in srgb,var(--dh-ink) 8%,transparent),0 18px 34px -26px color-mix(in srgb,var(--dh-ink) 55%,transparent);
+
   --text:var(--dh-font);--draft:var(--dh-font);--mono:var(--dh-mono);
-  --gut:var(--dh-gutter);--maxw:var(--dh-max);
+
 }
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none !important}
@@ -31,22 +30,19 @@ a{color:inherit}
 h1,h2,h3,p,ul,ol{margin:0}
 ul,ol{padding:0;list-style:none}
 code{font-family:var(--mono);font-size:.9em}
-.wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--gut)}
 .skip{position:absolute;left:-9999px;top:0;background:var(--plate);color:var(--line);padding:12px 18px;z-index:50}
 .skip:focus{left:12px;top:12px}
-:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:2px}
-.sheet :focus-visible,.plate :focus-visible{outline-color:var(--amber)}
-
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 /* ============================================================
    THE SHEET: map + title block, one cyanotype field
    ============================================================ */
-.sheet,.plate{position:relative;background:var(--plate);border:1px solid var(--plate-edge);box-shadow:var(--shadow);overflow:hidden}
+.sheet,.plate{position:relative;overflow:hidden}.plate{background:var(--plate);border:1px solid var(--plate-edge)}
 /* the dot grid is the network, under every drawing */
 .sheet::before,.plate::before{
   content:"";position:absolute;inset:0;pointer-events:none;
   background-image:radial-gradient(var(--line) 1px,transparent 1px);
 }
-.sheet{margin-top:clamp(8px,1.4vw,18px);border-radius:4px;color:var(--line)}
+.sheet{color:var(--line)}
 .sheet::before{background-size:16px 16px;opacity:.08}
 /* drawing border, inset like a real sheet */
 .sheet-inner{position:relative;margin:10px;border:1px solid var(--hair);display:flex;flex-direction:column}
@@ -98,7 +94,7 @@ code{font-family:var(--mono);font-size:.9em}
 .chiplabel{flex-basis:100%;font-family:var(--draft);font-weight:700;font-size:1rem;color:var(--line-hi);margin-bottom:2px}
 .chip{
   font-family:var(--draft);font-weight:600;font-size:.9375rem;color:var(--line-hi);text-decoration:none;
-  border:1px solid rgba(166,216,247,.6);border-radius:3px;padding:3px 9px;
+  border:1px solid color-mix(in srgb,var(--dh-plate-line) 60%,transparent);border-radius:var(--dh-r2);padding:3px 9px;
 }
 .chip.test{border-style:dashed}
 .mapchips.routing .chip:not(.on){opacity:.55}
@@ -107,61 +103,36 @@ code{font-family:var(--mono);font-size:.9em}
 
 /* title block: the drawing's caption; carries the h1 */
 .titleblock{display:grid;grid-template-columns:minmax(0,1fr) 230px;border-top:1px solid var(--hair)}
-.tb-main{padding:18px 20px 20px}
+.tb-main{padding-block:var(--dh-6);margin-bottom:0}
 .tb-stats{border-left:1px solid var(--hair);display:flex;flex-direction:column}
 .tb-stats > *{padding:14px 18px;border-top:1px solid var(--hair)}
 .tb-stats > :first-child{border-top:0}
-.titleblock h1{
-  font-family:var(--draft);font-weight:700;font-size:clamp(1.7rem,2.6vw,2.2rem);
-  line-height:1.05;letter-spacing:.005em;color:var(--line-hi);
-}
-.sub{margin-top:8px;font-size:1rem;color:var(--line-2);max-width:62ch}
 /* the finder: one field over everything on the page */
 .finder{display:none;margin-top:16px;align-items:center;gap:8px 10px;flex-wrap:wrap}
 html.finder-on .finder{display:flex}
-.finder label{font-family:var(--draft);font-weight:600;font-size:1rem;color:var(--line-hi)}
-.finder input{
-  flex:1 1 220px;min-width:0;max-width:420px;
-  background:rgba(166,216,247,.05);color:var(--line-hi);
-  border:1px solid rgba(166,216,247,.45);border-radius:3px;padding:7px 11px;
-  font-family:var(--text);font-size:1rem;line-height:1.2;
-  -webkit-appearance:none;appearance:none;
-}
-.finder input::placeholder{color:var(--line-2);opacity:1}
-.finder input:focus-visible{outline-offset:2px;border-color:var(--amber)}
 .finder input::-webkit-search-cancel-button{display:none}
-#qclear,#noclear{
-  font:600 .9375rem/1.2 var(--draft);color:var(--line-hi);background:none;cursor:pointer;
-  border:1px solid rgba(166,216,247,.55);border-radius:3px;padding:6px 11px;
-}
-#qclear:hover,#noclear:hover{border-color:var(--amber);color:var(--amber)}
 .fin-c{flex-basis:100%;font-size:.875rem;color:var(--line-2);min-height:1.1em}
 /* nothing matched: say so where the plates would have been */
-.noresult{font-size:1.0625rem;color:var(--ink-2);padding:8px 0 4px}
 
 .rhead{margin-top:16px;font-size:.9375rem;color:var(--line-2)}
 .routes{margin-top:8px;display:grid;gap:6px}
 .route{padding:6px 10px 7px 12px;margin-left:-12px;border-left:2px solid transparent}
 .route.on{border-left-color:var(--amber)}
-@media (hover:hover){.route:hover{border-left-color:var(--amber)}.rname:hover{border-color:var(--amber);color:var(--amber)}}
-.rname{
-  font:600 1.0625rem/1.2 var(--draft);color:var(--line-hi);background:none;cursor:pointer;
-  border:1px solid rgba(166,216,247,.55);border-radius:3px;padding:2px 10px;flex:none;
-}
-.rname[aria-pressed="true"]{border-color:var(--amber);color:var(--amber)}
+@media (hover:hover){.route:hover{border-left-color:var(--amber)}}
+.rname[aria-pressed="true"]{border-color:var(--dh-brand);background:var(--dh-brand-soft)}
 .route > p:first-child{display:flex;align-items:baseline;gap:10px}
 .rwhy{font-size:.9375rem;color:var(--line-2)}
 html:not(.js) .rhead{display:none}
 html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
 .rstops{margin-top:5px;font-size:.9375rem;line-height:1.5;color:var(--line-2)}
-.rstops a{color:var(--line);text-underline-offset:3px;text-decoration-color:rgba(166,216,247,.45)}
+.rstops a{color:var(--line);text-underline-offset:3px;text-decoration-color:color-mix(in srgb,var(--dh-plate-line) 45%,transparent)}
 .rstops a:hover{color:var(--amber);text-decoration-color:var(--amber)}
 .sep{color:var(--amber)}
 .tb-k{display:block;font-size:.875rem;color:var(--line-2)}
 .tb-v{display:block;margin-top:3px;font-family:var(--draft);font-weight:600;font-size:1.1875rem;color:var(--line-hi);line-height:1.25}
 .legend{display:flex;flex-direction:column;gap:5px;margin-top:6px;font-size:.875rem;color:var(--line-2)}
 .legend span{display:inline-flex;align-items:center;gap:8px}
-.sw{display:inline-block;width:22px;height:12px;border:1px solid var(--line);border-radius:2px}
+.sw{display:inline-block;width:22px;height:12px;border:1px solid var(--line);border-radius:var(--dh-r1)}
 .sw.dash{border-style:dashed}
 .sw.cross{height:0;border:0;border-top:2px solid var(--amber);width:18px}
 .panhint{display:none;margin-top:6px;font-size:.875rem;color:var(--amber)}
@@ -170,14 +141,10 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
 /* ============================================================
    SECTIONS
    ============================================================ */
-.section{padding-top:clamp(56px,7vw,96px)}
 .sechead{
   display:flex;align-items:baseline;gap:8px 20px;flex-wrap:wrap;
   border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:clamp(22px,3vw,34px);
 }
-.sechead h2{font-family:var(--draft);font-weight:700;font-size:clamp(1.6rem,2.4vw,2rem);line-height:1.1}
-.sechead .note{margin-left:auto;color:var(--ink-2);font-size:1rem}
-
 /* ============================================================
    PLATES
    ============================================================ */
@@ -189,7 +156,7 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
 .card:hover .cname a{color:var(--link)}
 
 .tags{order:3;display:flex;flex-wrap:wrap;gap:2px 18px;font-size:.875rem;color:var(--ink-2);line-height:1.3;margin-top:2px}
-.plate{order:0;border-radius:3px;aspect-ratio:4/3;padding:30px clamp(22px,9%,74px) 26px;transition:border-color .22s ease}
+.plate{order:0;border-radius:var(--dh-r2);aspect-ratio:4/3;padding:30px clamp(22px,9%,74px) 26px;transition:border-color .22s ease}
 .plate::before{background-size:14px 14px;opacity:.11;transition:opacity .22s ease}
 .meta{order:2;display:flex;flex-direction:column;gap:4px;margin-top:4px}
 .pnet{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
@@ -197,7 +164,6 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
 .pnet.test::before{background:none;border:1.5px dashed var(--link)}
 .pnet.none::before{display:none}
 
-.cname{font-family:var(--draft);font-weight:700;font-size:1.4375rem;line-height:1.15}
 .cname a{text-decoration:none;transition:color .18s ease}
 /* the whole card is the primary link; secondary links sit above it */
 .cname a::after{content:"";position:absolute;inset:0;z-index:1}
@@ -212,7 +178,6 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
   .span3{grid-column:span 3}
   .span2{grid-column:span 2}
   .span3 .plate{aspect-ratio:16/9}
-  .span3 .cname{font-size:1.625rem}
 }
 
 /* ---------- the marks ---------- */
@@ -256,7 +221,7 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
    ============================================================ */
 .dir{columns:3 300px;column-gap:clamp(28px,4vw,56px)}
 .dgroup{break-inside:avoid;margin-bottom:34px}
-.dgroup h3{
+.dgroup > summary{
   font-family:var(--draft);font-weight:700;font-size:1.1875rem;
   padding-bottom:8px;border-bottom:1px solid var(--ink);margin-bottom:2px;
 }
@@ -282,48 +247,41 @@ html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
   .mk .tx,.mk .txs{display:none}
   .mapscroll{display:none}
   .mapchips{display:block}
-  .tb-main{padding:12px 14px 16px}
+
   .tb-stats{display:block}
   .tb-stats > *{border-left:0;border-top:1px solid var(--hair);padding:8px 14px}
   .tb-stats > p{display:flex;justify-content:space-between;align-items:baseline}
   .legend{flex-direction:row;flex-wrap:wrap;gap:4px 16px}
   .tb-v{margin-top:0}
-  .sechead .note{margin-left:0;flex-basis:100%}
-  .grid{grid-template-columns:1fr}
+.grid{grid-template-columns:1fr}
   /* compact plates: drawing on the left, text on the right */
   .card{display:grid;grid-template-columns:112px 1fr;grid-template-areas:"plate meta" "plate tags";column-gap:14px;row-gap:6px;align-items:start}
   .plate{grid-area:plate;aspect-ratio:1;padding:10px;width:112px}
   .plate::before{background-size:10px 10px}
   .meta{grid-area:meta}
   .tags{grid-area:tags;justify-content:flex-start;flex-wrap:wrap;gap:2px 14px;margin-top:0;font-size:.8125rem}
-  .cname{font-size:1.25rem}
-  .desc{font-size:.9375rem}
+.desc{font-size:.9375rem}
   /* secondary links are small type; pad them to a 24px target */
   .host a,.rstops a,.dgroup a{display:inline-block;padding-block:3px}
   .chip{padding:5px 10px}
 }
 
 html{scroll-padding-top:72px}
-.tb-main h1{font-size:clamp(30px,4.2vw,46px);font-weight:660;font-stretch:116%;letter-spacing:-.02em;line-height:1.06}
-.hsvg .hnm,.chip,.rname,.tb-v{font-stretch:88%;font-weight:620}
-.hsvg .hband,.chiplabel,.sechead h2{font-stretch:112%;font-weight:650}
+.hsvg .hnm,.chip,.tb-v{font-stretch:88%;font-weight:620}
+.hsvg .hband,.chiplabel{font-stretch:112%;font-weight:650}
 .hsvg .hnode:hover .hnm{fill:var(--line-hi)}
-.cname,.dgroup h3{font-weight:620;font-stretch:110%}
+.cname,.dgroup > summary{font-weight:620;font-stretch:110%}
 .doors{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:16px;border-bottom:1px solid var(--hair)}
-.door{display:block;padding:14px;color:var(--dh-ink);background:var(--dh-surface);border:1px solid var(--dh-line);border-radius:var(--dh-r3);text-decoration:none}
-.door:hover{border-color:var(--dh-brand)}
-.door strong{display:block;color:var(--dh-brand-ink);font-size:17px;font-weight:620}
 .door span{display:block;margin-top:4px;color:var(--dh-ink-2);font-size:13px;line-height:1.5}
 .route-panel{position:relative;padding:20px;border-top:1px solid var(--hair)}
 .route-panel .rhead{margin-top:0}
 .route-panel .routes{grid-template-columns:1fr 1fr;gap:12px 24px}
 .tools{margin-top:10px;font-size:14px;color:var(--line-2)}
 .tools a{color:var(--line);display:inline-block;padding:8px;text-underline-offset:3px}
-#noclear{color:var(--dh-brand-ink);border-color:var(--dh-line-2)}
 dashhq-footer{display:block;margin-top:64px}
 dashhq-footer p{margin:8px 0}
-@media(max-width:760px){.doors{grid-template-columns:1fr}.door{padding:10px 14px}.door strong{font-size:16px}.door span{margin-top:2px}.route-panel .routes{grid-template-columns:1fr}}
-@media(pointer:coarse){.rname,#qclear,#noclear,.chip{min-height:42px}.chip{display:inline-flex;align-items:center}.host a,.rstops a,.dgroup a{min-height:40px;display:inline-flex;align-items:center}.finder input{font-size:16px;min-height:42px}}
+@media(max-width:760px){.doors{grid-template-columns:1fr}.door span{margin-top:2px}.route-panel .routes{grid-template-columns:1fr}}
+@media(pointer:coarse){.chip{min-height:var(--dh-ctl-h)}.chip{display:inline-flex;align-items:center}.host a,.rstops a,.dgroup a{min-height:40px;display:inline-flex;align-items:center}}
 
 .titleblock{grid-template-columns:1fr;border-top:0;border-bottom:1px solid var(--hair)}
 .tb-stats{border-left:0;border-top:1px solid var(--hair);flex-direction:row;flex-wrap:wrap}
@@ -344,22 +302,20 @@ html.finder-on .finder{display:grid;grid-template-columns:minmax(0,1fr) auto;max
 .platform-intro h3{font-size:21px;font-weight:660}.platform-intro a{color:var(--dh-brand-ink);text-underline-offset:3px}
 
 .sheet-inner { margin: 0; border: 0; }
-.sheet { background: var(--dh-surface); color: var(--dh-ink); box-shadow: none; border-color: var(--dh-line); }
+.sheet { color: var(--dh-ink); }
 .sheet .titleblock, .sheet .doors { color: var(--dh-ink); }
 .sheet .sub, .sheet .door span { color: var(--dh-ink-2); }
 .sheet .titleblock, .sheet .doors { border-color: var(--dh-line); }
-.sheet .door { background: var(--dh-surface); color: var(--dh-ink); border-color: var(--dh-line); }
+
 .sheet .door:hover { background: var(--dh-sunken); }
 .sheet .door strong { color: var(--dh-brand-ink); }
 .sheet .tb-main { color: var(--dh-ink); }
-.sheet .finder input { color: var(--dh-ink); background: var(--dh-surface); border-color: var(--dh-line-2); }
 .sheet .finder label, .sheet .fin-c { color: var(--dh-ink-2); }
 .sheet .mapscroll, .sheet .mapchips, .sheet .route-panel, .sheet .tb-stats { background: var(--dh-plate); color: var(--dh-plate-ink); }
 .noresult { grid-column: 1 / -1; }
 .directory-fold > summary { cursor: pointer; color: var(--dh-brand-ink); padding: 16px 0; font-weight: 600; }
 .tools { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
-@media (max-width:760px) { .doors { grid-template-columns: 1fr; } .sheet .tb-main { padding: 18px; } }
+@media (max-width:760px) { .doors { grid-template-columns: 1fr; }  }
 
-.sheet h1 { color: var(--dh-ink); }
-.sheet #qclear { color: var(--dh-ink); border-color: var(--dh-line-2); }
-.sheet .finder input::placeholder { color: var(--dh-ink-2); }
+.section{padding-top:var(--dh-6)}
+.dgroup > summary{cursor:pointer;font-size:var(--dh-fs-h3)}
