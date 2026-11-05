@@ -25,8 +25,8 @@
       if (!response.ok) throw new Error('unavailable');
       const data = await response.json();
       const c = data.crawl, p = data.platform;
-      if (!c || ![c.mn_total, c.mn_reachable, c.finished].every(Number.isFinite) || c.mn_total < 0 || c.mn_reachable < 0 || c.mn_reachable > c.mn_total || c.finished > Date.now() / 1000 + 60 ||
-        (p?.checked && (![p.healthy, p.checked, p.updated].every(Number.isFinite) || p.healthy < 0 || p.healthy > p.checked))) throw new Error('invalid');
+      if (!c || ![c.mn_total, c.mn_reachable, c.finished].every(Number.isFinite) || c.mn_total < 0 || c.mn_reachable < 0 || c.mn_reachable > c.mn_total || c.finished <= 0 || c.finished > Date.now() / 1000 + 60 ||
+        (p?.checked && (![p.healthy, p.checked, p.updated].every(Number.isFinite) || p.healthy < 0 || p.healthy > p.checked || p.updated <= 0 || p.updated > Date.now() / 1000 + 60))) throw new Error('invalid');
       last = data;
       render();
       retry.hidden = true;

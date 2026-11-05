@@ -2,9 +2,9 @@
 
 The family front door and a cyanotype map of the Dash ecosystem. Static HTML, CSS and JavaScript; no build dependencies or backend.
 
-`index.html` contains the map, six starting points and expandable project groups. `/directory/` holds the full resource directory. `hub.css` maps the site's drafting surface onto the family tokens. `hub.js` handles the finder and numbered routes. The pinned shell, Archivo font and mark live in `dashhq/`; see `SHELL.md` for the version and checksum. Family destinations use `dashhq.href()` through the small `family-links.js` adapter.
+`index.html` contains the map, six starting points and expandable project groups. `/directory/` holds the full resource directory. `hub.css` maps the site's drafting surface onto the family tokens. `hub.js` handles the finder and numbered routes. The pinned shell, Archivo font and mark live in `dashhq/`; see `SHELL.md` for the version and checksum. The shell resolves declarative family destinations; SVG map links use `dashhq.href()` explicitly.
 
-The finder filters plates and directory entries, highlights matching map nodes, removes unavailable links from the tab order, and keeps the skip link pointed at visible content. It is hidden without JavaScript; the full directory and production destination links remain usable.
+The finder returns destination links from the project cards and directory without hiding the catalogue. Map routes highlight and number their stops. The finder is hidden without JavaScript; the full directory and production destination links remain usable.
 
 A plate needs an `<article class="card spanN" id="…">`, a matching `<a class="hnode">` in the map, and a matching `<a class="chip">` in the phone list. Keep the three ID lists identical. At desktop width each grid row spans six columns: two `span3` cards or three `span2` cards. Route `data-route` values are ordered plate IDs.
 
