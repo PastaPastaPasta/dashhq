@@ -40,6 +40,17 @@
   --dh-act-hover: #EA9727;
   --dh-act-ink: #0A2A3D;       /* text on amber */
 
+  /* accent: what the primary button is filled with. Core tools leave it amber. An app sets exactly one line,
+     :root { --dh-accent: var(--dh-accent-forge); }, and every primary button, shape and state follows.
+     The app accents all carry --dh-act-ink at 6:1 or better, so hover and press stay above 4.5:1. */
+  --dh-accent: var(--dh-act);
+  --dh-accent-ink: var(--dh-act-ink);
+  --dh-accent-forge: #F58A4F;  /* ember */
+  --dh-accent-pollr: #25B8A6;  /* teal */
+  --dh-accent-yappr: #38BDF8;  /* sky */
+  --dh-shade-1: rgba(6, 19, 27, .08);   /* hover and press overlays on filled buttons */
+  --dh-shade-2: rgba(6, 19, 27, .14);
+
   /* status */
   --dh-good: #167A46;  --dh-good-soft: #E1F2E8;
   --dh-warn: #94500A;  --dh-warn-soft: #FCEEDB;
@@ -90,16 +101,25 @@
   --dh-1: 4px;  --dh-2: 8px;  --dh-3: 12px; --dh-4: 16px;
   --dh-5: 24px; --dh-6: 32px; --dh-7: 48px; --dh-8: 64px;
   --dh-gutter: clamp(16px, 4vw, 40px);
-  --dh-max: 1200px;
+  --dh-max: 1200px;            /* the bar's row and .dh-container: border-box, so content starts one gutter in */
+  --dh-w-narrow: 760px;        /* forms and reading columns, left-aligned inside the container */
 
   /* shape */
   --dh-r1: 3px;   /* pills, kbd */
   --dh-r2: 6px;   /* buttons, inputs, segmented controls */
   --dh-r3: 10px;  /* panels, cards, popovers */
 
-  /* controls */
+  /* controls: one height scale; touch screens step every size up */
+  --dh-ctl-h-sm: 28px;
   --dh-ctl-h: 34px;
+  --dh-ctl-h-lg: 42px;
   --dh-bar-h: 52px;
+
+  /* focus: one ring for everything. --dh-ring-shadow is the same ring as a box-shadow, for frameworks
+     that draw focus with shadows (Chakra's shadows.outline). */
+  --dh-ring-w: 2px;
+  --dh-ring-offset: 2px;
+  --dh-ring-shadow: 0 0 0 2px var(--dh-surface), 0 0 0 4px var(--dh-focus);
 
   /* motion */
   --dh-ease: cubic-bezier(.2, .7, .2, 1);
@@ -108,7 +128,7 @@
 }
 
 @media (pointer: coarse) {
-  :root { --dh-ctl-h: 42px; }
+  :root { --dh-ctl-h-sm: 40px; --dh-ctl-h: 42px; --dh-ctl-h-lg: 48px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
