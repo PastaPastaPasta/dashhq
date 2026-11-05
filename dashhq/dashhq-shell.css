@@ -21,8 +21,11 @@ dashhq-bar:not(:defined) > [slot="logo"] { display: none; }
 dashhq-bar:not(:defined) > [slot="actions"] { margin-left: auto; }
 dashhq-footer:not(:defined) { min-height: 120px; margin-top: var(--dh-7); border-top: 1px solid var(--dh-line); }
 dashhq-hash:not(:defined) { display: inline; font-family: var(--dh-mono); font-size: .92em; overflow-wrap: anywhere; }
-dashhq-signin-help { display: block; }
-dashhq-signin-help:not(:defined) { min-height: 180px; border-radius: var(--dh-r3); background: var(--dh-sunken); }
+dashhq-signin-help, dashhq-not-found, dashhq-moved { display: block; }
+dashhq-signin-help:not(:defined) { min-height: 44px; border-radius: var(--dh-r3); background: var(--dh-sunken); }
+/* Before upgrade (or without JavaScript) a not-found or moved notice shows its own children: write them as the
+   plain-text version, with a real link (DESIGN.md §6, "Wrong network" and "Retired pages"). */
+dashhq-not-found:not(:defined) { padding: 20px 24px; border: 1px dashed var(--dh-line-2); border-radius: var(--dh-r3); }
 
 /* The product's nav in the bar: its sections, and the only section nav it has. Put your links in one element
    with slot="nav" (a <nav>, <ul> or <div>); a <button> may stand in for a link that opens something (Post).
@@ -53,6 +56,7 @@ dashhq-bar > [slot="nav"] :is(a, button):is([aria-current="page"], [aria-current
 }
 dashhq-bar > [slot="nav"] :is(a, button):focus-visible { outline: 2px solid var(--dh-focus); outline-offset: 2px; }
 dashhq-bar > [slot="nav"] .dh-nav-icon { display: var(--dh-nav-icon, none); width: 22px; height: 22px; flex: none; }
+dashhq-bar > [slot="nav"] :is([aria-current="page"], [aria-current="true"]) .dh-nav-icon { color: var(--dh-nav-current-icon, inherit); }
 dashhq-bar > [slot="nav"] [data-dh-phone] { display: var(--dh-nav-only-phone, none); }
 dashhq-bar > [slot="nav"] [data-dh-desktop] { display: var(--dh-nav-only-desk, flex); }
 /* The item rules above outrank [hidden] (and Tailwind's .hidden); hide an item with the attribute. */

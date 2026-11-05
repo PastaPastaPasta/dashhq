@@ -38,6 +38,41 @@ declare module 'react' {
         kept?: DashhqSigninKept;
         /** One or two sentences of specifics: limits, expiry, encrypted copies. */
         'kept-note'?: string;
+        /** Folds the explanation into one line ("What's this? ▸"). Default auto: folded when phone-narrow. */
+        compact?: 'auto' | 'always' | 'never' | '' | true;
+      };
+      /** A record that isn't on this network: says where it is instead. Set `found`, or give the element a `lookup`
+       *  through its ref (DashhqNotFoundElement). Children are one extra sentence of your own. */
+      'dashhq-not-found': ShellAttrs & {
+        /** The noun: "masternode", "proposal", "identity", "name contest", "contract". */
+        thing: string;
+        /** What the id is called: "ProTx hash", "name", "ID" (default). */
+        'id-label'?: string;
+        /** Where the page looked. Defaults to the page bar's network. */
+        network?: DashhqNetwork;
+        /** Networks to look across. Default "mainnet testnet". */
+        networks?: string;
+        /** A network, 'none' (on no network) or 'unknown' (couldn't check). Omit it while checking or with a lookup. */
+        found?: DashhqNetwork | 'none' | 'unknown';
+        /** The record on the found network. Default: this URL with ?network= swapped. */
+        href?: string;
+        /** This network's list or search, and its label: "Browse Testnet masternodes". */
+        'list-href'?: string;
+        'list-label'?: string;
+      };
+      /** A retired product's page. Forwards after 10 s unless the visitor stays; carries network, query and hash. */
+      'dashhq-moved': ShellAttrs & {
+        /** The new home's product key. */
+        to: DashhqProduct;
+        /** Path (and query) at the new home. Default "/". */
+        path?: string;
+        /** The retired product. Defaults to the page bar's. */
+        product?: DashhqProduct;
+        /** The network when the old link has none. Default mainnet. */
+        network?: DashhqNetwork;
+        heading?: string;
+        lede?: string;
+        label?: string;
       };
     }
   }

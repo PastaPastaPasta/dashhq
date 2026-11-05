@@ -53,8 +53,8 @@
   <section class="dh-section" id="buttons" aria-labelledby="h-buttons">
     <div class="dh-section__head">
       <h2 class="dh-section__title" id="h-buttons">Buttons</h2>
-      <p class="dh-section__desc">One primary per view, filled with the accent. Everything that doesn't commit is secondary. Labels are verbs
-        with objects, in sentence case.</p>
+      <p class="dh-section__desc">One primary per view, filled amber in every product, apps included, at the one family height. Everything
+        that doesn't commit is secondary. Labels are verbs with objects, in sentence case.</p>
     </div>
     <div class="dh-stack">
       <div class="dh-actions" data-test="variants">
@@ -68,10 +68,8 @@
       <div class="dh-actions" data-test="sizes">
         <button class="dh-btn dh-btn--primary dh-btn--sm" type="button" data-test="btn-sm">Vote yes</button>
         <button class="dh-btn dh-btn--primary" type="button" data-test="btn-md">Vote yes</button>
-        <button class="dh-btn dh-btn--primary dh-btn--lg" type="button" data-test="btn-lg">Vote yes</button>
         <button class="dh-btn dh-btn--sm" type="button">Small</button>
         <button class="dh-btn" type="button">Default</button>
-        <button class="dh-btn dh-btn--lg" type="button">Large</button>
         <button class="dh-btn dh-btn--icon dh-btn--quiet" type="button" aria-label="Copy"><svg viewBox="0 0 16 16" aria-hidden="true" class="ic"><rect x="5" y="5" width="8" height="8" rx="1.5"/><path d="M3 10.5V4a1 1 0 0 1 1-1h6.5"/></svg></button>
         <button class="dh-btn dh-btn--icon" type="button" aria-label="Refresh"><svg viewBox="0 0 16 16" aria-hidden="true" class="ic"><path d="M13 8a5 5 0 1 1-1.5-3.5M13 2.5v3h-3"/></svg></button>
       </div>
@@ -98,15 +96,28 @@
   <section class="dh-section" id="accents" aria-labelledby="h-accents">
     <div class="dh-section__head">
       <h2 class="dh-section__title" id="h-accents">App accents</h2>
-      <p class="dh-section__desc">Core tools are amber. Each app sets one line, <code class="dh-mono">--dh-accent: var(--dh-accent-forge)</code>;
-        the shape, height, weight, ink and states stay the family's.</p>
+      <p class="dh-section__desc">The committing button is amber in every product. An app's accent marks its brand, its selection and its
+        highlights; links stay blue. An app turns it on with one attribute, <code class="dh-mono">&lt;html data-dh-accent="pollr"&gt;</code>.</p>
     </div>
     <div class="dh-grid accents">
-      <div class="dh-card accent-core" data-test="accent-core"><p class="dh-label">Core (amber)</p><div class="dh-actions"><button class="dh-btn dh-btn--primary" type="button">Create identity</button><button class="dh-btn" type="button">Cancel</button></div></div>
-      <div class="dh-card accent-forge" data-test="accent-forge"><p class="dh-label">Forge (ember)</p><div class="dh-actions"><button class="dh-btn dh-btn--primary" type="button">Create repository</button><button class="dh-btn" type="button">Cancel</button></div></div>
-      <div class="dh-card accent-pollr" data-test="accent-pollr"><p class="dh-label">Pollr (teal)</p><div class="dh-actions"><button class="dh-btn dh-btn--primary" type="button">Create poll</button><button class="dh-btn" type="button">Cancel</button></div></div>
-      <div class="dh-card accent-yappr" data-test="accent-yappr"><p class="dh-label">Yappr (sky)</p><div class="dh-actions"><button class="dh-btn dh-btn--primary" type="button">Post</button><button class="dh-btn" type="button">Cancel</button></div></div>
+      <div class="dh-card accent-core" data-test="accent-core"></div>
+      <div class="dh-card accent-forge" data-test="accent-forge"></div>
+      <div class="dh-card accent-pollr" data-test="accent-pollr"></div>
+      <div class="dh-card accent-yappr" data-test="accent-yappr"></div>
     </div>
+    <template id="accent-card">
+      <p class="accent-name"><span class="accent-glyph" aria-hidden="true"></span><span class="dh-label"></span></p>
+      <nav class="dh-tabs" aria-label="Example tabs"><a href="#accents" aria-current="page">Open</a><a href="#accents">Closed</a><a href="#accents">Mine</a></nav>
+      <div class="dh-choices">
+        <button class="dh-choice" type="button" aria-pressed="true"><span class="dh-choice__title">Chosen way</span><span class="dh-choice__desc">Selection takes the accent.</span></button>
+      </div>
+      <table class="dh-table dh-table--compact dh-table--cards"><caption class="dh-sr">Example rows</caption><tbody>
+        <tr aria-selected="true"><td class="dh-rc-title" data-label="Poll"><a href="#accents">Highlighted row</a></td><td class="dh-r dh-rc-end" data-label="Votes">12</td></tr>
+        <tr><td class="dh-rc-title" data-label="Poll"><a href="#accents">Another row</a></td><td class="dh-r dh-rc-end" data-label="Votes">3</td></tr>
+      </tbody></table>
+      <label class="dh-check"><input type="checkbox" checked> Checked</label>
+      <div class="dh-actions"><button class="dh-btn" type="button">Cancel</button><button class="dh-btn dh-btn--primary" type="button" data-test="accent-primary">Create</button></div>
+    </template>
   </section>
 
   <section class="dh-section" id="fields" aria-labelledby="h-fields">
@@ -253,7 +264,7 @@
         <p class="dh-dialog__lede">Reading and cloning need no sign-in. Sign in to push, open issues and review.</p>
         <div class="dh-dialog__body">
           <dashhq-signin-help product="forge" network="testnet" asks="wallet passkey phrase key" kept="sealed"
-            kept-note="This browser gets its own limited key: at most 0.05 DASH, only on Forge, for 90 days. A phrase you import is used once and not stored."></dashhq-signin-help>
+            kept-note="This browser gets its own limited key: at most 0.05 tDASH, only on Forge, for 90 days. A phrase you import is used once and not stored."></dashhq-signin-help>
           <div class="dh-choices">
             <button class="dh-choice" type="button" aria-pressed="true">
               <svg class="dh-choice__icon ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 6h13v9h-13zM3.5 6l1.5-2.5h9.5L16.5 6M13 10.5h1.5"/></svg>
@@ -421,7 +432,8 @@
   <section class="dh-section" id="steps" aria-labelledby="h-steps">
     <div class="dh-section__head">
       <h2 class="dh-section__title" id="h-steps">Stepper</h2>
-      <p class="dh-section__desc">The Start journey, identical in Bridge and Faucet. Done steps link back.</p>
+      <p class="dh-section__desc">The Start journey, identical in Bridge and Faucet. Done steps link back. An earlier step that isn't done
+        yet stays a dashed ring (<code class="dh-mono">data-state="todo"</code>), so opening a later step never pretends.</p>
     </div>
     <ol class="dh-steps" aria-label="Start on Testnet" data-test="steps-1">
       <li aria-current="step">Address</li><li>Testnet DASH</li><li>Identity</li><li>Username</li>
@@ -431,6 +443,9 @@
     </ol>
     <ol class="dh-steps" aria-label="Start on Testnet" data-test="steps-4">
       <li><a href="#steps">Address</a></li><li><a href="#steps">Testnet DASH</a></li><li data-state="done">Identity</li><li aria-current="step">Username</li>
+    </ol>
+    <ol class="dh-steps" aria-label="Start on Testnet" data-test="steps-todo">
+      <li data-state="todo">Address</li><li data-state="todo">Testnet DASH</li><li data-state="todo">Identity</li><li aria-current="step">Username</li>
     </ol>
   </section>
 
@@ -442,6 +457,9 @@
   "revision": 3,
   "publicKeys": [{ "id": 0, "purpose": "AUTHENTICATION", "securityLevel": "MASTER" }]
 }</pre>
+    <p class="dh-measure links-demo">An inline link sits in a sentence and is underlined: read <a class="dh-link" href="#misc" data-test="link-inline">how identities
+      work</a> first. A next step on its own line is semibold with an arrow:</p>
+    <p class="links-demo"><a class="dh-link--go" href="#misc" data-test="link-go">Top up in Bridge</a></p>
     <p class="dh-elsewhere"><span>Elsewhere</span><a href="#misc">Votes in Governance</a><a href="#misc">Platform activity in Explorer</a><a class="dh-btn dh-btn--sm" href="#misc" data-test="btn-in-elsewhere">Open in Radar</a></p>
   </section>
 

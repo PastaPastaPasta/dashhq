@@ -40,14 +40,19 @@
   --dh-act-hover: #EA9727;
   --dh-act-ink: #0A2A3D;       /* text on amber */
 
-  /* accent: what the primary button is filled with. Core tools leave it amber. An app sets exactly one line,
-     :root { --dh-accent: var(--dh-accent-forge); }, and every primary button, shape and state follows.
-     The app accents all carry --dh-act-ink at 6:1 or better, so hover and press stay above 4.5:1. */
-  --dh-accent: var(--dh-act);
-  --dh-accent-ink: var(--dh-act-ink);
-  --dh-accent-forge: #F58A4F;  /* ember */
-  --dh-accent-pollr: #25B8A6;  /* teal */
-  --dh-accent-yappr: #38BDF8;  /* sky */
+  /* selection: the current tab's rule, a chosen card's ring, checked boxes (--dh-select, 3:1 on page and surface),
+     and selected or highlighted rows (--dh-select-soft). Dash blue, unless an app sets its accent below. */
+  --dh-select: var(--dh-brand);
+  --dh-select-soft: var(--dh-brand-soft);
+
+  /* accent: an app's own colour (Forge ember, Pollr teal, Yappr sky), for its brand mark, selection and highlights.
+     Never the committing button (always amber, --dh-act, at the family height) and never text. An app turns it on
+     with one attribute, <html data-dh-accent="forge|pollr|yappr">; core tools leave it off. */
+  --dh-accent: var(--dh-act);            /* the app's colour as a fill: its glyph, a highlight rule */
+  --dh-accent-ink: var(--dh-act-ink);    /* text on an accent fill (6:1 or better on every accent) */
+  --dh-accent-forge: #F58A4F;  --dh-accent-forge-select: #C67040;  --dh-accent-forge-soft: #FDECE3;  /* ember */
+  --dh-accent-pollr: #25B8A6;  --dh-accent-pollr-select: #1E9586;  --dh-accent-pollr-soft: #DCF4F1;  /* teal */
+  --dh-accent-yappr: #38BDF8;  --dh-accent-yappr-select: #2B90BC;  --dh-accent-yappr-soft: #DFF4FE;  /* sky */
   --dh-shade-1: rgba(6, 19, 27, .08);   /* hover and press overlays on filled buttons */
   --dh-shade-2: rgba(6, 19, 27, .14);
 
@@ -135,6 +140,11 @@
   :root { --dh-dur-1: 0ms; --dh-dur-2: 0ms; }
 }
 
+/* An app's accent: <html data-dh-accent="forge|pollr|yappr">. The shades follow the theme by themselves. */
+:root[data-dh-accent="forge"] { --dh-accent: var(--dh-accent-forge); --dh-select: var(--dh-accent-forge-select); --dh-select-soft: var(--dh-accent-forge-soft); }
+:root[data-dh-accent="pollr"] { --dh-accent: var(--dh-accent-pollr); --dh-select: var(--dh-accent-pollr-select); --dh-select-soft: var(--dh-accent-pollr-soft); }
+:root[data-dh-accent="yappr"] { --dh-accent: var(--dh-accent-yappr); --dh-select: var(--dh-accent-yappr-select); --dh-select-soft: var(--dh-accent-yappr-soft); }
+
 :root[data-theme="light"] { color-scheme: light; }
 
 /* The dark set is written twice: once for the system setting, once for an explicit choice. Keep them identical. */
@@ -160,6 +170,9 @@
     --dh-plate-edge: #123A52;
     --dh-ramp-1: #A9D9FA; --dh-ramp-2: #62B8F3; --dh-ramp-3: #2B90DA; --dh-ramp-4: #1F6CA3; --dh-ramp-5: #1A4A6E;
     --dh-mark-edge: rgba(166, 216, 247, .38);
+    --dh-accent-forge-select: #F58A4F; --dh-accent-forge-soft: #363131;
+    --dh-accent-pollr-select: #25B8A6; --dh-accent-pollr-soft: #103A40;
+    --dh-accent-yappr-select: #38BDF8; --dh-accent-yappr-soft: #143B4F;
     --dh-focus: #5EC2F6;
     --dh-shadow-pop: 0 14px 36px -12px rgba(0, 0, 0, .7), 0 0 0 1px var(--dh-line);
   }
@@ -185,6 +198,9 @@
   --dh-plate-edge: #123A52;
   --dh-ramp-1: #A9D9FA; --dh-ramp-2: #62B8F3; --dh-ramp-3: #2B90DA; --dh-ramp-4: #1F6CA3; --dh-ramp-5: #1A4A6E;
   --dh-mark-edge: rgba(166, 216, 247, .38);
+  --dh-accent-forge-select: #F58A4F; --dh-accent-forge-soft: #363131;
+  --dh-accent-pollr-select: #25B8A6; --dh-accent-pollr-soft: #103A40;
+  --dh-accent-yappr-select: #38BDF8; --dh-accent-yappr-soft: #143B4F;
   --dh-focus: #5EC2F6;
   --dh-shadow-pop: 0 14px 36px -12px rgba(0, 0, 0, .7), 0 0 0 1px var(--dh-line);
 }

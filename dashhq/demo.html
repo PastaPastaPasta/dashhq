@@ -196,6 +196,20 @@
     </div>
   </section>
 
+  <section class="block" id="not-found" aria-labelledby="h-notfound">
+    <h2 class="dh-h2" id="h-notfound">Not on this network</h2>
+    <p class="dh-muted narrow">A shared link opened on the other network never looks like missing data. The page says where the
+      record is instead, or that it is on neither. The app gives <code class="dh-mono">&lt;dashhq-not-found&gt;</code> a lookup, or sets
+      <code class="dh-mono">found</code> itself.</p>
+    <div class="states" data-test="not-found">
+      <dashhq-not-found thing="masternode" id-label="ProTx hash" network="testnet" data-demo="mainnet"
+        list-href="#masternodes" list-label="Browse Testnet masternodes"></dashhq-not-found>
+      <dashhq-not-found thing="identity" network="testnet" found="none" list-href="#overview" list-label="Search Testnet"></dashhq-not-found>
+      <dashhq-not-found thing="proposal" network="testnet" data-demo="slow"></dashhq-not-found>
+      <dashhq-not-found thing="identity" network="testnet" found="unknown"></dashhq-not-found>
+    </div>
+  </section>
+
   <section class="block" aria-labelledby="h-family">
     <h2 class="dh-h2" id="h-family">The bar across the family</h2>
     <p class="dh-muted narrow">Same element, different attributes. Testnet and devnet draw the bar's bottom rule dashed, like the

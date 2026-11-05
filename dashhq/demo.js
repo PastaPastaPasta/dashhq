@@ -13,3 +13,8 @@ for (const seg of document.querySelectorAll('.dh-seg')) {
     for (const x of seg.querySelectorAll('button')) x.setAttribute('aria-pressed', String(x === b));
   });
 }
+
+// <dashhq-not-found> lookups: one network has the record; one check never finishes, to show the checking state.
+for (const el of document.querySelectorAll('dashhq-not-found[data-demo]')) {
+  el.lookup = el.dataset.demo === 'slow' ? () => new Promise(() => {}) : async (network) => network === el.dataset.demo;
+}

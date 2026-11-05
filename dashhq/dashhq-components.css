@@ -6,16 +6,22 @@
 
    Decided once for the family:
    - Radius: 6px (--dh-r2) for every control, 10px (--dh-r3) for every card, 3px (--dh-r1) for badges. No pills.
-   - Heights: --dh-ctl-h-sm / --dh-ctl-h / --dh-ctl-h-lg = 28 / 34 / 42, and 40 / 42 / 48 on touch screens.
+   - Heights: --dh-ctl-h-sm / --dh-ctl-h = 28 / 34, and 40 / 42 on touch screens. Every button that matters is the
+     middle one; --sm is for dense rows (tables, toolbars). --lg is retired: it draws at the family height.
    - Focus: 2px --dh-focus outline, 2px offset, on every interactive element (--dh-ring-shadow for shadow systems).
    - Casing: sentence case. Components reset text-transform and letter-spacing so framework defaults can't
      uppercase a label; the words themselves must be written in sentence case ("Create identity", "Sign in").
-   - Primary: the one committing action in view, filled with --dh-accent (amber; an app's accent in apps).
+   - Primary: the one committing action in view, filled amber (--dh-act) everywhere, apps included.
+   - Selection: --dh-select and --dh-select-soft (Dash blue; an app's accent with <html data-dh-accent>). Links stay blue.
 
    Contents: layout · page header · section · buttons · fields · segmented control · tabs · cards · choices · stats ·
    tables (+ phone row cards) · key/value · badges · notices · states · stepper · misc */
 
 /* ================================================================ layout */
+/* Short pages keep the footer at the bottom of the screen: put .dh-fill on <body> (or the element that holds the bar,
+   <main> and the footer). <main>, or a child marked .dh-fill__main, takes the spare height. */
+.dh-fill { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+.dh-fill > main, .dh-fill > .dh-fill__main { flex: 1 0 auto; }
 /* The container lines up with the bar: same max width, same gutter, border-box, so the page's left edge is the
    bar's left edge on every site. Put all page content inside one; full-bleed bands sit outside it. */
 .dh-container {
@@ -52,6 +58,11 @@
 .dh-link { color: var(--dh-brand-ink); text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
   text-underline-offset: 3px; }
 .dh-link:hover { text-decoration-color: currentColor; }
+/* Two link styles in the family. Inline links in sentences: .dh-link (underlined). A link that is a next step on its own
+   ("Top up in Bridge", "Return to your identity"): .dh-link--go, semibold with an arrow, underlined on hover. */
+.dh-link--go { color: var(--dh-brand-ink); font-weight: var(--dh-w-strong); text-decoration: none; }
+.dh-link--go::after { content: "\2192"; content: "\2192" / ""; margin-left: .3em; }
+.dh-link--go:hover { text-decoration: underline; text-underline-offset: 3px; }
 .dh-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 @media (max-width: 480px) { .dh-h1 { font-size: 26px; } }
 
@@ -113,7 +124,7 @@
    .dh-btn--quiet             toolbars, Cancel, icon buttons
    .dh-btn--link              an action that reads as a link ("Show all 25", "Copy")
    .dh-btn--destructive       remove, revoke, delete; always behind a confirm that names the thing (--danger: alias)
-   .dh-btn--sm / --lg         28 / 42px (40 / 48 on touch); default 34 (42)
+   .dh-btn--sm                28px (40 on touch), dense rows only; default 34 (42). --lg is retired: same as default.
    .dh-btn--block / --icon    full width / square icon button (give it an aria-label)
    :disabled, [aria-disabled="true"]   flat and grey, whatever the variant, with the reason written nearby
    [aria-busy="true"]         spinner before the label; change the label too ("Sending…") and ignore presses
@@ -132,13 +143,15 @@
 .dh-btn:active { background-color: var(--dh-line); }
 .dh-btn:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
 
-.dh-btn--primary, .dh-btn--act { border-color: transparent; background-color: var(--dh-accent); color: var(--dh-accent-ink);
+/* The committing action is amber in every product, apps included: an app's accent marks its brand and selection, never
+   this button. */
+.dh-btn--primary, .dh-btn--act { border-color: transparent; background-color: var(--dh-act); color: var(--dh-act-ink);
   font-weight: var(--dh-w-strong); }
 .dh-btn--primary:hover, .dh-btn--act:hover {
-  background-color: var(--dh-accent); color: var(--dh-accent-ink);
+  background-color: var(--dh-act); color: var(--dh-act-ink);
   background-image: linear-gradient(var(--dh-shade-1), var(--dh-shade-1));
 }
-.dh-btn--primary:active, .dh-btn--act:active { background-color: var(--dh-accent); background-image: linear-gradient(var(--dh-shade-2), var(--dh-shade-2)); }
+.dh-btn--primary:active, .dh-btn--act:active { background-color: var(--dh-act); background-image: linear-gradient(var(--dh-shade-2), var(--dh-shade-2)); }
 
 .dh-btn--secondary { /* the default; the name exists so markup can say what it means */ }
 
@@ -158,7 +171,7 @@
 .dh-btn--destructive:active, .dh-btn--danger:active { background-color: var(--dh-bad-soft); color: var(--dh-bad); box-shadow: inset 0 0 0 1px var(--dh-bad); }
 
 .dh-btn--sm { height: var(--dh-ctl-h-sm); padding: 0 10px; gap: 6px; font-size: var(--dh-fs-sm); }
-.dh-btn--lg { height: var(--dh-ctl-h-lg); padding: 0 18px; font-size: var(--dh-fs-body); }
+.dh-btn--lg { /* retired in 1.6: one height for every button that matters, so it draws as the default */ }
 .dh-btn--block { display: flex; width: 100%; }
 .dh-btn--icon { width: var(--dh-ctl-h); padding: 0; }
 .dh-btn--icon.dh-btn--sm { width: var(--dh-ctl-h-sm); }
@@ -240,7 +253,7 @@
 @media (max-width: 480px) { .dh-inline-form > .dh-btn { flex: 1 1 100%; } }
 /* Checkbox and radio rows. */
 .dh-check { display: flex; align-items: flex-start; gap: 10px; min-height: 24px; font-size: var(--dh-fs-ui); color: var(--dh-ink); cursor: pointer; }
-.dh-check > input { flex: none; width: 16px; height: 16px; margin: 2px 0 0; accent-color: var(--dh-brand-fill); }
+.dh-check > input { flex: none; width: 16px; height: 16px; margin: 2px 0 0; accent-color: var(--dh-select); }
 .dh-check > input:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
 .dh-check small { display: block; color: var(--dh-ink-2); font-size: var(--dh-fs-sm); }
 @media (pointer: coarse) {
@@ -280,7 +293,7 @@
 .dh-tabs > :hover { color: var(--dh-ink); }
 .dh-tabs > [aria-current="page"], .dh-tabs > [aria-current="true"], .dh-tabs > [aria-selected="true"] { color: var(--dh-ink); }
 .dh-tabs > [aria-current="page"]::after, .dh-tabs > [aria-current="true"]::after, .dh-tabs > [aria-selected="true"]::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 2px; background: var(--dh-brand);
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 2px; background: var(--dh-select);
 }
 .dh-tabs > :focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: -2px; border-radius: var(--dh-r1); }
 .dh-tabs .dh-count { color: var(--dh-ink-2); font-weight: 400; }
@@ -339,7 +352,7 @@
 .dh-choice:hover .dh-choice__title { color: var(--dh-brand-ink); }
 .dh-choice:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
 .dh-choice:is([aria-pressed="true"], [aria-checked="true"], [aria-current]:not([aria-current="false"])) {
-  border-color: var(--dh-brand); box-shadow: 0 0 0 1px var(--dh-brand); }
+  border-color: var(--dh-select); box-shadow: 0 0 0 1px var(--dh-select); }
 .dh-choice:is(:disabled, [aria-disabled="true"]) { cursor: default; background: var(--dh-sunken); border-style: dashed;
   border-color: var(--dh-line-2); }
 .dh-choice:is(:disabled, [aria-disabled="true"]) :is(.dh-choice__title, .dh-choice__icon) { color: var(--dh-ink-2); }
@@ -363,7 +376,7 @@
 /* ================================================================ stats */
 .dh-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--dh-4) var(--dh-5); }
 .dh-stat { display: grid; gap: 2px; align-content: start; padding-left: 12px; border-left: 1px solid var(--dh-line); min-width: 0; }
-.dh-stat--key { border-left: 3px solid var(--dh-brand); padding-left: 10px; }
+.dh-stat--key { border-left: 3px solid var(--dh-select); padding-left: 10px; }
 .dh-stat--good { border-left: 3px solid var(--dh-good); padding-left: 10px; }
 .dh-stat--warn { border-left: 3px solid var(--dh-warn); padding-left: 10px; }
 .dh-stat__label { font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
@@ -385,7 +398,7 @@
   background: var(--dh-surface); vertical-align: bottom; }
 .dh-table td { padding: 9px 12px; border-bottom: 1px solid var(--dh-line); vertical-align: middle; }
 .dh-table tbody tr:hover td { background: var(--dh-hover); }
-.dh-table tbody tr[aria-selected="true"] td, .dh-table tbody tr.is-selected td { background: var(--dh-brand-soft); }
+.dh-table tbody tr[aria-selected="true"] td, .dh-table tbody tr.is-selected td { background: var(--dh-select-soft); }
 .dh-table tbody tr:last-child td { border-bottom: 0; }
 .dh-table .dh-r, .dh-table th.dh-r { text-align: right; }
 .dh-table td .dh-sub { display: block; font-size: 12.5px; color: var(--dh-ink-2); }
@@ -442,7 +455,7 @@
   .dh-table--cards tbody tr:hover td { background: none; }
   .dh-table--cards tbody tr:hover { background: var(--dh-hover); }
   .dh-table--cards tbody tr[aria-selected="true"] td { background: none; }
-  .dh-table--cards tbody tr[aria-selected="true"] { background: var(--dh-brand-soft); }
+  .dh-table--cards tbody tr[aria-selected="true"] { background: var(--dh-select-soft); }
 }
 /* Phone, record tables (keys, checks, settings): each row becomes a block of "label  value" lines. */
 @media (max-width: 640px) {
@@ -596,7 +609,8 @@
    The Start journey (Address → Testnet DASH → Identity → Username), and any short ordered flow.
    <ol class="dh-steps" aria-label="Start on Testnet"> <li><a href=…>Address</a></li> <li aria-current="step">Testnet DASH</li>
    <li>Identity</li> <li>Username</li> </ol>
-   Numbers come from the list. Steps before the current one are done (or mark them data-state="done"). */
+   Numbers come from the list. Steps before the current one are done (or mark them data-state="done"). An earlier step
+   that isn't done (Bridge's username step opened without an identity) says so with data-state="todo": a dashed ring. */
 .dh-steps { display: flex; align-items: center; gap: 0; margin: 0 0 var(--dh-5); padding: 0; list-style: none; counter-reset: dh-step;
   font-size: var(--dh-fs-ui); color: var(--dh-ink-2); }
 .dh-steps > li { counter-increment: dh-step; display: flex; align-items: center; gap: 8px; flex: 1 1 auto; min-width: 0; white-space: nowrap; }
@@ -613,10 +627,11 @@
 .dh-steps > li[aria-current="step"] { color: var(--dh-ink); font-weight: var(--dh-w-strong); }
 .dh-steps > li[aria-current="step"]::before { background: var(--dh-brand-fill); border-color: var(--dh-brand-fill); color: #FFFFFF; }
 /* :is() is forgiving, so a browser without :has() still honours data-state. */
-.dh-steps > li:is([data-state="done"], :has(~ li[aria-current="step"])) { color: var(--dh-ink); }
-.dh-steps > li:is([data-state="done"], :has(~ li[aria-current="step"]))::before {
+.dh-steps > li:is([data-state="done"], :has(~ li[aria-current="step"])):not([data-state="todo"]) { color: var(--dh-ink); }
+.dh-steps > li:is([data-state="done"], :has(~ li[aria-current="step"])):not([data-state="todo"])::before {
   background: var(--dh-brand-soft); border-color: var(--dh-brand); color: var(--dh-brand-ink); }
-.dh-steps > li:is([data-state="done"], :has(~ li[aria-current="step"]))::after { background: var(--dh-brand); }
+.dh-steps > li:is([data-state="done"], :has(~ li[aria-current="step"])):not([data-state="todo"])::after { background: var(--dh-brand); }
+.dh-steps > li[data-state="todo"]::before { border-style: dashed; background: var(--dh-sunken); }
 @media (max-width: 720px) {
   .dh-steps { align-items: flex-start; font-size: var(--dh-fs-xs); }
   .dh-steps > li, .dh-steps > li:last-child { position: relative; flex: 1 1 0; flex-direction: column; gap: 6px; text-align: center; white-space: normal; }
@@ -647,13 +662,14 @@
 /* Inline components keep their own width when they sit in a grid (stacks, fields, notices, page headers). */
 .dh-seg:not(.dh-seg--block), .dh-badge, .dh-pill, .dh-proof, .dh-status, .dh-btn:not(.dh-btn--block) { justify-self: start; }
 /* The one focus ring, on the layer's link-like pieces too. */
-.dh-link:focus-visible, .dh-crumbs a:focus-visible, .dh-elsewhere a:focus-visible, .dh-table a:focus-visible,
+.dh-link:focus-visible, .dh-link--go:focus-visible, .dh-crumbs a:focus-visible, .dh-elsewhere a:focus-visible, .dh-table a:focus-visible,
 .dh-error summary:focus-visible, .dh-empty a:focus-visible, .dh-notice a:focus-visible {
   outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); border-radius: var(--dh-r1); }
 /* Touch screens: every target the layer draws is at least 40px tall. Links inside running text are exempt. */
 @media (pointer: coarse) {
   .dh-seg > button, .dh-seg > a { height: 40px; }
   .dh-btn--link { min-height: 40px; }
+  .dh-link--go { display: inline-flex; align-items: center; min-height: 40px; }
   .dh-proof { height: 40px; padding-inline: 12px 14px; }
   .dh-crumbs :where(a:not(.dh-btn)), .dh-steps > li > :where(a:not(.dh-btn)), .dh-elsewhere :where(a:not(.dh-btn)),
   :is(.dh-card__foot, .dh-actions, .dh-pager, .dh-notice__actions) > :where(a:not(.dh-btn)) {

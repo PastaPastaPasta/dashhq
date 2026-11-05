@@ -15,13 +15,14 @@ p { margin: 0; }
 .sub-head { margin: var(--dh-6) 0 var(--dh-3); }
 .dh-steps + .dh-steps { margin-top: var(--dh-5); }
 
-/* The one line an app writes. Here on cards so all four render side by side; an app puts it on :root. */
-.accent-forge { --dh-accent: var(--dh-accent-forge); }
-.accent-pollr { --dh-accent: var(--dh-accent-pollr); }
-.accent-yappr { --dh-accent: var(--dh-accent-yappr); }
-:root[data-accent="forge"] { --dh-accent: var(--dh-accent-forge); }
-:root[data-accent="pollr"] { --dh-accent: var(--dh-accent-pollr); }
-:root[data-accent="yappr"] { --dh-accent: var(--dh-accent-yappr); }
+/* What <html data-dh-accent="…"> sets, here on cards so all four render side by side. */
+.accent-forge { --dh-accent: var(--dh-accent-forge); --dh-select: var(--dh-accent-forge-select); --dh-select-soft: var(--dh-accent-forge-soft); }
+.accent-pollr { --dh-accent: var(--dh-accent-pollr); --dh-select: var(--dh-accent-pollr-select); --dh-select-soft: var(--dh-accent-pollr-soft); }
+.accent-yappr { --dh-accent: var(--dh-accent-yappr); --dh-select: var(--dh-accent-yappr-select); --dh-select-soft: var(--dh-accent-yappr-soft); }
+.accent-name { display: flex; align-items: center; gap: 8px; }
+.accent-glyph { width: 20px; height: 20px; border-radius: 5px; background: var(--dh-accent); }
+.accents .dh-tabs { margin: 0; }
+.links-demo + .links-demo { margin-top: var(--dh-2); }
 /* Sign-in frames: dialogs shown in place, side by side */
 .signin-demos { --dh-grid-min: 380px; align-items: start; }
 .signin-frame { width: auto; max-height: none; margin: 0; box-shadow: none; border: 1px solid var(--dh-line); }

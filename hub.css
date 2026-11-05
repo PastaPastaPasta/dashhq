@@ -357,3 +357,4 @@ html.finder-on .finder{display:grid;grid-template-columns:minmax(0,1fr) auto;max
 
 .directory-page > .dh-container { padding: 0; }
 @media(max-width:760px) { .network-pulse { gap: 12px; } .network-pulse strong { font-size: 18px; } }
+.desc a, .dd a, .platform-intro a { color: var(--dh-brand-ink); text-decoration: underline; text-underline-offset: 3px; }

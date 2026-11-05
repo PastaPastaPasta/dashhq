@@ -39,14 +39,30 @@ export interface DashhqApi {
     withNetwork(url: string, network: DashhqNetwork): string;
     /** Rewrite a legacy ?net= in the address bar to ?network= without reloading. */
     canonicalize(): void;
+    /** The family's order: Mainnet, Testnet, then devnets A to Z, deduplicated, unknown values dropped. The bar's
+     *  network menu always uses it, whatever order `networks` lists. Use it for any network list of your own. */
+    sort(networks: Iterable<string>): DashhqNetwork[];
+    /** A record isn't on this network: ask the others, in the family's order. `exists` resolves true or false (a throw
+     *  means "couldn't ask"). Resolves to the first network that has it, 'none', or 'unknown'. `network` defaults to
+     *  the page's; `networks` to Mainnet and Testnet. */
+    findElsewhere(exists: (network: DashhqNetwork, signal?: AbortSignal) => Promise<boolean> | boolean,
+      opts?: { network?: DashhqNetwork; networks?: string[]; signal?: AbortSignal }): Promise<DashhqNetwork | 'none' | 'unknown'>;
   };
 }
+
+/** <dashhq-not-found>: set `lookup` to let the element ask the other networks itself (or set its `found` attribute). */
+export interface DashhqNotFoundElement extends HTMLElement {
+  lookup: ((network: DashhqNetwork, signal?: AbortSignal) => Promise<boolean> | boolean) | null;
+}
+/** The accent an app sets on <html data-dh-accent="…">. */
+export type DashhqAccent = 'forge' | 'pollr' | 'yappr';
 
 export interface DashhqThemeEventDetail { pref: DashhqThemePref; theme: 'light' | 'dark' }
 export interface DashhqNetworkEventDetail { network: DashhqNetwork; href: string }
 
 declare global {
   interface Window { dashhq: DashhqApi }
+  interface HTMLElementTagNameMap { 'dashhq-not-found': DashhqNotFoundElement }
   interface DocumentEventMap { 'dashhq-theme': CustomEvent<DashhqThemeEventDetail> }
   // dashhq-network bubbles and is composed, so it can be heard on the bar, any ancestor, or document.
   interface GlobalEventHandlersEventMap { 'dashhq-network': CustomEvent<DashhqNetworkEventDetail> }
