@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Stricter than any site in the family: proves the shell needs nothing inline. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="theme-color" content="#FFFFFF">
+<title>dashhq shell demo</title>
+<link rel="icon" href="mark/favicon.svg" type="image/svg+xml">
+<script src="dashhq-shell.js"></script>
+<link rel="preload" href="fonts/archivo-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="dashhq-tokens.css">
+<link rel="stylesheet" href="dashhq-shell.css">
+<link rel="stylesheet" href="dashhq-components.css">
+<link rel="stylesheet" href="demo.css">
+<script src="demo.js" defer></script>
+</head>
+<body>
+
+<dashhq-bar product="radar" network="mainnet" networks="mainnet testnet" sticky>
+  <nav slot="nav" aria-label="Radar">
+    <a href="#overview" aria-current="page">Overview</a>
+    <a href="#masternodes">Masternodes</a>
+    <a href="#platform">Platform</a>
+    <a href="#changes">Changes</a>
+    <a href="#map">Map</a>
+    <a href="#api">API</a>
+  </nav>
+</dashhq-bar>
+
+<main class="page">
+
+  <header class="intro" id="overview">
+    <p class="dh-label">dashhq shell 1.0 · reference page</p>
+    <h1 class="dh-display">2,584 Dash nodes answered our last crawl</h1>
+    <p class="dh-lead">Every component the core tools share, drawn with the shared tokens. The bar above is the
+      real <code class="dh-mono">&lt;dashhq-bar&gt;</code>: open the chevron for the family doors, the network
+      pill to switch networks, or narrow the window to get the phone menu.</p>
+    <div class="row-actions">
+      <a class="dh-btn" href="#masternodes">Browse masternodes</a>
+      <button class="dh-btn dh-btn--act" type="button">Vote yes on 3 proposals</button>
+    </div>
+  </header>
+
+  <section class="block" aria-labelledby="h-stats">
+    <h2 class="dh-h2" id="h-stats">Stats</h2>
+    <div class="dh-stats">
+      <div class="dh-stat dh-stat--good"><span class="dh-stat__label">Masternodes reachable</span><span class="dh-stat__value">99.0%</span><span class="dh-stat__note">22 didn't answer</span></div>
+      <div class="dh-stat"><span class="dh-stat__label">Enabled masternodes</span><span class="dh-stat__value">2,244</span><span class="dh-stat__note">361 of them evonodes</span></div>
+      <div class="dh-stat"><span class="dh-stat__label">Next payout</span><span class="dh-stat__value">15 <small>days</small></span><span class="dh-stat__note">voting closes Nov 17</span></div>
+      <div class="dh-stat"><span class="dh-stat__label">Still available</span><span class="dh-stat__value">1,635 <small>DASH</small></span><span class="dh-stat__note">of 6,828 in the budget</span></div>
+    </div>
+  </section>
+
+  <section class="block" id="masternodes" aria-labelledby="h-table">
+    <div class="block-head">
+      <h2 class="dh-h2" id="h-table">Masternodes</h2>
+      <div class="dh-seg" role="group" aria-label="Show">
+        <button type="button" aria-pressed="true">Masternodes <span class="dh-count">2,244</span></button>
+        <button type="button" aria-pressed="false">Evonodes <span class="dh-count">361</span></button>
+        <button type="button" aria-pressed="false">All nodes</button>
+      </div>
+    </div>
+    <div class="filters">
+      <div class="dh-field grow"><label for="q">Search</label><input class="dh-input" id="q" type="search" placeholder="ProTx hash, IP, payout address, hosting"></div>
+      <div class="dh-field"><label for="st">Status</label><select class="dh-select" id="st"><option>Any</option><option>Reachable</option><option>Unreachable</option><option>PoSe-banned</option></select></div>
+      <div class="dh-field"><label for="ver">Version</label><select class="dh-select" id="ver"><option>Any</option><option>23.1.10</option><option>23.1.9</option></select></div>
+    </div>
+    <div class="dh-panel dh-panel--flush">
+      <div class="dh-table-wrap">
+        <table class="dh-table dh-table--cards">
+          <thead><tr><th>ProTx</th><th>Address</th><th>Type</th><th>Status</th><th class="dh-r">Uptime 30d</th><th class="dh-r">Last paid</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="dh-rc-title"><dashhq-hash label="ProTx hash" href="#mn" value="219edddca6b0973d4b9fd24ae62d9b8a8c4addd0d1c44de577e1ef127f37fb32">219edddca6b0973d4b9fd24ae62d9b8a8c4addd0d1c44de577e1ef127f37fb32</dashhq-hash></td>
+              <td data-label="" class="dh-mono">85.209.241.228:9999</td>
+              <td data-label="">Masternode</td>
+              <td data-label=""><span class="dh-status dh-status--good">Reachable</span></td>
+              <td data-label="up" class="dh-r">100%</td>
+              <td data-label="paid" class="dh-r">28 h ago</td>
+            </tr>
+            <tr>
+              <td class="dh-rc-title"><dashhq-hash label="ProTx hash" href="#mn" value="a835558287c1f0e2b3d4a5968778695a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0130">a835558287c1f0e2b3d4a5968778695a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0130</dashhq-hash></td>
+              <td data-label="" class="dh-mono">159.65.72.161:9999</td>
+              <td data-label="">Evonode</td>
+              <td data-label=""><span class="dh-status dh-status--bad">Unreachable</span> <span class="dh-pill dh-pill--warn">PoSe-banned</span></td>
+              <td data-label="up" class="dh-r">0.0%</td>
+              <td data-label="paid" class="dh-r">4.2 years ago</td>
+            </tr>
+            <tr>
+              <td class="dh-rc-title"><dashhq-hash label="ProTx hash" href="#mn" value="d1dc61fe0a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5bd706">d1dc61fe0a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5bd706</dashhq-hash></td>
+              <td data-label="" class="dh-mono">15.188.53.12:9999</td>
+              <td data-label="">Masternode</td>
+              <td data-label=""><span class="dh-status dh-status--warn">Slow</span></td>
+              <td data-label="up" class="dh-r">99.5%</td>
+              <td data-label="paid" class="dh-r">2 days ago</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-record">
+    <h2 class="dh-h2" id="h-record">A record header</h2>
+    <div class="dh-panel record">
+      <div class="record-title">
+        <h3 class="dh-h1">german.dash</h3>
+        <span class="dh-pill dh-pill--info">Name contest</span>
+        <a class="dh-proof dh-proof--ok" href="#proof">Verified</a>
+      </div>
+      <dl class="dh-kv">
+        <dt>Leading</dt><dd>Lock, 57% of 14 votes</dd>
+        <dt>Contender</dt><dd><dashhq-hash label="identity" href="#identity" value="7mUyau4yQdjFp8ZGHjKeVvYcN8sYtKqXxHjkE3w2ZmPq">7mUyau4yQdjFp8ZGHjKeVvYcN8sYtKqXxHjkE3w2ZmPq</dashhq-hash></dd>
+        <dt>Document</dt><dd><dashhq-hash full label="document id" value="4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF">4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF</dashhq-hash></dd>
+        <dt>Closes</dt><dd>in 1 day 10 hours <span class="dh-muted">(block 2,567,890)</span></dd>
+      </dl>
+      <nav class="dh-tabs" aria-label="Contest">
+        <a href="#votes" aria-current="page">Votes <span class="dh-count">14</span></a>
+        <a href="#contenders">Contenders <span class="dh-count">1</span></a>
+        <a href="#history">History</a>
+      </nav>
+      <div class="proofs">
+        <span class="dh-proof dh-proof--ok">Verified</span>
+        <span class="dh-proof dh-proof--checking">Checking</span>
+        <span class="dh-proof dh-proof--unverified">Not verified</span>
+        <span class="dh-proof dh-proof--failed">Proof failed</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="block two" aria-labelledby="h-forms">
+    <div>
+      <h2 class="dh-h2" id="h-forms">Buttons and fields</h2>
+      <div class="stack">
+        <div class="row-actions">
+          <button class="dh-btn dh-btn--act" type="button">Get 1 tDASH</button>
+          <button class="dh-btn" type="button">Copy address</button>
+          <button class="dh-btn dh-btn--quiet" type="button">Cancel</button>
+          <button class="dh-btn dh-btn--danger" type="button">Remove key</button>
+          <button class="dh-btn" type="button" disabled>Disabled</button>
+        </div>
+        <div class="dh-field">
+          <label for="addr">Testnet address</label>
+          <input class="dh-input dh-input--mono" id="addr" value="yPrynRN6ViX2rCcRL5So5i8ntcWgdHSEaS" aria-describedby="addr-h">
+          <span class="dh-field__hint" id="addr-h">Starts with y or 8. Send testnet DASH only.</span>
+        </div>
+        <div class="dh-field">
+          <label for="lbl">Username</label>
+          <input class="dh-input" id="lbl" value="ab" aria-invalid="true" aria-describedby="lbl-e">
+          <span class="dh-field__error" id="lbl-e">Use 3 to 63 letters, numbers or hyphens.</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h2 class="dh-h2">Pills and status</h2>
+      <div class="stack">
+        <p class="pills">
+          <span class="dh-pill">Closed</span>
+          <span class="dh-pill dh-pill--good">In the next budget</span>
+          <span class="dh-pill dh-pill--warn">Short of votes</span>
+          <span class="dh-pill dh-pill--bad">Locked</span>
+          <span class="dh-pill dh-pill--info">Closes in 1.5 days</span>
+          <span class="dh-pill dh-pill--good dh-pill--dot">Passing by 355</span>
+        </p>
+        <p class="pills">
+          <span class="dh-status dh-status--good">Reachable</span>
+          <span class="dh-status dh-status--warn">Slow</span>
+          <span class="dh-status dh-status--bad">Unreachable</span>
+          <span class="dh-status">Unknown</span>
+        </p>
+        <p class="hashes">
+          <span class="dh-label">Hash, truncated:</span> <dashhq-hash label="transaction id" value="d3f7d7c0a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718a9000000">d3f7…</dashhq-hash><br>
+          <span class="dh-label">Linked, longer head:</span> <dashhq-hash label="identity" head="8" tail="6" href="#identity" value="GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec">GWRS…</dashhq-hash>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-states">
+    <h2 class="dh-h2" id="h-states">Empty, loading, error, notice</h2>
+    <div class="states">
+      <div class="dh-empty"><strong>No votes yet</strong>Masternodes can vote until Nov 17. Votes show up here within a block.<br><a class="dh-btn" href="#vote">How voting works</a></div>
+      <div class="stack">
+        <div class="dh-loading"><span class="dh-spin"></span>Reading contested names from Platform…</div>
+        <div class="skel-rows"><span class="dh-skel dh-skel--text"></span><span class="dh-skel"></span><span class="dh-skel dh-skel--text"></span></div>
+        <div class="dh-error" role="alert">
+          <strong>Couldn't reach Platform.</strong>
+          <span>3 of 3 DAPI nodes timed out. Your keys and settings are untouched.</span>
+          <button class="dh-btn dh-btn--sm" type="button">Try again</button>
+          <details><summary>Details</summary><pre>getStatus: deadline exceeded after 10000 ms (seed-2.testnet.networks.dash.org:1443)</pre></details>
+        </div>
+        <div class="dh-notice"><strong>Name contests moved to Governance.</strong><span>EvoVote is now part of gov.dashhq.org. <a class="dh-link" href="#names">Open german.dash there</a>.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-family">
+    <h2 class="dh-h2" id="h-family">The bar across the family</h2>
+    <p class="dh-muted narrow">Same element, different attributes. Testnet and devnet draw the bar's bottom rule dashed, like the
+      testnet boxes on the hub map.</p>
+    <div class="bars">
+      <dashhq-bar product="home">
+        <nav slot="nav" aria-label="Sections"><a href="#map">Map</a><a href="#apps">Apps</a><a href="#explore">Explore</a><a href="#govern">Govern</a><a href="#build">Build</a><a href="#directory">Directory</a></nav>
+      </dashhq-bar>
+      <dashhq-bar product="gov" network="testnet" networks="mainnet testnet devnet-paloma" network-settings="#settings">
+        <nav slot="nav" aria-label="Governance"><a href="#p" aria-current="page">Proposals</a><a href="#names">Name contests</a><a href="#mns">My masternodes</a></nav>
+        <div slot="actions"><button class="dh-btn dh-btn--sm" type="button">Sign in</button></div>
+      </dashhq-bar>
+      <dashhq-bar product="explorer" network="devnet-paloma" networks="mainnet testnet devnet-paloma">
+        <nav slot="nav" aria-label="Explorer"><a href="#s">Search</a><a href="#i">Identities</a><a href="#n">Names</a><a href="#c">Contracts</a><a href="#t">Tokens</a></nav>
+      </dashhq-bar>
+      <dashhq-bar product="faucet"></dashhq-bar>
+      <dashhq-bar product="forge" class="app-forge">
+        <svg slot="logo" viewBox="0 0 20 20" aria-hidden="true"><rect class="forge-tile" width="20" height="20" rx="4"/><path class="forge-glyph" d="M5 8h10l-2 3H7z M9 11v4 M7 15h6"/></svg>
+        <nav slot="nav" aria-label="Forge"><a href="#e">Explore</a><a href="#d">Docs</a></nav>
+        <div slot="actions"><button class="dh-btn dh-btn--sm forge-cta" type="button">Sign in</button></div>
+      </dashhq-bar>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-type">
+    <h2 class="dh-h2" id="h-type">Type and colour</h2>
+    <div class="type">
+      <p class="dh-display">Display 46 · 116%</p>
+      <p class="dh-h1">Heading 1 · 30 · 110%</p>
+      <p class="dh-h2">Heading 2 · 21 · 110%</p>
+      <p class="dh-h3">Heading 3 · 17 · 620</p>
+      <p class="dh-lead">Lead 17: Dash Platform is the data layer run by Dash's masternodes.</p>
+      <p>Body 15: identities, usernames, documents and tokens. Numbers: <span class="dh-num">1,028,165 · 0.4158 DASH · 100.0%</span></p>
+      <p class="dh-label">Label 13 · secondary ink</p>
+      <p class="dh-mono">mono 0123456789abcdef · 7mUyau…HJkE</p>
+    </div>
+    <div class="swatches">
+      <div class="sw" data-t="page"><span>page</span></div>
+      <div class="sw" data-t="surface"><span>surface</span></div>
+      <div class="sw" data-t="sunken"><span>sunken</span></div>
+      <div class="sw" data-t="ink"><span>ink</span></div>
+      <div class="sw" data-t="ink-2"><span>ink-2</span></div>
+      <div class="sw" data-t="line"><span>line</span></div>
+      <div class="sw" data-t="brand"><span>brand</span></div>
+      <div class="sw" data-t="brand-ink"><span>brand-ink</span></div>
+      <div class="sw" data-t="act"><span>act</span></div>
+      <div class="sw" data-t="good"><span>good</span></div>
+      <div class="sw" data-t="warn"><span>warn</span></div>
+      <div class="sw" data-t="bad"><span>bad</span></div>
+      <div class="sw" data-t="plate"><span>plate</span></div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-plate">
+    <h2 class="dh-h2" id="h-plate">The plate</h2>
+    <div class="dh-plate plate-demo">
+      <div class="plate-inner">
+        <span class="plate-band">Platform</span>
+        <div class="plate-boxes">
+          <a class="plate-box" href="#explorer"><span>pasta</span><b>Explorer</b></a>
+          <a class="plate-box" href="#fees"><span>pasta</span><b>Fee estimator</b></a>
+          <a class="plate-box test" href="#pollr"><span>pasta</span><b>Pollr</b></a>
+        </div>
+        <span class="plate-band">Network</span>
+        <div class="plate-boxes">
+          <a class="plate-box" href="#radar"><span>pasta</span><b>Radar</b></a>
+          <a class="plate-box" href="#gov"><span>pasta</span><b>Governance</b></a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<dashhq-footer product="radar" source="https://github.com/PastaPastaPasta/dash-nodes">
+  <p>Locations from DB-IP (CC BY 4.0). Crawled every 10 minutes from three locations.</p>
+</dashhq-footer>
+
+</body>
+</html>

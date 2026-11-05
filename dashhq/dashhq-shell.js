@@ -1,4 +1,4 @@
-/*! dashhq-shell 1.3.0 | family bar, footer, hash display and theme for dashhq.org tools | MIT */
+/*! dashhq-shell 1.4.0 | family bar, footer, hash display and theme for dashhq.org tools | MIT */
 /* Load as a classic, blocking script in <head>, before any stylesheet that depends on [data-theme]:
      <script src="/dashhq/dashhq-shell.js"></script>
    CSP: needs only script-src 'self'. No inline script, no eval, no innerHTML, no style attributes,
@@ -7,7 +7,7 @@
   'use strict';
   if (window.dashhq && window.dashhq.version) return;
 
-  const VERSION = '1.3.0';
+  const VERSION = '1.4.0';
   const doc = document;
   const root = doc.documentElement;
   const host = location.hostname;
@@ -15,21 +15,22 @@
   /* ---------------------------------------------------------------- family registry */
   // door: home | network | governance | platform | start | apps
   // net: the product accepts ?network=, so family links carry the current network into it
+  // only: the one network the product runs on, shown next to it in the family menus
   const PRODUCTS = {
-    home:     { name: 'dashhq',        url: 'https://dashhq.org',          door: 'home',       net: true },
+    home:     { name: 'dashhq',        url: 'https://dashhq.org',          door: 'home' },
     radar:    { name: 'Radar',         url: 'https://radar.dashhq.org',    door: 'network',    net: true },
     gov:      { name: 'Governance',    url: 'https://gov.dashhq.org',      door: 'governance', net: true },
     explorer: { name: 'Explorer',      url: 'https://explorer.dashhq.org', door: 'platform',   net: true },
     faucet:   { name: 'Faucet',        url: 'https://faucet.dashhq.org',   door: 'start',      net: true },
     bridge:   { name: 'Bridge',        url: 'https://bridge.thepasta.org', door: 'start',      net: true },
-    arch:     { name: 'Architecture',  url: 'https://arch.dashhq.org',     door: 'platform',   net: true },
+    arch:     { name: 'Architecture',  url: 'https://arch.dashhq.org',     door: 'platform' },
     fees:     { name: 'Fee estimator', url: 'https://fees.dashhq.org',     door: 'platform',   net: true },
     dapi:     { name: 'DAPI console',  url: 'https://dapi.dashhq.org',     door: 'platform',   net: true },
     vote:     { name: 'EvoVote',       url: 'https://vote.dashhq.org',     door: 'governance', net: true },
-    basics:   { name: 'Basics',        url: 'https://basics.dashhq.org',   door: 'platform',   net: true },
-    forge:    { name: 'Forge',         url: 'https://forge.dashhq.org',    door: 'apps',       net: true },
-    pollr:    { name: 'Pollr',         url: 'https://pollr.dashhq.org',    door: 'apps',       net: true },
-    yappr:    { name: 'Yappr',         url: 'https://yap.pr',              door: 'apps',       net: true }
+    basics:   { name: 'Basics',        url: 'https://basics.dashhq.org',   door: 'platform' },
+    forge:    { name: 'Forge',         url: 'https://forge.dashhq.org',    door: 'apps',       only: 'Testnet' },
+    pollr:    { name: 'Pollr',         url: 'https://pollr.dashhq.org',    door: 'apps',       only: 'Testnet' },
+    yappr:    { name: 'Yappr',         url: 'https://yap.pr',              door: 'apps',       only: 'Testnet' }
   };
   PRODUCTS.nodes = PRODUCTS.radar;
   const DOORS = [
@@ -37,7 +38,7 @@
     { door: 'network',    key: 'radar',    label: 'Radar',      desc: 'Live network health, masternodes and evonodes' },
     { door: 'governance', key: 'gov',      label: 'Governance', desc: 'Proposals, votes, name contests' },
     { door: 'platform',   key: 'explorer', label: 'Explorer',   desc: 'Identities, names, contracts, proof-checked' },
-    { door: 'start',      key: 'bridge',   label: 'Start · Testnet',      desc: 'Address, testnet DASH, identity, username', steps: ['bridge', 'faucet'] }
+    { door: 'start',      key: 'bridge',   label: 'Start',      desc: 'Address, testnet DASH, identity, username', steps: ['bridge', 'faucet'] }
   ];
   const APPS = ['forge', 'pollr', 'yappr'];
   const ALSO = ['arch', 'fees', 'dapi'];
@@ -109,8 +110,8 @@
     const u = new URL(path || '/', base + '/');
     if (u.origin !== new URL(base).origin) throw new Error(`dashhq: href("${key}") must stay on ${base}`);
     const p = PRODUCTS[key];
-    const fallback = parseNetwork(u.searchParams.get('network')) || activeNetwork();
-    const n = p.door === 'apps' ? 'testnet' : parseNetwork(opts && 'network' in opts ? opts.network : fallback);
+    const fallback = p.door === 'start' ? parseNetwork(u.searchParams.get('network')) || 'testnet' : activeNetwork();
+    const n = parseNetwork(opts && 'network' in opts ? opts.network : fallback);
     if (p.net && n) {
       u.searchParams.delete('net');
       u.searchParams.set('network', n);
@@ -322,7 +323,9 @@
     '.pop{position:absolute;top:calc(100% + 6px);z-index:2;background:var(--dh-surface);border-radius:var(--dh-r3);' +
     'box-shadow:var(--dh-shadow-pop);padding:6px}' +
     '.doorpop{left:var(--dh-gutter);width:min(440px,calc(100vw - 2 * var(--dh-gutter)))}' +
-    '.netpop{right:0;min-width:200px}' +
+    '.netpop{right:0;min-width:200px;max-width:min(300px,calc(100vw - 2 * var(--dh-gutter)))}' +
+    '.nnote{margin:4px 0 0;padding:8px 10px 4px;border-top:1px solid var(--dh-line);font-size:13px;line-height:1.4;' +
+    'color:var(--dh-ink-2)}' +
     '.opt{display:flex;align-items:center;gap:10px;min-height:36px;padding:6px 10px;border-radius:var(--dh-r2);' +
     'font-size:14px;color:var(--dh-ink)}' +
     '.opt:hover{background:var(--dh-hover)}' +
@@ -347,6 +350,8 @@
     'margin-top:6px;font-size:14px}' +
     '.gl{font-size:13px;color:var(--dh-ink-2);min-width:52px}' +
     '.grp a{font-weight:540}' +
+    '.only{margin-left:6px;padding:1px 5px;border:1px dashed var(--dh-line-2);border-radius:var(--dh-r1);' +
+    'font-size:12px;font-weight:520;color:var(--dh-ink-2);vertical-align:1px}' +
     '.grp a:hover{color:var(--dh-brand-ink)}' +
     '.grp a[aria-current]{color:var(--dh-brand-ink);text-decoration:underline;text-underline-offset:3px}' +
     '.themes{display:flex;align-items:center;gap:12px;padding:10px 14px 6px;border-top:1px solid var(--dh-line);' +
@@ -357,7 +362,9 @@
     '.seg button[aria-pressed=true]{background:var(--dh-surface);color:var(--dh-ink);' +
     'box-shadow:0 0 0 1px var(--dh-line),0 1px 2px rgba(8,24,36,.08)}' +
     /* compact: phones, and any width where the row would not fit */
-    '.bar.compact .wm,.bar.compact .slash,.bar.compact .switch,.bar.compact .tbtn{display:none}' +
+    '.bar.compact .switch,.bar.compact .tbtn{display:none}' +
+    '.bar.compact .wm{font-size:15px}.bar.compact .slash{margin:0 1px 0 3px}' +
+    '.bar.compact.tight .wm,.bar.compact.tight .slash{display:none}' +
     '.bar.compact .home{padding-right:2px}' +
     '.bar.compact.is-home .wm{display:inline}' +
     '.bar.compact .product{padding-left:6px}' +
@@ -372,10 +379,9 @@
     '.bar.compact .nav.empty{display:none}' +
     '.bar.compact .family{display:block;border-top:1px solid var(--dh-line);padding-top:8px}' +
     '.bar.compact .nav.empty+.family{border-top:0;padding-top:0}' +
-    '.bar.compact .family .doors{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px}' +
-    '.bar.compact .family .door{padding:4px 8px;min-height:40px}' +
+    '.bar.compact .family .doors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px}' +
+    '.bar.compact .family .door{display:flex;align-items:center;min-height:44px;padding:0 12px 0 14px}' +
     '.bar.compact .family .dd,.bar.compact .family .steps{display:none}' +
-    '.bar.compact .wm{display:inline;font-size:12px}' +
     '.bar.compact .grp,.bar.compact .themes{padding-left:14px;padding-right:0}' +
     '.bar.compact .net{height:36px}' +
     '.bar.compact .menu{width:40px;height:40px;margin-right:-4px}' +
@@ -458,7 +464,7 @@
 
   class DashhqBar extends ShellElement {
     static get observedAttributes() {
-      return ['product', 'product-name', 'product-href', 'network', 'networks', 'network-settings', 'no-theme'];
+      return ['product', 'product-name', 'product-href', 'network', 'networks', 'network-settings', 'network-note', 'no-theme'];
     }
     static css = BAR_CSS;
 
@@ -555,7 +561,8 @@
     _family(key, net) {
       const cur = PRODUCTS[key].door;
       const to = (k) => doorHref(k, net);
-      const link = (k) => h('a', { href: to(k), title: APPS.includes(k) ? 'Practice app on Testnet; uses practice funds rather than Mainnet DASH' : PRODUCTS[k].name, 'aria-current': current(key === k, 'page') }, PRODUCTS[k].name + (APPS.includes(k) ? ' · Testnet' : ''));
+      const link = (k) => h('a', { href: to(k), 'aria-current': current(key === k, 'page') }, PRODUCTS[k].name,
+        PRODUCTS[k].only && h('span', { class: 'only' }, PRODUCTS[k].only));
       const doors = h('ul', { class: 'doors' }, DOORS.map((d) =>
         h('li', { class: 'door', 'aria-current': current(cur === d.door) },
           h('a', { class: 'dn', href: to(d.key) }, d.label),
@@ -574,7 +581,7 @@
       const themes = h('div', { class: 'themes' }, h('span', { class: 'gl' }, 'Theme'),
         h('div', { class: 'seg', role: 'group', 'aria-label': 'Theme' }, btns.map(([, b]) => b)));
 
-      return [doors, group('Testnet practice apps', APPS), group('Also', ALSO), themes];
+      return [doors, group('Apps', APPS), group('Also', ALSO), themes];
     }
 
     _netControl(net, kind) {
@@ -601,9 +608,9 @@
         return a;
       });
       const settings = this.getAttribute('network-settings');
-      const entity = this.getAttribute('product') === 'explorer' && /^\/(identity|dpns|contract|document)(\/|$)/.test(location.pathname);
-      const note = entity && h('p', { class: 'opt' }, 'Records belong to one network. This record may be absent after switching.');
-      const pop = h('nav', { class: 'pop netpop', id: 'dh-net', hidden: true, 'aria-label': 'Network' }, note, options,
+      const note = this.getAttribute('network-note');
+      const pop = h('nav', { class: 'pop netpop', id: 'dh-net', hidden: true, 'aria-label': 'Network' }, options,
+        note && h('p', { class: 'nnote' }, note),
         settings && h('a', { class: 'opt more', href: settings }, 'Network settings'));
       btn.addEventListener('click', () => this._toggle('net', btn, pop));
       return h('div', { class: 'netwrap' }, btn, pop);
@@ -683,9 +690,12 @@
       this._nav.classList.toggle('empty', !shown);
       const w = this.getBoundingClientRect().width;
       const was = bar.classList.contains('compact');
-      bar.classList.remove('compact');
-      const compact = w > 0 && (w < 600 || row.scrollWidth > row.clientWidth + 1);
+      bar.classList.remove('compact', 'tight');
+      const over = () => row.scrollWidth > row.clientWidth + 1;
+      const compact = w > 0 && (w < 600 || over());
       bar.classList.toggle('compact', compact);
+      // On phones the family wordmark stays when the row has room for it, so shared links still say dashhq.
+      if (compact && over()) bar.classList.add('tight');
       if (this._open && was !== compact && (this._open.which === 'sheet') !== compact) this.close();
     }
   }

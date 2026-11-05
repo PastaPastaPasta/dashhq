@@ -1,0 +1,24 @@
+/* components.html layout only. Nothing here is part of the component layer, except that it shows the one
+   line an app writes to set its accent. */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--dh-page); color: var(--dh-ink);
+  font: var(--dh-w-body) var(--dh-fs-body)/var(--dh-lh-body) var(--dh-font);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--dh-brand-ink); }
+p { margin: 0; }
+.ic { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.accents { --dh-grid-min: 240px; }
+.accents .dh-card { display: grid; gap: var(--dh-3); align-content: start; }
+.sub-head { margin: var(--dh-6) 0 var(--dh-3); }
+.dh-steps + .dh-steps { margin-top: var(--dh-5); }
+
+/* The one line an app writes. Here on cards so all four render side by side; an app puts it on :root. */
+.accent-forge { --dh-accent: var(--dh-accent-forge); }
+.accent-pollr { --dh-accent: var(--dh-accent-pollr); }
+.accent-yappr { --dh-accent: var(--dh-accent-yappr); }
+:root[data-accent="forge"] { --dh-accent: var(--dh-accent-forge); }
+:root[data-accent="pollr"] { --dh-accent: var(--dh-accent-pollr); }
+:root[data-accent="yappr"] { --dh-accent: var(--dh-accent-yappr); }

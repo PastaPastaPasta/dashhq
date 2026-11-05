@@ -1,4 +1,4 @@
-# dashhq shell 1.3.0
+# dashhq shell 1.4.0
 
 The shared shell for the dashhq.org family: the family bar, the footer, the hash display, the theme, and the
 tokens they all draw with. Read `../DESIGN.md` for the rules and `../MIGRATION.md` for your site's plan.
@@ -9,10 +9,12 @@ tokens they all draw with. Read `../DESIGN.md` for the rules and `../MIGRATION.m
 | `dashhq-tokens.css` | `--dh-*` custom properties, light and dark, and the Archivo `@font-face` | yes |
 | `dashhq-shell.css` | Pre-upgrade fallback and styling for your links slotted into the bar | yes |
 | `fonts/archivo-latin-var.woff2` | Archivo, variable, Latin, 79 KB (`fonts/PROVENANCE.md`, `fonts/OFL.txt`) | yes |
-| `dashhq-components.css` | Reference look for buttons, fields, tables, pills, states (`.dh-*` classes) | plain-CSS sites |
+| `dashhq-components.css` | The family component layer: layout, page header, buttons, fields, tables, states, stepper (`.dh-*` classes) | yes (see Components) |
+| `dashhq-tailwind-preset.cjs` | Tailwind 3.4 preset mapping colours, radii, heights, fonts and shadows to the tokens | Tailwind sites |
 | `mark/` | The mark as SVG, and the favicon | yes |
 | `dashhq-shell.d.ts`, `dashhq-shell.react.d.ts` | Types for `window.dashhq` and the events; JSX types for the elements (React only) | TS sites |
 | `demo.html` | Every piece on one page; also a CSP test (open it through a server, not `file://`) | no |
+| `components.html` | Every component in every state, with the app accents; `?accent=forge\|pollr\|yappr` previews one page-wide | no |
 
 ## Vendor it
 
@@ -43,6 +45,7 @@ Put this in `<head>`, in this order, before your own stylesheet:
 <link rel="preload" href="/dashhq/fonts/archivo-latin-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/dashhq/dashhq-tokens.css">
 <link rel="stylesheet" href="/dashhq/dashhq-shell.css">
+<link rel="stylesheet" href="/dashhq/dashhq-components.css">
 <link rel="icon" href="/dashhq/mark/favicon.svg" type="image/svg+xml">
 ```
 
@@ -94,6 +97,7 @@ Then, in `<body>`:
 | `network` | The network this page shows: `mainnet`, `testnet`, `devnet-<name>`. Omit on pages that are not about one network. Testnet and devnet draw the bar's bottom rule dashed. |
 | `networks` | Space-separated list. With two or more, the network pill becomes a menu. Choosing one navigates to the same URL with `?network=` (including mainnet) unless you cancel the `dashhq-network` event. |
 | `network-settings` | URL of an advanced network page; adds "Network settings" to the network menu (gov). |
+| `network-note` | One sentence shown under the network choices. Set it on record pages, where a record exists on one network only: "This masternode is on Mainnet; Testnet opens Testnet's list." Pair it with routing that lands on the other network's list or search instead of a dead end. |
 | `sticky` | Sticks the bar to the top. Use it on the core tools. |
 | `no-theme` | Hides the theme button (the menu still has System / Light / Dark). |
 
@@ -116,8 +120,12 @@ Events and API:
 - `window.dashhq.network.fromUrl()`, `.withNetwork(url, n)`, `.canonicalize()`: the one network vocabulary.
 - `window.dashhq.theme.set('dark' | 'light' | 'system')`, `.toggle()`, `.pref`, `.resolved`.
 
-The bar decides its own layout: it collapses to the phone layout (mark, product name, network pill, menu button)
-whenever the full row would not fit, not at a fixed breakpoint. You do not need a media query for it.
+The bar decides its own layout: it collapses to the phone layout (mark, `dashhq /`, product name, network pill, menu
+button) whenever the full row would not fit, not at a fixed breakpoint, and drops the `dashhq /` wordmark only when
+even that row would not fit. You do not need a media query for it. In the phone menu the five doors are a compact
+grid of names; the desktop switcher keeps their descriptions. Apps are tagged with the one network they run on
+(Testnet), so nobody crosses from a Mainnet tool into a practice app unawares. The Fee estimator and DAPI console
+receive the page's network like the other network-aware tools.
 
 ## `<dashhq-hash>`
 
@@ -135,6 +143,73 @@ element's text, which is what shows if the script never runs.
   Display-only addresses in lists (proposal payees, payout addresses) may truncate.
 - **Never secrets.** The value ends up in an attribute, a tooltip and the accessibility tree. Mnemonics, WIF keys
   and voting keys never go in `<dashhq-hash>`.
+
+## Components (`dashhq-components.css`)
+
+One small, framework-free layer on the tokens. It is CSP-safe: no inline styles, no images, no `url()`. Every
+class is namespaced `dh-`. The rules it encodes are in `../DESIGN.md` §6; `components.html` shows every piece in every
+state, and `../tools/render-components.mjs` checks it. Load it after `dashhq-shell.css` and before your own CSS.
+
+Decided once for the family, so nobody decides them again:
+
+| | |
+|---|---|
+| Radius | 6px (`--dh-r2`) on every control, 10px (`--dh-r3`) on every card, 3px (`--dh-r1`) on badges. Nothing pill-shaped. |
+| Heights | `--dh-ctl-h-sm` / `--dh-ctl-h` / `--dh-ctl-h-lg`: 28 / 34 / 42px, and 40 / 42 / 48px on touch screens. Inputs and selects use the middle one. |
+| Focus | `outline: 2px solid var(--dh-focus); outline-offset: 2px` on everything. `--dh-ring-shadow` is the same ring as a box-shadow. |
+| Casing | Sentence case: "Create identity", "Sign in", "Explore public posts". Components reset `text-transform` and `letter-spacing`, but the words are yours to write. |
+| Primary | `.dh-btn--primary` is the one committing action in view, filled with `--dh-accent` (amber) and `--dh-accent-ink` text. |
+| Width | `.dh-container` is the bar's row: `max-width: var(--dh-max)`, border-box, `padding-inline: var(--dh-gutter)`. Content starts exactly under the mark: x = 160 at 1440px, 16px on phones. |
+
+**App accents.** An app writes one line, on `:root`, and every primary button follows; shape, height, weight, ink and
+states stay the family's:
+
+```css
+:root { --dh-accent: var(--dh-accent-forge); }   /* or -pollr, -yappr */
+```
+
+The three accents are tokens, checked against the navy ink at rest, on hover and when pressed. Don't override
+`--dh-accent-ink` or `--dh-act*`, and don't recolour anything else with the accent.
+
+### Class reference
+
+| Block | Classes | Notes |
+|---|---|---|
+| Layout | `dh-container`, `dh-page`, `dh-narrow`, `dh-measure`, `dh-stack` (`--lg`), `dh-grid` (`--dh-grid-min`), `dh-split`, `dh-band` | One container per page. Narrow columns stay left-aligned. `dh-split` is a main column plus a 320px aside. |
+| Page header | `dh-page-header` (`--home`), `__row`, `__text`, `__kicker`, `__title`, `__lede`, `__actions`, `__meta`; `dh-crumbs` | One per page, directly inside the container. Title 30px (26px on phones), lede 17px, actions top right and wrapping under on phones. |
+| Section | `dh-section` (`--rule`), `__head`, `__title`, `__desc`, `__actions` | H2 21px. The description sits under the title, with actions to the right. |
+| Buttons | `dh-btn` + `--primary` · `--secondary` · `--quiet` · `--link` · `--destructive`; `--sm` · `--lg` · `--block` · `--icon`; `dh-actions` (`--end`, `--stack`), `dh-actions__note` | `:disabled` or `aria-disabled="true"` flattens any variant to grey; delete any site `opacity` rule for disabled buttons, or the two compound. `aria-busy="true"` adds a spinner; change the label ("Sending…") and have the handler ignore presses while busy. Aliases: `--act` = `--primary`, `--danger` = `--destructive`. |
+| Fields | `dh-field`, `dh-field__label`, `__optional`, `__help`, `__error`; `dh-input` (`--mono`, `--sm`), `dh-select`, `dh-textarea`; `dh-input-group` + `__addon`; `dh-inline-form`; `dh-form`, `dh-form__row`, `dh-fieldset`; `dh-check` | Label above. Mark invalid fields with `aria-invalid="true"` and `aria-describedby` pointing at the error. On touch, text is 16px so iOS doesn't zoom. |
+| Segmented / tabs | `dh-seg` (`--block`) with `aria-pressed` buttons or `aria-current` links; `dh-tabs` with `aria-current` / `aria-selected`; `dh-count` | Segmented control: views of the same data. Tabs: sections of one record. Both change the URL. |
+| Cards | `dh-card` (`--flush`, `--link`), `__head`, `__title`, `__desc`, `__foot`, `__rule`; `dh-panel` = `dh-card` | No shadow, no card inside a card. |
+| Stats | `dh-stats`, `dh-stat` (`--key`, `--good`, `--warn`), `__label`, `__value`, `__note` | |
+| Tables | `dh-table` (`--compact`, `--cards`, `--stack`), `dh-table-wrap`, `dh-r`, `dh-sub`; row cards: `dh-rc-title`, `dh-rc-end`, `dh-rc-line`, `dh-rc-actions`, `dh-rc-hide` | Every `td` gets `data-label`. `--cards` turns list tables into Radar-style row cards under 640px: the title's link covers the card, controls in any cell stay clickable above it, and `dh-rc-actions` cells (buttons, checkboxes) move to the card's last line without a label. `--stack` turns record tables (keys, checks) into label/value blocks. Captions stay for screen readers. |
+| Key/value | `dh-kv` (`--ruled`, `--grid`) | `<dt>`/`<dd>` pairs, optionally wrapped in `<div>`. Long values wrap; they never overflow. |
+| Badges | `dh-badge` (`--good`, `--warn`, `--bad`, `--info`, `--outline`, `--dot`), `dh-status` (`--good`, `--warn`, `--bad`, `--info`), `dh-proof` (`--checking`, `--ok`, `--reported`, `--unverified`, `--failed`) | Never clickable, except the proof badge, which opens what was checked. `dh-pill` = `dh-badge`. |
+| Notices | `dh-notice` (`--info`, `--success`, `--warn`, `--error`), `__title`, `__actions` | Page context. Use `role="status"`, or `role="alert"` for errors. |
+| States | `dh-empty` (`--inline`), `__title`; `dh-loading` (`--block`), `__note`, `dh-spin`, `dh-skel` (`--text`, `--title`, `--num`, `--row`, `--block`), `dh-skel-group`, `dh-progress`; `dh-error` (`--stale`), `__title` | Empty says what would be here and offers one next step. Loading names what is loading. Error says what failed, what is safe and how to retry, with the raw detail under Details. `--stale` keeps the last good data on screen and says how old it is. |
+| Stepper | `dh-steps` on an `<ol>`, `aria-current="step"` on the current `<li>`, links on done steps | Numbers come from the list. Write "Address", not "1 Address". Steps before the current one show as done (or set `data-state="done"`). |
+| Misc | `dh-code`, `dh-toolbar` + `dh-grow`, `dh-pager`, `dh-elsewhere`, `dh-sr`, `dh-num`, `dh-mono`, `dh-unit`, `dh-link` | |
+
+### Using it from each stack
+
+- **Plain CSS** (hub, arch, basics, faucet, Radar): link the file and use the classes in your HTML. Delete your own
+  button, field, table and card rules as you replace them.
+- **React + CSS** (gov, vote, bridge, fees): use the classes in JSX or templates (`className="dh-btn dh-btn--primary"`).
+  Keep any wrapper component thin: it maps props to classes and adds nothing visual.
+- **Tailwind** (dapi, pollr, yappr, forge): add `presets: [require('./public/dashhq/dashhq-tailwind-preset.cjs')]`, then
+  have your `<Button>`, `<Input>`, `<Card>` and `<Badge>` render the `dh-*` classes. Use `dh-*` utilities
+  (`bg-dh-surface`, `text-dh-ink-2`, `rounded-dh`, `h-dh`, `max-w-dh`, `px-dh-gutter`) for everything else. The preset
+  also moves Tailwind's own scale onto the family's: `rounded`/`-sm` = 3, `-md` = 6, `-lg` and up = 10, and `shadow`,
+  `-sm`, `-md` = none (`-lg` and up = the pop shadow, for things that float). **Load the layer before Tailwind's CSS**
+  so a utility on a component element (`pb-24` on `dh-page`) can refine it: Next puts its own CSS ahead of `<link>`s
+  in `<head>`, so Next apps `@import '../public/dashhq/dashhq-components.css';` at the top of `globals.css` (before
+  `@tailwind base`) instead of linking it. Preflight's element resets lose to the layer's classes in either order
+  (`render-components.mjs` checks both against Tailwind 3.4.19). Don't restyle `dh-btn` with `bg-*` or `rounded-*`.
+- **Chakra v2** (explorer): extend the theme so Chakra's components draw the same shapes from the same tokens.
+  The snippet is in `../DESIGN.md` §6.
+
+Full recipes: `../DESIGN.md` §6, "Mapping recipes". Per-site changes: `../ADOPTION-r3.md`.
 
 ## Theme
 

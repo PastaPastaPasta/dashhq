@@ -81,8 +81,8 @@
 .dh-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin: 0; padding: 0; list-style: none;
   font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
 .dh-crumbs > * + *::before { content: "/"; margin-right: 8px; color: var(--dh-line-2); }
-.dh-crumbs a { color: var(--dh-brand-ink); text-decoration: none; }
-.dh-crumbs a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.dh-crumbs :where(a:not(.dh-btn)) { color: var(--dh-brand-ink); text-decoration: none; border-radius: var(--dh-r1); }
+.dh-crumbs :where(a:not(.dh-btn)):hover { text-decoration: underline; text-underline-offset: 3px; }
 .dh-crumbs [aria-current] { color: var(--dh-ink-2); }
 @media (max-width: 480px) {
   .dh-page-header { margin-bottom: var(--dh-5); }
@@ -103,8 +103,8 @@
 .dh-section__actions { grid-column: 2; grid-row: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--dh-2); }
 @media (max-width: 640px) {
   .dh-section { margin-bottom: var(--dh-6); } .dh-section--rule { padding-top: var(--dh-5); }
-  .dh-section__head:has(.dh-section__actions .dh-seg, .dh-section__actions > :nth-child(2)) { grid-template-columns: minmax(0, 1fr); }
-  .dh-section__head:has(.dh-section__actions .dh-seg, .dh-section__actions > :nth-child(2)) .dh-section__actions { grid-column: 1; grid-row: 3; justify-content: flex-start; }
+  .dh-section__head { grid-template-columns: minmax(0, 1fr); }
+  .dh-section__actions { grid-column: 1; grid-row: 3; justify-content: flex-start; }
 }
 
 /* ================================================================ buttons
@@ -116,9 +116,8 @@
    .dh-btn--sm / --lg         28 / 42px (40 / 48 on touch); default 34 (42)
    .dh-btn--block / --icon    full width / square icon button (give it an aria-label)
    :disabled, [aria-disabled="true"]   flat and grey, whatever the variant, with the reason written nearby
-   [aria-busy="true"]         spinner before the label; change the label too ("Sending…")
-   Fills are restated with [type] so Tailwind's preflight ([type='button'] { background: transparent }) can't
-   win on load order. */
+   [aria-busy="true"]         spinner before the label; change the label too ("Sending…") and ignore presses
+   Load this file before Tailwind's CSS so utilities can refine it; preflight's element resets lose to these classes. */
 .dh-btn {
   box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   height: var(--dh-ctl-h); min-width: 0; margin: 0; padding: 0 14px;
@@ -129,13 +128,12 @@
   -webkit-appearance: none; appearance: none; -webkit-tap-highlight-color: transparent;
   transition: background-color var(--dh-dur-1) var(--dh-ease), border-color var(--dh-dur-1) var(--dh-ease);
 }
-.dh-btn[type] { background-color: var(--dh-surface); }
 .dh-btn:hover { background-color: var(--dh-sunken); color: var(--dh-ink); text-decoration: none; }
 .dh-btn:active { background-color: var(--dh-line); }
 .dh-btn:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
 
-.dh-btn--primary, .dh-btn--act { border-color: transparent; color: var(--dh-accent-ink); font-weight: var(--dh-w-strong); }
-.dh-btn--primary, .dh-btn--act, .dh-btn--primary[type], .dh-btn--act[type] { background-color: var(--dh-accent); }
+.dh-btn--primary, .dh-btn--act { border-color: transparent; background-color: var(--dh-accent); color: var(--dh-accent-ink);
+  font-weight: var(--dh-w-strong); }
 .dh-btn--primary:hover, .dh-btn--act:hover {
   background-color: var(--dh-accent); color: var(--dh-accent-ink);
   background-image: linear-gradient(var(--dh-shade-1), var(--dh-shade-1));
@@ -144,14 +142,12 @@
 
 .dh-btn--secondary { /* the default; the name exists so markup can say what it means */ }
 
-.dh-btn--quiet { border-color: transparent; color: var(--dh-ink-2); padding: 0 10px; }
-.dh-btn--quiet, .dh-btn--quiet[type] { background-color: transparent; }
+.dh-btn--quiet { border-color: transparent; background-color: transparent; color: var(--dh-ink-2); padding: 0 10px; }
 .dh-btn--quiet:hover { background-color: var(--dh-hover); color: var(--dh-ink); }
 .dh-btn--quiet:active { background-color: var(--dh-sunken); }
 
-.dh-btn--link, .dh-btn--link[type] { background-color: transparent; }
 .dh-btn--link {
-  height: auto; min-height: 0; padding: 0; border: 0; color: var(--dh-brand-ink);
+  background-color: transparent; height: auto; min-height: 0; padding: 0; border: 0; color: var(--dh-brand-ink);
   font-weight: var(--dh-w-ui); text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
   text-underline-offset: 3px; white-space: normal; text-align: left;
 }
@@ -159,6 +155,7 @@
 
 .dh-btn--destructive, .dh-btn--danger { border-color: var(--dh-bad); color: var(--dh-bad); }
 .dh-btn--destructive:hover, .dh-btn--danger:hover { background-color: var(--dh-bad-soft); color: var(--dh-bad); }
+.dh-btn--destructive:active, .dh-btn--danger:active { background-color: var(--dh-bad-soft); color: var(--dh-bad); box-shadow: inset 0 0 0 1px var(--dh-bad); }
 
 .dh-btn--sm { height: var(--dh-ctl-h-sm); padding: 0 10px; gap: 6px; font-size: var(--dh-fs-sm); }
 .dh-btn--lg { height: var(--dh-ctl-h-lg); padding: 0 18px; font-size: var(--dh-fs-body); }
@@ -167,7 +164,7 @@
 .dh-btn--icon.dh-btn--sm { width: var(--dh-ctl-h-sm); }
 .dh-btn > svg { flex: none; width: 16px; height: 16px; }
 
-.dh-btn[aria-busy="true"] { cursor: progress; pointer-events: none; }
+.dh-btn[aria-busy="true"] { cursor: progress; }
 .dh-btn[aria-busy="true"]::before {
   content: ""; width: 14px; height: 14px; flex: none; box-sizing: border-box; margin-left: -2px; border-radius: 50%;
   border: 2px solid currentColor; border-right-color: transparent; animation: dh-rot .8s linear infinite;
@@ -176,7 +173,8 @@
   background-color: var(--dh-sunken); background-image: none; border-color: var(--dh-line); color: var(--dh-ink-3);
   cursor: not-allowed; text-decoration: none;
 }
-.dh-btn--link:disabled, .dh-btn--link[aria-disabled="true"] { background-color: transparent; }
+.dh-btn--link:disabled, .dh-btn--link[aria-disabled="true"],
+.dh-btn--link:disabled:hover, .dh-btn--link[aria-disabled="true"]:hover { background-color: transparent; }
 .dh-btn .dh-spin { margin-left: -2px; }
 
 /* A row of buttons. The primary goes last on desktop (reading order ends on the commitment); on phones
@@ -216,7 +214,6 @@
 .dh-input--sm, .dh-select--sm { height: var(--dh-ctl-h-sm); font-size: var(--dh-fs-sm); }
 .dh-input::placeholder, .dh-textarea::placeholder { color: var(--dh-ink-2); opacity: 1; }
 .dh-input:hover, .dh-select:hover, .dh-textarea:hover { border-color: var(--dh-ink-2); }
-.dh-input:focus-visible, .dh-select:focus-visible, .dh-textarea:focus-visible,
 .dh-input:focus, .dh-select:focus, .dh-textarea:focus {
   outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); border-color: var(--dh-line-2); box-shadow: none;
 }
@@ -274,7 +271,7 @@
 /* ================================================================ tabs
    Sections of one page or record; changes the URL. Links with aria-current, or role=tab with aria-selected. */
 .dh-tabs { display: flex; gap: 20px; margin: 0 0 var(--dh-4); padding: 0; border-bottom: 1px solid var(--dh-line);
-  overflow-x: auto; scrollbar-width: none; list-style: none; }
+  overflow-x: auto; scrollbar-width: thin; list-style: none; }
 .dh-tabs > a, .dh-tabs > button {
   position: relative; box-sizing: border-box; display: inline-flex; align-items: center; gap: 6px; height: 40px; margin: 0; padding: 0 2px;
   border: 0; background: none; color: var(--dh-ink-2); text-decoration: none; white-space: nowrap; flex: none;
@@ -350,8 +347,8 @@
 .dh-table th > button { all: unset; cursor: pointer; border-radius: var(--dh-r1); }
 .dh-table th > button:hover { color: var(--dh-ink); }
 .dh-table th > button:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
-.dh-table a { color: var(--dh-brand-ink); text-decoration: none; }
-.dh-table a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.dh-table :where(a:not(.dh-btn)) { color: var(--dh-brand-ink); text-decoration: none; }
+.dh-table :where(a:not(.dh-btn)):hover { text-decoration: underline; text-underline-offset: 3px; }
 .dh-table--compact th { padding: 6px 10px; } .dh-table--compact td { padding: 6px 10px; }
 /* Tables in a flush card line their first and last columns up with the card's own padding. */
 @media (min-width: 641px) {
@@ -370,26 +367,30 @@
      td.dh-rc-end     right end of the first line: state or the one number that matters
      td.dh-rc-line    a full-width line of its own (an address)
      td.dh-rc-hide    dropped on phones
+     td.dh-rc-actions buttons or checkboxes: no label, on the card's last line
    Every other cell becomes a "Label value" fact on the next line, joined by " · ". */
 @media (max-width: 640px) {
   .dh-table--cards, .dh-table--cards tbody { display: block; }
-  .dh-table--cards thead, .dh-table--cards caption { display: none; }
+  .dh-table--cards thead { display: none; }
+  .dh-table--cards caption, .dh-table--stack caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .dh-table--cards tr { position: relative; display: flex; flex-wrap: wrap; align-items: baseline; row-gap: 3px;
     padding: 12px 14px; border-bottom: 1px solid var(--dh-line); }
   .dh-table--cards tr:last-child { border-bottom: 0; }
   .dh-table--cards tr::after { content: ""; order: 1; flex-basis: 100%; }
+  .dh-table--cards tr:has(> .dh-rc-actions)::before { content: ""; order: 3; flex-basis: 100%; height: 5px; }
+  .dh-table--cards td.dh-rc-actions { order: 4; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-right: 12px; color: var(--dh-ink); }
   .dh-table--cards td { order: 2; display: block; padding: 0; border: 0; text-align: left; min-width: 0;
     font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
-  .dh-table--cards td.dh-rc-title { order: 0; flex: 1 1 0; font-size: var(--dh-fs-body); font-weight: var(--dh-w-strong); color: var(--dh-ink);
+  .dh-table--cards td.dh-rc-title { order: 0; flex: 1 1 1px; font-size: var(--dh-fs-body); font-weight: var(--dh-w-strong); color: var(--dh-ink);
     overflow-wrap: anywhere; }
   .dh-table--cards td.dh-rc-end { order: 0; flex: none; margin-left: auto; padding-left: 12px; font-size: var(--dh-fs-ui); color: var(--dh-ink); }
   .dh-table--cards td.dh-rc-line { flex-basis: 100%; font-size: var(--dh-fs-ui); color: var(--dh-ink); overflow-wrap: anywhere; }
-  .dh-table--cards td[data-label]:not(.dh-rc-title):not(.dh-rc-end):not(.dh-rc-line)::before { content: attr(data-label) " "; }
-  .dh-table--cards td[data-label]:not(.dh-rc-title):not(.dh-rc-end):not(.dh-rc-line):not(.dh-rc-hide)
-    ~ td[data-label]:not(.dh-rc-title):not(.dh-rc-end):not(.dh-rc-line)::before { content: "\00a0·\00a0 " attr(data-label) " "; }
-  .dh-table--cards td.dh-rc-hide, .dh-table--cards td[data-label].dh-rc-hide { display: none; }
+  .dh-table--cards td[data-label]:not(.dh-rc-title, .dh-rc-end, .dh-rc-line, .dh-rc-actions)::before { content: attr(data-label) " "; }
+  .dh-table--cards td[data-label]:not(.dh-rc-title, .dh-rc-end, .dh-rc-line, .dh-rc-actions, .dh-rc-hide)
+    ~ td[data-label]:not(.dh-rc-title, .dh-rc-end, .dh-rc-line, .dh-rc-actions)::before { content: "\00a0·\00a0 " attr(data-label) " "; }
+  .dh-table--cards td.dh-rc-hide { display: none; }
   .dh-table--cards td.dh-rc-title a::after { content: ""; position: absolute; inset: 0; }
-  .dh-table--cards td:not(.dh-rc-title) :is(a, button, dashhq-hash) { position: relative; z-index: 1; }
+  .dh-table--cards td:not(.dh-rc-title) :is(a, button, input, select, textarea, label, summary, [tabindex], dashhq-hash) { position: relative; z-index: 1; }
   .dh-table--cards tbody tr:hover td { background: none; }
   .dh-table--cards tbody tr:hover { background: var(--dh-hover); }
   .dh-table--cards tbody tr[aria-selected="true"] td { background: none; }
@@ -398,7 +399,7 @@
 /* Phone, record tables (keys, checks, settings): each row becomes a block of "label  value" lines. */
 @media (max-width: 640px) {
   .dh-table--stack, .dh-table--stack tbody, .dh-table--stack tr { display: block; }
-  .dh-table--stack thead, .dh-table--stack caption { display: none; }
+  .dh-table--stack thead { display: none; }
   .dh-table--stack tr { padding: 10px 14px; border-bottom: 1px solid var(--dh-line); }
   .dh-table--stack tr:last-child { border-bottom: 0; }
   .dh-table--stack td { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 3px 0; border: 0;
@@ -417,8 +418,9 @@
 .dh-kv > div { display: contents; }
 .dh-kv dt { color: var(--dh-ink-2); }
 .dh-kv dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
-.dh-kv--ruled { gap: 0 20px; }
+.dh-kv--ruled { gap: 0; }
 .dh-kv--ruled dt, .dh-kv--ruled dd { padding: 9px 0; border-bottom: 1px solid var(--dh-line); }
+.dh-kv--ruled dt { padding-right: 20px; }
 .dh-kv--ruled > :nth-last-child(-n+2):is(dt, dd), .dh-kv--ruled > div:last-child > * { border-bottom: 0; }
 /* Facts in tiles across the record header: label over value. */
 .dh-kv--grid { grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr)); gap: var(--dh-4) var(--dh-5); }
@@ -483,7 +485,7 @@
   border-left: 3px solid var(--dh-tone); background: var(--dh-tone-soft); color: var(--dh-ink); font-size: var(--dh-fs-ui); }
 .dh-notice p { margin: 0; }
 .dh-notice strong, .dh-notice__title { font-weight: var(--dh-w-strong); color: var(--dh-ink); }
-.dh-notice a:not(.dh-btn) { color: var(--dh-ink); text-decoration: underline; text-underline-offset: 3px; }
+.dh-notice :where(a:not(.dh-btn)) { color: var(--dh-ink); text-decoration: underline; text-underline-offset: 3px; }
 .dh-notice__actions { display: flex; flex-wrap: wrap; gap: var(--dh-2); margin-top: 6px; }
 .dh-notice--info { --dh-tone: var(--dh-info); --dh-tone-soft: var(--dh-info-soft); }
 .dh-notice--success { --dh-tone: var(--dh-good); --dh-tone-soft: var(--dh-good-soft); }
@@ -557,8 +559,8 @@
   font: var(--dh-w-strong) 12px/1 var(--dh-font); font-variant-numeric: tabular-nums; color: var(--dh-ink-2);
 }
 .dh-steps > li:not(:last-child)::after { content: ""; flex: 1 1 auto; min-width: 12px; height: 1px; margin: 0 4px; background: var(--dh-line-2); }
-.dh-steps > li > a { color: inherit; text-decoration: none; border-radius: var(--dh-r1); }
-.dh-steps > li > a:hover { color: var(--dh-brand-ink); text-decoration: underline; text-underline-offset: 3px; }
+.dh-steps > li > :where(a:not(.dh-btn)) { color: inherit; text-decoration: none; border-radius: var(--dh-r1); }
+.dh-steps > li > :where(a:not(.dh-btn)):hover { color: var(--dh-brand-ink); text-decoration: underline; text-underline-offset: 3px; }
 .dh-steps > li > a:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
 .dh-steps > li[aria-current="step"] { color: var(--dh-ink); font-weight: var(--dh-w-strong); }
 .dh-steps > li[aria-current="step"]::before { background: var(--dh-brand-fill); border-color: var(--dh-brand-fill); color: #FFFFFF; }
@@ -567,7 +569,7 @@
 .dh-steps > li:is([data-state="done"], :has(~ li[aria-current="step"]))::before {
   background: var(--dh-brand-soft); border-color: var(--dh-brand); color: var(--dh-brand-ink); }
 .dh-steps > li:is([data-state="done"], :has(~ li[aria-current="step"]))::after { background: var(--dh-brand); }
-@media (max-width: 560px) {
+@media (max-width: 720px) {
   .dh-steps { align-items: flex-start; font-size: var(--dh-fs-xs); }
   .dh-steps > li, .dh-steps > li:last-child { position: relative; flex: 1 1 0; flex-direction: column; gap: 6px; text-align: center; white-space: normal; }
   .dh-steps > li:not(:last-child)::after { position: absolute; top: 12px; left: calc(50% + 16px); right: calc(-50% + 16px); min-width: 0; margin: 0; }
@@ -590,7 +592,25 @@
 /* "Elsewhere": the line at the end of a record linking its facets in other tools. */
 .dh-elsewhere { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; margin: var(--dh-4) 0; font-size: var(--dh-fs-ui); }
 .dh-elsewhere > span { color: var(--dh-ink-2); }
-.dh-elsewhere a { display: inline-flex; align-items: center; min-height: 32px; color: var(--dh-brand-ink); }
+.dh-elsewhere :where(a:not(.dh-btn)) { display: inline-flex; align-items: center; min-height: 32px; color: var(--dh-brand-ink); border-radius: var(--dh-r1); }
+
+/* ================================================================ shared behaviour */
+/* Inline components keep their own width when they sit in a grid (stacks, fields, notices, page headers). */
+.dh-seg:not(.dh-seg--block), .dh-badge, .dh-pill, .dh-proof, .dh-status, .dh-btn:not(.dh-btn--block) { justify-self: start; }
+/* The one focus ring, on the layer's link-like pieces too. */
+.dh-link:focus-visible, .dh-crumbs a:focus-visible, .dh-elsewhere a:focus-visible, .dh-table a:focus-visible,
+.dh-error summary:focus-visible, .dh-empty a:focus-visible, .dh-notice a:focus-visible {
+  outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); border-radius: var(--dh-r1); }
+/* Touch screens: every target the layer draws is at least 40px tall. Links inside running text are exempt. */
+@media (pointer: coarse) {
+  .dh-seg > button, .dh-seg > a { height: 40px; }
+  .dh-btn--link { min-height: 40px; }
+  .dh-proof { height: 40px; padding-inline: 12px 14px; }
+  .dh-crumbs :where(a:not(.dh-btn)), .dh-steps > li > :where(a:not(.dh-btn)), .dh-elsewhere :where(a:not(.dh-btn)),
+  :is(.dh-card__foot, .dh-actions, .dh-pager, .dh-notice__actions) > :where(a:not(.dh-btn)) {
+    display: inline-flex; align-items: center; min-height: 40px; }
+  .dh-error summary { padding-block: 10px; }
+}
 
 /* ---------- the blueprint plate (hub map, architecture diagrams) ---------- */
 .dh-plate { position: relative; background: var(--dh-plate); color: var(--dh-plate-line); border: 1px solid var(--dh-plate-edge);

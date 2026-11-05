@@ -1,0 +1,73 @@
+/* Demo page layout only. Nothing here is part of the shell. */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--dh-page); color: var(--dh-ink);
+  font: var(--dh-w-body) var(--dh-fs-body)/var(--dh-lh-body) var(--dh-font);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--dh-brand-ink); }
+p { margin: 0; }
+.page { max-width: var(--dh-max); margin: 0 auto; padding: var(--dh-6) var(--dh-gutter) 0; }
+.intro { display: grid; gap: var(--dh-3); max-width: 760px; padding-bottom: var(--dh-6); }
+.row-actions { display: flex; flex-wrap: wrap; gap: var(--dh-2); margin-top: var(--dh-2); }
+.block { padding: var(--dh-6) 0; border-top: 1px solid var(--dh-line); display: grid; gap: var(--dh-4); }
+.block-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--dh-3); }
+.two { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--dh-6); align-items: start; }
+.two > div { display: grid; gap: var(--dh-4); }
+.stack { display: grid; gap: var(--dh-4); }
+.filters { display: flex; flex-wrap: wrap; gap: var(--dh-3); align-items: end; }
+.filters .grow { flex: 1 1 280px; }
+.filters .dh-field:not(.grow) { flex: 0 1 160px; }
+.record { display: grid; gap: var(--dh-4); }
+.record-title { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.proofs, .pills { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.hashes { line-height: 2.2; }
+.states { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--dh-5); align-items: start; }
+.skel-rows { display: grid; gap: 8px; }
+.narrow { max-width: 64ch; }
+.bars { display: grid; gap: 14px; }
+.bars dashhq-bar { border: 1px solid var(--dh-line); border-radius: var(--dh-r2); overflow: hidden; }
+.type { display: grid; gap: 10px; }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; margin-top: var(--dh-3); }
+.sw { height: 64px; border-radius: var(--dh-r2); border: 1px solid var(--dh-line); display: flex; align-items: flex-end; padding: 6px 8px; }
+.sw span { font: 520 12px/1 var(--dh-font); background: var(--dh-surface); color: var(--dh-ink); padding: 3px 5px; border-radius: 3px; }
+.sw[data-t="page"] { background: var(--dh-page); }
+.sw[data-t="surface"] { background: var(--dh-surface); }
+.sw[data-t="sunken"] { background: var(--dh-sunken); }
+.sw[data-t="ink"] { background: var(--dh-ink); }
+.sw[data-t="ink-2"] { background: var(--dh-ink-2); }
+.sw[data-t="line"] { background: var(--dh-line); }
+.sw[data-t="brand"] { background: var(--dh-brand); }
+.sw[data-t="brand-ink"] { background: var(--dh-brand-ink); }
+.sw[data-t="act"] { background: var(--dh-act); }
+.sw[data-t="good"] { background: var(--dh-good); }
+.sw[data-t="warn"] { background: var(--dh-warn); }
+.sw[data-t="bad"] { background: var(--dh-bad); }
+.sw[data-t="plate"] { background: var(--dh-plate); }
+
+/* An app keeps its accent: Forge's ember on its own logo and its own primary button. */
+.app-forge .forge-tile { fill: #C2410C; }
+.app-forge .forge-glyph { fill: none; stroke: #fff; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+.forge-cta { background: #C2410C; border-color: #C2410C; color: #fff; }
+.forge-cta:hover { background: #9A3412; border-color: #9A3412; }
+
+/* plate sample: the hub map's language with Archivo at 88% width instead of Barlow */
+.plate-demo { padding: 10px; }
+.plate-inner { position: relative; border: 1px solid var(--dh-plate-hair); padding: 18px 20px 22px; display: grid; gap: 12px; }
+.plate-band { font: 650 15px/1 var(--dh-font); font-stretch: 112%; color: var(--dh-plate-ink); border-bottom: 1px solid var(--dh-plate-line); padding-bottom: 8px; }
+.plate-boxes { display: flex; flex-wrap: wrap; gap: 8px; }
+.plate-box { display: grid; gap: 2px; min-width: 150px; padding: 7px 11px 8px; border: 1px solid var(--dh-plate-line); border-radius: 2px; color: var(--dh-plate-ink); text-decoration: none; }
+.plate-box.test { border-style: dashed; }
+.plate-box span { font: 500 11.5px/1.2 var(--dh-font); font-stretch: 88%; color: var(--dh-plate-ink-2); }
+.plate-box b { font: 620 14.5px/1.15 var(--dh-font); font-stretch: 88%; }
+.plate-box:hover { border-color: var(--dh-act); }
+.plate-box:hover b { color: var(--dh-act); }
+.plate-box:focus-visible { outline: 2px solid var(--dh-act); outline-offset: 2px; }
+
+@media (max-width: 640px) {
+  .page { padding-top: var(--dh-5); }
+  .block { padding: var(--dh-5) 0; }
+  .filters .dh-field:not(.grow) { flex: 1 1 140px; }
+  .row-actions .dh-btn { flex: 1 1 auto; }
+}
