@@ -41,16 +41,16 @@ These are prior independent review observations compared with new current-state 
 
 Round-3 source heads: Bridge `6b03a36a27fde31581fa8a314ace0666d8cce044`, Faucet `3cf825c8700c5baee24322b43bc3121da6a88854`, Radar `b9842460d4fa8d2e7b00de3733ad64cdfd231053`, hub `9044191103060eb75f7e1875c006e0535ac9dff3`, Architecture `143496a37a4add30e0e014d3478ea36aae0624e8`, Basics `790f5e6ae714749f93d74c91b7291aeb46fb314a`, Vote `7bbc51bac0133d80957b3b797c1391e767fe8ae5`.
 
-New capture revisions, exact viewport settings and runtime errors are recorded in `shots/r4-s4/report.json` and `shots/r4-s4-journeys/report.json`; those reports are authoritative for their images. The manifest's `baseSha` is the original lab import, not the round-3 comparison revision. Evidence stays local.
+New capture revisions, exact viewport settings and runtime errors are recorded in `shots/r4-s4/report.json` and `shots/r4-s4-journeys/report.json`; those reports are authoritative for their images. The manifest's `baseSha` is the original lab import, not the round-3 comparison revision. Evidence stays local. Every final PNG was opened and inspected at original resolution. Failure-state images deliberately block the public Radar read; contract-choice images use a simple imported public schema fixture.
 
 ## Validation and review
 
 - All seven sites rebuilt with `lab/build.sh`; Bridge includes TypeScript compilation and all three Vite bundles.
-- Bridge: full suite passed before review corrections (828 tests); focused recovery, UI and key eligibility suite passed after corrections (37 tests), plus TypeScript check.
+- Bridge: final full suite passed (831 tests across 52 files); focused recovery, UI and key eligibility suite also passed (37 tests), plus TypeScript check.
 - Faucet: 297 tests and typecheck passed. Radar: 21 Worker/browser-helper tests passed. Vote: 11 tests and lint passed.
 - Hub, Architecture and Basics have no package-managed unit/type/lint suite; changed static scripts pass Node syntax checks and copy builds.
 - Copied shell `start.test.mjs` could not import the lab Playwright dependency from its relative path. This is a baseline vendored-test path issue, not a passing check.
-- Guarded cross-site journeys passed all 12 combinations (three journeys × phone/desktop × light/dark), with zero blocked writes and zero page errors before final capture.
+- Guarded journeys passed all 16 combinations (four journeys × phone/desktop × light/dark), including contract-choice sizing, touch stepper alignment and forced network failure/retry, with zero blocked writes and zero page errors. All 72 manifest captures returned HTTP 200 with zero console/page errors, blocked writes or horizontal overflow. Faucet was recaptured after the touch-specific alignment correction.
 - Live funded identity creation, paid username submission and authenticated Faucet payout are outside the read-only proof. Submitted transactions with no confirmed identity are deliberately not reconstructed from partial browser metadata.
 
 Direct code-review-validator four-pass review: correctness, maintainability, architecture and security/reliability. Corrections applied: safe backup-allowance boolean validation, async cancellation guard, eligible active/nonrestricted authentication-key checks, repeated-resume username retention, standalone-shell fallback and invalid observation timestamps. No unresolved release-blocking finding; **APPROVED WITH SUGGESTIONS**, subject to the stated live-write limits and shared-spec dependencies.
