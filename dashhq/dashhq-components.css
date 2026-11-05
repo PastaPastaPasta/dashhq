@@ -20,7 +20,7 @@
 /* ================================================================ layout */
 /* Short pages keep the footer at the bottom of the screen: put .dh-fill on <body> (or the element that holds the bar,
    <main> and the footer). <main>, or a child marked .dh-fill__main, takes the spare height. */
-.dh-fill { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+.dh-fill { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; margin: 0; }
 .dh-fill > main, .dh-fill > .dh-fill__main { flex: 1 0 auto; }
 /* The container lines up with the bar: same max width, same gutter, border-box, so the page's left edge is the
    bar's left edge on every site. Put all page content inside one; full-bleed bands sit outside it. */
@@ -171,7 +171,6 @@
 .dh-btn--destructive:active, .dh-btn--danger:active { background-color: var(--dh-bad-soft); color: var(--dh-bad); box-shadow: inset 0 0 0 1px var(--dh-bad); }
 
 .dh-btn--sm { height: var(--dh-ctl-h-sm); padding: 0 10px; gap: 6px; font-size: var(--dh-fs-sm); }
-.dh-btn--lg { /* retired in 1.6: one height for every button that matters, so it draws as the default */ }
 .dh-btn--block { display: flex; width: 100%; }
 .dh-btn--icon { width: var(--dh-ctl-h); padding: 0; }
 .dh-btn--icon.dh-btn--sm { width: var(--dh-ctl-h-sm); }

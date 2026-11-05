@@ -1,4 +1,4 @@
-# dashhq shell 1.6.0
+# dashhq shell 1.6.1
 
 The shared shell for the dashhq.org family: the family bar, the footer, the hash display, the sign-in explanation,
 the wrong-network and retired-page notices, the theme, and the tokens they all draw with. Read `../DESIGN.md` for the
@@ -10,9 +10,10 @@ rules and `../ADOPTION-r5.md` for your site's changes this round.
 |---|---|---|
 | **The shell owns the network order.** Every network menu reads Mainnet, Testnet, then "Developer networks" (devnets A to Z, open only on a devnet), whatever order `networks` lists. `dashhq.network.sort()` gives the same order to any list of your own. | Nobody for the bar. Explorer and Bridge: sort their own network pickers. | `<dashhq-bar>`; check `network-order-is-the-shells` |
 | **`<dashhq-not-found>`** and **`dashhq.network.findElsewhere()`**: a record looked up on one network that isn't there says "Not on Testnet. This masternode exists on Mainnet", with "Open it on Mainnet", or "Not on Testnet or Mainnet". | Radar, Governance, Explorer, Bridge, DAPI | The element's section below; `demo.html#not-found` |
-| **`<dashhq-moved>`**: one retired-page behaviour. What moved where, one primary link, and a forward after 10 seconds that "Stay here" (or any use of the page) stops. The network, query and hash travel; the bar shows the network you'll land on. | EvoVote, Basics, the Fee estimator | The element's section below; `moved.html` |
+| **`<dashhq-moved>`**: one retired-page behaviour. What moved where, one primary link, and a forward after 20 seconds that "Stay here" (or any use of the page) stops. The network, query and hash travel; the bar shows the network you'll land on. | EvoVote, Basics, the Fee estimator | The element's section below; `moved.html` |
 | **Compact sign-in help.** On phones (or `compact="always"`) `<dashhq-signin-help>` is one line, "Uses your Dash identity · What's this? ›", above the ways in; the explanation opens in place. | Nobody: re-vendor | The element's section below; `app.html?signin` at 390px |
 | **The committing button is amber everywhere.** `.dh-btn--primary` no longer takes `--dh-accent`. `.dh-btn--lg` is retired and draws at the family height. An app's accent now marks its brand, selection and highlights, turned on with `<html data-dh-accent="forge\|pollr\|yappr">`. Links stay blue. | Forge, Pollr, Yappr: swap the `:root` line for the attribute | "App accents" below; `components.html#accents` |
+| **1.6.1:** review fixes, same API. "Open it on Mainnet" is dispatched from the page's bar, so SPAs that route the bar's network switch route this one too. Both notices keep one live region and announce each result once. The retired-page forward is 20 seconds (WCAG 2.2.1), and pressing "Stay here" from the keyboard can't also open the link (Firefox). `found` values other than a network, `none` or `unknown` read as "couldn't check", never as "nowhere". Repeated query keys all travel. `.dh-fill` resets the body margin. | Everyone: re-vendor 1.6.1 | |
 | **Fixes.** The footer and switcher no longer mark Explorer's door current on Architecture, Basics or the DAPI console (Opus #15). A stepper step before the current one can say it isn't done (`data-state="todo"`, Sol #14). Two link styles, `.dh-link` and `.dh-link--go` (Opus #25). `.dh-fill` keeps a short page's footer at the bottom (Opus #22). | Bridge (`todo`); anyone with a floating footer | `components.html#steps`, `#misc` |
 
 ## New in 1.5 (round 4)
@@ -300,9 +301,9 @@ The lookup resolves `true` or `false`; a throw counts as "couldn't check". Witho
 | Chakra / Next (Explorer) | The same as React. Replace `IdentityNetworkRecovery` and each entity page's "No … on this network" with the element. |
 | Vanilla TS (Bridge) | `wrong-network.ts` already probes: set `found` from its answer. |
 
-"Open it on Mainnet" fires a cancelable `dashhq-network` event (bubbling, composed, `detail: { network, href }`), like
-the bar's menu. SPAs that route the network themselves listen on `document` and call `preventDefault()`; everyone else
-gets an ordinary link.
+"Open it on Mainnet" fires the same cancelable `dashhq-network` event as the bar's menu (bubbling, composed,
+`detail: { network, href }`), **from the page's bar**, so an SPA that already routes the bar's switch (Governance,
+Explorer, DAPI) routes this one with no new code. If nobody cancels it, it is an ordinary link to `href`.
 
 ## `<dashhq-moved>`
 
@@ -311,8 +312,8 @@ The page a retired product leaves behind. One behaviour for the family, decided 
 - **What moved where, calmly:** the heading ("EvoVote has moved to Governance", or yours), one lede, and "Links to
   EvoVote keep working: they open the same place in Governance, on Testnet."
 - **One way on:** an amber primary link to the exact new place.
-- **The same timed forward everywhere: 10 seconds**, counted in the notice ("Opening Governance in 7 s") and announced
-  once to screen readers. **Stay here** stops it, and so does any use of the page (a tap, a key, the network menu).
+- **The same timed forward everywhere: 20 seconds** (the time WCAG 2.2.1 gives anyone warned of a limit), counted in
+  the notice ("Opening Governance in 17 s") and announced once to screen readers. **Stay here** stops it, and so does any use of the page (a tap, a key, the network menu).
   The count waits while the tab is in the background, and coming back to the page (Back) never forwards again.
 - **Nothing is lost:** the old link's network (`?network=`, or the element's `network`, else Mainnet), its query, and
   its hash (unless the hash was an old hash route such as `#/c/german`, which your route map turns into `path`).

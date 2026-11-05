@@ -1,4 +1,4 @@
-/*! dashhq-shell 1.6.0 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
+/*! dashhq-shell 1.6.1 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
 /* Load as a classic, blocking script in <head>, before any stylesheet that depends on [data-theme]:
      <script src="/dashhq/dashhq-shell.js"></script>
    CSP: needs only script-src 'self'. No inline script, no eval, no innerHTML, no style attributes,
@@ -7,7 +7,7 @@
   'use strict';
   if (window.dashhq && window.dashhq.version) return;
 
-  const VERSION = '1.6.0';
+  const VERSION = '1.6.1';
   const doc = document;
   const root = doc.documentElement;
   const host = location.hostname;
@@ -557,8 +557,18 @@
     '@container (max-width:299.98px){.tg .tt .sh{display:inline}}' +
     '@media (pointer:coarse){.tg{min-height:44px}}';
 
+  // The buttons and action row the notices share. Navigation is a bordered button; .pri is the amber committing one.
+  const ACT_CSS =
+    '.acts{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}' +
+    '.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:var(--dh-ctl-h);padding:0 14px;' +
+    'border:1px solid var(--dh-line-2);border-radius:var(--dh-r2);background:var(--dh-surface);color:var(--dh-ink);' +
+    'font-size:14px;font-weight:600;white-space:nowrap}' +
+    '.btn:hover{background:var(--dh-sunken)}' +
+    '.btn[hidden]{display:none}' +
+    '.ar{margin-left:.3em}';
+
   // Not on this network: a dashed well (dashed = nothing real here) that says where the record is instead.
-  const NOTFOUND_CSS = BASE_CSS +
+  const NOTFOUND_CSS = BASE_CSS + ACT_CSS +
     ':host{display:block}' +
     '.nf{display:grid;gap:6px;justify-items:start;padding:20px 24px;border:1px dashed var(--dh-line-2);' +
     'border-radius:var(--dh-r3);font-size:15px;line-height:1.5;color:var(--dh-ink);text-align:left}' +
@@ -567,20 +577,16 @@
     '.chk{display:flex;align-items:center;gap:10px}' +
     '.spin{width:14px;height:14px;flex:none;border-radius:50%;border:2px solid var(--dh-line);border-top-color:var(--dh-brand);' +
     'animation:dh-rot .8s linear infinite}' +
-    '.acts{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;margin-top:8px}' +
-    '.btn{display:inline-flex;align-items:center;gap:8px;height:var(--dh-ctl-h);padding:0 14px;border:1px solid var(--dh-line-2);' +
-    'border-radius:var(--dh-r2);background:var(--dh-surface);color:var(--dh-ink);font-size:14px;font-weight:600;white-space:nowrap}' +
-    '.btn:hover{background:var(--dh-sunken)}' +
+    '.acts{column-gap:20px}' +
     '.lk{color:var(--dh-brand-ink);font-size:14px;font-weight:600}' +
     '.lk:hover{text-decoration:underline;text-underline-offset:3px}' +
-    '.ar{margin-left:.3em}' +
     '@media (pointer:coarse){.lk{display:inline-flex;align-items:center;min-height:40px}}' +
     '@media (max-width:480px){.nf{padding:16px}}' +
     '@media (prefers-reduced-motion:reduce){.spin{animation-duration:2.4s}}' +
     '@keyframes dh-rot{to{transform:rotate(360deg)}}';
 
   // A retired product's page: what moved where, one way on, and the same timed forward everywhere.
-  const MOVED_CSS = BASE_CSS +
+  const MOVED_CSS = BASE_CSS + ACT_CSS +
     ':host{display:block}' +
     'h1{margin:0;font:var(--dh-w-head) var(--dh-fs-h1)/var(--dh-lh-head) var(--dh-font);font-stretch:var(--dh-stretch-head);' +
     'letter-spacing:-.015em;text-wrap:balance;overflow-wrap:anywhere}' +
@@ -589,14 +595,9 @@
     'border-radius:var(--dh-r2);background:var(--dh-info-soft);font-size:var(--dh-fs-ui);line-height:1.5}' +
     '.nt{margin:0;font-weight:620}' +
     '.nb{margin:0;color:var(--dh-ink)}' +
-    '.acts{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}' +
-    '.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:var(--dh-ctl-h);padding:0 14px;' +
-    'border:1px solid var(--dh-line-2);border-radius:var(--dh-r2);background:var(--dh-surface);color:var(--dh-ink);' +
-    'font-size:14px;font-weight:520;white-space:nowrap}' +
-    '.btn:hover{background:var(--dh-sunken)}' +
+    '.btn{font-weight:520}' +
     '.pri{border-color:transparent;background:var(--dh-act);color:var(--dh-act-ink);font-weight:620}' +
     '.pri:hover{background:var(--dh-act);background-image:linear-gradient(var(--dh-shade-1),var(--dh-shade-1))}' +
-    '.btn[hidden]{display:none}' +
     '@media (max-width:480px){h1{font-size:26px}.l{font-size:var(--dh-fs-body)}' +
     '.acts{flex-direction:column-reverse;align-items:stretch}.btn{width:100%}}';
 
@@ -1134,30 +1135,55 @@
         h('a', { class: 'lk', href: href('home', IDENTITY_PATH) }, 'How identities work', arrow())),
         facts.length ? h('dl', null, facts) : null,
         h('p', { class: 'f' }, h('span', { class: 'q' }, 'No identity yet?'), h('slot', { name: 'start' }, start))];
+      // Re-rendering (a new attribute, or the layout flipping between folded and open) keeps keyboard focus inside.
+      const hadFocus = this.shadowRoot.activeElement && this.shadowRoot.activeElement.closest('.w');
       if (!this._compact()) {
         this._paint(h('div', { class: 'w' }, h('p', { class: 't' }, icon('identity', 20), 'You sign in with a Dash identity'), body));
+        if (hadFocus) this.shadowRoot.querySelector('a').focus();
         return;
       }
 
       // Compact: the controls come first and the explanation is one tap away. The toggle flips in place, so focus stays.
-      const hadFocus = this.shadowRoot.activeElement && this.shadowRoot.activeElement.classList.contains('tg');
-      const more = h('div', { class: 'bd', id: 'dh-signin-more', hidden: !this._open }, body);
-      const word = h('span', { class: 'wt' }, this._open ? 'Hide' : 'What\'s this?');
-      const tg = h('button', { class: 'tg', type: 'button', 'aria-expanded': String(!!this._open), 'aria-controls': 'dh-signin-more' },
-        icon('identity', 20),
+      const more = h('div', { class: 'bd', id: 'dh-signin-more' }, body);
+      const word = h('span', { class: 'wt' });
+      const tg = h('button', { class: 'tg', type: 'button', 'aria-controls': 'dh-signin-more' }, icon('identity', 20),
         h('span', { class: 'tt' }, h('span', { class: 'lg' }, 'You sign in with a Dash identity'),
           h('span', { class: 'md' }, 'Uses your Dash identity'), h('span', { class: 'sh' }, 'Your Dash identity')),
         word, h('span', { class: 'cv', 'aria-hidden': 'true' }, icon('chevron', 14)));
-      const well = h('div', { class: this._open ? 'w c open' : 'w c' }, tg, more);
-      tg.addEventListener('click', () => {
-        this._open = !this._open;
-        more.hidden = !this._open;
-        tg.setAttribute('aria-expanded', String(this._open));
-        word.textContent = this._open ? 'Hide' : 'What\'s this?';
-        well.classList.toggle('open', this._open);
-      });
+      const well = h('div', { class: 'w c' }, tg, more);
+      const sync = () => {
+        const o = !!this._open;
+        more.hidden = !o;
+        tg.setAttribute('aria-expanded', String(o));
+        word.textContent = o ? 'Hide' : 'What\'s this?';
+        well.classList.toggle('open', o);
+      };
+      sync();
+      tg.addEventListener('click', () => { this._open = !this._open; sync(); });
       this._paint(well);
       if (hadFocus) tg.focus();
+    }
+  }
+
+  // The notices keep one live region for their whole life and change only its words, so screen readers hear each
+  // result once; the visible content beside it is repainted freely.
+  class NoticeElement extends ShellElement {
+    _show(...nodes) {
+      if (!this._box) {
+        this._box = h('div');
+        this._live = h('p', { class: 'sr', role: 'status' });
+        this._paint(this._box, this._live);
+      }
+      const f = this.shadowRoot.activeElement && this.shadowRoot.activeElement.dataset.f;
+      this._box.replaceChildren(...nodes.filter(Boolean));
+      if (f) { const el = this._box.querySelector(`[data-f="${f}"]`); if (el) el.focus(); }
+    }
+    // Say it once, a moment after the region exists, so it is announced rather than read as part of the page.
+    _say(text) {
+      if (text === this._said) return;
+      this._said = text;
+      clearTimeout(this._sayT);
+      this._sayT = setTimeout(() => { if (this._live) this._live.textContent = text; }, 60);
     }
   }
 
@@ -1165,7 +1191,7 @@
   // A record looked up on one network that isn't there. Says so, then where it is instead (or that it is nowhere), so a
   // shared link opened on the other network never looks like missing data. The app either sets found="mainnet" |
   // "none" | "unknown" itself, or hands the element a lookup: el.lookup = (network, signal) => Promise<boolean>.
-  class DashhqNotFound extends ShellElement {
+  class DashhqNotFound extends NoticeElement {
     static get observedAttributes() {
       return ['thing', 'id-label', 'network', 'networks', 'found', 'href', 'list-href', 'list-label'];
     }
@@ -1173,7 +1199,10 @@
 
     get lookup() { return this._lookup || null; }
     set lookup(fn) {
-      this._lookup = typeof fn === 'function' ? fn : null;
+      fn = typeof fn === 'function' ? fn : null;
+      if (fn === this._lookup) return;
+      // A new lookup may be for a new record, so ask again; the last answer stays on screen until the new one comes.
+      this._lookup = fn;
       this._ranFor = null;
       if (this.shadowRoot && this.isConnected) this.render();
     }
@@ -1183,16 +1212,15 @@
       this._ac = null;
       this._ranFor = null;
     }
-    _here() { return parseNetwork(this.getAttribute('network')) || activeNetwork(); }
     _nets() { return sortNetworks((this.getAttribute('networks') || 'mainnet testnet').split(/[\s,]+/)); }
     _run(here) {
       if (this._ac) this._ac.abort();
       const ac = this._ac = new AbortController();
       this._ranFor = here;
-      this._found = null;
       findElsewhere(this._lookup, { network: here, networks: this._nets(), signal: ac.signal }).then((found) => {
-        if (ac.signal.aborted) return;
+        if (ac.signal.aborted || (found === this._found && here === this._foundFor)) return;
         this._found = found;
+        this._foundFor = here;
         this.render();
       });
     }
@@ -1200,51 +1228,60 @@
       const given = this.getAttribute('href');
       return given ? new URL(given, location.href).href : withNetwork(location.href, network);
     }
+    // found="…": a network, "none" or "unknown"; empty or "checking" shows the check; anything else can't be trusted to
+    // mean "nowhere", so it reads as "couldn't check".
+    _answer(here) {
+      const raw = this.getAttribute('found');
+      if (raw == null) return this._lookup && this._foundFor === here ? this._found : null;
+      const v = raw.trim().toLowerCase();
+      if (v === '' || v === 'checking') return null;
+      return v === 'none' || v === 'unknown' ? v : parseNetwork(v) || 'unknown';
+    }
 
     render() {
       this._drop();
       if (!this.hasAttribute('network')) this._on(netListeners, () => this.render());
-      const here = this._here();
+      const here = parseNetwork(this.getAttribute('network')) || activeNetwork();
       if (this._lookup && !this.hasAttribute('found') && this._ranFor !== here) this._run(here);
-      const attr = this.getAttribute('found');
-      const found = attr == null ? (this._lookup ? this._found : null)
-        : (parseNetwork(attr) || (attr.trim() === 'unknown' ? 'unknown' : 'none'));
+      const found = this._answer(here);
       const thing = (this.getAttribute('thing') || 'record').trim();
       const idLabel = (this.getAttribute('id-label') || 'ID').trim();
       const hereL = networkLabel(here);
       const others = this._nets().filter((n) => n !== here);
-      const othersL = listOf(others.map(networkLabel)) || 'the other network';
+      const otherLs = others.map(networkLabel);
+      const othersL = listOf(otherLs) || 'the other network';
 
+      // Opening it on the other network is a network switch: the page's bar hears it first (where SPAs listen and route,
+      // as they do for the bar's own menu); if nobody cancels it, the link simply navigates.
       const open = (network, text) => {
-        const a = h('a', { class: 'btn', href: this._target(network) }, text, arrow());
+        const a = h('a', { class: 'btn', href: this._target(network), 'data-f': 'open' }, text, arrow());
         a.addEventListener('click', (e) => {
           a.href = this._target(network);
-          const go = this.dispatchEvent(new CustomEvent('dashhq-network', {
+          const go = ([...bars].pop() || this).dispatchEvent(new CustomEvent('dashhq-network', {
             bubbles: true, composed: true, cancelable: true, detail: { network, href: a.href } }));
           if (!go) e.preventDefault();
         });
         return a;
       };
       const listHref = this.getAttribute('list-href');
-      const list = listHref && h('a', { class: 'lk', href: new URL(listHref, location.href).href },
+      const list = listHref && h('a', { class: 'lk', href: new URL(listHref, location.href).href, 'data-f': 'list' },
         this.getAttribute('list-label') || `Search ${hereL}`, arrow());
 
       let title = `Not on ${hereL}`, line, action = null;
       if (found === 'none') {
-        title = `Not on ${listOf([hereL, ...others.map(networkLabel)])}`;
+        title = `Not on ${listOf([hereL, ...otherLs])}`;
         line = `There's no ${thing} with this ${idLabel} on ${others.length > 1 ? 'any network' : 'either network'}.`;
       } else if (found === 'unknown') {
         line = `We couldn't check ${othersL} just now.`;
-        if (others[0]) action = open(others[0], `Look on ${networkLabel(others[0])}`);
+        if (others[0]) action = open(others[0], `Look on ${otherLs[0]}`);
       } else if (found) {
         line = `This ${thing} exists on ${networkLabel(found)}.`;
         action = open(found, `Open it on ${networkLabel(found)}`);
-      } else {
-        line = h('span', { class: 'chk' }, h('span', { class: 'spin', 'aria-hidden': 'true' }), `Checking ${othersL}…`);
       }
-      this._paint(h('div', { class: 'nf', role: 'status' },
-        h('h2', null, title), h('p', null, line), h('slot'),
-        (action || list) && h('div', { class: 'acts' }, action, list)));
+      this._show(h('div', { class: 'nf' }, h('h2', null, title),
+        h('p', null, line || h('span', { class: 'chk' }, h('span', { class: 'spin', 'aria-hidden': 'true' }), `Checking ${othersL}…`)),
+        h('slot'), (action || list) && h('div', { class: 'acts' }, action, list)));
+      this._say(line ? `${title}. ${line}` : '');
     }
   }
 
@@ -1252,8 +1289,9 @@
   // A retired product's page. One behaviour for the family: say what moved where, offer the one way on, and forward
   // after MOVED_DELAY seconds unless the visitor stops it (Stay here, or by using the page). The old link's network
   // and query travel with it; the page's bar shows the network the visitor will land on.
-  const MOVED_DELAY = 10;
-  class DashhqMoved extends ShellElement {
+  // 20 s: WCAG 2.2.1 gives anyone warned of a time limit at least 20 seconds to act on it.
+  const MOVED_DELAY = 20;
+  class DashhqMoved extends NoticeElement {
     static get observedAttributes() { return ['to', 'path', 'product', 'network', 'heading', 'lede', 'label']; }
     static css = MOVED_CSS;
 
@@ -1264,14 +1302,20 @@
         const nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
         // Back to this page (from the new home, say): forwarding again would trap the visitor.
         this._stopped = !!(nav && nav.type === 'back_forward');
+        // Any use of the page stops the forward, except the two controls, which act on their own clicks.
         this._onUse = (e) => {
-          if (this._stopped || (e.composedPath && this._pri && e.composedPath().includes(this._pri))) return;
+          if (this._stopped) return;
+          const path = e.composedPath();
+          if (path.includes(this._pri) || path.includes(this._stay)) return;
           if (e.type === 'keydown' && /^(Shift|Control|Alt|Meta)$/.test(e.key)) return;
-          this._stop(false);
+          this._stop();
         };
-        this._onShow = (e) => { if (e.persisted) this._stop(false); };
+        this._onShow = (e) => { if (e.persisted) this._stop(); };
       }
       super.connectedCallback();
+      if (first && !this._stopped) {
+        this._say(`Opening ${this._names().toName} automatically in ${MOVED_DELAY} seconds. Choose Stay here to stop.`);
+      }
       doc.addEventListener('pointerdown', this._onUse, true);
       doc.addEventListener('keydown', this._onUse, true);
       addEventListener('pageshow', this._onShow);
@@ -1279,7 +1323,9 @@
         this._tick = setInterval(() => {
           if (doc.hidden) return; // a background tab waits until someone looks at it
           this._left -= 1;
-          if (this._left <= 0) { this._stop(true); location.replace(this._dest()); } else this._sync();
+          if (this._left > 0) return this._sync();
+          this._clearTick();
+          location.replace(this._dest());
         }, 1000);
       }
     }
@@ -1288,18 +1334,15 @@
       doc.removeEventListener('pointerdown', this._onUse, true);
       doc.removeEventListener('keydown', this._onUse, true);
       removeEventListener('pageshow', this._onShow);
-      clearInterval(this._tick);
-      this._tick = null;
+      this._clearTick();
     }
-    _stop(leaving) {
-      clearInterval(this._tick);
-      this._tick = null;
-      if (leaving) return;
-      const wasOnStay = this.shadowRoot && this.shadowRoot.activeElement === this._stay;
+    _clearTick() { clearInterval(this._tick); this._tick = null; }
+    _stop() {
+      this._clearTick();
+      if (this._stopped) return;
       this._stopped = true;
       this._sync();
-      if (this._live) this._live.textContent = 'Staying on this page.';
-      if (wasOnStay && this._pri) this._pri.focus();
+      this._say('Staying on this page.');
     }
     _names() {
       const to = this.getAttribute('to');
@@ -1307,24 +1350,26 @@
       return { to: PRODUCTS[to] ? to : 'home', toName: PRODUCTS[to] ? PRODUCTS[to].name : 'dashhq.org',
         fromName: from && from !== 'home' ? PRODUCTS[from].name : 'This tool' };
     }
-    _net() { return parseNetwork(new URL(location.href).searchParams.get('network') || new URL(location.href).searchParams.get('net')) ||
-      parseNetwork(this.getAttribute('network')) || 'mainnet'; }
-    // The new home, with the old link's network, its query (contract, id, filters) unless the new path sets them, and
-    // its hash unless the path has one or the old hash was a hash route ("#/c/german": the site maps that into path).
+    _net() {
+      const sp = new URL(location.href).searchParams;
+      return parseNetwork(sp.get('network') || sp.get('net')) || parseNetwork(this.getAttribute('network')) || 'mainnet';
+    }
+    // The new home, with the old link's network, its query (contract, id, filters, every value of a repeated key) unless
+    // the new path sets that key, and its hash unless the path has one or the old hash was a hash route ("#/c/german":
+    // the site maps that into path).
     _dest() {
       const { to } = this._names();
       let u;
       try { u = new URL(href(to, this.getAttribute('path') || '/', { network: this._net() })); } catch { u = new URL(href(to)); }
+      const own = new Set(u.searchParams.keys());
       for (const [k, v] of new URL(location.href).searchParams) {
-        if (k !== 'network' && k !== 'net' && !u.searchParams.has(k)) u.searchParams.append(k, v);
+        if (k !== 'network' && k !== 'net' && !own.has(k)) u.searchParams.append(k, v);
       }
       if (!u.hash && location.hash && !location.hash.startsWith('#/')) u.hash = location.hash;
       return u.href;
     }
     _sync() {
-      if (!this._title) return;
-      const { toName } = this._names();
-      this._title.textContent = this._stopped ? 'Staying on this page' : `Opening ${toName} in ${this._left} s`;
+      this._title.textContent = this._stopped ? 'Staying on this page' : `Opening ${this._names().toName} in ${this._left} s`;
       this._stay.hidden = this._stopped;
     }
 
@@ -1335,18 +1380,16 @@
       // The same header on every retired page: the bar shows the network the visitor will land on.
       const bar = [...bars].pop();
       if (bar && aware && bar.getAttribute('network') !== net) bar.setAttribute('network', net);
-      const dest = this._dest();
-      this._pri = h('a', { class: 'btn pri', href: dest }, this.getAttribute('label') || `Open ${toName}`, arrow());
-      this._stay = h('button', { class: 'btn', type: 'button' }, 'Stay here');
-      this._stay.addEventListener('click', () => this._stop(false));
+      this._pri = h('a', { class: 'btn pri', href: this._dest(), 'data-f': 'pri' }, this.getAttribute('label') || `Open ${toName}`, arrow());
+      this._stay = h('button', { class: 'btn', type: 'button', 'data-f': 'stay' }, 'Stay here');
+      // Focus moves on once the click is done, so the key that pressed Stay here can't also open the link.
+      this._stay.addEventListener('click', () => { this._stop(); this._pri.focus(); });
       this._title = h('p', { class: 'nt', 'aria-hidden': 'true' });
-      this._live = h('p', { class: 'sr', role: 'status' }, this._stopped ? '' :
-        `Opening ${toName} automatically in ${MOVED_DELAY} seconds. Choose Stay here to stop.`);
       const lede = (this.getAttribute('lede') || '').trim();
-      this._paint(h('div', { class: 'm' },
+      this._show(h('div', { class: 'm' },
         h('h1', null, this.getAttribute('heading') || `${fromName} has moved to ${toName}`),
         lede && h('p', { class: 'l' }, lede),
-        h('div', { class: 'n' }, this._title, this._live,
+        h('div', { class: 'n' }, this._title,
           h('p', { class: 'nb' }, `Links to ${fromName} keep working: they open the same place in ${toName}` +
             (aware ? `, on ${networkLabel(net)}.` : '.')),
           h('div', { class: 'acts' }, this._stay, this._pri))));

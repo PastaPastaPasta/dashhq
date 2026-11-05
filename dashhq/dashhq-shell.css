@@ -23,8 +23,9 @@ dashhq-footer:not(:defined) { min-height: 120px; margin-top: var(--dh-7); border
 dashhq-hash:not(:defined) { display: inline; font-family: var(--dh-mono); font-size: .92em; overflow-wrap: anywhere; }
 dashhq-signin-help, dashhq-not-found, dashhq-moved { display: block; }
 dashhq-signin-help:not(:defined) { min-height: 44px; border-radius: var(--dh-r3); background: var(--dh-sunken); }
-/* Before upgrade (or without JavaScript) a not-found or moved notice shows its own children: write them as the
-   plain-text version, with a real link (DESIGN.md §6, "Wrong network" and "Retired pages"). */
+/* <dashhq-moved>'s children are its version without JavaScript (the heading and a real link); once upgraded the element
+   draws its own. <dashhq-not-found>'s children are one extra line it shows under its own words, so keep them to that
+   (the full id, or one factual sentence). */
 dashhq-not-found:not(:defined) { padding: 20px 24px; border: 1px dashed var(--dh-line-2); border-radius: var(--dh-r3); }
 
 /* The product's nav in the bar: its sections, and the only section nav it has. Put your links in one element
