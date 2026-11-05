@@ -4,15 +4,18 @@
   let refreshing = false;
   let last;
   const fmt = value => value.toLocaleString('en-US');
+  const date = timestamp => new Date(timestamp * 1000).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + ' UTC';
+  const ago = timestamp => { const minutes = Math.max(0, Math.floor((Date.now() / 1000 - timestamp) / 60)); return minutes < 1 ? 'just now' : minutes < 60 ? `${minutes} min ago` : `${Math.floor(minutes / 60)} h ago`; };
   function render() {
     if (!last) return;
     const { crawl, platform } = last;
     const old = Date.now() / 1000 - crawl.finished > 3600;
     document.getElementById('pulse-core').textContent = crawl.mn_total ? `${(crawl.mn_reachable / crawl.mn_total * 100).toFixed(1)}% answered` : 'Not checked';
     document.getElementById('pulse-core-note').textContent = `${fmt(crawl.mn_reachable)} of ${fmt(crawl.mn_total)} enabled masternodes`;
-    document.getElementById('pulse-platform').textContent = platform?.checked ? `${Date.now() / 1000 - platform.updated > 2700 ? "Check overdue · " : ""}${fmt(platform.healthy)} of ${fmt(platform.checked)} passed` : 'Not checked';
-    document.getElementById('pulse-platform-note').textContent = platform?.checked ? `Tenderdash P2P + DAPI · ${new Date(platform.updated * 1000).toLocaleString('en-GB', { timeZone: 'UTC' })} UTC` : 'No Platform observations published';
-    age.textContent = `Radar observations · ${old ? 'Crawl is over an hour old · ' : ''}Core ${new Date(crawl.finished * 1000).toLocaleString('en-GB', { timeZone: 'UTC' })} UTC. Open Radar for diagnostics.`;
+    document.getElementById('pulse-platform').textContent = platform?.checked ? `${Date.now() / 1000 - platform.updated > 2700 ? "Check overdue · " : ""}${(platform.healthy / platform.checked * 100).toFixed(1)}% passed` : 'Not checked';
+    document.getElementById('pulse-platform-note').textContent = platform?.checked ? `${fmt(platform.healthy)} of ${fmt(platform.checked)} checked evonodes · ${ago(platform.updated)}` : 'No Platform observations published';
+    document.getElementById('pulse-platform-note').title = platform?.updated ? `Tenderdash P2P + DAPI · ${date(platform.updated)}` : '';
+    age.textContent = `Radar observations · ${old ? 'Crawl is over an hour old · ' : ''}Core ${date(crawl.finished)}. Open Radar for diagnostics.`;
   }
   async function load() {
     if (refreshing) return;

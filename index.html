@@ -53,26 +53,13 @@
       <div class="titleblock">
         <div class="tb-main dh-page-header dh-page-header--home">
           <h1 class="dh-page-header__title" id="title">Dash ecosystem</h1>
-          <p class="dh-page-header__lede">Monitor the network, take part in governance, or explore Platform. Choose a tool, or follow the map to see how Platform fits together.</p>
-          <search class="finder dh-field" role="search">
-            <label class="dh-field__label" for="q">Find</label>
-            <input class="dh-input" id="q" type="search" autocomplete="off" spellcheck="false" placeholder="wallet, explorer, treasury, Rust, testnet…">
-            <button type="button" class="dh-btn dh-btn--quiet dh-btn--sm" id="qclear" hidden>Clear</button>
-            <p class="fin-c" id="qcount" role="status" aria-live="polite"></p>
-            <ul id="find-results" class="find-results" aria-label="Search destinations" tabindex="-1" hidden></ul>
-            <p class="noresult dh-empty dh-empty--inline" id="noresult" tabindex="-1" hidden>No destinations match yet. Try “Platform”, “wallet” or “masternode”, or paste a public ID. <button type="button" class="dh-btn dh-btn--link dh-btn--sm" id="noclear">Clear search</button></p>
-          </search>
+          <p class="dh-page-header__lede">Choose a tool for the Dash network, or start building on Platform.</p>
+
           <p class="panhint">Drag the map sideways to see all of it.</p>
         </div>
 
       </div>
 
-<section class="network-pulse" aria-label="Network observations">
-        <a data-family="radar" href="https://radar.dashhq.org/"><span>Core reachability</span><strong id="pulse-core">Checking…</strong><small id="pulse-core-note">Enabled masternodes</small></a>
-        <a data-family="radar" data-path="/#platform" href="https://radar.dashhq.org/#platform"><span>Platform services</span><strong id="pulse-platform">Checking…</strong><small id="pulse-platform-note">Enabled evonodes</small></a>
-        <p id="pulse-age" class="dh-field__help" role="status">Loading Radar’s latest observations…</p>
-        <button id="pulse-retry" class="dh-btn dh-btn--sm" hidden>Retry network status</button>
-      </section>
       <nav class="doors" aria-label="Choose a starting point">
         <a class="door dh-card dh-card--link" href="https://arch.dashhq.org/" data-family="arch" data-path="/"><strong class="dh-card__title">What is Platform?</strong><span>Shared accounts, names and data for apps. Start with a three-step explanation and a registered name.</span></a>
 <a class="door dh-card dh-card--link" href="https://radar.dashhq.org/" data-family="radar" data-path="/"><strong class="dh-card__title">Radar</strong><span>Live network health, masternodes and evonodes</span></a>
@@ -81,6 +68,21 @@
         <a class="door dh-card dh-card--link" href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet" data-family="bridge" data-path="/?mode=create&amp;journey=start" data-network="testnet"><strong class="dh-card__title">Start on Testnet</strong><span>Create keys in Bridge, fund with Faucet, then create an identity</span></a>
         <a class="door dh-card dh-card--link" href="https://dashhq.org/#apps" data-family="home" data-path="/#apps"><strong class="dh-card__title">Apps</strong><span>Forge, Pollr and Yappr, plus wallets. The three apps are Testnet previews.</span></a>
       </nav>
+          <search class="finder dh-field" role="search">
+            <label class="dh-field__label" for="q">Find</label>
+            <input class="dh-input" id="q" type="search" autocomplete="off" spellcheck="false" placeholder="wallet, explorer, treasury, Rust, testnet…">
+            <button type="button" class="dh-btn dh-btn--quiet dh-btn--sm" id="qclear" hidden>Clear</button>
+            <p class="fin-c" id="qcount" role="status" aria-live="polite"></p>
+            <ul id="find-results" class="find-results" aria-label="Search destinations" tabindex="-1" hidden></ul>
+            <p class="noresult dh-empty dh-empty--inline" id="noresult" tabindex="-1" hidden>No destinations match yet. Try “Platform”, “wallet” or “masternode”, or paste a public ID. <button type="button" class="dh-btn dh-btn--link dh-btn--sm" id="noclear">Clear search</button></p>
+          </search>
+<details class="pulse-fold" open><summary>Mainnet network observations <span aria-hidden="true">⌄</span></summary><section class="network-pulse" aria-label="Mainnet network observations">
+        <a data-family="radar" data-network="mainnet" href="https://radar.dashhq.org/"><span>Core reachability</span><strong id="pulse-core">Checking…</strong><small id="pulse-core-note">Enabled masternodes</small></a>
+        <a data-family="radar" data-network="mainnet" data-path="/#platform" href="https://radar.dashhq.org/#platform"><span>Platform service health</span><strong id="pulse-platform">Checking…</strong><small id="pulse-platform-note">Enabled evonodes</small></a>
+        <p id="pulse-age" class="dh-field__help" role="status">Loading Radar’s latest observations…</p>
+        <button id="pulse-retry" class="dh-btn dh-btn--sm" hidden>Retry network status</button>
+      </section></details>
+
       <p class="map-help">Select a project to open it. Expand the groups below for descriptions.</p><div class="mapscroll">
       <svg class="hsvg" viewBox="0 0 1220 522" role="group" aria-labelledby="maptitle">
         <title id="maptitle">Map of the Dash Platform ecosystem. Each project sits on the layer it works with; select one to open it.</title>
@@ -135,7 +137,7 @@
             <li class="route" data-route="dashmate radar payments upgrade"><p><button type="button" class="rname dh-btn dh-btn--sm" aria-pressed="false">Run a node</button><span class="rwhy">Set it up, then watch how it does.</span></p><p class="rstops"><a href="#dashmate">dashmate</a><span class="sep" aria-hidden="true"> → </span><a href="#radar">Radar</a><span class="sep" aria-hidden="true"> → </span><a href="#payments">Evonode payments</a><span class="sep" aria-hidden="true"> → </span><a href="#upgrade">Upgrade vote status</a></p></li>
             <li class="route" data-route="govhub upgrade"><p><button type="button" class="rname dh-btn dh-btn--sm" aria-pressed="false">Have a say</button><span class="rwhy">Spend the treasury, settle a name, pick a version.</span></p><p class="rstops"><a href="#govhub">Governance</a><span class="sep" aria-hidden="true"> → </span><a href="https://gov.dashhq.org/names" data-family="gov" data-path="/names">Name contests</a><span class="sep" aria-hidden="true"> → </span><a href="#upgrade">Upgrade vote status</a></p></li>
           </ol>
-<p class="tools">Platform tools: <a href="https://arch.dashhq.org/" data-family="arch" data-path="/">Architecture</a> · <a href="https://explorer.dashhq.org/tools/fees/" data-family="explorer" data-path="/tools/fees/">Fee estimator</a> · <a href="https://dapi.dashhq.org/" data-family="dapi" data-path="/">DAPI console</a></p></div>
+</div>
         <div class="tb-stats">
           <p><span class="tb-k">On the map</span><span class="tb-v"><span data-count="card">24</span> projects</span></p>
           <p><span class="tb-k">In the directory</span><span class="tb-v"><span data-count="entry">41</span> more</span></p>
@@ -155,9 +157,9 @@
      ========================================================== -->
 <section class="section dh-section dh-section--rule" id="apps">
   <div class="dh-container">
-    <details class="catalogue-fold"><summary class="sechead dh-section__head">
-      <h2 class="dh-section__title">Apps and wallets</h2>
-      <p class="dh-section__desc">Things you install or open to use Dash Platform.</p>
+    <details class="catalogue-fold" open><summary class="sechead dh-section__head">
+      <h2 class="dh-section__title">Apps and wallets</h2><span class="fold-count dh-count">6 projects</span><span class="fold-action"><span class="fold-show">Show</span><span class="fold-hide">Hide</span></span>
+      <p class="dh-section__desc">Wallets for everyday use, plus Testnet app previews. Public app activity may be sparse.</p>
     </summary>
     <div class="grid">
 
@@ -239,7 +241,7 @@
       </article>
 
       <article class="card span2" id="forge">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet test">Testnet</span></p>
+        <p class="tags"><span class="pby">pasta</span><span class="pnet test">Testnet preview</span></p>
           <div class="plate">
           <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
             <!-- git history; the merge's ref is proved by Platform -->
@@ -265,7 +267,7 @@
       </article>
 
       <article class="card span2" id="yappr">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet test">Testnet</span></p>
+        <p class="tags"><span class="pby">pasta</span><span class="pnet test">Testnet preview</span></p>
           <div class="plate">
           <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
             <!-- a thread: each post is a document -->
@@ -291,7 +293,7 @@
       </article>
 
       <article class="card span2" id="pollr">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet test">Testnet</span></p>
+        <p class="tags"><span class="pby">pasta</span><span class="pnet test">Testnet preview</span></p>
           <div class="plate">
           <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
             <g transform="translate(-7,6)">
@@ -322,7 +324,7 @@
 <section class="section dh-section dh-section--rule" id="explore">
   <div class="dh-container">
     <details class="catalogue-fold"><summary class="sechead dh-section__head">
-      <h2 class="dh-section__title">Explore the network</h2>
+      <h2 class="dh-section__title">Explore the network</h2><span class="fold-count dh-count">4 projects</span><span class="fold-action"><span class="fold-show">Show</span><span class="fold-hide">Hide</span></span>
       <p class="dh-section__desc">See what is on Platform and how the masternodes are doing.</p>
     </summary>
     <div class="grid">
@@ -445,7 +447,7 @@
 <section class="section dh-section dh-section--rule" id="govern">
   <div class="dh-container">
     <details class="catalogue-fold"><summary class="sechead dh-section__head">
-      <h2 class="dh-section__title">Govern and vote</h2>
+      <h2 class="dh-section__title">Govern and vote</h2><span class="fold-count dh-count">3 projects</span><span class="fold-action"><span class="fold-show">Show</span><span class="fold-hide">Hide</span></span>
       <p class="dh-section__desc">Masternodes decide the treasury, contested names and protocol upgrades.</p>
     </summary>
     <div class="grid">
@@ -516,7 +518,7 @@
 <section class="section dh-section dh-section--rule" id="build">
   <div class="dh-container">
     <details class="catalogue-fold"><summary class="sechead dh-section__head">
-      <h2 class="dh-section__title">Build on Platform</h2>
+      <h2 class="dh-section__title">Build on Platform</h2><span class="fold-count dh-count">8 projects</span><span class="fold-action"><span class="fold-show">Show</span><span class="fold-hide">Hide</span></span>
       <p class="dh-section__desc">Docs, SDKs, test funds and the tools around them.</p>
     </summary>
     <div class="grid">
@@ -723,7 +725,7 @@
 <section class="section dh-section dh-section--rule" id="learn">
   <div class="dh-container">
     <details class="catalogue-fold"><summary class="sechead dh-section__head">
-      <h2 class="dh-section__title">Learn how it works</h2>
+      <h2 class="dh-section__title">Learn how it works</h2><span class="fold-count dh-count">3 projects</span><span class="fold-action"><span class="fold-show">Show</span><span class="fold-hide">Hide</span></span>
       <p class="dh-section__desc">Start with what Platform does, then explore its machinery.</p>
     </summary>
     <div class="platform-intro">

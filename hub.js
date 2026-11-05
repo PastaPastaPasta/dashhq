@@ -94,6 +94,11 @@
 
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') unpin(); });
 
+  var phone = matchMedia('(max-width:760px)');
+  function sizePulse(){ document.querySelector('.pulse-fold').open = !phone.matches; }
+  phone.addEventListener('change', sizePulse);
+  sizePulse();
+
   // Search destinations without hiding the catalogue or its navigation.
   var q = document.getElementById('q');
   if(!q) return;
@@ -149,18 +154,19 @@
     qcount.textContent = '';
     if(raw) countTimer = setTimeout(function(){ qcount.textContent = unique.length + ' destinations' + (unique.length > 8 ? '; showing the first 8' : ''); }, 300);
   }
-  function revealHash(){
-    var target = document.getElementById(location.hash.slice(1));
-    var fold = target && target.closest('details');
-    while(fold){ fold.open = true; fold = fold.parentElement.closest("details"); }
+  function revealHash(hash){
+    var id;
+    try { id = decodeURIComponent((typeof hash === 'string' ? hash : location.hash).slice(1)); } catch(e) { return; }
+    var target = document.getElementById(id);
+    if(!target) return;
+    var fold = target.closest('details') || target.querySelector('details');
+    while(fold){ fold.open = true; fold = fold.parentElement.closest('details'); }
   }
   addEventListener('hashchange', revealHash);
   document.addEventListener('click', function(event){
-    var a = event.target.closest('a[href^="#"]');
-    if(!a) return;
-    var target = document.getElementById(a.hash.slice(1));
-    var fold = target && target.closest('details');
-    while(fold){ fold.open = true; fold = fold.parentElement.closest("details"); }
+    var a = event.target.closest('a[href]');
+    if(!a || a.origin !== location.origin || a.pathname !== location.pathname || !a.hash) return;
+    revealHash(a.hash);
   });
   revealHash();
 
