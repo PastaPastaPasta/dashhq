@@ -1,4 +1,4 @@
-# dashhq shell 1.0.1
+# dashhq shell 1.1.0
 
 The shared shell for the dashhq.org family: the family bar, the footer, the hash display, the theme, and the
 tokens they all draw with. Read `../DESIGN.md` for the rules and `../MIGRATION.md` for your site's plan.
@@ -92,7 +92,7 @@ Then, in `<body>`:
 | `product-name` | Override the shown name (rare). |
 | `product-href` | Where the product name links. Default `/`. Set it if you have a base path. |
 | `network` | The network this page shows: `mainnet`, `testnet`, `devnet-<name>`. Omit on pages that are not about one network. Testnet and devnet draw the bar's bottom rule dashed. |
-| `networks` | Space-separated list. With two or more, the network pill becomes a menu. Choosing one navigates to the same URL with `?network=` (mainnet removes it) unless you cancel the `dashhq-network` event. |
+| `networks` | Space-separated list. With two or more, the network pill becomes a menu. Choosing one navigates to the same URL with `?network=` (including mainnet) unless you cancel the `dashhq-network` event. |
 | `network-settings` | URL of an advanced network page; adds "Network settings" to the network menu (gov). |
 | `sticky` | Sticks the bar to the top. Use it on the core tools. |
 | `no-theme` | Hides the theme button (the menu still has System / Light / Dark). |
@@ -110,7 +110,7 @@ Events and API:
 - `dashhq-theme` on `document`, `detail: { pref, theme }`, on every change after load. It does not fire for the
   initial theme: read `window.dashhq.theme.resolved` when your app starts, then listen.
 - `window.dashhq.href('gov', '/names/german')` builds a family link: production URL, or the lab URL on
-  `*.dashhq.localhost`, plus `?network=` when not mainnet (links into the bridge always carry it, mainnet included).
+  `*.dashhq.localhost`, plus an explicit `?network=` for every network-aware destination, including Mainnet.
   The network is the page's: the most recently connected bar's `network`, else the URL. It throws if the path would
   leave that product's origin. Use it for every cross-link.
 - `window.dashhq.network.fromUrl()`, `.withNetwork(url, n)`, `.canonicalize()`: the one network vocabulary.
@@ -169,3 +169,22 @@ script-written cookies for 7 days.
 
 On `dashhq.localhost` and `*.dashhq.localhost` every family link becomes
 `<scheme>://<product>.dashhq.localhost:<same port>/…` (the hub is `dashhq.localhost`). Production is unchanged.
+
+## Declarative family links
+
+Static pages can use only the shell script:
+
+```html
+<a href="https://explorer.dashhq.org/dpns/search/?network=mainnet"
+   data-family="explorer" data-path="/dpns/search/">Search usernames</a>
+```
+
+`data-family` is a product key, `data-path` defaults to `/`, and optional `data-network`
+pins a particular network. Otherwise the page bar or URL owns the network. The shell
+resolves initial and newly inserted anchors, attribute changes, network changes and
+history traversal. Invalid product keys, network values and off-origin paths retain
+the authored fallback. Keep a real production `href` for no-JavaScript browsing.
+
+Outside pointer taps dismiss an open door switcher, network menu or phone sheet and
+consume that tap, including pointer focus. Escape restores trigger focus; Tab still
+moves normally. A second tap can activate the underlying control.

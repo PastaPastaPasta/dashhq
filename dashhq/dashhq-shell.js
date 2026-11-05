@@ -1,4 +1,4 @@
-/*! dashhq-shell 1.0.1 | family bar, footer, hash display and theme for dashhq.org tools | MIT */
+/*! dashhq-shell 1.1.0 | family bar, footer, hash display and theme for dashhq.org tools | MIT */
 /* Load as a classic, blocking script in <head>, before any stylesheet that depends on [data-theme]:
      <script src="/dashhq/dashhq-shell.js"></script>
    CSP: needs only script-src 'self'. No inline script, no eval, no innerHTML, no style attributes,
@@ -7,7 +7,7 @@
   'use strict';
   if (window.dashhq && window.dashhq.version) return;
 
-  const VERSION = '1.0.1';
+  const VERSION = '1.1.0';
   const doc = document;
   const root = doc.documentElement;
   const host = location.hostname;
@@ -15,14 +15,13 @@
   /* ---------------------------------------------------------------- family registry */
   // door: home | network | governance | platform | start | apps
   // net: the product accepts ?network=, so family links carry the current network into it
-  // explicit: it moves money, so links into it state the network even when it is mainnet
   const PRODUCTS = {
     home:     { name: 'dashhq',        url: 'https://dashhq.org',          door: 'home' },
     radar:    { name: 'Radar',         url: 'https://radar.dashhq.org',    door: 'network',    net: true },
     gov:      { name: 'Governance',    url: 'https://gov.dashhq.org',      door: 'governance', net: true },
     explorer: { name: 'Explorer',      url: 'https://explorer.dashhq.org', door: 'platform',   net: true },
     faucet:   { name: 'Faucet',        url: 'https://faucet.dashhq.org',   door: 'start' },
-    bridge:   { name: 'Bridge',        url: 'https://bridge.thepasta.org', door: 'start',      net: true, explicit: true },
+    bridge:   { name: 'Bridge',        url: 'https://bridge.thepasta.org', door: 'start',      net: true },
     arch:     { name: 'Architecture',  url: 'https://arch.dashhq.org',     door: 'platform' },
     fees:     { name: 'Fee estimator', url: 'https://fees.dashhq.org',     door: 'platform' },
     dapi:     { name: 'DAPI console',  url: 'https://dapi.dashhq.org',     door: 'platform',   net: true },
@@ -79,8 +78,9 @@
   function withNetwork(u, n) {
     const url = new URL(u, location.href);
     url.searchParams.delete('net');
-    if (!n || n === 'mainnet') url.searchParams.delete('network');
-    else url.searchParams.set('network', n);
+    const network = parseNetwork(n);
+    if (network) url.searchParams.set('network', network);
+    else url.searchParams.delete('network');
     return url.href;
   }
   // Rewrite a legacy ?net= (or ?network=main) to the canonical form without a reload.
@@ -90,6 +90,8 @@
     const next = withNetwork(location.href, networkFromUrl());
     if (next !== location.href) history.replaceState(history.state, '', next);
   }
+
+  canonicalizeNetworkParam();
 
   // The page's network: from the most recently connected <dashhq-bar network>, else from the URL.
   const bars = new Set();
@@ -106,10 +108,39 @@
     const u = new URL(path || '/', base + '/');
     if (u.origin !== new URL(base).origin) throw new Error(`dashhq: href("${key}") must stay on ${base}`);
     const p = PRODUCTS[key];
-    const n = opts && 'network' in opts ? opts.network : activeNetwork();
-    if (p.net && n && (n !== 'mainnet' || p.explicit)) u.searchParams.set('network', n);
+    const n = parseNetwork(opts && 'network' in opts ? opts.network : activeNetwork());
+    if (p.net && n) {
+      u.searchParams.delete('net');
+      u.searchParams.set('network', n);
+    }
     return u.href;
   }
+
+  // Keep production hrefs as the no-script fallback; resolve only explicitly opted-in anchors.
+  function familyLinks(node) {
+    if (!node.querySelectorAll) return;
+    const links = [...node.querySelectorAll('a[data-family]')];
+    if (node.matches && node.matches('a[data-family]')) links.push(node);
+    for (const link of links) {
+      if (!Object.hasOwn(PRODUCTS, link.dataset.family)) continue;
+      const network = parseNetwork(link.dataset.network);
+      if (link.hasAttribute('data-network') && !network) continue;
+      try {
+        link.href = href(link.dataset.family, link.dataset.path || '/', network ? { network } : undefined);
+      } catch { /* An invalid path keeps its authored fallback. */ }
+    }
+  }
+  netListeners.add(() => familyLinks(doc));
+  new MutationObserver((records) => {
+    for (const record of records) {
+      if (record.type === 'attributes') familyLinks(record.target);
+      else for (const node of record.addedNodes) familyLinks(node);
+    }
+  }).observe(root, { subtree: true, childList: true, attributes: true,
+    attributeFilter: ['data-family', 'data-path', 'data-network'] });
+  addEventListener('popstate', () => familyLinks(doc));
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', () => familyLinks(doc));
+  else familyLinks(doc);
 
   /* ---------------------------------------------------------------- theme */
   // One preference for the whole family: a cookie on the parent domain (dashhq.org, or dashhq.localhost in the
@@ -423,6 +454,7 @@
       super();
       this._fit = this._fit.bind(this);
       this._onDoc = this._onDoc.bind(this);
+      this._onPointer = this._onPointer.bind(this);
       this._onKey = this._onKey.bind(this);
     }
     connectedCallback() {
@@ -431,6 +463,7 @@
       const first = !this.shadowRoot;
       super.connectedCallback();
       if (first) this.shadowRoot.addEventListener('focusout', (e) => this._onFocusOut(e));
+      doc.addEventListener('pointerdown', this._onPointer, true);
       doc.addEventListener('click', this._onDoc, true);
       doc.addEventListener('keydown', this._onKey);
       doc.fonts.ready.then(this._fit);
@@ -438,6 +471,7 @@
     disconnectedCallback() {
       super.disconnectedCallback();
       bars.delete(this);
+      doc.removeEventListener('pointerdown', this._onPointer, true);
       doc.removeEventListener('click', this._onDoc, true);
       doc.removeEventListener('keydown', this._onKey);
       this._ro.disconnect();
@@ -486,7 +520,7 @@
       end.append(h('slot', { name: 'actions' }), menuBtn);
 
       const productHref = this.getAttribute('product-href') || '/';
-      const product = key !== 'home' && h('a', { class: 'product', href: net && net !== 'mainnet' ? withNetwork(productHref, net) : productHref },
+      const product = key !== 'home' && h('a', { class: 'product', href: net ? withNetwork(productHref, net) : productHref },
         h('slot', { name: 'logo' }), h('span', { class: 'pn' }, this.getAttribute('product-name') || PRODUCTS[key].name));
       this._row = h('div', { class: 'row' },
         h('a', { class: 'home', href: href('home'), 'aria-label': 'dashhq.org home' },
@@ -596,10 +630,23 @@
       this._setOpen(o, false);
       return o.trigger;
     }
-    _onDoc(e) {
-      if (!this._open) return;
+    _outside(e) {
+      if (!this._open) return false;
       const path = e.composedPath();
-      if (!path.includes(this._open.panel) && !path.includes(this._open.trigger)) this.close();
+      return !path.includes(this._open.panel) && !path.includes(this._open.trigger);
+    }
+    _onPointer(e) {
+      if (!this._outside(e)) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+    _onDoc(e) {
+      if (!this._outside(e)) return;
+      if (e.detail > 0) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }
+      this.close();
     }
     _onKey(e) {
       if (e.key !== 'Escape' || !this._open) return;

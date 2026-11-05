@@ -15,8 +15,7 @@ export interface DashhqApi {
   readonly products: Readonly<Record<DashhqProduct, { name: string; url: string; door: string; net?: boolean }>>;
   /** Origin of a family product, production or lab. */
   origin(product: DashhqProduct): string;
-  /** URL of a page in another family product. Carries ?network= when it is not mainnet and the product takes it
-   *  (always, for the bridge). Throws if path would leave the product's origin (e.g. "//evil.example"). */
+  /** URL of a page in another family product. Carries an explicit ?network= for every network-aware product. Throws if path would leave the product's origin (e.g. "//evil.example"). */
   href(product: DashhqProduct, path?: string, opts?: { network?: DashhqNetwork | null }): string;
   readonly theme: {
     readonly pref: DashhqThemePref;
@@ -32,7 +31,7 @@ export interface DashhqApi {
     kind(network: DashhqNetwork): 'main' | 'test' | 'dev';
     /** ?network= (or legacy ?net=) from a URL; absent means 'mainnet'. */
     fromUrl(url?: string): DashhqNetwork;
-    /** Same URL with ?network= set (removed for mainnet) and legacy ?net= dropped. */
+    /** Same URL with ?network= set explicitly, including mainnet and legacy ?net= dropped. */
     withNetwork(url: string, network: DashhqNetwork): string;
     /** Rewrite a legacy ?net= in the address bar to ?network= without reloading. */
     canonicalize(): void;
