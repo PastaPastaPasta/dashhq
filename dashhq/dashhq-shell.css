@@ -1,0 +1,46 @@
+/* dashhq-shell.css: document-level rules for the shell elements.
+   Covers (1) the look before dashhq-shell.js upgrades the elements, or if it never runs,
+   and (2) the product's own links slotted into <dashhq-bar>. Element internals live in the JS.
+   Requires dashhq-tokens.css. */
+
+/* Only before upgrade: once defined, the elements style their own host (and honour [hidden]). */
+dashhq-footer:not(:defined) { display: block; }
+dashhq-bar[sticky]:not(:defined) { position: sticky; top: 0; z-index: 40; }
+
+/* Before upgrade: reserve the bar's height so nothing jumps, show a wordmark, and lay the slotted nav out in a row. */
+dashhq-bar:not(:defined) {
+  display: flex; align-items: center; gap: 14px; overflow: hidden;
+  min-height: var(--dh-bar-h); padding: 0 var(--dh-gutter);
+  background: var(--dh-surface); border-bottom: 1px solid var(--dh-line);
+  font-family: var(--dh-font); color: var(--dh-ink);
+}
+dashhq-bar:not(:defined)::before {
+  content: "dashhq"; font-weight: 650; font-stretch: 112%; font-size: 16px; letter-spacing: -.012em;
+}
+dashhq-bar:not(:defined) > [slot="logo"] { display: none; }
+dashhq-bar:not(:defined) > [slot="actions"] { margin-left: auto; }
+dashhq-footer:not(:defined) { min-height: 120px; margin-top: var(--dh-7); border-top: 1px solid var(--dh-line); }
+dashhq-hash:not(:defined) { display: inline; font-family: var(--dh-mono); font-size: .92em; overflow-wrap: anywhere; }
+
+/* The product's nav in the bar. Put your links in one element with slot="nav" (a <nav>, <ul> or <div>).
+   Mark the current one with aria-current="page". The bar sets the --dh-nav-* variables: a row on wide
+   screens, a stacked list of 44px rows in the phone menu. */
+dashhq-bar > [slot="nav"] {
+  display: flex; flex-direction: var(--dh-nav-dir, row); align-items: var(--dh-nav-align, center);
+  gap: 2px; margin: 0; padding: 0; list-style: none;
+}
+dashhq-bar > [slot="nav"] a {
+  display: flex; align-items: center; height: var(--dh-nav-h, 32px); padding: 0 var(--dh-nav-pad, 10px);
+  border-radius: var(--dh-r2); font-family: var(--dh-font); font-size: var(--dh-nav-fs, 14px); font-weight: 520;
+  line-height: 1; color: var(--dh-ink-2); text-decoration: none; white-space: nowrap;
+}
+dashhq-bar > [slot="nav"] a:hover { color: var(--dh-ink); background: var(--dh-hover); }
+dashhq-bar > [slot="nav"] a[aria-current="page"],
+dashhq-bar > [slot="nav"] a[aria-current="true"] { color: var(--dh-ink); background: var(--dh-sunken); }
+dashhq-bar > [slot="nav"] a:focus-visible { outline: 2px solid var(--dh-focus); outline-offset: 2px; }
+
+dashhq-bar > [slot="actions"] { display: flex; align-items: center; gap: 6px; }
+dashhq-bar > [slot="logo"] { display: block; width: 20px; height: 20px; }
+
+/* Off-screen buffer used by the copy fallback on insecure origins. */
+.dh-copy-buffer { position: fixed; left: -9999px; top: 0; opacity: 0; }

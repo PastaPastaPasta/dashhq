@@ -1,34 +1,15 @@
 # dashhq.org
 
-The landing page at [dashhq.org](https://dashhq.org): a map of the Dash ecosystem.
+The family front door and a cyanotype map of the Dash ecosystem. Static HTML, CSS and JavaScript; no build dependencies or backend.
 
-One static file, `index.html`, plus self-hosted Barlow fonts (SIL Open Font License) in `fonts/`. No build step.
-GitHub Pages serves the `main` branch root.
+`index.html` contains the map, five family doors, project plates and directory. `hub.css` maps the site's drafting surface onto the family tokens. `hub.js` handles the finder and numbered routes. The pinned shell, Archivo font and mark live in `dashhq/`; see `SHELL.md` for the version and checksum. Family destinations use `dashhq.href()` through the small `family-links.js` adapter.
 
-## How it is put together
+The finder filters plates and directory entries, highlights matching map nodes, removes unavailable links from the tab order, and keeps the skip link pointed at visible content. It is hidden without JavaScript; the full directory and production destination links remain usable.
 
-- **The sheet** at the top is one SVG: every project on the layer it works with. Phones get the same projects
-  as chips instead, because a 1040 px drawing does not fit.
-- **Routes** number the stops of a journey on that map. Each `<li class="route">` carries its stops in
-  `data-route`, as a space-separated list of card ids.
-- **Plates** are the cards below, one per project, each with a hand-drawn SVG mark.
-- **The directory** is the plain list at the end, for everything that does not need a drawing.
-- **The finder** (the `Find` field) filters plates and directory entries, and lights up the matching projects
-  on the map. It is progressive enhancement: without JavaScript the field is hidden and the whole page is there.
+A plate needs an `<article class="card spanN" id="…">`, a matching `<a class="hnode">` in the map, and a matching `<a class="chip">` in the phone list. Keep the three ID lists identical. At desktop width each grid row spans six columns: two `span3` cards or three `span2` cards. Route `data-route` values are ordered plate IDs.
 
-Counts in the title block are computed from the page at load, so they cannot drift. The `Links checked` date
-is not: bump it when you have actually re-checked the links.
+Counts come from the page. The family-route check is explicitly labelled as a local lab check; the full directory link-check date remains historical. Only update a check date after checking that scope.
 
-## Adding a project
+The page uses a strict first-party CSP and makes no data requests. All fonts and assets are local. `og.png` remains the previous map preview and can be regenerated separately when publishing.
 
-A plate needs a `<article class="card spanN" id="...">`, a matching `<a class="hnode">` in the map, and a matching
-`<a class="chip">` in the phone list. The three id lists must stay identical; `.span3` and `.span2` have to add up
-to 6 per row.
-
-The map link's accessible name is its `aria-label`, written in the order the words are drawn
-(`author, name`). The `<text>` elements end with a space so the drawn words do not run together.
-
-`og.png` is the link preview: a 1200x630 render of the map plus a title block, made from the page's own SVG and
-fonts. Re-render it when the map changes; nothing on the page reads it, only the `og:image` tag does.
-
-Something missing, dead or wrong? Open an issue with the link.
+Local checks: `node --check hub.js`, `node --check family-links.js`, and the static copy build. There is no package-managed test, lint or typecheck suite. In the family lab, use `../../lab/build.sh hub` and the guarded screenshot runner from the lab root.

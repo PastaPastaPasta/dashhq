@@ -1,0 +1,338 @@
+
+/* ============================================================
+   dashhq.org · Dash Ecosystem
+   A cyanotype atlas. The hero is one drawing sheet: every
+   project placed on the layer it works with. Below it, one
+   technical plate per project, then a plain directory.
+   ============================================================ */
+
+
+/* ---------- tokens: light (cool plan paper) ---------- */
+:root{
+  --paper:var(--dh-page);--ink:var(--dh-ink);--ink-2:var(--dh-ink-2);
+  --rule:var(--dh-line);--link:var(--dh-brand-ink);--plate:var(--dh-plate);
+  --plate-edge:var(--dh-line);--line:var(--dh-plate-line);
+  --line-2:var(--dh-plate-ink-2);--line-hi:var(--dh-plate-ink);
+  --hair:color-mix(in srgb,var(--dh-plate-line) 22%,transparent);
+  --amber:var(--dh-act);--focus:var(--dh-focus);
+  --shadow:0 1px 0 color-mix(in srgb,var(--dh-ink) 8%,transparent),0 18px 34px -26px color-mix(in srgb,var(--dh-ink) 55%,transparent);
+  --text:var(--dh-font);--draft:var(--dh-font);--mono:var(--dh-mono);
+  --gut:var(--dh-gutter);--maxw:1320px;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none !important}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:24px}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--text);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+h1,h2,h3,p,ul,ol{margin:0}
+ul,ol{padding:0;list-style:none}
+code{font-family:var(--mono);font-size:.9em}
+.wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--gut)}
+.skip{position:absolute;left:-9999px;top:0;background:var(--plate);color:var(--line);padding:12px 18px;z-index:50}
+.skip:focus{left:12px;top:12px}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:2px}
+.sheet :focus-visible,.plate :focus-visible{outline-color:var(--amber)}
+
+/* ============================================================
+   THE SHEET: map + title block, one cyanotype field
+   ============================================================ */
+.sheet,.plate{position:relative;background:var(--plate);border:1px solid var(--plate-edge);box-shadow:var(--shadow);overflow:hidden}
+/* the dot grid is the network, under every drawing */
+.sheet::before,.plate::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(var(--line) 1px,transparent 1px);
+}
+.sheet{margin-top:clamp(8px,1.4vw,18px);border-radius:4px;color:var(--line)}
+.sheet::before{background-size:16px 16px;opacity:.08}
+/* drawing border, inset like a real sheet */
+.sheet-inner{position:relative;margin:10px;border:1px solid var(--hair);display:flex;flex-direction:column}
+
+.mapscroll{overflow-x:auto;overscroll-behavior-x:contain;padding:clamp(10px,1.4vw,20px) clamp(10px,1.4vw,20px) 4px}
+.mapscroll svg{display:block;min-width:1040px;width:100%;height:auto}
+
+/* --- map internals --- */
+.hsvg *{vector-effect:non-scaling-stroke}
+.hsvg .hrail{stroke:var(--line);stroke-width:1;opacity:.6}
+.hsvg .hstem{fill:none;stroke:var(--line);stroke-width:1;opacity:.45}
+.hsvg .hcross{fill:none;stroke:var(--amber);stroke-width:1.4;opacity:.85}
+.hsvg .hband{fill:var(--line-hi);font-family:var(--draft);font-weight:700;font-size:19px}
+.hsvg .hnote{fill:var(--line-2);font-family:var(--text);font-size:13.5px;paint-order:stroke;stroke:var(--plate);stroke-width:5px;stroke-linejoin:round}
+.hsvg .hbox{fill:var(--plate);stroke:var(--line);stroke-width:1;stroke-opacity:.65}
+.hsvg .hby{fill:var(--line-2);font-family:var(--text);font-size:12.5px}
+.hsvg .hnm{fill:var(--line-hi);font-family:var(--draft);font-weight:600;font-size:17px}
+.hsvg .hnm2{font-size:15.5px}
+.hsvg .hstep{fill:var(--amber);font-family:var(--draft);font-weight:700;font-size:16px;opacity:0}
+.hsvg .hnode{cursor:pointer;transition:opacity .25s ease}
+.hsvg .hnode:hover .hbox{stroke:var(--amber);stroke-opacity:1}
+.hsvg .hnode:hover .hnm{fill:var(--amber)}
+.hsvg .hnode:focus-visible{outline:none}
+.hsvg .hnode:focus-visible .hbox{stroke:var(--line-hi);stroke-width:3;stroke-opacity:1}
+.hsvg.routing .hnode:focus-visible{opacity:1}
+.hsvg .htest .hbox{stroke-dasharray:4 3}
+/* a route is showing: dim everything off it */
+.hsvg.routing .hnode{opacity:.5}
+.hsvg.routing .hnode.on{opacity:1}
+.hsvg.routing .hnode.on .hbox{stroke:var(--amber);stroke-opacity:1;stroke-width:1.6}
+.hsvg.routing .hnode.on .hstep{opacity:1}
+/* a route preview still has every card on the page, so its dimmed nodes stay
+   clickable. A filtered-out card is gone, so its node must not be. */
+.hsvg.filtering .hnode:not(.on),.mapchips.filtering .chip:not(.on){pointer-events:none}
+
+@media (prefers-reduced-motion:no-preference){
+  .hsvg .hrail{stroke-dasharray:1300;animation:draw 1s cubic-bezier(.2,.7,.3,1) backwards}
+  .hsvg .hstem{animation:fade .5s ease-out .8s backwards}
+  .hsvg .hcross{animation:fade .5s ease-out 1.25s backwards}
+  .hsvg .hnode,.hsvg .hnote,.hsvg .hband{animation:rise .5s cubic-bezier(.2,.7,.3,1) backwards}
+  @keyframes draw{from{stroke-dashoffset:1300}to{stroke-dashoffset:0}}
+  @keyframes fade{from{opacity:0}}
+  @keyframes rise{from{opacity:0;transform:translateY(7px)}}
+}
+
+/* phone fallback for the map: the same projects as three rows of chips */
+.mapchips{display:none;padding:14px 14px 4px}
+.chiprow{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chiplabel{flex-basis:100%;font-family:var(--draft);font-weight:700;font-size:1rem;color:var(--line-hi);margin-bottom:2px}
+.chip{
+  font-family:var(--draft);font-weight:600;font-size:.9375rem;color:var(--line-hi);text-decoration:none;
+  border:1px solid rgba(166,216,247,.6);border-radius:3px;padding:3px 9px;
+}
+.chip.test{border-style:dashed}
+.mapchips.routing .chip:not(.on){opacity:.55}
+.chip.on{border-color:var(--amber)}
+.chip.on::before{content:attr(data-step) " ";color:var(--amber);font-weight:700}
+
+/* title block: the drawing's caption; carries the h1 */
+.titleblock{display:grid;grid-template-columns:minmax(0,1fr) 230px;border-top:1px solid var(--hair)}
+.tb-main{padding:18px 20px 20px}
+.tb-stats{border-left:1px solid var(--hair);display:flex;flex-direction:column}
+.tb-stats > *{padding:14px 18px;border-top:1px solid var(--hair)}
+.tb-stats > :first-child{border-top:0}
+.titleblock h1{
+  font-family:var(--draft);font-weight:700;font-size:clamp(1.7rem,2.6vw,2.2rem);
+  line-height:1.05;letter-spacing:.005em;color:var(--line-hi);
+}
+.sub{margin-top:8px;font-size:1rem;color:var(--line-2);max-width:62ch}
+/* the finder: one field over everything on the page */
+.finder{display:none;margin-top:16px;align-items:center;gap:8px 10px;flex-wrap:wrap}
+html.finder-on .finder{display:flex}
+.finder label{font-family:var(--draft);font-weight:600;font-size:1rem;color:var(--line-hi)}
+.finder input{
+  flex:1 1 220px;min-width:0;max-width:420px;
+  background:rgba(166,216,247,.05);color:var(--line-hi);
+  border:1px solid rgba(166,216,247,.45);border-radius:3px;padding:7px 11px;
+  font-family:var(--text);font-size:1rem;line-height:1.2;
+  -webkit-appearance:none;appearance:none;
+}
+.finder input::placeholder{color:var(--line-2);opacity:1}
+.finder input:focus-visible{outline-offset:2px;border-color:var(--amber)}
+.finder input::-webkit-search-cancel-button{display:none}
+#qclear,#noclear{
+  font:600 .9375rem/1.2 var(--draft);color:var(--line-hi);background:none;cursor:pointer;
+  border:1px solid rgba(166,216,247,.55);border-radius:3px;padding:6px 11px;
+}
+#qclear:hover,#noclear:hover{border-color:var(--amber);color:var(--amber)}
+.fin-c{flex-basis:100%;font-size:.875rem;color:var(--line-2);min-height:1.1em}
+/* nothing matched: say so where the plates would have been */
+.noresult{font-size:1.0625rem;color:var(--ink-2);padding:8px 0 4px}
+
+.rhead{margin-top:16px;font-size:.9375rem;color:var(--line-2)}
+.routes{margin-top:8px;display:grid;gap:6px}
+.route{padding:6px 10px 7px 12px;margin-left:-12px;border-left:2px solid transparent}
+.route.on{border-left-color:var(--amber)}
+@media (hover:hover){.route:hover{border-left-color:var(--amber)}.rname:hover{border-color:var(--amber);color:var(--amber)}}
+.rname{
+  font:600 1.0625rem/1.2 var(--draft);color:var(--line-hi);background:none;cursor:pointer;
+  border:1px solid rgba(166,216,247,.55);border-radius:3px;padding:2px 10px;flex:none;
+}
+.rname[aria-pressed="true"]{border-color:var(--amber);color:var(--amber)}
+.route > p:first-child{display:flex;align-items:baseline;gap:10px}
+.rwhy{font-size:.9375rem;color:var(--line-2)}
+html:not(.js) .rhead{display:none}
+html:not(.js) .rname{border-color:transparent;padding-left:0;cursor:default}
+.rstops{margin-top:5px;font-size:.9375rem;line-height:1.5;color:var(--line-2)}
+.rstops a{color:var(--line);text-underline-offset:3px;text-decoration-color:rgba(166,216,247,.45)}
+.rstops a:hover{color:var(--amber);text-decoration-color:var(--amber)}
+.sep{color:var(--amber)}
+.tb-k{display:block;font-size:.875rem;color:var(--line-2)}
+.tb-v{display:block;margin-top:3px;font-family:var(--draft);font-weight:600;font-size:1.1875rem;color:var(--line-hi);line-height:1.25}
+.legend{display:flex;flex-direction:column;gap:5px;margin-top:6px;font-size:.875rem;color:var(--line-2)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{display:inline-block;width:22px;height:12px;border:1px solid var(--line);border-radius:2px}
+.sw.dash{border-style:dashed}
+.sw.cross{height:0;border:0;border-top:2px solid var(--amber);width:18px}
+.panhint{display:none;margin-top:6px;font-size:.875rem;color:var(--amber)}
+@media (max-width:1180px) and (min-width:641px){.panhint{display:block}}
+
+/* ============================================================
+   SECTIONS
+   ============================================================ */
+.section{padding-top:clamp(56px,7vw,96px)}
+.sechead{
+  display:flex;align-items:baseline;gap:8px 20px;flex-wrap:wrap;
+  border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:clamp(22px,3vw,34px);
+}
+.sechead h2{font-family:var(--draft);font-weight:700;font-size:clamp(1.6rem,2.4vw,2rem);line-height:1.1}
+.sechead .note{margin-left:auto;color:var(--ink-2);font-size:1rem}
+
+/* ============================================================
+   PLATES
+   ============================================================ */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(18px,1.8vw,26px) clamp(14px,1.6vw,22px)}
+
+.card{position:relative;display:flex;flex-direction:column;gap:10px}
+.card:hover .plate{border-color:var(--amber)}
+.card:hover .plate::before{opacity:.2}
+.card:hover .cname a{color:var(--link)}
+
+.tags{order:3;display:flex;flex-wrap:wrap;gap:2px 18px;font-size:.875rem;color:var(--ink-2);line-height:1.3;margin-top:2px}
+.plate{order:0;border-radius:3px;aspect-ratio:4/3;padding:30px clamp(22px,9%,74px) 26px;transition:border-color .22s ease}
+.plate::before{background-size:14px 14px;opacity:.11;transition:opacity .22s ease}
+.meta{order:2;display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.pnet{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.pnet::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--link);opacity:.85}
+.pnet.test::before{background:none;border:1.5px dashed var(--link)}
+.pnet.none::before{display:none}
+
+.cname{font-family:var(--draft);font-weight:700;font-size:1.4375rem;line-height:1.15}
+.cname a{text-decoration:none;transition:color .18s ease}
+/* the whole card is the primary link; secondary links sit above it */
+.cname a::after{content:"";position:absolute;inset:0;z-index:1}
+.host{font-family:var(--mono);font-size:.8125rem;color:var(--link);display:flex;flex-wrap:wrap;gap:2px 16px}
+.host a{position:relative;z-index:2;text-decoration:none}
+.host a:hover{text-decoration:underline}
+.host .lbl{font-family:var(--text);font-weight:500;font-size:.9375rem}
+.desc{font-size:1rem;line-height:1.5;color:var(--ink-2);max-width:48ch}
+
+@media (min-width:1061px){
+  .grid{grid-template-columns:repeat(6,1fr)}
+  .span3{grid-column:span 3}
+  .span2{grid-column:span 2}
+  .span3 .plate{aspect-ratio:16/9}
+  .span3 .cname{font-size:1.625rem}
+}
+
+/* ---------- the marks ---------- */
+.mk{display:block;width:100%;height:100%;position:relative}
+.mk *{vector-effect:non-scaling-stroke}
+.mk :is(.l,.lt,.ld,.a,.ad){fill:none}
+.mk .l{stroke:var(--line);stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}
+.mk .lt{stroke:var(--line);stroke-width:1;opacity:.4}
+.mk .ld{stroke:var(--line);stroke-width:1;opacity:.55;stroke-dasharray:3 4}
+.mk .a{stroke:var(--amber);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mk .ad{stroke:var(--amber);stroke-width:1.6;stroke-dasharray:3 3.5}
+.mk .af{fill:var(--amber)}
+.mk .df{fill:var(--line)}
+.mk .dq{fill:var(--line);opacity:.4}
+.mk .sh{fill:var(--line);opacity:.07}
+.mk .tx{fill:var(--line);font-family:var(--mono);font-size:6.5px;opacity:.85}
+.mk .txa{fill:var(--amber);opacity:1}
+.mk .txs{fill:var(--line-2);font-family:var(--text);font-size:6.5px}
+
+@media (prefers-reduced-motion:no-preference){
+  .mvr{transform-box:fill-box;transition:transform .38s cubic-bezier(.3,.8,.3,1),opacity .38s ease}
+  .mv-ping{transform-origin:center}
+  .mv-tally{transform-origin:left}
+  .mv-grow{transform-origin:bottom}
+  .mv-needle{transform-origin:left bottom}
+  .card:hover .mv-drop{transform:translateY(9px);opacity:.35}
+  .card:hover .mv-drop2{transform:translateY(9px)}
+  .card:hover .mv-tally{transform:scaleX(1.14)}
+  .card:hover .mv-ping{transform:scale(1.22);opacity:.5}
+  .card:hover .mv-slide{transform:translateX(7px)}
+  .card:hover .mv-lift{transform:translateY(-5px)}
+  .card:hover .mv-step{transform:translate(9px,-9px)}
+  .card:hover .mv-down{transform:translateY(6px)}
+  .card:hover .mv-far{transform:translateX(10px)}
+  .card:hover .mv-grow{transform:scaleY(1.14)}
+  .card:hover .mv-needle{transform:rotate(9deg)}
+}
+
+/* ============================================================
+   DIRECTORY: no plates, plain lists
+   ============================================================ */
+.dir{columns:3 300px;column-gap:clamp(28px,4vw,56px)}
+.dgroup{break-inside:avoid;margin-bottom:34px}
+.dgroup h3{
+  font-family:var(--draft);font-weight:700;font-size:1.1875rem;
+  padding-bottom:8px;border-bottom:1px solid var(--ink);margin-bottom:2px;
+}
+.dgroup li{padding:10px 0 11px;border-bottom:1px solid var(--rule)}
+.dgroup a{text-decoration:none;font-weight:500}
+.dgroup a:hover{color:var(--link);text-decoration:underline}
+.dby{color:var(--ink-2);font-size:.875rem;margin-left:6px}
+.dd{font-size:.9375rem;color:var(--ink-2);line-height:1.4;margin-top:2px}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1060px){
+  .titleblock{grid-template-columns:1fr}
+  .tb-stats{border-left:0;border-top:1px solid var(--hair);flex-direction:row;flex-wrap:wrap}
+  .tb-stats > *{flex:1 1 180px;border-top:0;border-left:1px solid var(--hair)}
+  .tb-stats > :first-child{border-left:0}
+}
+@media (max-width:640px){
+  body{font-size:15px}
+  .sheet-inner{margin:6px}
+  .titleblock{border-top:0;border-bottom:1px solid var(--hair)}
+  .mk .tx,.mk .txs{display:none}
+  .mapscroll{display:none}
+  .mapchips{display:block}
+  .tb-main{padding:12px 14px 16px}
+  .tb-stats{display:block}
+  .tb-stats > *{border-left:0;border-top:1px solid var(--hair);padding:8px 14px}
+  .tb-stats > p{display:flex;justify-content:space-between;align-items:baseline}
+  .legend{flex-direction:row;flex-wrap:wrap;gap:4px 16px}
+  .tb-v{margin-top:0}
+  .sechead .note{margin-left:0;flex-basis:100%}
+  .grid{grid-template-columns:1fr}
+  /* compact plates: drawing on the left, text on the right */
+  .card{display:grid;grid-template-columns:112px 1fr;grid-template-areas:"plate meta" "plate tags";column-gap:14px;row-gap:6px;align-items:start}
+  .plate{grid-area:plate;aspect-ratio:1;padding:10px;width:112px}
+  .plate::before{background-size:10px 10px}
+  .meta{grid-area:meta}
+  .tags{grid-area:tags;justify-content:flex-start;flex-wrap:wrap;gap:2px 14px;margin-top:0;font-size:.8125rem}
+  .cname{font-size:1.25rem}
+  .desc{font-size:.9375rem}
+  /* secondary links are small type; pad them to a 24px target */
+  .host a,.rstops a,.dgroup a{display:inline-block;padding-block:3px}
+  .chip{padding:5px 10px}
+}
+
+html{scroll-padding-top:72px}
+.tb-main h1{font-size:clamp(30px,4.2vw,46px);font-weight:660;font-stretch:116%;letter-spacing:-.02em;line-height:1.06}
+.hsvg .hnm,.chip,.rname,.tb-v{font-stretch:88%;font-weight:620}
+.hsvg .hband,.chiplabel,.sechead h2{font-stretch:112%;font-weight:650}
+.hsvg .hnode:hover .hnm{fill:var(--line-hi)}
+.cname,.dgroup h3{font-weight:620;font-stretch:110%}
+.doors{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:16px;border-bottom:1px solid var(--hair)}
+.door{display:block;padding:14px;color:var(--dh-ink);background:var(--dh-surface);border:1px solid var(--dh-line);border-radius:var(--dh-r3);text-decoration:none}
+.door:hover{border-color:var(--dh-brand)}
+.door strong{display:block;color:var(--dh-brand-ink);font-size:17px;font-weight:620}
+.door span{display:block;margin-top:4px;color:var(--dh-ink-2);font-size:13px;line-height:1.5}
+.route-panel{position:relative;padding:20px;border-top:1px solid var(--hair)}
+.route-panel .rhead{margin-top:0}
+.route-panel .routes{grid-template-columns:1fr 1fr;gap:12px 24px}
+.tools{margin-top:10px;font-size:14px;color:var(--line-2)}
+.tools a{color:var(--line);display:inline-block;padding:8px;text-underline-offset:3px}
+#noclear{color:var(--dh-brand-ink);border-color:var(--dh-line-2)}
+dashhq-footer{display:block;margin-top:64px}
+dashhq-footer p{margin:8px 0}
+@media(max-width:760px){.doors{grid-template-columns:1fr}.door{padding:10px 14px}.door strong{font-size:16px}.door span{margin-top:2px}.route-panel .routes{grid-template-columns:1fr}}
+@media(pointer:coarse){.rname,#qclear,#noclear,.chip{min-height:42px}.chip{display:inline-flex;align-items:center}.host a,.rstops a,.dgroup a{min-height:40px;display:inline-flex;align-items:center}.finder input{font-size:16px;min-height:42px}}
+
+.titleblock{grid-template-columns:1fr;border-top:0;border-bottom:1px solid var(--hair)}
+.tb-stats{border-left:0;border-top:1px solid var(--hair);flex-direction:row;flex-wrap:wrap}
+.tb-stats > *{flex:1 1 180px;border-top:0;border-left:1px solid var(--hair)}
+.tb-stats > :first-child{border-left:0}
+@media(max-width:640px){.tb-stats{display:block}.tb-stats > *{border-left:0;border-top:1px solid var(--hair)}.tb-stats > :first-child{border-top:0}}
+
+html.finder-on .finder{display:grid;grid-template-columns:minmax(0,1fr) auto;max-width:520px;gap:8px}
+.finder label,.fin-c{grid-column:1/-1}.finder input{width:100%;max-width:none}
+.finding .doors,.finding .route-panel,.finding .tb-stats{display:none}
+.finding .mapchips .chip:not(.on){display:none}
+.finding .section{padding-top:32px}

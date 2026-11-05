@@ -1,0 +1,221 @@
+/* dashhq-components.css: the reference look for shared components, as plain classes.
+   Plain-CSS sites (hub, nodes, faucet, arch) can use these classes directly. Framework sites (gov, explorer, pollr,
+   forge) re-create them in their own component layer with the same tokens and measurements; this file is the
+   source of truth for what "the same" means. Requires dashhq-tokens.css. */
+
+/* ---------- type ---------- */
+.dh-display { font: var(--dh-w-head) var(--dh-fs-display)/var(--dh-lh-display) var(--dh-font);
+  font-stretch: var(--dh-stretch-display); letter-spacing: -.02em; text-wrap: balance; margin: 0; }
+.dh-h1 { font: var(--dh-w-head) var(--dh-fs-h1)/var(--dh-lh-head) var(--dh-font);
+  font-stretch: var(--dh-stretch-head); letter-spacing: -.015em; text-wrap: balance; margin: 0; }
+.dh-h2 { font: var(--dh-w-head) var(--dh-fs-h2)/var(--dh-lh-head) var(--dh-font);
+  font-stretch: var(--dh-stretch-head); letter-spacing: -.008em; margin: 0; }
+.dh-h3 { font: var(--dh-w-strong) var(--dh-fs-h3)/var(--dh-lh-head) var(--dh-font); margin: 0; }
+.dh-lead { font-size: var(--dh-fs-lead); line-height: 1.55; color: var(--dh-ink-2); max-width: 64ch; margin: 0; }
+.dh-label { font-size: var(--dh-fs-sm); font-weight: var(--dh-w-ui); color: var(--dh-ink-2); }
+.dh-muted { color: var(--dh-ink-2); }
+.dh-mono { font-family: var(--dh-mono); font-size: .92em; font-variant-ligatures: none; }
+.dh-num { font-variant-numeric: tabular-nums; }
+.dh-link { color: var(--dh-brand-ink); text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  text-underline-offset: 3px; }
+.dh-link:hover { text-decoration-color: currentColor; }
+
+/* ---------- buttons ----------
+   .dh-btn          default; navigation and secondary actions
+   .dh-btn--act     amber; the one committing action in view (vote, request, create, sign, send)
+   .dh-btn--quiet   toolbar / icon buttons
+   .dh-btn--danger  destructive (remove key, revoke) */
+.dh-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: var(--dh-ctl-h); padding: 0 14px; border: 1px solid var(--dh-line-2); border-radius: var(--dh-r2);
+  background: var(--dh-surface); color: var(--dh-ink);
+  font: var(--dh-w-ui) var(--dh-fs-ui)/1 var(--dh-font); white-space: nowrap; text-decoration: none; cursor: pointer;
+  transition: background-color var(--dh-dur-1) var(--dh-ease), border-color var(--dh-dur-1) var(--dh-ease);
+}
+.dh-btn:hover { background: var(--dh-sunken); }
+.dh-btn:focus-visible { outline: 2px solid var(--dh-focus); outline-offset: 2px; }
+.dh-btn:disabled, .dh-btn[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+.dh-btn--act { background: var(--dh-act); border-color: var(--dh-act); color: var(--dh-act-ink); font-weight: var(--dh-w-strong); }
+.dh-btn--act:hover { background: var(--dh-act-hover); border-color: var(--dh-act-hover); }
+.dh-btn--quiet { border-color: transparent; background: transparent; color: var(--dh-ink-2); padding: 0 10px; }
+.dh-btn--quiet:hover { background: var(--dh-hover); color: var(--dh-ink); }
+.dh-btn--danger { color: var(--dh-bad); border-color: currentColor; }
+.dh-btn--danger:hover { background: var(--dh-bad-soft); }
+.dh-btn--sm { height: 28px; padding: 0 10px; font-size: var(--dh-fs-sm); }
+.dh-btn--block { width: 100%; }
+.dh-btn .dh-spin { margin-left: -2px; }
+
+/* ---------- fields ---------- */
+.dh-field { display: grid; gap: 6px; }
+.dh-field > label, .dh-field > .dh-field__label { font-size: var(--dh-fs-sm); font-weight: var(--dh-w-ui); color: var(--dh-ink); }
+.dh-field__hint { font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
+.dh-field__error { font-size: var(--dh-fs-sm); color: var(--dh-bad); font-weight: var(--dh-w-ui); }
+.dh-input, .dh-select {
+  height: var(--dh-ctl-h); width: 100%; min-width: 0; padding: 0 10px;
+  border: 1px solid var(--dh-line-2); border-radius: var(--dh-r2); background: var(--dh-surface); color: var(--dh-ink);
+  font: var(--dh-w-body) var(--dh-fs-ui)/1.2 var(--dh-font);
+}
+textarea.dh-input { height: auto; min-height: 96px; padding: 8px 10px; line-height: 1.45; }
+.dh-input--mono { font-family: var(--dh-mono); font-size: 13px; }
+.dh-input::placeholder { color: var(--dh-ink-2); opacity: 1; }
+.dh-input:focus, .dh-select:focus { outline: 2px solid var(--dh-focus); outline-offset: 0; border-color: var(--dh-focus); }
+.dh-input[aria-invalid="true"] { border-color: var(--dh-bad); }
+/* Native select with a chevron drawn from gradients: no image, so img-src stays untouched. */
+.dh-select {
+  appearance: none; -webkit-appearance: none; padding-right: 30px; cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, var(--dh-ink-2) 50%), linear-gradient(-45deg, transparent 50%, var(--dh-ink-2) 50%);
+  background-position: calc(100% - 16px) 52%, calc(100% - 11px) 52%;
+  background-size: 5px 5px; background-repeat: no-repeat;
+}
+@media (pointer: coarse) { .dh-input, .dh-select { font-size: 16px; } } /* stops iOS zooming on focus */
+
+/* ---------- segmented control (2 to 5 mutually exclusive views of the same data) ---------- */
+.dh-seg { display: inline-flex; gap: 2px; padding: 2px; border-radius: var(--dh-r2); background: var(--dh-sunken); max-width: 100%; overflow-x: auto; }
+.dh-seg > button, .dh-seg > a {
+  display: inline-flex; align-items: center; gap: 6px; height: calc(var(--dh-ctl-h) - 6px); padding: 0 12px;
+  border: 0; border-radius: 4px; background: transparent; color: var(--dh-ink-2); text-decoration: none; white-space: nowrap;
+  font: var(--dh-w-ui) var(--dh-fs-sm)/1 var(--dh-font); cursor: pointer;
+}
+.dh-seg > :hover { color: var(--dh-ink); }
+.dh-seg > [aria-pressed="true"], .dh-seg > [aria-current="page"], .dh-seg > [aria-selected="true"] {
+  background: var(--dh-surface); color: var(--dh-ink); box-shadow: 0 0 0 1px var(--dh-line), 0 1px 2px rgba(8, 24, 36, .08);
+}
+.dh-seg > :focus-visible { outline: 2px solid var(--dh-focus); outline-offset: 1px; }
+.dh-seg .dh-count { color: var(--dh-ink-2); font-weight: 400; }
+
+/* ---------- tabs (sections of one page or record; changes the URL) ---------- */
+.dh-tabs { display: flex; gap: 20px; border-bottom: 1px solid var(--dh-line); overflow-x: auto; scrollbar-width: none; }
+.dh-tabs > a, .dh-tabs > button {
+  position: relative; display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 2px;
+  border: 0; background: none; color: var(--dh-ink-2); text-decoration: none; white-space: nowrap;
+  font: var(--dh-w-ui) var(--dh-fs-ui)/1 var(--dh-font); cursor: pointer;
+}
+.dh-tabs > :hover { color: var(--dh-ink); }
+.dh-tabs > [aria-current="page"], .dh-tabs > [aria-selected="true"] { color: var(--dh-ink); }
+.dh-tabs > [aria-current="page"]::after, .dh-tabs > [aria-selected="true"]::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; border-radius: 2px; background: var(--dh-brand);
+}
+.dh-tabs .dh-count { color: var(--dh-ink-2); font-weight: 400; }
+
+/* ---------- panels and stats ---------- */
+.dh-panel { background: var(--dh-surface); border: 1px solid var(--dh-line); border-radius: var(--dh-r3); padding: var(--dh-4) var(--dh-5); }
+.dh-panel__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: var(--dh-3); }
+.dh-panel--flush { padding: 0; overflow: hidden; }
+.dh-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--dh-4) var(--dh-5); }
+.dh-stat { display: grid; gap: 2px; padding-left: 12px; border-left: 1px solid var(--dh-line); }
+.dh-stat--key { border-left: 3px solid var(--dh-brand); padding-left: 10px; }
+.dh-stat--good { border-left: 3px solid var(--dh-good); padding-left: 10px; }
+.dh-stat__label { font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
+.dh-stat__value { font: var(--dh-w-head) var(--dh-fs-stat)/1.15 var(--dh-font); font-stretch: var(--dh-stretch-stat);
+  letter-spacing: -.015em; font-variant-numeric: tabular-nums; }
+.dh-stat__value small { font-size: 14px; font-weight: var(--dh-w-ui); font-stretch: 100%; color: var(--dh-ink-2); letter-spacing: 0; }
+.dh-stat__note { font-size: 12.5px; color: var(--dh-ink-2); }
+
+/* ---------- tables ---------- */
+.dh-table-wrap { overflow-x: auto; }
+.dh-table { width: 100%; border-collapse: collapse; font-size: var(--dh-fs-ui); font-variant-numeric: tabular-nums; }
+.dh-table th { text-align: left; font-size: var(--dh-fs-sm); font-weight: var(--dh-w-ui); color: var(--dh-ink-2);
+  padding: 8px 12px; border-bottom: 1px solid var(--dh-line); white-space: nowrap; background: var(--dh-surface); }
+.dh-table td { padding: 9px 12px; border-bottom: 1px solid var(--dh-line); vertical-align: middle; }
+.dh-table tbody tr:hover td { background: var(--dh-hover); }
+.dh-table tbody tr:last-child td { border-bottom: 0; }
+.dh-table .dh-r { text-align: right; }
+.dh-table td .dh-sub { display: block; font-size: 12.5px; color: var(--dh-ink-2); }
+.dh-table th[aria-sort] { color: var(--dh-ink); }
+.dh-table a { color: var(--dh-brand-ink); text-decoration: none; }
+.dh-table a:hover { text-decoration: underline; text-underline-offset: 3px; }
+/* Phone: a table becomes a list of row cards. Each row gives its cells data-label; .dh-rc-title is the first line. */
+@media (max-width: 640px) {
+  .dh-table--cards thead { display: none; }
+  .dh-table--cards, .dh-table--cards tbody, .dh-table--cards tr, .dh-table--cards td { display: block; }
+  .dh-table--cards tr { padding: 12px 14px; border-bottom: 1px solid var(--dh-line); }
+  .dh-table--cards td { padding: 0; border: 0; text-align: left; }
+  .dh-table--cards td.dh-rc-title { font-weight: var(--dh-w-strong); margin-bottom: 2px; }
+  .dh-table--cards td[data-label]:not(.dh-rc-title) { display: inline; font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
+  .dh-table--cards td[data-label]:not(.dh-rc-title)::before { content: attr(data-label) " "; }
+  .dh-table--cards td[data-label]:not(.dh-rc-title):not(:last-child)::after { content: " · "; }
+  .dh-table--cards td.dh-rc-hide, .dh-table--cards td[data-label].dh-rc-hide { display: none; }
+  .dh-table--cards tbody tr:hover td { background: none; }
+}
+
+/* ---------- pills (status, never actions) ---------- */
+.dh-pill {
+  display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 7px; border-radius: var(--dh-r1);
+  font: var(--dh-w-ui) var(--dh-fs-xs)/1 var(--dh-font); white-space: nowrap; vertical-align: middle;
+  background: var(--dh-sunken); color: var(--dh-ink-2);
+}
+.dh-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: none; }
+.dh-pill--dot::before { display: block; }
+.dh-pill--good { background: var(--dh-good-soft); color: var(--dh-good); }
+.dh-pill--warn { background: var(--dh-warn-soft); color: var(--dh-warn); }
+.dh-pill--bad  { background: var(--dh-bad-soft);  color: var(--dh-bad); }
+.dh-pill--info { background: var(--dh-info-soft); color: var(--dh-info); }
+/* Inline status without a box: a dot and a word, for dense tables ("● Reachable"). */
+.dh-status { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.dh-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--dh-ink-3); flex: none; }
+.dh-status--good::before { background: var(--dh-good); }
+.dh-status--warn::before { background: var(--dh-warn); }
+.dh-status--bad::before { background: var(--dh-bad); }
+
+/* ---------- proof badge: "Verified" means a cryptographic check passed in this browser, nothing else ---------- */
+.dh-proof {
+  display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 9px 0 7px;
+  border: 1px solid var(--dh-line); border-radius: var(--dh-r2); background: var(--dh-surface);
+  font: var(--dh-w-ui) var(--dh-fs-sm)/1 var(--dh-font); color: var(--dh-ink-2); white-space: nowrap; text-decoration: none;
+}
+.dh-proof::before { content: ""; width: 10px; height: 10px; flex: none; border-radius: 50%; border: 1.5px solid currentColor; box-sizing: border-box; }
+.dh-proof--ok { color: var(--dh-good); border-color: color-mix(in srgb, var(--dh-good) 40%, transparent); }
+.dh-proof--ok::before { width: 5px; height: 9px; margin: -2px 3px 0 2px; border-radius: 0; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.dh-proof--checking::before { border-color: var(--dh-line-2); border-top-color: var(--dh-brand); animation: dh-rot .8s linear infinite; }
+.dh-proof--unverified { color: var(--dh-warn); border-style: dashed; border-color: currentColor; }
+.dh-proof--unverified::before { border-style: dashed; }
+.dh-proof--failed { color: var(--dh-bad); border-color: currentColor; }
+.dh-proof--failed::before { background: currentColor; }
+
+/* ---------- states ---------- */
+/* Empty: say what would be here and offer the one next step. Dashed = nothing real yet. */
+.dh-empty { padding: var(--dh-6) var(--dh-5); border: 1px dashed var(--dh-line-2); border-radius: var(--dh-r3);
+  text-align: center; color: var(--dh-ink-2); font-size: var(--dh-fs-ui); }
+.dh-empty strong { display: block; color: var(--dh-ink); font-size: var(--dh-fs-body); font-weight: var(--dh-w-strong); margin-bottom: 4px; }
+.dh-empty .dh-btn { margin-top: var(--dh-3); }
+/* Loading: name what is loading; spinner only for the first second, skeletons where the layout is known. */
+.dh-loading { display: flex; align-items: center; gap: 10px; color: var(--dh-ink-2); font-size: var(--dh-fs-ui); padding: var(--dh-4) 0; }
+.dh-spin { width: 14px; height: 14px; flex: none; border-radius: 50%; border: 2px solid var(--dh-line); border-top-color: var(--dh-brand);
+  animation: dh-rot .8s linear infinite; }
+.dh-skel { display: block; height: 12px; border-radius: 3px; background: var(--dh-line); }
+.dh-skel--text { width: 60%; }
+.dh-skel--num { width: 4em; height: 22px; }
+@media (prefers-reduced-motion: no-preference) {
+  .dh-skel { background: linear-gradient(90deg, var(--dh-line) 0 40%, var(--dh-sunken) 50%, var(--dh-line) 60% 100%) 0 0 / 300% 100%;
+    animation: dh-shimmer 1.4s linear infinite; }
+}
+/* Error: a sentence a user can act on, a retry, and the raw detail folded away. */
+.dh-error { display: grid; gap: 6px; padding: var(--dh-3) var(--dh-4); border: 1px solid var(--dh-line);
+  border-left: 3px solid var(--dh-bad); border-radius: var(--dh-r2); background: var(--dh-surface); font-size: var(--dh-fs-ui); }
+.dh-error strong { color: var(--dh-ink); font-weight: var(--dh-w-strong); }
+.dh-error details { color: var(--dh-ink-2); font-size: var(--dh-fs-sm); }
+.dh-error summary { cursor: pointer; width: fit-content; }
+.dh-error pre { margin: 6px 0 0; padding: 8px 10px; background: var(--dh-sunken); border-radius: var(--dh-r1);
+  font: 12px/1.45 var(--dh-mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+.dh-error .dh-btn { justify-self: start; margin-top: 4px; }
+
+/* Notice: page-level context (e.g. "This tool moved"). Not for errors. */
+.dh-notice { display: grid; gap: 4px; padding: var(--dh-3) var(--dh-4); border-radius: var(--dh-r2);
+  background: var(--dh-info-soft); color: var(--dh-ink); font-size: var(--dh-fs-ui); }
+.dh-notice strong { font-weight: var(--dh-w-strong); }
+
+/* ---------- key/value list (record headers, detail panels) ---------- */
+.dh-kv { display: grid; grid-template-columns: max-content 1fr; gap: 8px 20px; margin: 0; font-size: var(--dh-fs-ui); }
+.dh-kv dt { color: var(--dh-ink-2); }
+.dh-kv dd { margin: 0; min-width: 0; }
+@media (max-width: 480px) { .dh-kv { grid-template-columns: 1fr; gap: 2px; } .dh-kv dd { margin-bottom: 8px; } }
+
+/* ---------- the blueprint plate (hub map, architecture diagrams) ---------- */
+.dh-plate { position: relative; background: var(--dh-plate); color: var(--dh-plate-line); border: 1px solid var(--dh-plate-edge);
+  border-radius: 4px; overflow: hidden; }
+.dh-plate::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .08;
+  background-image: radial-gradient(var(--dh-plate-line) 1px, transparent 1px); background-size: 16px 16px; }
+.dh-plate__label { font: 600 13px/1.2 var(--dh-font); font-stretch: var(--dh-stretch-dense); color: var(--dh-plate-ink); }
+
+@keyframes dh-rot { to { transform: rotate(360deg); } }
+@keyframes dh-shimmer { to { background-position: -150% 0; } }
