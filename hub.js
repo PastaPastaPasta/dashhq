@@ -180,13 +180,37 @@
     if(rhead) rhead.hidden = !!raw;
 
     highlight(raw ? shown.map(function(c){ return c.el.id; }) : null, false);
-    none.hidden = !raw || shown.length > 0 || shownEntries.length > 0;
+    var results = document.getElementById('find-results');
+    results.replaceChildren();
+    var destinations = shown.concat(shownEntries).map(function(it){
+      var a = it.el.querySelector('.cname a, a');
+      var title = a.textContent.trim();
+      var score = (title.toLowerCase() === raw ? 100 : title.toLowerCase().includes(raw) ? 50 : 0)
+        + (a.dataset.family ? 10 : 0) + (it.el.id === 'radar' && /masternode|evonode|node/.test(raw) ? 40 : 0);
+      return {a:a, title:title, score:score, family:a.dataset.family};
+    }).sort(function(a,b){ return b.score - a.score; });
+    if (/^[a-f0-9]{64}$/i.test(raw)) destinations.unshift({
+      title:'Inspect this masternode in Radar', family:'radar', a:{href:dashhq.href('radar', '/mn/' + raw)}
+    });
+    else if (/^[a-z0-9-]+\.dash$/i.test(raw)) destinations.unshift({
+      title:'Find ' + raw + ' in Explorer', family:'explorer', a:{href:dashhq.href('explorer', '/dpns?name=' + encodeURIComponent(raw.slice(0,-5)))}
+    });
+    if (raw) destinations.slice(0,8).forEach(function(item){
+      var row = document.createElement('li');
+      var link = document.createElement('a');
+      link.href = item.a.href;
+      link.textContent = item.title + (item.family ? ' →' : ' ↗');
+      row.append(link);
+      results.append(row);
+    });
+    results.hidden = !raw || !destinations.length;
+    none.hidden = !raw || destinations.length > 0;
+    if (skip && raw && destinations.length) skip.setAttribute('href', '#find-results');
     // the count is a live region, so let typing settle before it is announced
     clearTimeout(countTimer);
     if(!raw) qcount.textContent = '';
     else countTimer = setTimeout(function(){
-      qcount.textContent = shown.length + ' of ' + cards.length + ' projects, '
-        + shownEntries.length + ' of ' + entries.length + ' directory entries';
+      qcount.textContent = destinations.length + ' destinations' + (destinations.length > 8 ? '; showing the first 8' : '');
     }, 300);
   }
 
