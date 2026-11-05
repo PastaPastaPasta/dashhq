@@ -17,7 +17,7 @@
   --amber:var(--dh-act);--focus:var(--dh-focus);
   --shadow:0 1px 0 color-mix(in srgb,var(--dh-ink) 8%,transparent),0 18px 34px -26px color-mix(in srgb,var(--dh-ink) 55%,transparent);
   --text:var(--dh-font);--draft:var(--dh-font);--mono:var(--dh-mono);
-  --gut:var(--dh-gutter);--maxw:1320px;
+  --gut:var(--dh-gutter);--maxw:var(--dh-max);
 }
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none !important}
@@ -309,7 +309,7 @@ html{scroll-padding-top:72px}
 .hsvg .hband,.chiplabel,.sechead h2{font-stretch:112%;font-weight:650}
 .hsvg .hnode:hover .hnm{fill:var(--line-hi)}
 .cname,.dgroup h3{font-weight:620;font-stretch:110%}
-.doors{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:16px;border-bottom:1px solid var(--hair)}
+.doors{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:16px;border-bottom:1px solid var(--hair)}
 .door{display:block;padding:14px;color:var(--dh-ink);background:var(--dh-surface);border:1px solid var(--dh-line);border-radius:var(--dh-r3);text-decoration:none}
 .door:hover{border-color:var(--dh-brand)}
 .door strong{display:block;color:var(--dh-brand-ink);font-size:17px;font-weight:620}
@@ -342,3 +342,24 @@ html.finder-on .finder{display:grid;grid-template-columns:minmax(0,1fr) auto;max
 .find-results a{display:flex;align-items:center;min-height:44px;padding:8px 0;color:var(--dh-brand-ink);font-size:15px;overflow-wrap:anywhere}
 .platform-intro{max-width:72ch;margin:0 0 32px;font-size:16px;line-height:1.6}
 .platform-intro h3{font-size:21px;font-weight:660}.platform-intro a{color:var(--dh-brand-ink);text-underline-offset:3px}
+
+.sheet-inner { margin: 0; border: 0; }
+.sheet { background: var(--dh-surface); color: var(--dh-ink); box-shadow: none; border-color: var(--dh-line); }
+.sheet .titleblock, .sheet .doors { color: var(--dh-ink); }
+.sheet .sub, .sheet .door span { color: var(--dh-ink-2); }
+.sheet .titleblock, .sheet .doors { border-color: var(--dh-line); }
+.sheet .door { background: var(--dh-surface); color: var(--dh-ink); border-color: var(--dh-line); }
+.sheet .door:hover { background: var(--dh-sunken); }
+.sheet .door strong { color: var(--dh-brand-ink); }
+.sheet .tb-main { color: var(--dh-ink); }
+.sheet .finder input { color: var(--dh-ink); background: var(--dh-surface); border-color: var(--dh-line-2); }
+.sheet .finder label, .sheet .fin-c { color: var(--dh-ink-2); }
+.sheet .mapscroll, .sheet .mapchips, .sheet .route-panel, .sheet .tb-stats { background: var(--dh-plate); color: var(--dh-plate-ink); }
+.noresult { grid-column: 1 / -1; }
+.directory-fold > summary { cursor: pointer; color: var(--dh-brand-ink); padding: 16px 0; font-weight: 600; }
+.tools { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+@media (max-width:760px) { .doors { grid-template-columns: 1fr; } .sheet .tb-main { padding: 18px; } }
+
+.sheet h1 { color: var(--dh-ink); }
+.sheet #qclear { color: var(--dh-ink); border-color: var(--dh-line-2); }
+.sheet .finder input::placeholder { color: var(--dh-ink-2); }

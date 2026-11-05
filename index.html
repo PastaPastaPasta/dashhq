@@ -61,13 +61,15 @@
             <button type="button" id="qclear" hidden>Clear</button>
             <p class="fin-c" id="qcount" role="status" aria-live="polite"></p>
             <ul id="find-results" class="find-results" aria-label="Search destinations" tabindex="-1" hidden></ul>
+            <p class="noresult" id="noresult" tabindex="-1" hidden>No destinations match yet. Try “Platform”, “wallet” or “masternode”, or paste a public ID. <button type="button" id="noclear">Clear search</button></p>
           </search>
           <p class="panhint">Drag the map sideways to see all of it.</p>
         </div>
 
       </div>
 
-      <nav class="doors" aria-label="The five doors">
+      <nav class="doors" aria-label="Choose a starting point">
+        <a class="door" href="https://arch.dashhq.org/" data-family="arch" data-path="/"><strong>What is Platform?</strong><span>Shared accounts, names and data for apps. Start with a three-step explanation and a registered name.</span></a>
 <a class="door" href="https://radar.dashhq.org/" data-family="radar" data-path="/"><strong>Radar</strong><span>Live network health, masternodes and evonodes</span></a>
         <a class="door" href="https://gov.dashhq.org/" data-family="gov" data-path="/"><strong>Governance</strong><span>Proposals, votes, name contests</span></a>
         <a class="door" href="https://explorer.dashhq.org/" data-family="explorer" data-path="/"><strong>Explorer</strong><span>Find identities, names and contracts; inspect their proofs</span></a>
@@ -723,8 +725,8 @@
       <h3>What is Dash Platform?</h3>
       <p>Dash Core moves DASH and secures payments. Platform adds shared application data: an identity gives an app a public account, a username makes that account easier to find, and documents hold things like a post or a poll. A data contract sets the rules for those documents.</p>
       <p>Evonodes are masternodes that run Platform. They agree on updates and provide proofs so your browser can check an answer against the network’s signed state. A valid proof confirms the stored data; it does not establish that a post is true or an app is safe.</p>
-      <p><a href="https://explorer.dashhq.org/dpns?name=pasta" data-family="explorer" data-path="/dpns?name=pasta">Inspect a real username in Explorer →</a> · <a href="https://radar.dashhq.org/masternodes?type=Evo" data-family="radar" data-path="/masternodes?type=Evo">Meet the evonodes in Radar →</a></p>
-      <p>For a hands-on example, <a href="https://pollr.dashhq.org/" data-family="pollr" data-path="/">browse public polls in Pollr</a>. The diagrams below explain how clients check Platform’s answers.</p>
+      <p><a href="https://explorer.dashhq.org/dpns/?name=dashpay.dash&amp;network=mainnet" data-family="explorer" data-path="/dpns/?name=dashpay.dash" data-network="mainnet">Inspect dashpay.dash on Mainnet →</a> · <a href="https://radar.dashhq.org/masternodes?type=Evo" data-family="radar" data-path="/masternodes?type=Evo">Meet the evonodes in Radar →</a></p>
+      <p>The registered name above is a live Mainnet example. <a href="https://pollr.dashhq.org/" data-family="pollr" data-path="/" data-network="testnet">Pollr’s Testnet archive</a> is a separate practice app; activity may be sparse. The diagrams below explain how clients check Platform’s answers.</p>
     </div>
     <div class="grid">
 
@@ -824,6 +826,7 @@
       <p class="note">Libraries, references, services and smaller tools.</p>
     </div>
 
+    <details class="directory-fold" open><summary>Browse the full directory of wallets, developer tools and resources</summary>
     <div class="dir">
       <div class="dgroup">
         <h3>Wallets and apps</h3>
@@ -902,10 +905,11 @@
         </ul>
       </div>
     </div>
+    </details>
   </div>
 </section>
 
-<p class="noresult wrap" id="noresult" tabindex="-1" hidden>Nothing here matches that. <button type="button" id="noclear">Clear the filter</button></p>
+
 
 </main>
 
