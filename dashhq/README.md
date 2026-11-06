@@ -48,7 +48,11 @@ Use UTC with this exact absolute format in title. Update the relative text from 
 Use `<details class="dh-disclosure"><summary>Details</summary>…</details>`; native details keyboard handling stays intact.
 Use `<span class="dh-chip--test">Testnet preview</span>` for a dashed chip without a circle.
 
-## New in 1.8 (round 6): sources beside figures, and a switcher that says what it is
+## Release history
+
+Earlier notes below describe their original releases. The 1.9 contracts above supersede navigation and icon guidance.
+
+### New in 1.8 (round 6): sources beside figures, and a switcher that says what it is
 
 | What | Who acts | How |
 |---|---|---|
@@ -58,7 +62,7 @@ Use `<span class="dh-chip--test">Testnet preview</span>` for a dashed chip witho
 | **1.8.1, same API.** A numbered source line keeps a link or `<time>` inline (1.8.0 put them in the number's column); a long `.dh-src` tag wraps inside its tile instead of widening a phone page. A retired page mounted late forwards even where the browser keeps no navigation timing. The arrival notice moves to a new bar whichever order a framework swaps bars in, and pads the scroll only under a `sticky` bar. The address loses no more than the marker (no stray `?`). `PRICE.md`'s `formatUsdEstimate` uses only long-supported Intl options. | Everyone on 1.8.0: re-vendor 1.8.1 | checks `sources-*`, `arrival-handover-insert-then-remove`, `moved-late-without-timing-forwards-once`, `switcher-drops-words-before-collapsing` |
 | **Fixes to 1.7.0, same API.** The desktop network menu's "Network settings" row keeps its look (1.7.0's phone "More tools" style leaked onto it in Governance and Explorer). The arrival notice shows only where the retired product's links land, survives the page replacing its bar, keeps focus on Dismiss across re-renders, waits for a visible tab before speaking, and pads `<html>`'s scroll while it makes the bar taller. A retired page never forwards in a loop, and waits for DOMContentLoaded even when it is added late. | Everyone on 1.7.0: re-vendor 1.8.1 | checks `network-settings-row-unchanged`, `arrival-*`, `moved-never-loops` |
 
-## New in 1.7 (round 6): no waiting at a retired address, and a phone menu that lists nothing twice
+### New in 1.7 (round 6): no waiting at a retired address, and a phone menu that lists nothing twice
 
 | What | Who acts | How |
 |---|---|---|
@@ -67,7 +71,7 @@ Use `<span class="dh-chip--test">Testnet preview</span>` for a dashed chip witho
 | **A short phone menu.** The product's sections, then "dashhq tools": the other doors by name (never the product's own door, which its sections already cover), then one **More tools** row that opens the apps, Architecture, the Fee estimator, the DAPI console, the Faucet and dashhq.org, then the theme. Anything your own sections already link to leaves the family part, so the hub's menu no longer lists Radar, Governance, Explorer and Start twice. With `phone-nav="tabs"` the menu holds only the family part, as before. | Nobody: re-vendor. See `../ADOPTION-r6.md` §2 for the sites whose nav repeats family links | "Phone menu" below; checks `phone-menu-*` |
 | **Footer:** "Directory" opens `dashhq.org/directory/`, like the hub's own nav, instead of a fold half-way down the hub. | Nobody | check `footer-directory-is-the-directory-page` |
 
-## New in 1.6 (round 5): the same situation, handled the same way everywhere
+### New in 1.6 (round 5): the same situation, handled the same way everywhere
 
 | What | Who acts | How |
 |---|---|---|
@@ -80,7 +84,7 @@ Use `<span class="dh-chip--test">Testnet preview</span>` for a dashed chip witho
 | **1.6.1:** review fixes, same API. "Open it on Mainnet" is dispatched from the page's bar, so SPAs that route the bar's network switch route this one too. Both notices keep one live region and announce each result once. The retired-page forward is 20 seconds (WCAG 2.2.1), and pressing "Stay here" from the keyboard can't also open the link (Firefox). `found` values other than a network, `none` or `unknown` read as "couldn't check", never as "nowhere". Repeated query keys all travel. `.dh-fill` resets the body margin. | Everyone: re-vendor 1.6.1 | |
 | **Fixes.** The footer and switcher no longer mark Explorer's door current on Architecture, Basics or the DAPI console (Opus #15). A stepper step before the current one can say it isn't done (`data-state="todo"`, Sol #14). Two link styles, `.dh-link` and `.dh-link--go` (Opus #25). `.dh-fill` keeps a short page's footer at the bottom (Opus #22). | Bridge (`todo`); anyone with a floating footer | `components.html#steps`, `#misc` |
 
-## New in 1.5 (round 4)
+### New in 1.5 (round 4)
 
 | What | Who acts | How |
 |---|---|---|
@@ -104,6 +108,7 @@ Use `<span class="dh-chip--test">Testnet preview</span>` for a dashed chip witho
 | `dashhq-components.css` | The family component layer: layout, page header, buttons, fields, tables, states, stepper (`.dh-*` classes) | yes (see Components) |
 | `dashhq-tailwind-preset.cjs` | Tailwind 3.4 preset mapping colours, radii, heights, fonts and shadows to the tokens | Tailwind sites |
 | `dashhq-shell.d.ts`, `dashhq-shell.react.d.ts` | Types for `window.dashhq` and the events; JSX types for the elements (React only) | TS sites |
+| `demo-radar.png` | Radar’s original icon, used only by the reference demos | no |
 | `demo.html` | Every piece on one page; also a CSP test (open it through a server, not `file://`) | no |
 | `bars.html` | All fourteen bars with each site's real attributes, logo and actions: the phone lockup reference | no |
 | `app.html` | An app page: section nav as phone tabs, the sign-in dialog with `<dashhq-signin-help>`, one footer | no |
@@ -112,6 +117,8 @@ Use `<span class="dh-chip--test">Testnet preview</span>` for a dashed chip witho
 | `arrived.html` | Where a retired link lands (a Governance contest): open it as `arrived.html?moved-from=vote` to see the arrival notice | no |
 
 ## Vendor it
+
+Recompute every document SRI `integrity` value for changed shell assets (SHA-256 or SHA-384, matching your policy); do not remove integrity checks.
 
 Copy this directory unchanged to a path your site serves as static files, at build time. Use `/dashhq/` everywhere so
 the family is predictable:
