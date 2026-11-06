@@ -11,6 +11,7 @@ rules and `../ADOPTION-r6.md` for your site's changes this round (then `-r5`, `-
 | **Sources beside figures.** A source or check label never sits inside a sentence. Three classes in the component layer: `.dh-src`, a quiet tag after a label or a complete value ("Asked for [Platform records]"; `--ok` checked in this browser, `--warn` stale or not checked); `.dh-ref`, a superscript number after a sentence's full stop; `.dh-sources`, the numbered lines closing the block (`ol`), or one "Sources: …" line for a block that shares a source (`p`). | Governance (Treasury, budget header), Explorer and anyone with a chip in a sentence; anyone showing fiat | "Sources beside figures" below; `components.html#sources`; checks `sources-*`; `../ADOPTION-r6.md` §4 |
 | **Fiat reads as an estimate**: "≈ $309,000", three significant figures (`../PRICE.md`, with a reference `formatUsdEstimate`). | Governance, Explorer, Bridge | `../PRICE.md` |
 | **The desktop switcher says what it is**: "dashhq tools ⌄" beside the product name (Sol #14), the phone menu's heading too. Short of room, the words give way to the chevron before the row collapses. Its accessible name is unchanged ("All dashhq tools"). | Nobody: re-vendor | check `switcher-says-what-it-is-*`; `bars.html` |
+| **Fixes to 1.7.0, same API.** The desktop network menu's "Network settings" row keeps its look (1.7.0's phone "More tools" style leaked onto it in Governance and Explorer). The arrival notice shows only where the retired product's links land, survives the page replacing its bar, keeps focus on Dismiss across re-renders, waits for a visible tab before speaking, and pads `<html>`'s scroll while it makes the bar taller. A retired page never forwards in a loop, and waits for DOMContentLoaded even when it is added late. | Everyone on 1.7.0: re-vendor 1.8.0 | checks `network-settings-row-unchanged`, `arrival-*`, `moved-never-loops` |
 
 ## New in 1.7 (round 6): no waiting at a retired address, and a phone menu that lists nothing twice
 
@@ -396,13 +397,18 @@ its row, on the info ground, with a Dismiss button:
 > **fees.dashhq.org** is now part of Explorer. Old links open the same place here.
 
 - Phones show the first sentence only.
-- It shows only on the product that is the retired one's new home (`vote` on Governance, `fees` and `basics` on
-  Explorer), so a hand-made link can't make another tool claim a move. Any other value is taken out of the address
-  and ignored.
-- Screen readers hear it once; re-rendering the bar (a network switch) keeps the same node and says nothing new.
-- It goes when dismissed (focus moves to the product's name) or when the visitor moves on to another page: a push or
-  Back in your SPA (with the Navigation API; elsewhere it stays until dismissed). An app canonicalising its own address
-  with `replaceState` doesn't end it.
+- It shows only on the product that is the retired one's new home, and only on the pages its links land on: Governance's
+  `/names…` for `vote`; Explorer's `/tools/fees/` for `fees`; Explorer's `/`, `/identity/…` and `/dpns/…` for `basics`.
+  A hand-made link elsewhere can't make a page claim the move: the marker is taken out of the address and ignored.
+- Screen readers hear it once, when the tab is visible (a tab opened in the background waits until it is shown). Re-rendering
+  the bar keeps the same node, says nothing new and keeps focus on Dismiss. If your framework replaces the bar element,
+  the new bar takes the same node over.
+- It goes when dismissed (focus moves to the product's name) or when the visitor moves on to another page in your SPA
+  (a push or a traverse, through the Navigation API; without it, it stays until dismissed). Your app canonicalising its
+  own address with `replaceState` doesn't end it.
+- While it shows, the bar is taller, so the shell adds its height to `<html>`'s `scroll-padding-top` (on top of yours):
+  anchors and `scrollIntoView` sized for the bar alone still land clear of it. Dismissing gives your value back.
+- `<dashhq-moved>` never forwards a page that was itself reached by a forward, or one whose map points back at itself.
 - It is part of the bar, so it sticks with a `sticky` bar until dismissed. The phone menu opens over it.
 
 ## Components (`dashhq-components.css`)

@@ -46,10 +46,11 @@
   const MOVED = { fees: ['explorer', '/tools/fees/'] };
   // Retired products: the address people have bookmarked, and the product that is its new home. <dashhq-moved>
   // forwards there at once with ?moved-from=<key>, and the new home's bar says so once.
+  // paths: where its forward can land, the only pages that show the notice.
   const RETIRED = {
-    vote: { to: 'gov', was: 'vote.dashhq.org' },
-    fees: { to: 'explorer', was: 'fees.dashhq.org' },
-    basics: { to: 'explorer', was: 'basics.dashhq.org' }
+    vote: { to: 'gov', was: 'vote.dashhq.org', paths: ['/names'] },
+    fees: { to: 'explorer', was: 'fees.dashhq.org', paths: ['/tools/fees/'] },
+    basics: { to: 'explorer', was: 'basics.dashhq.org', paths: ['/', '/identity/', '/dpns/'] }
   };
   const ARRIVAL_PARAM = 'moved-from';
   // The door a product is: only a door's own products mark it current. Architecture, the DAPI console, the retired
@@ -123,8 +124,10 @@
 
   // Arriving from a retired product: remember where from, then take the marker out of the address before any app
   // reads it, so a reload, a copied link or the app's router never sees it. Every other byte of the query is kept.
+  let forwarded = false; // this page was itself reached by a retired page's forward
   const arrival = (() => {
-    const parts = location.search.slice(1).split('&').filter(Boolean);
+    if (!location.search) return null;
+    const parts = location.search.slice(1).split('&');
     let from = null;
     const kept = parts.filter((p) => {
       const i = p.indexOf('=');
@@ -135,31 +138,49 @@
       return false;
     });
     if (kept.length === parts.length) return null;
+    forwarded = true;
+    const href = location.href, cut = href.search(/[?#]/), hash = href.indexOf('#');
     try {
-      history.replaceState(history.state, '', location.pathname + (kept.length ? '?' + kept.join('&') : '') + location.hash);
+      history.replaceState(history.state, '', href.slice(0, cut) + (kept.length ? '?' + kept.join('&') : '') +
+        (hash < 0 ? '' : href.slice(hash)));
     } catch { /* an opaque or sandboxed document keeps its address */ }
-    return Object.hasOwn(RETIRED, from) ? { from, path: location.pathname, bar: null, done: false } : null;
+    // Only where the old product's links land, so a hand-made link can't make another page claim the move.
+    const r = Object.hasOwn(RETIRED, from) && RETIRED[from];
+    const norm = (x) => (x.length > 1 ? x.replace(/\/+$/, '') : x);
+    const here = norm(location.pathname);
+    const lands = r && r.paths.map(norm).some((p) => (p === '/' ? here === '/' : here === p || here.startsWith(p + '/')));
+    return lands ? { from, bar: null, done: false } : null;
   })();
-  // The arrival notice ends when dismissed, or when the visitor moves on to another page of the app (a push or a Back,
-  // not an app canonicalising its own address). Focus that was on it moves to the product's name.
+  // While the notice shows, the sticky bar is taller: pad the page's scroll by its height so anchors and
+  // scrollIntoView (sized for the bar alone) still land clear of it. The page's own value comes back after.
+  let padWas = null;
+  function padScroll(px) {
+    if (padWas === null) padWas = { inline: root.style.scrollPaddingTop, base: getComputedStyle(root).scrollPaddingTop };
+    if (px == null) { root.style.scrollPaddingTop = padWas.inline; padWas = null; return; }
+    root.style.scrollPaddingTop = padWas.base === 'auto' ? `${px}px` : `calc(${padWas.base} + ${px}px)`;
+  }
+  // The arrival notice ends when dismissed, or when the visitor moves on to another page of the app (a push or a
+  // traverse in the Navigation API; an app canonicalising its own address with replaceState doesn't count). Without the
+  // Navigation API it stays until dismissed. Focus that was on it moves to the product's name.
   function endArrival(refocus) {
     if (!arrival || arrival.done) return;
     arrival.done = true;
     const bar = arrival.bar, el = bar && bar._arr;
     if (!el) return;
     const had = refocus && el.contains(bar.shadowRoot.activeElement);
+    if (bar._arrRo) bar._arrRo.disconnect();
     el.remove();
     bar._arr = null;
+    padScroll(null);
     const to = had && (bar.shadowRoot.querySelector('.product') || bar.shadowRoot.querySelector('.home'));
     if (to) to.focus();
   }
-  if (arrival) {
-    const moved = (e) => {
-      if (e && e.navigationType === 'replace') { arrival.path = location.pathname; return; }
-      if (location.pathname !== arrival.path) endArrival(false);
-    };
-    addEventListener('popstate', () => moved());
-    if (window.navigation && typeof navigation.addEventListener === 'function') navigation.addEventListener('currententrychange', moved);
+  if (arrival && window.navigation && typeof navigation.addEventListener === 'function') {
+    let path = location.pathname;
+    navigation.addEventListener('currententrychange', (e) => {
+      if (e.navigationType !== 'replace' && location.pathname !== path) endArrival(false);
+      path = location.pathname;
+    });
   }
 
   // The page's network: from the most recently connected <dashhq-bar network>, else from the URL.
@@ -495,15 +516,15 @@
     '.pd li{position:relative;min-width:0}' +
     '.pd a{display:flex;align-items:center;min-height:44px;padding:0 12px 0 14px;border-radius:var(--dh-r2);' +
     'font-size:15px;font-weight:620}' +
-    '@media (hover:hover){.pd a:hover,.more:hover,.hm:hover{background:var(--dh-hover)}.more:hover{color:var(--dh-ink)}}' +
+    '@media (hover:hover){.pd a:hover,.mtools:hover,.hm:hover{background:var(--dh-hover)}.mtools:hover{color:var(--dh-ink)}}' +
     '.pd li[aria-current] a{background:var(--dh-sunken)}' +
     '.pd li[aria-current]::before{content:"";position:absolute;left:4px;top:11px;bottom:11px;width:3px;border-radius:2px;' +
     'background:var(--dh-brand)}' +
-    '.more{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;margin-top:2px;padding:0 12px 0 14px;' +
+    '.mtools{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;margin-top:2px;padding:0 12px 0 14px;' +
     'border-radius:var(--dh-r2);font-size:15px;font-weight:540;color:var(--dh-ink-2);text-align:left}' +
-    '.more[aria-expanded=true]{color:var(--dh-ink)}' +
-    '.more .ic{margin-left:auto;transition:transform var(--dh-dur-2) var(--dh-ease)}' +
-    '.more[aria-expanded=true] .ic{transform:rotate(180deg)}' +
+    '.mtools[aria-expanded=true]{color:var(--dh-ink)}' +
+    '.mtools .ic{margin-left:auto;transition:transform var(--dh-dur-2) var(--dh-ease)}' +
+    '.mtools[aria-expanded=true] .ic{transform:rotate(180deg)}' +
     '.hm{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 8px;min-height:44px;padding:11px 12px 11px 14px;' +
     'margin-top:6px;border-top:1px solid var(--dh-line);font-size:15px;font-weight:620}' +
     '.hm span{font-size:13px;font-weight:400;color:var(--dh-ink-2)}' +
@@ -881,7 +902,7 @@
         this._group(key, net, 'Apps', APPS), this._group(key, net, 'Also', [...ALSO, 'faucet']),
         key !== 'home' && h('a', { class: 'hm', href: doorHref('home'), 'data-k': 'home' },
           'dashhq.org', h('span', null, DOORS[0].desc)));
-      const more = h('button', { class: 'more', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'dh-more' },
+      const more = h('button', { class: 'mtools', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'dh-more', 'data-f': 'mtools' },
         'More tools', icon('chevron', 16));
       more.addEventListener('click', () => {
         box.hidden = !box.hidden;
@@ -941,24 +962,41 @@
     }
 
     // After a retired product's forward: "fees.dashhq.org is now part of Explorer." Only the bar of the product it
-    // moved into shows it, so a hand-made link can't make another tool claim the move. One node for the bar's life,
-    // so a re-render doesn't announce it again; it goes when dismissed or when the visitor leaves that page.
+    // moved into shows it (and only where that product's links land), so a hand-made link can't make another tool claim
+    // the move. One node for its whole life, handed to a new bar if the page replaces its bar, so nothing is announced
+    // twice; it goes when dismissed or when the visitor moves on.
     _arrival(key) {
       const a = arrival;
-      if (!a || a.done || (a.bar && a.bar !== this) || RETIRED[a.from].to !== key) return null;
+      if (!a || a.done || RETIRED[a.from].to !== key) return null;
+      if (a.bar && a.bar !== this) {
+        if (a.bar.isConnected) return null;
+        this._arr = a.bar._arr;
+        this._arrRo = a.bar._arrRo;
+        a.bar._arr = a.bar._arrRo = null;
+      }
       a.bar = this;
       if (!this._arr) {
         const r = RETIRED[a.from];
-        const said = `${r.was} is now part of ${PRODUCTS[r.to].name}.`;
-        const x = h('button', { class: 'ax', type: 'button', 'aria-label': 'Dismiss', title: 'Dismiss' }, icon('close', 16));
+        const lead = ` is now part of ${PRODUCTS[r.to].name}.`, more = ' Old links open the same place here.';
+        const live = h('p', { class: 'sr', role: 'status', id: 'dh-arrive-said' });
+        const x = h('button', { class: 'ax', type: 'button', 'aria-label': 'Dismiss', 'aria-describedby': 'dh-arrive-said',
+          title: 'Dismiss', 'data-f': 'arrive-x' }, icon('close', 16));
         x.addEventListener('click', () => endArrival(true));
-        const live = h('p', { class: 'sr', role: 'status' });
         this._arr = h('div', { class: 'arrive', part: 'arrival' },
           h('div', { class: 'ain' }, icon('info', 18),
-            h('p', { class: 'at', 'aria-hidden': 'true' }, h('b', null, r.was), said.slice(r.was.length),
-              h('span', { class: 'am' }, ' Old links open the same place here.')), x),
+            h('p', { class: 'at', 'aria-hidden': 'true' }, h('b', null, r.was), lead, h('span', { class: 'am' }, more)), x),
           live);
-        setTimeout(() => { live.textContent = `${said} Old links open the same place here.`; }, 60);
+        // Said once, while someone is looking: a tab opened in the background waits until it is shown.
+        const say = () => {
+          if (doc.hidden) return;
+          doc.removeEventListener('visibilitychange', say);
+          setTimeout(() => { live.textContent = r.was + lead + more; }, 60);
+        };
+        doc.addEventListener('visibilitychange', say);
+        say();
+        const node = this._arr;
+        this._arrRo = new ResizeObserver(() => { if (node.isConnected && !a.done) padScroll(node.getBoundingClientRect().height); });
+        this._arrRo.observe(node);
       }
       return this._arr;
     }
@@ -1038,7 +1076,7 @@
         // The sheet comes before the menu button in DOM order, so put keyboard focus on its first link.
         const first = (!this._tabs && this._navSlot.assignedElements()
           .map((el) => (el.matches('a') ? el : el.querySelector('a')))
-          .find((a) => a && a.getClientRects().length)) || panel.querySelector('a');
+          .find((a) => a && a.getClientRects().length)) || [...panel.querySelectorAll('a, button')].find((a) => a.getClientRects().length);
         if (first) first.focus();
       }
     }
@@ -1474,10 +1512,19 @@
         const nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
         this._going = !(nav && nav.type === 'back_forward');
         if (this._going) {
-          // After the site's route map: deferred scripts run before DOMContentLoaded.
-          const go = () => { if (this.isConnected && this._going) location.replace(this._dest()); };
-          if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', go, { once: true });
-          else setTimeout(go, 0);
+          const go = () => {
+            if (!this.isConnected || !this._going) return;
+            const to = new URL(this._dest());
+            // A map pointing back at this page, or a retired page reached by another one's forward, would bounce the
+            // visitor forever: stay, and show the way on.
+            if (forwarded || to.origin + to.pathname === location.origin + location.pathname) { this._going = false; this.render(); return; }
+            location.replace(to.href);
+          };
+          // After the site's route map. Deferred scripts run before DOMContentLoaded, which can still be ahead after
+          // parsing has finished (this element added by a deferred script), so ask the navigation entry.
+          const ready = doc.readyState === 'complete' || !!(nav && nav.domContentLoadedEventStart > 0);
+          if (ready) setTimeout(go, 0);
+          else doc.addEventListener('DOMContentLoaded', go, { once: true });
         }
         // Restored from the back-forward cache: show the way on rather than "Opening…" forever.
         addEventListener('pageshow', (e) => { if (e.persisted && this._going) { this._going = false; this.render(); } });
