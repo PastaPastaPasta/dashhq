@@ -111,7 +111,7 @@ Earlier notes below describe their original releases. The 1.9 contracts above su
 | `demo-radar.png` | Radar’s original icon, used only by the reference demos | no |
 | `demo.html` | Every piece on one page; also a CSP test (open it through a server, not `file://`) | no |
 | `bars.html` | All fourteen bars with each site's real attributes, logo and actions: the phone lockup reference | no |
-| `app.html` | An app page: section nav as phone tabs, the sign-in dialog with `<dashhq-signin-help>`, one footer | no |
+| `app.html` | A Governance page: section nav in the phone sheet, the sign-in dialog with `<dashhq-signin-help>`, one footer | no |
 | `components.html` | Every component in every state, with the app accents; `?accent=forge\|pollr\|yappr` previews one page-wide | no |
 | `moved.html`, `moved.js` | A retired product's page as every retired site writes it (EvoVote's, with its one route map) | no |
 | `arrived.html` | Where a retired link lands (a Governance contest): open it as `arrived.html?moved-from=vote` to see the arrival notice | no |
