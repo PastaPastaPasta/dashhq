@@ -7,10 +7,11 @@ import { installQaGuard } from '../../../lab/qa-guard.mjs';
 const root = new URL('../../../', import.meta.url);
 const out = new URL('shots/r6-s3-journeys/', root);
 await fs.mkdir(out, { recursive: true });
-const urls = { hub: 'http://dashhq.localhost:8787', bridge: 'http://bridge.dashhq.localhost:8787', faucet: 'http://faucet.dashhq.localhost:8787', radar: 'http://radar.dashhq.localhost:8787', arch: 'http://arch.dashhq.localhost:8787' };
+const urls = { hub: 'http://dashhq.localhost:8787', bridge: 'http://bridge.dashhq.localhost:8787', faucet: 'http://faucet.dashhq.localhost:8787', radar: 'http://radar.dashhq.localhost:8787', arch: 'http://arch.dashhq.localhost:8787', explorer: 'http://explorer.dashhq.localhost:8787' };
 const protx = 'd353cdcae53071401345c38ab482935cb62442be2174a1d3210ca356c9017eff';
 const identity = '7P3ZsJHh61jhvVwaxh1xyNx7wkCqiDdkhw2EpCfTn9J';
 const results = [];
+const externalBuilds = { explorer: JSON.parse(await fs.readFile(new URL('lab/logs/explorer.build.json', root), 'utf8')) };
 const sources = Object.fromEntries(await Promise.all(['bridge', 'faucet', 'nodes', 'hub', 'arch'].map(async site => [site, {
   head: execFileSync('git', ['rev-parse', 'HEAD'], {cwd: new URL(`repos/${site}/`, root), encoding: 'utf8'}).trim(),
   build: JSON.parse(await fs.readFile(new URL(`lab/logs/${site}.build.json`, root), 'utf8')),
@@ -46,10 +47,19 @@ try {
         }));
         assert.equal(new Set([...links, ...local]).size, links.length + local.length, 'repeated phone destination');
         assert((await more.boundingBox()).y < 844, 'More tools fits first screen');
+        const themeChoices = await bar.locator('.sheet .themes').boundingBox();
+        assert(themeChoices.y + themeChoices.height <= 844, 'closed menu fits one phone screen');
         if ([urls.hub, urls.radar].includes(new URL(page.url()).origin)) await shot('family-menu-' + new URL(page.url()).hostname.split('.')[0]);
         await more.click();
         assert(await bar.locator('#dh-more').isVisible());
         await bar.getByRole('button', {name:'Close menu', exact:true}).click();
+      } else {
+        assert(/tools/i.test(await bar.locator('.switch').innerText()), 'desktop family switcher has a visible Tools label');
+        if (new URL(page.url()).origin === urls.radar) {
+          await bar.locator('.switch').click();
+          await shot('desktop-tools');
+          await page.keyboard.press('Escape');
+        }
       }
       const directory = new URL(await page.locator('dashhq-footer').getByRole('link', {name:'Directory', exact:true}).getAttribute('href'));
       assert.equal(directory.pathname, '/directory/');
@@ -59,6 +69,7 @@ try {
     await menu();
     assert((await page.locator('#q').boundingBox()).y < (await page.locator('main nav.doors').boundingBox()).y);
     assert(await page.locator('.pulse-fold').evaluate(el=>el.open));
+    assert((await page.locator('.network-pulse .dh-sources').textContent()).includes('Sources:'));
     for (const [query,path] of [['treasury','/treasury'],['my masternodes','/masternodes'],['contract cost','/tools/fees/'],['name contests','/names']]) {
       await page.locator('#q').fill(query);
       assert(new URL(await page.locator('#find-results a').first().getAttribute('href')).pathname === path,query);
@@ -75,6 +86,7 @@ try {
     await page.goto(urls.radar);
     await page.locator('#host-donut .donut-value').waitFor({timeout:45000});
     await menu();
+    assert((await page.locator('#health-source').textContent()).includes('Sources: Radar crawler'));
     const providers = (await page.locator('#host-donut .donut-value').textContent()).trim();
     const countries = (await page.locator('#country-donut .donut-value').textContent()).trim();
     assert((await page.locator('#where-lede').textContent()).includes(`${providers} identified providers across ${countries} countries`));
@@ -102,7 +114,11 @@ try {
     await shot('arch-technical-arrival');
     assert((await page.locator('#relationships').boundingBox()).y >= 48);
     await noOverflow();
-    await page.goto(urls.bridge + `/?mode=contract&network=mainnet&identity=${identity}`);
+    await page.goto(urls.explorer + `/identity/?network=mainnet&id=${identity}`);
+    await page.getByRole('link', {name:/Estimate a contract/}).click();
+    await page.getByRole('button', {name:'Estimate fees', exact:true}).click();
+    await page.getByRole('link', {name:/Continue to Bridge/}).click();
+    await page.waitForFunction(() => document.querySelector('.contract-import-receipt')?.textContent.includes('Schema SHA-256:'));
     await menu();
     await page.locator('#contract-choose-existing-btn').click();
     assert.equal(await page.locator('#contract-identity-id-input').inputValue(),identity);
@@ -112,6 +128,7 @@ try {
     await noOverflow();
     await page.goto(urls.faucet);
     await menu();
+    assert((await page.locator('.dh-sources').textContent()).includes('Faucet status API'));
     assert(await page.locator('.dh-steps').isHidden());
     const address = 'yZgQUp3D4cxQSa5YvAZcmmu17xkuSk1uKs';
     await page.goto(urls.faucet + `/?from=bridge&journey=start&address=${address}`);
@@ -163,11 +180,11 @@ try {
     }
     assert.equal(blocked.length,0,`unexpected writes: ${blocked.join(', ')}`);
     assert.deepEqual(errors, [], 'browser page errors');
-    results.push({device,theme,checks:'hub task search/health/folds; Radar counts/index/readiness; Arch map/anchors; Bridge identity; Faucet direct/start/same-tab resume',errors,blocked});
+    results.push({device,theme,checks:'hub task search/health/folds; Radar counts/index/readiness; Arch map/anchors; Explorer identity → fee estimator → Bridge public identity; Faucet direct/start/same-tab resume; family menus/Directory',errors,blocked});
     console.log(`${device} ${theme}: PASS`);
     await context.close();
   }
 } finally {
   await browser.close();
-  await fs.writeFile(new URL('report.json',out),JSON.stringify({sources,fixture:'Live public reads under lab/qa-guard.mjs; local keys generated only in browser memory; no chain writes.',results},null,2)+'\n');
+  await fs.writeFile(new URL('report.json',out),JSON.stringify({sources,externalBuilds,fixture:'Live public reads under lab/qa-guard.mjs; local keys generated only in browser memory; no chain writes.',results},null,2)+'\n');
 }
