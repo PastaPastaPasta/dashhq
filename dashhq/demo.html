@@ -189,7 +189,7 @@
           <strong>Couldn't reach Platform.</strong>
           <span>3 of 3 DAPI nodes timed out. Your keys and settings are untouched.</span>
           <button class="dh-btn dh-btn--sm" type="button">Try again</button>
-          <details><summary>Details</summary><pre>getStatus: deadline exceeded after 10000 ms (seed-2.testnet.networks.dash.org:1443)</pre></details>
+          <details class="dh-disclosure"><summary>Details</summary><pre>getStatus: deadline exceeded after 10000 ms (seed-2.testnet.networks.dash.org:1443)</pre></details>
         </div>
         <div class="dh-notice"><strong>Name contests moved to Governance.</strong><span>EvoVote is now part of gov.dashhq.org. <a class="dh-link" href="#names">Open german.dash there</a>.</span></div>
       </div>
@@ -216,7 +216,7 @@
       testnet boxes on the hub map.</p>
     <div class="bars">
       <dashhq-bar product="home">
-        <nav slot="nav" aria-label="Sections"><a href="#map">Map</a><a href="#apps">Apps</a><a href="#explore">Explore</a><a href="#govern">Govern</a><a href="#build">Build</a><a href="#directory">Directory</a></nav>
+        <nav slot="nav" aria-label="dashhq"><a href="#radar">Radar</a><a href="#gov">Governance</a><a href="#explorer">Explorer</a><a href="#start">Start on Testnet</a><a href="#directory">Directory</a></nav>
       </dashhq-bar>
       <dashhq-bar product="gov" network="testnet" networks="mainnet testnet devnet-paloma" network-settings="#settings">
         <nav slot="nav" aria-label="Governance"><a href="#p" aria-current="page">Proposals</a><a href="#names">Name contests</a><a href="#mns">My masternodes</a></nav>
@@ -226,11 +226,6 @@
         <nav slot="nav" aria-label="Explorer"><a href="#s">Search</a><a href="#i">Identities</a><a href="#n">Names</a><a href="#c">Contracts</a><a href="#t">Tokens</a></nav>
       </dashhq-bar>
       <dashhq-bar product="faucet"></dashhq-bar>
-      <dashhq-bar product="forge" class="app-forge">
-        <svg slot="logo" viewBox="0 0 20 20" aria-hidden="true"><rect class="forge-tile" width="20" height="20" rx="4"/><path class="forge-glyph" d="M5 8h10l-2 3H7z M9 11v4 M7 15h6"/></svg>
-        <nav slot="nav" aria-label="Forge"><a href="#e">Explore</a><a href="#d">Docs</a></nav>
-        <div slot="actions"><button class="dh-btn dh-btn--sm forge-cta" type="button">Sign in</button></div>
-      </dashhq-bar>
     </div>
   </section>
 
@@ -271,7 +266,7 @@
         <div class="plate-boxes">
           <a class="plate-box" href="#explorer"><span>pasta</span><b>Explorer</b></a>
           <a class="plate-box" href="#fees"><span>pasta</span><b>Fee estimator</b></a>
-          <a class="plate-box test" href="#pollr"><span>pasta</span><b>Pollr</b></a>
+          <a class="plate-box test" href="#gov-polls"><span>Governance</span><b>Polls</b></a>
         </div>
         <span class="plate-band">Network</span>
         <div class="plate-boxes">

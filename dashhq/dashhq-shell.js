@@ -43,7 +43,7 @@
   const DESCRIPTIONS = {
     arch: 'How Platform works', dapi: 'Raw node responses', faucet: 'Testnet DASH for your address'
   };
-  const MOVED = { fees: ['explorer', '/tools/fees/'], pollr: ['gov', '/polls/'] };
+  const MOVED = { fees: ['explorer', '/tools/fees/'] };
   // Retired products: the address people have bookmarked, and the product that is its new home. <dashhq-moved>
   // forwards there at once with ?moved-from=<key>, and the new home's bar says so once.
   // paths: where its forward can land, the only pages that show the notice (trailing slashes don't matter).
@@ -842,13 +842,14 @@
     }
 
     _phoneFamily(key, net) {
+      if (key === 'home') return null;
       const list = (items) => h('ul', { class: 'pd' }, items.map(([k, label]) =>
         h('li', { 'data-k': k }, h('a', { href: doorHref(k, net), 'aria-current': current(k === key, 'page') }, label))));
-      return [key !== 'home' && h('div', { 'data-list': '' }, h('p', { class: 'fl' }, 'dashhq tools'),
+      return [h('div', { 'data-list': '' }, h('p', { class: 'fl' }, 'dashhq tools'),
         list(DOORS.filter(d => PRODUCTS[d.key] !== PRODUCTS[key]).map(d => [d.key, d.label]))),
-        h('div', { 'data-list': '' }, key !== 'home' && h('div', { class: 'sep', role: 'separator' }),
+        h('div', { 'data-list': '' }, h('div', { class: 'sep', role: 'separator' }),
           list(ALSO.map(k => [k, PRODUCTS[k].name]))),
-        key !== 'home' && h('div', { 'data-list': '' }, h('div', { class: 'sep', role: 'separator' }),
+        h('div', { 'data-list': '' }, h('div', { class: 'sep', role: 'separator' }),
           h('a', { class: 'hm', href: href('home', '/directory/'), 'data-k': 'home' }, 'All Dash projects →'))];
     }
 
@@ -1115,7 +1116,6 @@
 
     render() {
       this._drop();
-      this._on(netListeners, () => this.render());
       const key = productOf(this);
       const src = this.getAttribute('source');
       this._paint(h('footer', { class: 'f', part: 'footer' },
