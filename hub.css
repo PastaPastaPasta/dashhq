@@ -111,3 +111,5 @@ dashhq-footer{display:block;margin-top:24px}
 @media(prefers-reduced-motion:reduce){.door{transition:none}}
 .short-label{display:none}
 @media(max-width:599px){.short-label{display:inline}}
+.resource-links{margin-top:4px;font-size:13px;color:var(--dh-ink-2)}
+.resource-links a,.dby a{color:var(--dh-brand-ink);font-weight:400}
