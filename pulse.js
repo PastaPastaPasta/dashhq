@@ -1,21 +1,38 @@
 (() => {
+  const summary = document.getElementById('pulse-summary');
   const age = document.getElementById('pulse-age');
   const retry = document.getElementById('pulse-retry');
   let refreshing = false;
   let last;
-  const fmt = value => value.toLocaleString('en-US');
-  const date = timestamp => new Date(timestamp * 1000).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + ' UTC';
-  const ago = timestamp => { const minutes = Math.max(0, Math.floor((Date.now() / 1000 - timestamp) / 60)); return minutes < 1 ? 'just now' : minutes < 60 ? `${minutes} min ago` : `${Math.floor(minutes / 60)} h ago`; };
+  const ago = timestamp => {
+    const minutes = Math.max(0, Math.floor((Date.now() / 1000 - timestamp) / 60));
+    return minutes < 1 ? 'just now' : minutes < 60 ? `${minutes} min ago` : `${Math.floor(minutes / 60)} h ago`;
+  };
+  function metric(value, label, shortLabel, title) {
+    const span = document.createElement('span');
+    span.title = title;
+    const strong = document.createElement('strong');
+    strong.textContent = value;
+    const full = document.createElement('span');
+    full.className = 'long-label';
+    full.textContent = label;
+    const short = document.createElement('span');
+    short.className = 'short-label';
+    short.textContent = shortLabel;
+    span.append(strong, full, short);
+    return span;
+  }
   function render() {
-    if (!last) return;
     const { crawl, platform } = last;
     const old = Date.now() / 1000 - crawl.finished > 3600;
-    document.getElementById('pulse-core').textContent = crawl.mn_total ? `${(crawl.mn_reachable / crawl.mn_total * 100).toFixed(1)}% answered` : 'Not checked';
-    document.getElementById('pulse-core-note').textContent = `${fmt(crawl.mn_reachable)} of ${fmt(crawl.mn_total)} enabled masternodes`;
-    document.getElementById('pulse-platform').textContent = platform?.checked ? `${Date.now() / 1000 - platform.updated > 2700 ? "Check overdue · " : ""}${(platform.healthy / platform.checked * 100).toFixed(1)}% passed` : 'Not checked';
-    document.getElementById('pulse-platform-note').textContent = platform?.checked ? `${fmt(platform.healthy)} of ${fmt(platform.checked)} checked evonodes · ${ago(platform.updated)}` : 'No Platform observations published';
-    document.getElementById('pulse-platform-note').title = platform?.updated ? `Tenderdash P2P + DAPI · ${date(platform.updated)}` : '';
-    age.textContent = `Radar observations · ${old ? 'Crawl is over an hour old · ' : ''}Core ${date(crawl.finished)}. Open Radar for diagnostics.`;
+    const stalePlatform = platform?.checked && Date.now() / 1000 - platform.updated > 2700;
+    summary.replaceChildren('Mainnet now · ',
+      metric(crawl.mn_total ? `${(crawl.mn_reachable / crawl.mn_total * 100).toFixed(1)}%` : 'Not checked', ' of masternodes answered', ' Core answered', `${crawl.mn_reachable} of ${crawl.mn_total} enabled masternodes · P2P reachability`),
+      ' · ', metric(platform?.checked ? `${(platform.healthy / platform.checked * 100).toFixed(1)}%` : 'Not checked', ' of evonodes passed Platform checks', ' Platform passed', platform?.checked ? `${platform.healthy} of ${platform.checked} checked evonodes · Tenderdash and DAPI · ${new Date(platform.updated * 1000).toISOString()}` : 'No Platform observations published'));
+    if (stalePlatform) summary.append(' · Platform check overdue');
+    age.textContent = `${ago(crawl.finished)}${old ? ' · overdue' : ''}`;
+    age.dateTime = new Date(crawl.finished * 1000).toISOString();
+    age.title = `Core: ${age.dateTime}${platform?.updated ? '; Platform: ' + new Date(platform.updated * 1000).toISOString() : ''}`;
   }
   async function load() {
     if (refreshing) return;
@@ -29,15 +46,15 @@
       const data = await response.json();
       const c = data.crawl, p = data.platform;
       if (!c || ![c.mn_total, c.mn_reachable, c.finished].every(Number.isFinite) || c.mn_total < 0 || c.mn_reachable < 0 || c.mn_reachable > c.mn_total || c.finished <= 0 || c.finished > Date.now() / 1000 + 60 ||
-        (p?.checked && (![p.healthy, p.checked, p.updated].every(Number.isFinite) || p.healthy < 0 || p.healthy > p.checked || p.updated <= 0 || p.updated > Date.now() / 1000 + 60))) throw new Error('invalid');
+        (p && (![p.healthy, p.checked, p.updated].every(Number.isFinite) || p.checked < 0 || p.healthy < 0 || p.healthy > p.checked || p.updated <= 0 || p.updated > Date.now() / 1000 + 60))) throw new Error('invalid');
       last = data;
       render();
       retry.hidden = true;
     } catch {
-      if (last) { render(); age.textContent += ' Refresh failed; showing the last observation.'; }
+      if (last) { render(); summary.append(' · Refresh failed; last observation shown'); }
       else {
-        for (const id of ['pulse-core', 'pulse-platform']) document.getElementById(id).textContent = 'Status unavailable';
-        age.textContent = 'Radar could not be reached. You can still open its diagnostics.';
+        summary.textContent = 'Mainnet observations unavailable. Open Radar for diagnostics.';
+        age.textContent = 'unavailable';
       }
       retry.hidden = false;
     } finally { clearTimeout(timer); refreshing = false; retry.disabled = false; }

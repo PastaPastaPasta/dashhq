@@ -17,7 +17,7 @@ export interface DashhqApi {
   /** true on *.dashhq.localhost: every family link stays in the local lab */
   readonly lab: boolean;
   readonly products: Readonly<Record<DashhqProduct, { name: string; url: string; door: string; net?: boolean }>>;
-  /** Origin of a family product, production or lab. */
+  /** Origin of a family product, production or lab. Fees resolves to Explorer; Pollr to Governance. */
   origin(product: DashhqProduct): string;
   /** URL of a page in another family product. Carries an explicit ?network= for every network-aware product. Bridge/Faucet default to Testnet unless a network is explicit. Throws if path would leave the product's origin (e.g. "//evil.example"). */
   href(product: DashhqProduct, path?: string, opts?: { network?: DashhqNetwork | null }): string;

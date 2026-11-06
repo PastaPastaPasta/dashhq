@@ -1,4 +1,4 @@
-/*! dashhq-shell 1.8.1 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
+/*! dashhq-shell 1.9.0 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
 /* Load as a classic, blocking script in <head>, before any stylesheet that depends on [data-theme]:
      <script src="/dashhq/dashhq-shell.js"></script>
    CSP: needs only script-src 'self'. No inline script, no eval, no innerHTML, no style attributes,
@@ -7,7 +7,7 @@
   'use strict';
   if (window.dashhq && window.dashhq.version) return;
 
-  const VERSION = '1.8.1';
+  const VERSION = '1.9.0';
   const doc = document;
   const root = doc.documentElement;
   const host = location.hostname;
@@ -34,20 +34,21 @@
   };
   PRODUCTS.nodes = PRODUCTS.radar;
   const DOORS = [
-    { door: 'home',       key: 'home',     label: 'dashhq.org', desc: 'The map: every Dash app, tool and doc' },
-    { door: 'network',    key: 'radar',    label: 'Radar',      desc: 'Live network health, masternodes and evonodes' },
-    { door: 'governance', key: 'gov',      label: 'Governance', desc: 'Proposals, votes, name contests' },
-    { door: 'platform',   key: 'explorer', label: 'Explorer',   desc: 'Identities, names, contracts, proof-checked' },
-    { door: 'start',      key: 'bridge',   label: 'Start on Testnet', desc: 'Address, testnet DASH, identity, username', steps: ['bridge', 'faucet'] }
+    { door: 'network', key: 'radar', label: 'Radar', desc: 'Network health and masternodes' },
+    { door: 'governance', key: 'gov', label: 'Governance', desc: 'Proposals, polls and name contests' },
+    { door: 'platform', key: 'explorer', label: 'Explorer', desc: 'Identities, names, contracts, fees' },
+    { door: 'start', key: 'bridge', label: 'Start on Testnet', desc: 'Address, tDASH, identity, username' }
   ];
-  const APPS = ['forge', 'pollr', 'yappr'];
-  const ALSO = ['arch', 'fees', 'dapi'];
-  // Products folded into another one: family menus link straight to the new home instead of the old host's notice.
-  const MOVED = { fees: ['explorer', '/tools/fees/'] };
+  const ALSO = ['arch', 'dapi', 'faucet'];
+  const DESCRIPTIONS = {
+    arch: 'How Platform works', dapi: 'Raw node responses', faucet: 'Testnet DASH for your address'
+  };
+  const MOVED = { fees: ['explorer', '/tools/fees/'], pollr: ['gov', '/polls/'] };
   // Retired products: the address people have bookmarked, and the product that is its new home. <dashhq-moved>
   // forwards there at once with ?moved-from=<key>, and the new home's bar says so once.
   // paths: where its forward can land, the only pages that show the notice (trailing slashes don't matter).
   const RETIRED = {
+    pollr: { to: 'gov', was: 'pollr.dashhq.org', paths: ['/polls'] },
     vote: { to: 'gov', was: 'vote.dashhq.org', paths: ['/names'] },
     fees: { to: MOVED.fees[0], was: 'fees.dashhq.org', paths: [MOVED.fees[1]] },
     basics: { to: 'explorer', was: 'basics.dashhq.org', paths: ['/', '/identity/', '/dpns/'] }
@@ -56,7 +57,7 @@
   // The door a product is: only a door's own products mark it current. Architecture, the DAPI console, the retired
   // tools and the apps mark their own entry under Also or Apps, never Explorer's or Governance's door.
   const doorOf = (key) => {
-    const d = DOORS.find((x) => PRODUCTS[x.key] === PRODUCTS[key] || (x.steps && x.steps.includes(key)));
+    const d = DOORS.find((x) => PRODUCTS[x.key] === PRODUCTS[key]);
     return d ? d.door : null;
   };
   // The hub's page that explains identities, keys and each app's sign-in (linked from <dashhq-signin-help>).
@@ -358,6 +359,7 @@
     chevron: ['M5 7.5l5 5 5-5'],
     menu: ['M3.5 6h13M3.5 10h13M3.5 14h13'],
     close: ['M5 5l10 10M15 5L5 15'],
+    monitor: ['M2.5 3.5h15v10h-15z', 'M10 13.5V17M7 17h6'],
     moon: ['M15.5 12.2A6.5 6.5 0 0 1 7.8 4.5a6.5 6.5 0 1 0 7.7 7.7z'],
     sun: ['M10 6.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7z',
       'M10 1.8v2M10 16.2v2M1.8 10h2M16.2 10h2M4.2 4.2l1.4 1.4M14.4 14.4l1.4 1.4M4.2 15.8l1.4-1.4M14.4 5.6l1.4-1.4'],
@@ -370,13 +372,6 @@
   const icon = (name, size) =>
     h('svg:svg', { viewBox: '0 0 20 20', width: size, height: size, 'aria-hidden': 'true', focusable: 'false', class: 'ic' },
       ICONS[name].map((d) => h('svg:path', { d })));
-  // The mark: a blueprint plate, two layers, and the amber link that joins them (an H on its side).
-  const mark = (size) =>
-    h('svg:svg', { viewBox: '0 0 24 24', width: size, height: size, 'aria-hidden': 'true', focusable: 'false', class: 'mark' },
-      h('svg:rect', { class: 'mk-plate', x: '.5', y: '.5', width: '23', height: '23', rx: '5' }),
-      h('svg:path', { class: 'mk-rail', d: 'M5 8.5H19M5 15.5H19' }),
-      h('svg:path', { class: 'mk-link', d: 'M12 8.5V15.5' }));
-
   /* ---------------------------------------------------------------- shadow CSS */
   const BASE_CSS =
     ':host{font-family:var(--dh-font);color:var(--dh-ink);-webkit-font-smoothing:antialiased;' +
@@ -388,16 +383,12 @@
     '-webkit-tap-highlight-color:transparent}' +
     ':focus-visible{outline:2px solid var(--dh-focus);outline-offset:2px}' +
     '.ic{display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}' +
-    '.mark{display:block;flex:none}' +
-    '.mk-plate{fill:#0A2A3D;stroke:var(--dh-mark-edge,transparent);stroke-width:1}' +
-    '.mk-rail{stroke:#A6D8F7;stroke-width:2.2;fill:none}' +
-    '.mk-link{stroke:#F5A73C;stroke-width:3.2;fill:none}' +
     '.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}';
 
   const BAR_CSS = BASE_CSS +
     ':host{display:block;position:relative;z-index:40}' +
     ':host([sticky]){position:sticky;top:0}' +
-    '.bar{background:var(--dh-surface);border-bottom:1px solid var(--dh-line);' +
+    '.bar{position:relative;background:var(--dh-surface);border-bottom:1px solid var(--dh-line);' +
     '--dh-nav-dir:row;--dh-nav-h:32px;--dh-nav-fs:14px;--dh-nav-pad:10px;--dh-nav-align:center;' +
     '--dh-nav-only-phone:none;--dh-nav-only-desk:flex}' +
     '.bar.compact{--dh-nav-only-phone:flex;--dh-nav-only-desk:none}' +
@@ -405,26 +396,30 @@
     '.row{position:relative;max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;' +
     'padding:0 var(--dh-gutter);height:var(--dh-bar-h);display:flex;align-items:center;gap:2px;overflow:hidden}' +
     '.bar.popping .row,.bar.open .row{overflow:visible}' +
-    '.home{display:flex;align-items:center;gap:9px;height:36px;padding-right:4px;border-radius:var(--dh-r2);flex:none}' +
-    '.wm{font-weight:650;font-stretch:112%;font-size:16px;letter-spacing:-.012em;line-height:1}' +
-    '.slash{color:var(--dh-line-2);font-size:19px;font-weight:300;margin:0 3px 0 5px;flex:none;line-height:1}' +
-    '.product{display:flex;align-items:center;gap:7px;font-weight:580;font-size:15px;height:34px;padding:0 4px;' +
-    'border-radius:var(--dh-r2);white-space:nowrap;flex:none}' +
-    '.pl{display:flex;align-items:center;gap:7px;min-width:0}' +
-    '.fam{display:none}' +
+    '.lockup{display:flex;align-items:center;flex:none;gap:0}' +
+    '.home{display:flex;align-items:center;height:36px;border-radius:var(--dh-r2);flex:none}' +
+    '.wm{font-weight:650;font-stretch:112%;font-size:17px;letter-spacing:-.012em;line-height:1}' +
+    '.is-home .wm{font-size:19px}' +
+    '.slash{color:var(--dh-line-2);font-size:19px;font-weight:300;margin:0 7px;flex:none;line-height:1}' +
+    '.product{display:flex;align-items:center;font-weight:580;font-size:15.5px;height:34px;' +
+    'border-radius:var(--dh-r2);white-space:nowrap;min-width:0}' +
+    '.pn{min-width:0}' +
+    '.logo{display:none;flex:none;margin-right:7px}' +
+    '.has-logo .logo{display:block}' +
+    '::slotted([slot=logo]){display:block;width:22px;height:22px;border-radius:5px;object-fit:contain}' +
     '.product:hover .pn{text-decoration:underline;text-decoration-color:var(--dh-line-2);text-underline-offset:4px}' +
-    '.switch{display:flex;align-items:center;gap:3px;height:28px;margin-left:6px;padding:0 5px 0 9px;' +
-    'border:1px solid var(--dh-line);border-radius:var(--dh-r2);color:var(--dh-ink-2);font-size:13px;font-weight:540;' +
-    'white-space:nowrap;flex:none}' +
-    '.switch:hover,.switch[aria-expanded=true]{background:var(--dh-hover);color:var(--dh-ink);border-color:var(--dh-line-2)}' +
-    '.bar.nolabel .switch{padding:0 5px}.bar.nolabel .swl{display:none}' +
+    '.doorwrap{position:relative;flex:none;margin-left:10px}' +
+    '.switch{display:flex;align-items:center;gap:4px;padding:6px 8px;' +
+    'border-radius:var(--dh-r2);color:var(--dh-ink-2);font-size:14.5px;font-weight:520;white-space:nowrap}' +
+    '.switch:hover,.switch[aria-expanded=true]{background:var(--dh-hover);color:var(--dh-ink)}' +
+    '.bar.nolabel .swl{display:none}' +
     '.switch .ic{transition:transform var(--dh-dur-2) var(--dh-ease)}' +
     '.switch[aria-expanded=true] .ic{transform:rotate(180deg)}' +
     '.sheet{display:contents}' +
     '.nav{display:flex;align-items:center;flex:none;margin-left:14px}' +
     '.family{display:none}' +
     '.end{display:flex;align-items:center;gap:6px;margin-left:auto;padding-left:12px;flex:none}' +
-    '.tbtn,.menu{width:34px;height:34px;display:grid;place-items:center;border-radius:var(--dh-r2);color:var(--dh-ink-2)}' +
+    '.tbtn,.menu{width:36px;height:36px;display:grid;place-items:center;border-radius:var(--dh-r2);color:var(--dh-ink-2)}' +
     '.tbtn:hover,.menu:hover,.menu[aria-expanded=true]{background:var(--dh-hover);color:var(--dh-ink)}' +
     '.menu{display:none}' +
     /* network pill: solid = mainnet (live, real DASH); dashed = testnet; dotted = devnet. Same key as the hub map. */
@@ -442,7 +437,7 @@
     /* popovers */
     '.pop{position:absolute;top:calc(100% + 6px);z-index:2;background:var(--dh-surface);border-radius:var(--dh-r3);' +
     'box-shadow:var(--dh-shadow-pop);padding:6px}' +
-    '.doorpop{left:var(--dh-gutter);width:min(440px,calc(100vw - 2 * var(--dh-gutter)))}' +
+    '.doorpop{left:0;width:420px;padding:8px}' +
     '.netpop{right:0;width:max-content;min-width:200px;max-width:min(300px,calc(100vw - 2 * var(--dh-gutter)))}' +
     '.nnote{margin:4px 0 0;padding:8px 10px 4px;border-top:1px solid var(--dh-line);font-size:13px;line-height:1.4;' +
     'color:var(--dh-ink-2)}' +
@@ -456,92 +451,64 @@
     'button.opt{width:100%;text-align:left;color:var(--dh-ink-2)}' +
     'button.opt .ic{margin-left:auto;transition:transform var(--dh-dur-2) var(--dh-ease)}' +
     'button.opt[aria-expanded=true] .ic{transform:rotate(180deg)}' +
-    /* the desktop popover's doors list */
     '.doors{list-style:none;margin:0;padding:0}' +
-    '.door{position:relative;display:grid;gap:1px;padding:9px 12px 9px 14px;border-radius:var(--dh-r2)}' +
+    '.door{display:grid;grid-template-columns:150px minmax(0,1fr);align-items:center;min-height:40px;' +
+    'padding:9px 12px;border-radius:var(--dh-r2);line-height:22px}' +
     '.door:hover{background:var(--dh-hover)}' +
-    '.door[aria-current]{background:var(--dh-sunken)}' +
-    '.door[aria-current]::before{content:"";position:absolute;left:4px;top:10px;bottom:10px;width:3px;' +
-    'border-radius:2px;background:var(--dh-brand)}' +
-    '.dn{font-weight:620;font-size:15px}' +
-    '.dn::after{content:"";position:absolute;inset:0}' +
-    '.dd{font-size:13px;color:var(--dh-ink-2)}' +
-    '.steps{position:relative;z-index:1;font-size:13px;color:var(--dh-ink-2);display:flex;gap:6px;align-items:center;' +
-    'margin-top:2px}' +
-    '.steps a{color:var(--dh-brand-ink);font-weight:540}' +
-    '.steps a:hover{text-decoration:underline}' +
-    '.grp{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;padding:10px 14px;border-top:1px solid var(--dh-line);' +
-    'margin-top:6px;font-size:14px}' +
-    '.gl{font-size:13px;color:var(--dh-ink-2);min-width:92px}' +
-    '.grp a{font-weight:540}' +
-    '.only{margin-left:6px;padding:1px 5px;border:1px dashed var(--dh-line-2);border-radius:var(--dh-r1);' +
-    'font-size:12px;font-weight:520;color:var(--dh-ink-2);vertical-align:1px}' +
-    '.grp a:hover{color:var(--dh-brand-ink)}' +
-    '.grp a[aria-current]{color:var(--dh-brand-ink);text-decoration:underline;text-underline-offset:3px}' +
-    '.themes{display:flex;align-items:center;gap:14px;padding:10px 14px 6px;border-top:1px solid var(--dh-line);' +
-    'margin-top:6px}' +
-    '.seg{display:inline-flex;padding:2px;background:var(--dh-sunken);border-radius:var(--dh-r2);gap:2px}' +
-    '.seg button{height:28px;padding:0 11px;border-radius:4px;font-size:13px;font-weight:520;color:var(--dh-ink-2)}' +
-    '.seg button:hover{color:var(--dh-ink)}' +
-    '.seg button[aria-pressed=true]{background:var(--dh-surface);color:var(--dh-ink);' +
-    'box-shadow:0 0 0 1px var(--dh-line),0 1px 2px rgba(8,24,36,.08)}' +
-    /* compact: phones, and any width where the row would not fit */
-    '.bar.compact .switch,.bar.compact .tbtn{display:none}' +
-    /* The phone lockup, the same on every site: the mark, then "dashhq" set small over the product name. It never
-       drops the family. Short of room, the network pill loses its word (squeeze), then the product name truncates. */
-    '.bar.compact .wm,.bar.compact .slash{display:none}' +
-    '.bar.compact.is-home .wm{display:inline;font-size:15px}' +
-    '.bar.compact .home{height:44px;padding-right:0}' +
-    '.bar.compact:not(.is-home) .home .mark{width:26px;height:26px}' +
-    '.bar.compact .product{flex:0 1 auto;min-width:3.4em;height:44px;padding:0 4px 0 8px;flex-direction:column;' +
-    'align-items:flex-start;justify-content:center;gap:3px}' +
-    '.bar.compact .fam{display:block;font-size:11.5px;font-weight:650;font-stretch:112%;letter-spacing:.01em;' +
-    'line-height:1;color:var(--dh-ink-2)}' +
-    '.bar.compact .pl{max-width:100%;gap:6px}' +
-    '.bar.compact .pn{min-width:0;overflow:hidden;text-overflow:ellipsis;line-height:1.15}' +
-    '.bar.compact .end{padding-left:8px}' +
+    '.door[aria-current]{background:var(--dh-sunken);box-shadow:inset 3px 0 var(--dh-brand)}' +
+    '.dn{font-weight:580;font-size:15px;white-space:nowrap}' +
+    '.dd{font-size:13.5px;color:var(--dh-ink-2);white-space:nowrap}' +
+    '.sep{height:1px;background:var(--dh-line);margin:8px 12px}' +
+    '.all{color:var(--dh-brand-ink)}' +
+    '.themewrap{position:relative;flex:none}' +
+    '.themepop{right:0;width:220px}' +
+    '.themeopt{width:100%;text-align:left;min-height:40px}' +
+    '.themeopt[aria-checked=true]{background:var(--dh-sunken);font-weight:580}' +
+    '.themeopt .tick{margin-left:auto}' +
+    '.themeopt .ic{flex:none;color:var(--dh-ink-2)}' +
+    '.themeopt .tick .ic{color:var(--dh-brand-ink)}' +
+    '.bar.compact .doorwrap{display:none}' +
+    '.bar.compact .lockup{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto;' +
+    'flex:0 1 auto;min-width:0;row-gap:3px}' +
+    '.bar.compact.has-logo .lockup{grid-template-columns:26px minmax(0,1fr);column-gap:7px}' +
+    '.bar.compact .logo{grid-area:1/1/3/2;margin:0}' +
+    '.bar.compact ::slotted([slot=logo]){width:26px;height:26px}' +
+    '.bar.compact .home{height:auto;grid-row:1;justify-self:start}' +
+    '.bar.compact.has-logo .home,.bar.compact.has-logo .product{grid-column:2}' +
+    '.bar.compact .wm{font-size:11.5px;color:var(--dh-ink-2)}' +
+    '.bar.compact .slash{display:none}' +
+    '.bar.compact .product{grid-row:2;height:auto;font-size:15px;line-height:1.15}' +
+    '.bar.compact .pn{overflow:hidden;text-overflow:ellipsis}' +
+    '.bar.compact.is-home .lockup{display:flex}' +
+    '.bar.compact.is-home .wm{font-size:19px;color:var(--dh-ink)}' +
+    '.bar.compact .end{padding-left:6px;gap:4px}' +
     '.bar.compact .net{padding:0 9px;gap:6px}.bar.compact button.net{padding-right:5px}' +
     '.bar.squeeze .nl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}' +
     '.bar.squeeze .net{gap:4px;padding:0 10px}.bar.squeeze button.net{padding-right:6px}' +
     '.bar.compact .menu{display:grid}' +
-    '.bar.compact .sheet{display:none;--dh-nav-dir:column;--dh-nav-h:44px;--dh-nav-fs:16px;--dh-nav-pad:12px;' +
-    '--dh-nav-align:stretch}' +
+    '.bar.compact .sheet{display:none;--dh-nav-dir:column;--dh-nav-h:44px;--dh-nav-fs:15px;--dh-nav-pad:12px;' +
+    '--dh-nav-align:stretch;--dh-nav-current-mark:inset 3px 0 var(--dh-brand)}' +
+    '.sheet:focus{outline:none}' +
+    '.scrim{display:none}' +
+    '.bar.open .scrim{display:block;position:absolute;left:0;right:0;top:100%;height:100dvh;' +
+    'background:rgba(6,19,27,.38);touch-action:none}' +
     '.bar.compact.open .sheet{display:block;position:absolute;left:0;right:0;top:100%;z-index:2;' +
     'background:var(--dh-surface);border-bottom:1px solid var(--dh-line);box-shadow:0 18px 30px -18px rgba(8,24,36,.45);' +
     'max-height:calc(100vh - var(--dh-bar-h) - var(--dh-tabs-h, 0px));' +
     'max-height:calc(100dvh - var(--dh-bar-h) - var(--dh-tabs-h, 0px));overflow:auto;' +
-    'overscroll-behavior:contain;padding:8px var(--dh-gutter) 20px}' +
+    'overscroll-behavior:contain;padding:8px var(--dh-gutter) 16px}' +
     '.bar.compact .nav{display:block;margin:0 0 6px}' +
     '.bar.compact .nav.empty{display:none}' +
     '.bar.compact .family{display:block;border-top:1px solid var(--dh-line);padding-top:8px}' +
     '.bar.compact .nav.empty+.family{border-top:0;padding-top:0}' +
-    /* The phone menu's family part is a short switcher: the four doors as a 2x2 grid of names, then everything else
-       behind one "More tools" row, then the theme. Whatever the product's own sections already link to is left out. */
-    '.fl{margin:0;padding:6px 14px 2px;font-size:13px;color:var(--dh-ink-2)}' +
-    '.pd{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px}' +
-    '.pd li{position:relative;min-width:0}' +
-    '.pd a,.bar.compact .grp a{display:flex;align-items:center;min-height:44px;padding:0 12px 0 14px;' +
-    'border-radius:var(--dh-r2);font-size:15px}.pd a{font-weight:620}' +
-    '@media (hover:hover){.pd a:hover,.mtools:hover,.hm:hover{background:var(--dh-hover)}.mtools:hover{color:var(--dh-ink)}}' +
-    '.pd li[aria-current] a{background:var(--dh-sunken)}' +
-    '.pd li[aria-current]::before{content:"";position:absolute;left:4px;top:11px;bottom:11px;width:3px;border-radius:2px;' +
-    'background:var(--dh-brand)}' +
-    '.mtools{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;margin-top:2px;padding:0 12px 0 14px;' +
-    'border-radius:var(--dh-r2);font-size:15px;font-weight:540;color:var(--dh-ink-2);text-align:left}' +
-    '.mtools[aria-expanded=true]{color:var(--dh-ink)}' +
-    '.mtools .ic{margin-left:auto;transition:transform var(--dh-dur-2) var(--dh-ease)}' +
-    '.mtools[aria-expanded=true] .ic{transform:rotate(180deg)}' +
-    '.hm{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 8px;min-height:44px;padding:11px 12px 11px 14px;' +
-    'margin-top:6px;border-top:1px solid var(--dh-line);font-size:15px;font-weight:620}' +
-    '.hm span{font-size:13px;font-weight:400;color:var(--dh-ink-2)}' +
+    '.fl{margin:0;padding:6px 12px;font-size:12.5px;color:var(--dh-ink-2)}' +
+    '.pd{list-style:none;margin:0;padding:0}' +
+    '.pd a,.hm{display:flex;align-items:center;min-height:44px;padding:0 12px;' +
+    'border-radius:var(--dh-r2);font-size:15px;font-weight:540}' +
+    '@media (hover:hover){.pd a:hover,.hm:hover{background:var(--dh-hover)}}' +
+    '.pd a[aria-current]{background:var(--dh-sunken);box-shadow:inset 3px 0 var(--dh-brand)}' +
+    '.hm{color:var(--dh-brand-ink)}' +
     '[hidden]{display:none!important}' +
-    /* Apps and Also: 44px rows in two columns, like the doors, not packed inline links */
-    '.bar.compact .grp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 2px;padding:6px 0 0}' +
-    '.bar.compact .gl{grid-column:1/-1;padding:6px 14px 2px}' +
-    '.bar.compact .grp.g3{grid-template-columns:repeat(3,minmax(0,1fr))}' +
-    '.bar.compact .grp a:hover{background:var(--dh-hover);color:var(--dh-ink)}' +
-    '.bar.compact .grp a[aria-current]{background:var(--dh-sunken);color:var(--dh-ink);text-decoration:none}' +
-    '.bar.compact .themes{padding-left:14px;padding-right:0}' +
     /* phone-nav="tabs": the product's sections become a bottom tab bar; the menu then holds only the family */
     '.bar.compact.tabs .nav{position:fixed;left:0;right:0;bottom:0;z-index:3;margin:0;' +
     'padding:0 max(env(safe-area-inset-right,0px),4px) env(safe-area-inset-bottom,0px) max(env(safe-area-inset-left,0px),4px);' +
@@ -553,8 +520,7 @@
     '.bar.compact.tabs .nav.empty{display:none}' +
     '.bar.compact.tabs .family{border-top:0;padding-top:0}' +
     '.bar.compact .net{height:36px}' +
-    '.bar.compact .menu{width:40px;height:40px;margin-right:-4px}' +
-    '.bar.compact .seg button{height:40px;padding:0 14px}' +
+
     'button.net{position:relative}.bar.compact button.net::after{content:"";position:absolute;inset:-4px -2px}' +
     /* Arriving from a retired product: one quiet line under the row, in the bar so every product gets it. */
     '.arrive{border-top:1px solid var(--dh-line);background:var(--dh-info-soft)}' +
@@ -574,22 +540,17 @@
 
   const FOOT_CSS = BASE_CSS +
     ':host{display:block;margin-top:var(--dh-7);padding-bottom:var(--dh-tabs-h,0px)}' +
-    '.f{border-top:1px solid var(--dh-line);font-size:13px;color:var(--dh-ink-2)}' +
-    '.in{max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;padding:var(--dh-5) var(--dh-gutter) var(--dh-6);' +
-    'display:grid;gap:14px}' +
-    '.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 28px}' +
-    '.home{display:flex;align-items:center;gap:8px;color:var(--dh-ink);font-weight:650;font-stretch:112%;font-size:15px}' +
-    '.home .tld{color:var(--dh-ink-2);font-weight:520}' +
-    '.doors{display:flex;flex-wrap:wrap;gap:4px 18px;margin:0;padding:0;list-style:none}' +
-    '.doors a{color:var(--dh-ink);font-weight:520;font-size:14px}' +
-    '.doors a:hover,.meta a:hover{color:var(--dh-brand-ink);text-decoration:underline;text-underline-offset:3px}' +
-    '.doors a[aria-current]{color:var(--dh-brand-ink)}' +
-    '.meta{display:flex;flex-wrap:wrap;gap:4px 16px}' +
-    '.meta a{color:var(--dh-ink-2);text-decoration:underline;text-decoration-color:var(--dh-line-2);' +
-    'text-underline-offset:3px}' +
-    '@media (max-width:560px){.top{flex-direction:column;align-items:flex-start}' +
-    '.top nav{width:100%}.doors{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}' +
-    '.doors a{display:block;padding:9px 0}}';
+    '.f{border-top:1px solid var(--dh-line);font-size:14px;line-height:1.5;color:var(--dh-ink-2)}' +
+    '.in{max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;padding:22px var(--dh-gutter) 26px;' +
+    'display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 24px}' +
+    '.home{color:var(--dh-ink);font-weight:650;font-stretch:112%;font-size:15px;flex:none}' +
+    '.sentence{flex:1 1 360px;margin:0;min-width:0}' +
+    '.links{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}' +
+    '.links a{color:var(--dh-ink-2);text-decoration:underline;text-decoration-color:var(--dh-line-2);text-underline-offset:3px}' +
+    '.links a:hover{color:var(--dh-brand-ink)}' +
+    '::slotted(*){display:inline!important;margin:0!important;padding:0!important;font:inherit!important;color:inherit!important}' +
+    '::slotted(a){text-decoration:underline;text-decoration-color:var(--dh-line-2);text-underline-offset:3px}' +
+    '@media(max-width:600px){.in{gap:10px 16px}.sentence{flex-basis:calc(100% - 100px)}.links{width:100%}}';
 
   const HASH_CSS = BASE_CSS +
     ':host{display:inline-flex;align-items:center;gap:2px;max-width:100%;vertical-align:baseline;' +
@@ -821,11 +782,11 @@
       // The family switcher says what it is ("dashhq tools", as the phone menu's heading does); the words give way to the
       // bare chevron only when the row is short of room.
       const switchBtn = h('button', { class: 'switch', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'dh-doors',
-        'aria-label': 'All dashhq tools', 'data-f': 'switch' }, h('span', { class: 'swl', 'aria-hidden': 'true' }, 'dashhq tools'),
-        icon('chevron', 16));
+        'aria-label': 'All dashhq tools', 'data-f': 'switch' }, h('span', { class: 'swl', 'aria-hidden': 'true' }, 'All tools'),
+        icon('chevron', 14));
       const doorPop = h('nav', { class: 'pop doorpop', id: 'dh-doors', hidden: true, 'aria-label': 'dashhq tools' },
         this._family(key, net));
-      switchBtn.addEventListener('click', () => this._toggle('door', switchBtn, doorPop));
+      switchBtn.addEventListener('click', (e) => this._toggle('door', switchBtn, doorPop, e.detail === 0));
 
       // One section nav per product. The bar places it: in the row on wide screens; on phones at the top of the menu,
       // or (phone-nav="tabs") as a bottom tab bar, leaving the menu to the family.
@@ -834,114 +795,99 @@
       this._navSlot.addEventListener('slotchange', this._fit);
       this._nav = h('div', { class: 'nav empty', part: 'nav' }, this._navSlot);
       this._pf = h('div', { class: 'family' }, this._phoneFamily(key, net));
-      const sheetEl = h('div', { class: 'sheet', id: 'dh-sheet' }, !this._tabs && this._nav, this._pf);
+      const sheetEl = h('div', { class: 'sheet', id: 'dh-sheet', tabindex: '-1', 'aria-label': 'Navigation' }, !this._tabs && this._nav, this._pf);
 
       const end = h('div', { class: 'end' }, net && this._netControl(net, kind));
       if (!this.hasAttribute('no-theme')) {
-        const tbtn = h('button', { class: 'tbtn', type: 'button', 'data-f': 'theme' });
-        const sync = () => {
-          const dark = resolved() === 'dark';
-          tbtn.replaceChildren(icon(dark ? 'sun' : 'moon', 18));
-          tbtn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
-          tbtn.setAttribute('title', dark ? 'Light theme' : 'Dark theme');
-        };
-        sync();
-        this._on(themeListeners, sync);
-        tbtn.addEventListener('click', toggleTheme);
-        end.append(tbtn);
+        end.append(this._themeControl());
       }
       const menuBtn = h('button', { class: 'menu', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'dh-sheet',
         'aria-label': 'Menu', 'data-f': 'menu' }, icon('menu', 20));
-      menuBtn.addEventListener('click', () => this._toggle('sheet', menuBtn, sheetEl));
+      menuBtn.addEventListener('click', (e) => this._toggle('sheet', menuBtn, sheetEl, e.detail === 0));
       end.append(h('slot', { name: 'actions' }), menuBtn);
 
       const productHref = this.getAttribute('product-href') || '/';
-      // .fam is the phone lockup's small "dashhq" over the product name; desktop shows the inline wordmark instead.
       this._pn = h('span', { class: 'pn' }, this.getAttribute('product-name') || PRODUCTS[key].name);
-      const product = key !== 'home' && h('a', { class: 'product', href: net ? withNetwork(productHref, net) : productHref },
-        h('span', { class: 'fam', 'aria-hidden': 'true' }, 'dashhq'),
-        h('span', { class: 'pl' }, h('slot', { name: 'logo' }), this._pn));
+      const product = key !== 'home' && h('a', { class: 'product', href: net ? withNetwork(productHref, net) : productHref }, this._pn);
+      const logo = h('slot', { name: 'logo' });
+      logo.addEventListener('slotchange', () => {
+        this._bar.classList.toggle('has-logo', logo.assignedElements().length > 0);
+        this._fit();
+      });
       this._product = product || null;
-      this._row = h('div', { class: 'row' },
+      const lockup = h('div', { class: 'lockup' },
         h('a', { class: 'home', href: href('home'), 'aria-label': 'dashhq.org home' },
-          mark(22), h('span', { class: 'wm', 'aria-hidden': 'true' }, 'dashhq')),
-        product && [h('span', { class: 'slash', 'aria-hidden': 'true' }, '/'), product],
-        switchBtn, doorPop, this._tabs && this._nav, sheetEl, end);
+          h('span', { class: 'wm', 'aria-hidden': 'true' }, 'dashhq')),
+        product && [h('span', { class: 'slash', 'aria-hidden': 'true' }, '/'),
+          h('span', { class: 'logo' }, logo), product]);
+      this._row = h('div', { class: 'row' }, lockup,
+        key !== 'home' && h('div', { class: 'doorwrap' }, switchBtn, doorPop),
+        this._tabs && this._nav, sheetEl, end);
       this._bar = h('header', { class: `bar ${kind}${key === 'home' ? ' is-home' : ''}${this._tabs ? ' tabs' : ''}`,
-        part: 'bar' }, this._row, this._arrival(key));
+        part: 'bar' }, this._row, this._arrival(key), h('div', { class: 'scrim', 'aria-hidden': 'true' }));
+      this._bar.classList.toggle('has-logo', logo.assignedElements().length > 0);
       // Following any link inside the bar (including the product's slotted nav) closes what is open.
       this._bar.addEventListener('click', (e) => { if (e.target.closest && e.target.closest('a')) this.close(); });
       this._paint(this._bar);
       // Re-check the fit whenever anything in the row changes width: slotted content, the network, a late font.
       this._ro.disconnect();
-      [this, this._nav, end, product].forEach((el) => el && this._ro.observe(el));
+      [this, this._nav, end, lockup].forEach((el) => el && this._ro.observe(el));
       this._fit();
       if (focused) { const f = this.shadowRoot.querySelector(`[data-f="${focused}"]`); if (f) f.focus(); }
       if (net !== this._net) { this._net = net; queueMicrotask(netChanged); }
     }
 
-    // Doors with their descriptions, Apps, Also and the theme choice: the desktop switcher.
     _family(key, net) {
-      const cur = doorOf(key);
-      const doors = h('ul', { class: 'doors' }, DOORS.map((d) =>
-        h('li', { class: d.steps ? 'door start' : 'door', 'aria-current': current(cur === d.door) },
-          h('a', { class: 'dn', href: doorHref(d.key, net) }, d.label),
-          h('span', { class: 'dd' }, d.desc),
-          d.steps && h('span', { class: 'steps' }, this._link(key, net, d.steps[0]), h('span', { 'aria-hidden': 'true' }, '→'),
-            this._link(key, net, d.steps[1])))));
-      return [doors, this._group(key, net, 'Apps', APPS), this._group(key, net, 'Also', ALSO), this._themes()];
+      const row = (k, label, desc, target) => h('li', null,
+        h('a', { class: 'door', href: target || doorHref(k, net), 'aria-current': current(k === key || PRODUCTS[k] === PRODUCTS[key], 'page') },
+          h('span', { class: 'dn' }, label), h('span', { class: 'dd' }, desc)));
+      return h('ul', { class: 'doors' }, DOORS.map(d => row(d.key, d.label, d.desc)),
+        h('li', { class: 'sep', role: 'separator' }),
+        ALSO.map(k => row(k, PRODUCTS[k].name, DESCRIPTIONS[k])),
+        h('li', { class: 'sep', role: 'separator' }),
+        row('home', 'All Dash projects →', 'The directory on dashhq.org', href('home', '/directory/')));
     }
 
-    // The phone menu's copy, kept short: the four doors by name, then one "More tools" row that opens the apps, the
-    // other tools and the hub. Start on Testnet is one door here (Bridge hands over to the Faucet); the Faucet itself
-    // is under More tools for anyone who only wants testnet DASH.
     _phoneFamily(key, net) {
-      const cur = doorOf(key);
-      // The product's own door is left out: its sections are right above, and the bar's name already goes home.
-      const doors = DOORS.filter((d) => d.door !== 'home' && PRODUCTS[d.key] !== PRODUCTS[key]);
-      const list = h('ul', { class: 'pd', 'aria-labelledby': 'dh-fl' }, doors.map((d) =>
-        h('li', { 'aria-current': current(cur === d.door), 'data-k': d.key },
-          h('a', { href: doorHref(d.key, net) }, d.label))));
-      const box = h('div', { id: 'dh-more', hidden: true },
-        this._group(key, net, 'Apps', APPS), this._group(key, net, 'Also', [...ALSO, 'faucet']),
-        key !== 'home' && h('a', { class: 'hm', href: doorHref('home'), 'data-k': 'home' },
-          'dashhq.org', h('span', null, DOORS.find((d) => d.door === 'home').desc)));
-      const more = h('button', { class: 'mtools', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'dh-more', 'data-f': 'mtools' },
-        'More tools', icon('chevron', 16));
-      more.addEventListener('click', () => {
-        box.hidden = !box.hidden;
-        more.setAttribute('aria-expanded', String(!box.hidden));
+      const list = (items) => h('ul', { class: 'pd' }, items.map(([k, label]) =>
+        h('li', { 'data-k': k }, h('a', { href: doorHref(k, net), 'aria-current': current(k === key, 'page') }, label))));
+      return [key !== 'home' && h('div', { 'data-list': '' }, h('p', { class: 'fl' }, 'dashhq tools'),
+        list(DOORS.filter(d => PRODUCTS[d.key] !== PRODUCTS[key]).map(d => [d.key, d.label]))),
+        h('div', { 'data-list': '' }, key !== 'home' && h('div', { class: 'sep', role: 'separator' }),
+          list(ALSO.map(k => [k, PRODUCTS[k].name]))),
+        key !== 'home' && h('div', { 'data-list': '' }, h('div', { class: 'sep', role: 'separator' }),
+          h('a', { class: 'hm', href: href('home', '/directory/'), 'data-k': 'home' }, 'All Dash projects →'))];
+    }
+
+    _themeControl() {
+      const btn = h('button', { class: 'tbtn', type: 'button', 'data-f': 'theme', 'aria-label': 'Theme', title: 'Theme',
+        'aria-haspopup': 'menu', 'aria-expanded': 'false', 'aria-controls': 'dh-theme' });
+      const options = [['light', 'Light', 'sun'], ['dark', 'Dark', 'moon'], ['system', 'Match device', 'monitor']].map(([p, label, glyph]) => {
+        const option = h('button', { class: 'opt themeopt', type: 'button', role: 'menuitemradio', tabindex: '-1' },
+          icon(glyph, 16), label, h('span', { class: 'tick' }));
+        option.addEventListener('click', () => { setPref(p); this.close(); btn.focus(); });
+        return [p, option];
       });
-      return [h('div', { 'data-list': '' }, h('p', { class: 'fl', id: 'dh-fl' }, 'dashhq tools'), list), more, box, this._themes()];
-    }
-
-    _link(key, net, k, tag = true) {
-      return h('a', { href: doorHref(k, net), 'aria-current': current(key === k, 'page'), 'data-k': k }, PRODUCTS[k].name,
-        tag && PRODUCTS[k].only && h('span', { class: 'only' }, PRODUCTS[k].only));
-    }
-
-    // A group whose products all run on one network says so once, beside its label, instead of on every link.
-    _group(key, net, label, keys) {
-      const only = new Set(keys.map((k) => PRODUCTS[k].only));
-      const shared = only.size === 1 ? [...only][0] : null;
-      // Short names (Forge, Pollr, Yappr) share one row of three on phones; longer ones take two columns.
-      const cls = keys.every((k) => PRODUCTS[k].name.length <= 6) ? 'grp g3' : 'grp';
-      return h('div', { class: cls, role: 'group', 'aria-label': shared ? `${label}, ${shared} only` : label, 'data-list': '' },
-        h('span', { class: 'gl', 'aria-hidden': 'true' }, label, shared && h('span', { class: 'only' }, shared)),
-        keys.map((k) => this._link(key, net, k, !shared)));
-    }
-
-    _themes() {
-      const btns = [['system', 'System'], ['light', 'Light'], ['dark', 'Dark']].map(([p, label]) => {
-        const b = h('button', { type: 'button' }, label);
-        b.addEventListener('click', () => setPref(p));
-        return [p, b];
-      });
-      const sync = () => btns.forEach(([p, b]) => b.setAttribute('aria-pressed', String(p === pref)));
+      const pop = h('div', { class: 'pop themepop', id: 'dh-theme', role: 'menu', 'aria-label': 'Theme', tabindex: '-1', hidden: true },
+        options.map(([, option]) => option));
+      const sync = () => {
+        btn.replaceChildren(icon(resolved() === 'dark' ? 'sun' : 'moon', 18));
+        options.forEach(([p, option]) => {
+          option.setAttribute('aria-checked', String(pref === p));
+          option.querySelector('.tick').replaceChildren(...(pref === p ? [icon('check', 16)] : []));
+        });
+      };
       sync();
       this._on(themeListeners, sync);
-      return h('div', { class: 'themes' }, h('span', { class: 'gl' }, 'Theme'),
-        h('div', { class: 'seg', role: 'group', 'aria-label': 'Theme' }, btns.map(([, b]) => b)));
+      btn.addEventListener('click', (e) => this._toggle('theme', btn, pop, e.detail === 0));
+      btn.addEventListener('keydown', (e) => {
+        if (!['ArrowDown', 'ArrowUp'].includes(e.key)) return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (!this._open || this._open.which !== 'theme') this._toggle('theme', btn, pop);
+        options[e.key === 'ArrowUp' ? 2 : 0][1].focus();
+      });
+      return h('div', { class: 'themewrap' }, btn, pop);
     }
 
     // Anything the product's own sections already link to (the hub's Radar, Governance, Explorer and Start; a nav
@@ -1047,7 +993,7 @@
         list.filter((n) => !devs.includes(n)).map(option), devGroup,
         note && h('p', { class: 'nnote' }, note),
         settings && h('a', { class: 'opt more', href: settings }, 'Network settings'));
-      btn.addEventListener('click', () => this._toggle('net', btn, pop));
+      btn.addEventListener('click', (e) => this._toggle('net', btn, pop, e.detail === 0));
       return h('div', { class: 'netwrap' }, btn, pop);
     }
 
@@ -1056,6 +1002,7 @@
       o.trigger.setAttribute('aria-expanded', String(on));
       if (o.which === 'sheet') {
         this._bar.classList.toggle('open', on);
+        root.toggleAttribute('data-dh-sheet-open', on);
         o.trigger.replaceChildren(icon(on ? 'close' : 'menu', 20));
         o.trigger.setAttribute('aria-label', on ? 'Close menu' : 'Menu');
       } else {
@@ -1063,7 +1010,7 @@
         this._bar.classList.toggle('popping', on);
       }
     }
-    _toggle(which, trigger, panel) {
+    _toggle(which, trigger, panel, keyboard = false) {
       const was = this._open && this._open.which === which;
       this.close();
       if (was) return;
@@ -1073,13 +1020,18 @@
       this._setOpen(this._open, true);
       if (which === 'sheet') {
         this._dedupe();
-        // The sheet comes before the menu button in DOM order, so put keyboard focus on its first link.
-        const first = (!this._tabs && this._navSlot.assignedElements()
-          .map((el) => (el.matches('a') ? el : el.querySelector('a')))
-          .find((a) => a && a.getClientRects().length)) || [...panel.querySelectorAll('a, button')].find((a) => a.getClientRects().length);
-        if (first) first.focus();
+        if (!keyboard) panel.focus({ preventScroll: true });
+        else {
+          const first = (!this._tabs && this._navSlot.assignedElements()
+            .flatMap(el => el.matches('a,button') ? [el] : [...el.querySelectorAll('a,button')])
+            .find(a => a.getClientRects().length)) || [...panel.querySelectorAll('a,button')].find(a => a.getClientRects().length);
+          (first || panel).focus({ preventScroll: true });
+        }
+      } else if (which === 'theme') {
+        (keyboard ? panel.querySelector('[aria-checked=true]') : panel).focus({ preventScroll: true });
       }
     }
+
     close() {
       const o = this._open;
       if (!o) return null;
@@ -1110,6 +1062,16 @@
       if (e.detail > 0 && trigger) trigger.focus();
     }
     _onKey(e) {
+      const o = this._open;
+      if (o && o.which === 'theme' && ['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) {
+        e.preventDefault();
+        const options = [...o.panel.querySelectorAll('[role=menuitemradio]')];
+        const index = options.indexOf(this.shadowRoot.activeElement);
+        const next = e.key === 'Home' ? 0 : e.key === 'End' ? options.length - 1 :
+          (index + (e.key === 'ArrowUp' ? -1 : 1) + options.length) % options.length;
+        options[next].focus();
+        return;
+      }
       if (e.key !== 'Escape' || !this._open) return;
       const t = this.close();
       if (t) t.focus();
@@ -1162,22 +1124,16 @@
       this._drop();
       this._on(netListeners, () => this.render());
       const key = productOf(this);
-      const cur = doorOf(key);
       const src = this.getAttribute('source');
-      const doorLinks = DOORS.slice(1).map((d) =>
-        h('li', null, h('a', { href: doorHref(d.key), 'aria-current': current(cur === d.door) }, d.label)));
-      doorLinks.push(h('li', null, h('a', { href: href('home', '/#apps'),
-        'aria-current': current(PRODUCTS[key].door === 'apps') }, 'Apps')));
       this._paint(h('footer', { class: 'f', part: 'footer' },
         h('div', { class: 'in' },
-          h('div', { class: 'top' },
-            h('a', { class: 'home', href: href('home') }, mark(20), h('span', null, 'dashhq', h('span', { class: 'tld' }, '.org'))),
-            h('nav', { 'aria-label': 'dashhq tools' }, h('ul', { class: 'doors' }, doorLinks))),
-          h('slot'),
-          h('div', { class: 'meta' },
-            h('span', null, key === 'home' ? 'Tools for the Dash network.' : `${PRODUCTS[key].name} is part of dashhq.org.`),
+          h('a', { class: 'home', href: href('home') }, 'dashhq'),
+          h('div', { class: 'sentence' }, key === 'home' ? h('slot', { name: 'sentence' }, h('slot')) :
+            `${PRODUCTS[key].name} is one of the dashhq tools for the Dash network.`),
+          h('div', { class: 'links' }, key === 'home' ? h('slot', { name: 'links' }) : h('slot'),
             src && h('a', { href: src }, 'Source'),
-            h('a', { href: href('home', '/directory/') }, 'Directory')))));
+            key !== 'home' && h('a', { href: href('home', '/directory/') }, 'All Dash projects')))));
+
     }
   }
 

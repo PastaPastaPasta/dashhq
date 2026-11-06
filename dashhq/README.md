@@ -1,8 +1,52 @@
-# dashhq shell 1.8.1
+# dashhq shell 1.9.0
 
 The shared shell for the dashhq.org family: the family bar, the footer, the hash display, the sign-in explanation,
 the wrong-network and retired-page notices, the theme, and the tokens they all draw with. Read `../DESIGN.md` for the
 rules and `../ADOPTION-r6.md` for your site's changes this round (then `-r5`, `-r4`).
+
+## New in 1.9
+
+- No shared glyph or favicon. Every product may supply its original icon in `slot="logo"`.
+- `All tools` is an unboxed destination picker: eight links, one name/description row pattern. The hub has no picker.
+  Fees stays under Explorer; Pollr retires into Governance `/polls/`. Yappr and Forge resolve via `href()` only.
+- Theme has one control, in the bar at every width. It opens Light / Dark / Match device as `menuitemradio` rows.
+  Enter/Space opens; Up/Down, Home/End move; Escape returns focus. `theme.toggle()` remains supported.
+- The phone sheet is one column, over a dismissible scrim; it locks page scroll. Pointer opening focuses the sheet;
+  keyboard opening focuses the first link. No nested More tools, app group or theme row.
+- Footer: one band, no destination list. See the exact slot contract below.
+- Added `.dh-disclosure`, `.dh-time`, `.dh-chip--test`; `.dh-stat` is now a surface card with 18px padding,
+  a 1px border, 10px radius and 12px tile gaps. Settled Reported badges no longer draw a dotted circle.
+- Removed release assets: `mark/` and its favicon. Remove those references from your document head.
+  Removed shadow classes: `.steps`, `.grp`, `.only`, `.themes`, `.seg`, `.mtools` and footer `.doors`.
+  No public bar attribute was removed. `no-theme` now hides the sole theme control: only use it for embedded chrome.
+
+### Footer API in 1.9
+
+`product` and `source` attributes remain. The wordmark is always `dashhq`, and Source comes from `source`.
+For a product, the shell writes “Radar is one of the dashhq tools for the Dash network.” (using the registry name),
+then places the **default slot** inline before Source and All Dash projects. Supply plain text and links;
+do not supply grids, columns, block wrappers, another tagline or another directory link.
+
+For `product="home"`, the **default slot is the sentence** (or use `slot="sentence"` on one inline element).
+Put optional links in `slot="links"`. The hub omits All Dash projects. Named slots are only used by the hub.
+
+```html
+<dashhq-footer product="radar" source="https://github.com/PastaPastaPasta/dash-nodes">
+  <a href="/about">Data sources</a><a href="/api">API</a>
+</dashhq-footer>
+<dashhq-footer product="home" source="https://github.com/PastaPastaPasta/dashhq">
+  <span slot="sentence">Kept by pasta. No analytics; one theme cookie if you pick a theme.</span>
+  <a slot="links" href="https://github.com/PastaPastaPasta/dashhq/issues">Report a problem ↗</a>
+</dashhq-footer>
+```
+
+### Freshness and disclosure contracts
+
+`.dh-time` styles authored markup; it does **not** calculate or refresh timestamps. Render a relative age only,
+using `<time class="dh-time" datetime="2026-11-06T16:16:00Z" title="6 Nov 2026, 16:16 UTC">10 min ago</time>`.
+Use UTC with this exact absolute format in title. Update the relative text from the product's existing timer.
+Use `<details class="dh-disclosure"><summary>Details</summary>…</details>`; native details keyboard handling stays intact.
+Use `<span class="dh-chip--test">Testnet preview</span>` for a dashed chip without a circle.
 
 ## New in 1.8 (round 6): sources beside figures, and a switcher that says what it is
 
@@ -59,7 +103,6 @@ rules and `../ADOPTION-r6.md` for your site's changes this round (then `-r5`, `-
 | `fonts/archivo-latin-var.woff2` | Archivo, variable, Latin, 79 KB (`fonts/PROVENANCE.md`, `fonts/OFL.txt`) | yes |
 | `dashhq-components.css` | The family component layer: layout, page header, buttons, fields, tables, states, stepper (`.dh-*` classes) | yes (see Components) |
 | `dashhq-tailwind-preset.cjs` | Tailwind 3.4 preset mapping colours, radii, heights, fonts and shadows to the tokens | Tailwind sites |
-| `mark/` | The mark as SVG, and the favicon | yes |
 | `dashhq-shell.d.ts`, `dashhq-shell.react.d.ts` | Types for `window.dashhq` and the events; JSX types for the elements (React only) | TS sites |
 | `demo.html` | Every piece on one page; also a CSP test (open it through a server, not `file://`) | no |
 | `bars.html` | All fourteen bars with each site's real attributes, logo and actions: the phone lockup reference | no |
@@ -98,7 +141,7 @@ Put this in `<head>`, in this order, before your own stylesheet:
 <link rel="stylesheet" href="/dashhq/dashhq-tokens.css">
 <link rel="stylesheet" href="/dashhq/dashhq-shell.css">
 <link rel="stylesheet" href="/dashhq/dashhq-components.css">
-<link rel="icon" href="/dashhq/mark/favicon.svg" type="image/svg+xml">
+<!-- Keep your product’s original favicon; the shell ships none. -->
 ```
 
 The script is classic and blocking on purpose: it sets `<html data-theme>` before first paint, so there is no flash
@@ -135,7 +178,7 @@ Then, in `<body>`:
 </dashhq-bar>
 …
 <dashhq-footer product="radar" source="https://github.com/PastaPastaPasta/dash-nodes">
-  <p>Optional lines of your own: data sources, privacy, about.</p>
+  <a href="/about">Data sources</a>
 </dashhq-footer>
 ```
 
@@ -152,13 +195,13 @@ Then, in `<body>`:
 | `phone-nav` | `menu` (default) or `tabs`. Where the slotted nav goes on phones: the top of the menu, or a bottom tab bar the bar draws (apps whose sections people switch between constantly: Pollr, Yappr). |
 | `network-note` | Optional. One sentence shown under the network choices, on record pages: "This masternode is on Mainnet." Switching keeps the record's URL; if the record isn't on the new network, the page shows `<dashhq-not-found>` (never a silent jump to a list, never "not published yet"). |
 | `sticky` | Sticks the bar to the top. Use it on the core tools. |
-| `no-theme` | Hides the theme button (the menu still has System / Light / Dark). |
+| `no-theme` | Hides the sole theme control, including its popover. Intended for embedded chrome only. |
 
 | Slot | Content |
 |---|---|
 | `nav` | One element (`<nav>`, `<ul>` or `<div>`) holding your top-level sections: your only section nav. Mark the current one `aria-current="page"`. 3 to 6 links (3 to 5 with `phone-nav="tabs"`). A plain `<button>` may stand in for a link that opens something (Yappr's Post). On phones they stack as 44px menu rows, or become tabs. Inside an item, an element with `class="dh-nav-icon"` (a 22px icon) shows only in the tab bar. `data-dh-phone` on an item shows it only in the phone layouts; `data-dh-desktop` only in the wide row. |
 | `actions` | Sign in or the account menu, and at most one more control (search, notifications). It stays visible on phones: keep it to 100px there ("Sign in", or 40px icon buttons). The account menu holds the app's personal pages (profile, bookmarks, settings, sign out). |
-| `logo` | Apps only: your own glyph (20×20) before your name. |
+| `logo` | One original product icon, for any product except home: `<img slot="logo" src="/icon.png" alt="" width="22" height="22">`. Decorative, local asset, 22px desktop / 26px phone, radius 5px. With no assigned icon there is no gap. Do not pass a family glyph. |
 
 Events and API:
 
@@ -176,30 +219,18 @@ Events and API:
 - `window.dashhq.network.findElsewhere(exists, { network, networks, signal })`: see `<dashhq-not-found>`.
 - `window.dashhq.theme.set('dark' | 'light' | 'system')`, `.toggle()`, `.pref`, `.resolved`.
 
-On wide screens the family switcher sits beside the product name as **dashhq tools ⌄** (accessible name "All dashhq
-tools"). The bar decides its own layout: when the full row would not fit, the switcher's words go first (the chevron
-stays), and then it collapses to the phone layout, not at a fixed breakpoint. You do not need a media query for it. The phone lockup is the same on every site: the mark, then
-`dashhq` set small over the product name (and the app's logo). It never drops the family name. If the row is still
-short of room (a long name, a network menu and an account control at 320px), the network pill keeps its dot and
-chevron but loses its word, and only then does the product name truncate, with the full name as its tooltip. At 360px
-and wider every product fits whole (`bars.html`, checked by `render-demo.mjs`).
+On wide screens **All tools ⌄** (accessible name “All dashhq tools”) sits beside the product name.
+The hub (`product="home"`) has only its wordmark and slotted nav, no family picker. The bar measures available width:
+first it drops the All tools label, then collapses to phone chrome. Desktop lockup: dashhq / [optional icon] Product.
+Phone: optional 26px icon beside a small dashhq home link over the product link. The theme stays visible.
+When space runs out, the network word hides before the product name truncates (full name in its tooltip).
 
-**Phone menu.** Short, and nothing in it twice. From the top:
-
-1. Your sections (`slot="nav"`), 44px rows. Not with `phone-nav="tabs"`: the tab bar already shows them.
-2. **dashhq tools**: the other doors by name in a 2×2 grid of 44px rows: Radar, Governance, Explorer, Start on Testnet.
-   Your own door is left out: your sections are right above it, and the bar's product name already goes home. (The
-   Faucet keeps Start, marked current, because Start's door is Bridge.)
-3. **More tools**, one 44px row that opens in place: the apps (tagged Testnet once), Architecture, the Fee estimator,
-   the DAPI console, the Faucet, and dashhq.org.
-4. The theme.
-
-Whatever your sections already link to leaves the family part when the menu opens: a link with `data-family`, or a link
-to the same address. That is how the hub's menu (whose nav is Radar, Governance, Explorer, Start on Testnet, Apps,
-Directory) shows its nav and More tools, not the same four doors again. The desktop switcher keeps every door
-with its description, Start's Bridge → Faucet, Apps, Also, the theme. A group whose products all run on one network says
-so once, beside its label ("Apps · Testnet"), so nobody crosses from a Mainnet tool into a practice app unawares. The
-Fee estimator and DAPI console receive the page's network like the other network-aware tools.
+**Phone menu.** One column of 44px rows: your sections, a hairline and dashhq tools label, the other core doors,
+a hairline and Architecture / DAPI console / Faucet, then a hairline and All Dash projects.
+No nested disclosure or theme row. Any destination already in the product nav is omitted from the family portion;
+the current core door is omitted. The hub shows its slotted doors plus nonduplicated reference tools.
+Pointer/touch opening focuses the sheet container without a link ring; keyboard opening focuses its first link.
+The scrim closes the sheet and page scroll stays locked until close. Escape restores trigger focus.
 
 **Following the bar from product CSS.** The bar never writes attributes on itself. It exposes its layout as a custom
 state, `dashhq-bar:state(compact)`, for the rare control in your actions slot that must change with it. With
@@ -221,10 +252,10 @@ One owner per job, at every width (`../DESIGN.md` §5 has the full rule):
 
 | Layer | Owns | Desktop | Phone |
 |---|---|---|---|
-| Family bar | The family (doors, apps, theme), the network, and the account (`actions`) | The row | Mark, lockup, network, actions, menu (≡) |
+| Family bar | The family tools, theme, the network, and the account (`actions`) | The row | Product icon, lockup, network, theme, actions, menu (≡) |
 | The product's sections (`slot="nav"`) | The app's 3 to 6 top-level sections | In the bar's row, after the product name | Top of the menu, or the bottom tab bar (`phone-nav="tabs"`) |
 | Page | Tabs, filters, sub-navigation of one page or record | In the page | In the page |
-| Footer (`<dashhq-footer>`) | The family links plus your own lines (terms, privacy, data sources) | One footer | One footer |
+| Footer (`<dashhq-footer>`) | Product lines, Source, All Dash projects | One footer | One footer |
 
 So: no second header, no sidebar that repeats the sections, no app bottom bar of your own, no second footer in a
 side column. A sidebar may hold things that belong to the page (compose, filters, who to follow), never the section
@@ -430,7 +461,7 @@ Decided once for the family, so nobody decides them again:
 | Primary | `.dh-btn--primary` is the one committing action in view, filled amber (`--dh-act`) with navy `--dh-act-ink` text, in every product, apps included. |
 | Selection | `--dh-select` (the current tab's rule, a chosen card's ring, checked boxes) and `--dh-select-soft` (selected and highlighted rows): Dash blue, or an app's accent. |
 | Links | `.dh-link` inside sentences (underlined); `.dh-link--go` for a next step on its own ("Top up in Bridge →": semibold, arrow, underlined on hover). Both Dash blue everywhere. |
-| Width | `.dh-container` is the bar's row: `max-width: var(--dh-max)`, border-box, `padding-inline: var(--dh-gutter)`. Content starts exactly under the mark: x = 160 at 1440px, 16px on phones. |
+| Width | `.dh-container` is the bar's row: `max-width: var(--dh-max)`, border-box, `padding-inline: var(--dh-gutter)`. Content starts at the bar gutter: x = 160 at 1440px, 16px on phones. |
 
 **App accents.** The committing button is amber in every product. An app's accent is for its brand mark, its
 selection and its highlights, and an app turns it on with one attribute on `<html>`:
@@ -579,8 +610,8 @@ Outside pointer taps dismiss an open door switcher, network menu or phone sheet 
 consume that tap, including pointer focus. Escape restores trigger focus; Tab still
 moves normally. A second tap can activate the underlying control.
 
-Start is a Testnet itinerary: Bridge address → Faucet funding → Bridge identity → username.
-The Start door, its step links and the footer always open Testnet, beginning in Bridge.
+Start is a Testnet itinerary inside Bridge: address → funding → identity → username.
+The Start door always opens Testnet in Bridge.
 `href()` and declarative links to Bridge/Faucet default to Testnet. Explicit
 `{ network: "mainnet" }` / `data-network="mainnet"` still support real-funds flows.
 A Bridge URL can use `?mode=create&journey=start&network=testnet` to begin at address creation.

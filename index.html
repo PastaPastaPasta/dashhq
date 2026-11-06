@@ -1,928 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://radar.dashhq.org; base-uri 'none'; form-action 'self'; object-src 'none'">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"/>
+<meta content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://radar.dashhq.org; base-uri 'none'; form-action 'self'; object-src 'none'" http-equiv="Content-Security-Policy"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
 <script src="/dashhq/dashhq-shell.js"></script>
-<link rel="preload" href="/dashhq/fonts/archivo-latin-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/dashhq/dashhq-tokens.css">
-<link rel="stylesheet" href="/dashhq/dashhq-shell.css">
-<link rel="stylesheet" href="/dashhq/dashhq-components.css">
-<link rel="icon" href="/dashhq/mark/favicon.svg" type="image/svg+xml">
-<script src="/hub.js" defer></script>
-<script src="/pulse.js" defer></script>
-<link rel="stylesheet" href="/hub.css">
-<title>Dash ecosystem · dashhq</title>
-<meta name="description" content="The DashHQ family and the Dash ecosystem: the apps, explorers, governance tools, SDKs and docs that are actually live, each placed on the layer it works with.">
-<link rel="canonical" href="https://dashhq.org/">
-<meta name="theme-color" content="#EDF2F5" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#06131B" media="(prefers-color-scheme: dark)">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://dashhq.org/">
-<meta property="og:site_name" content="dashhq.org">
-<meta property="og:title" content="Dash ecosystem · dashhq">
-<meta property="og:description" content="The DashHQ family and the Dash ecosystem: the apps, explorers, governance tools, SDKs and docs that are actually live, each placed on the layer it works with.">
-<meta property="og:image" content="https://dashhq.org/og.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="A blueprint map of the Dash ecosystem, with each project drawn on the layer it works with: apps, Platform, network.">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="color-scheme" content="light dark">
-
-
-
-
-
+<link as="font" crossorigin="" href="/dashhq/fonts/archivo-latin-var.woff2" rel="preload" type="font/woff2"/>
+<link href="/dashhq/dashhq-tokens.css" rel="stylesheet"/>
+<link href="/dashhq/dashhq-shell.css" rel="stylesheet"/>
+<link href="/dashhq/dashhq-components.css" rel="stylesheet"/>
+<link href="/favicon.svg" rel="icon" type="image/svg+xml"/>
+<script defer="" src="/hub.js"></script>
+<script defer="" src="/pulse.js"></script>
+<link href="/hub.css" rel="stylesheet"/>
+<title>Tools for the Dash network · dashhq</title>
+<meta content="The DashHQ family and the Dash ecosystem: the apps, explorers, governance tools, SDKs and docs that are actually live, each placed on the layer it works with." name="description"/>
+<link href="https://dashhq.org/" rel="canonical"/>
+<meta content="#EDF2F5" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#06131B" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<meta content="website" property="og:type"/>
+<meta content="https://dashhq.org/" property="og:url"/>
+<meta content="dashhq.org" property="og:site_name"/>
+<meta content="Tools for the Dash network · dashhq" property="og:title"/>
+<meta content="The DashHQ family and the Dash ecosystem: the apps, explorers, governance tools, SDKs and docs that are actually live, each placed on the layer it works with." property="og:description"/>
+<meta content="https://dashhq.org/og.png" property="og:image"/>
+<meta content="1200" property="og:image:width"/>
+<meta content="630" property="og:image:height"/>
+<meta content="Dash projects by layer: apps, Platform and the network." property="og:image:alt"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="light dark" name="color-scheme"/>
 </head>
-<body>
-<a class="skip" href="#apps">Skip to the projects</a>
-
-<dashhq-bar product="home" sticky>
-  <nav class="mnav" slot="nav" aria-label="Sections"><a href="https://radar.dashhq.org/" data-family="radar">Radar</a><a href="https://gov.dashhq.org/" data-family="gov">Governance</a><a href="https://explorer.dashhq.org/" data-family="explorer">Explorer</a><a href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet" data-family="bridge" data-path="/?mode=create&amp;journey=start" data-network="testnet">Start on Testnet</a><a href="#apps">Apps</a><a href="/directory/">Directory</a></nav>
-</dashhq-bar>
-
+<body><a class="skip" href="#main">Skip to content</a>
+<dashhq-bar product="home" sticky><nav class="mnav" slot="nav" aria-label="Tools"><a href="https://radar.dashhq.org/" data-family="radar">Radar</a><a href="https://gov.dashhq.org/" data-family="gov">Governance</a><a href="https://explorer.dashhq.org/" data-family="explorer">Explorer</a><a href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet" data-family="bridge" data-path="/?mode=create&amp;journey=start" data-network="testnet">Start on Testnet</a><a href="/directory/">Directory</a></nav></dashhq-bar>
 <main id="main">
+<section class="dh-container hub-intro" aria-labelledby="title">
+<h1 id="title">Tools for the Dash network</h1>
+<p class="lede">Dash is digital cash run by about 2,200 masternodes, with a treasury they vote on and Platform for app data. Check how it is doing, see where the money goes, or start building.</p>
+<search class="finder" role="search"><label class="dh-sr" for="q">Find a tool, or paste a ProTx, identity or name</label><div class="search-input"><input class="dh-input" id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Find a tool, identity or name…"><button type="button" class="dh-btn dh-btn--quiet dh-btn--sm" id="qclear" hidden>Clear</button></div><p id="qcount" class="fin-c" role="status" aria-live="polite"></p><ul id="find-results" class="find-results" aria-label="Search destinations" hidden></ul><p class="noresult" id="noresult" hidden>No destinations match. Try “wallet” or “masternode”, or paste a public ID. <button type="button" class="dh-btn dh-btn--link dh-btn--sm" id="noclear">Clear search</button></p></search>
+<nav class="doors" aria-label="Choose a starting point">
+<a class="door" href="https://radar.dashhq.org/masternodes" data-family="radar" data-path="/masternodes"><strong>Check a masternode</strong><span>Reachability, Platform health and earnings.</span><b>Radar →</b></a>
+<a class="door" href="https://gov.dashhq.org/treasury" data-family="gov" data-path="/treasury"><strong>See what the treasury funds</strong><span>Proposals, votes and what was paid.</span><b>Governance →</b></a>
+<a class="door" href="https://explorer.dashhq.org/" data-family="explorer"><strong>Look up an identity or name</strong><span>Balances, keys, usernames and contracts.</span><b>Explorer →</b></a>
+<a class="door" href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet" data-family="bridge" data-path="/?mode=create&amp;journey=start" data-network="testnet"><strong>Start building on Testnet</strong><span>An address, test DASH, an identity and a username.</span><b>Start on Testnet →</b></a>
+</nav>
+<section class="network-pulse" aria-label="Mainnet network observations"><p id="pulse-summary" role="status">Mainnet now · Checking network observations…</p><p class="pulse-source"><span>Radar crawl · <time class="dh-time" id="pulse-age">checking</time> · </span><a href="https://radar.dashhq.org/api/v1/mainnet/summary" data-family="radar" data-path="/api/v1/mainnet/summary" data-network="mainnet">details</a><button id="pulse-retry" class="dh-btn dh-btn--link dh-btn--sm" hidden>Retry</button></p></section>
 
-<!-- ==========================================================
-     THE SHEET: map, phone fallback, title block
-     ========================================================== -->
-<section class="dh-container" id="map" aria-labelledby="title">
-  <div class="sheet">
-    <div class="sheet-inner">
-      <div class="titleblock">
-        <div class="tb-main dh-page-header dh-page-header--home">
-          <h1 class="dh-page-header__title" id="title">Dash ecosystem</h1>
-          <p class="dh-page-header__lede">Choose a tool for the Dash network, or start building on Platform.</p>
-
-          <p class="panhint">Drag the map sideways to see all of it.</p>
-        </div>
-
-      </div>
-
-          <search class="finder dh-field" role="search">
-            <label class="dh-field__label" for="q">Find</label>
-            <input class="dh-input" id="q" type="search" autocomplete="off" spellcheck="false" placeholder="wallet, explorer, treasury, Rust, testnet…">
-            <button type="button" class="dh-btn dh-btn--quiet dh-btn--sm" id="qclear" hidden>Clear</button>
-            <p class="fin-c" id="qcount" role="status" aria-live="polite"></p>
-            <ul id="find-results" class="find-results" aria-label="Search destinations" tabindex="-1" hidden></ul>
-            <p class="noresult dh-empty dh-empty--inline" id="noresult" tabindex="-1" hidden>No destinations match yet. Try “Platform”, “wallet” or “masternode”, or paste a public ID. <button type="button" class="dh-btn dh-btn--link dh-btn--sm" id="noclear">Clear search</button></p>
-          </search>
-<details class="pulse-fold" open><summary>Mainnet network observations <span aria-hidden="true">⌄</span></summary><section class="network-pulse" aria-label="Mainnet network observations">
-        <a data-family="radar" data-network="mainnet" href="https://radar.dashhq.org/"><span>Core reachability</span><strong id="pulse-core">Checking…</strong><small id="pulse-core-note">Enabled masternodes</small></a>
-        <a data-family="radar" data-network="mainnet" data-path="/#platform" href="https://radar.dashhq.org/#platform"><span>Platform service health</span><strong id="pulse-platform">Checking…</strong><small id="pulse-platform-note">Enabled evonodes</small></a>
-        <p id="pulse-age" class="dh-field__help" role="status">Loading Radar’s latest observations…</p>
-        <p class="dh-sources">Sources: <a href="https://radar.dashhq.org/api/v1/mainnet/summary" data-family="radar" data-path="/api/v1/mainnet/summary" data-network="mainnet">Radar’s Mainnet snapshot</a>. Core measures P2P reachability; Platform checks Tenderdash and DAPI. These are observations from Radar’s crawler.</p>
-        <button id="pulse-retry" class="dh-btn dh-btn--sm" hidden>Retry network status</button>
-      </section></details>
-
-      <nav class="doors" aria-label="Choose a starting point">
-        <a class="door dh-card dh-card--link" href="https://arch.dashhq.org/" data-family="arch" data-path="/"><strong class="dh-card__title">What is Platform?</strong><span>Shared accounts, names and data for apps. Start with a three-step explanation and a registered name.</span></a>
-<a class="door dh-card dh-card--link" href="https://radar.dashhq.org/" data-family="radar" data-path="/"><strong class="dh-card__title">Radar</strong><span>Live network health, masternodes and evonodes</span></a>
-        <a class="door dh-card dh-card--link" href="https://gov.dashhq.org/" data-family="gov" data-path="/"><strong class="dh-card__title">Governance</strong><span>Proposals, votes, name contests</span></a>
-        <a class="door dh-card dh-card--link" href="https://explorer.dashhq.org/" data-family="explorer" data-path="/"><strong class="dh-card__title">Explorer</strong><span>Find identities, names and contracts; inspect their proofs</span></a>
-        <a class="door dh-card dh-card--link" href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet" data-family="bridge" data-path="/?mode=create&amp;journey=start" data-network="testnet"><strong class="dh-card__title">Start on Testnet</strong><span>Create keys in Bridge, fund with Faucet, then create an identity</span></a>
-        <a class="door dh-card dh-card--link" href="https://dashhq.org/#apps" data-family="home" data-path="/#apps"><strong class="dh-card__title">Apps</strong><span>Forge, Pollr and Yappr, plus wallets. The three apps are Testnet previews.</span></a>
-      </nav>
-
-      <p class="map-help">Select a project to open it. Expand the groups below for descriptions.</p><div class="mapscroll">
-      <svg class="hsvg" viewBox="0 0 1220 522" role="group" aria-labelledby="maptitle">
-        <title id="maptitle">Map of the Dash Platform ecosystem. Each project sits on the layer it works with; select one to open it.</title>
-        <line class="hrail" x1="40" y1="56" x2="1180" y2="56"/>
-        <line class="hrail" x1="40" y1="196" x2="1180" y2="196"/>
-        <line class="hrail" x1="40" y1="440" x2="1180" y2="440"/>
-        <text class="hband" x="40" y="46">Apps</text>
-        <text class="hband" x="40" y="186">Platform</text>
-        <text class="hband" x="40" y="430">Network</text>
-        <text class="hnote" x="1180" y="46" text-anchor="end">what people install and use</text>
-        <text class="hnote" x="846" y="186" text-anchor="end">reads and writes Platform data</text>
-        <text class="hnote" x="846" y="430" text-anchor="end">masternodes and Dash Core</text>
-        <text class="hnote" x="846" y="386" text-anchor="end">these two fund Platform from Core DASH</text>
-        <path class="hstem" d="M118 122 V196 M282 122 V196 M446 122 V196 M610 122 V196 M774 122 V158 H858 V196 M938 122 V196 M1102 122 V196 M118 196 V212 M282 196 V212 M446 196 V212 M610 196 V212 M774 196 V212 M118 440 V456 M282 440 V456 M446 440 V456 M610 440 V456 M774 440 V456"/>
-        <path class="hcross" d="M938 196 V356 M938 406 V440 M1102 196 V356 M1102 406 V440"/>
-        <a class="hnode" data-project="dashpay" href="https://play.google.com/store/apps/details?id=hashengineering.darkcoin.wallet" aria-label="Open dashpay"><rect class="hbox" x="40" y="72" width="156" height="50" rx="3"/><text class="hby" x="52" y="91">Dash Core Group </text><text class="hnm" x="52" y="111">DashPay wallet </text><text class="hstep" aria-hidden="true" x="187" y="90" text-anchor="end"></text></a>
-        <a class="hnode" data-project="extension" href="https://chromewebstore.google.com/detail/dash-platform-extension/odmphbcnlldggfhcpdjgnlhbehoicdnf" aria-label="Open extension"><rect class="hbox" x="204" y="72" width="156" height="50" rx="3"/><text class="hby" x="216" y="91">pshenmic </text><text class="hnm" x="216" y="111">Platform Extension </text><text class="hstep" aria-hidden="true" x="351" y="90" text-anchor="end"></text></a>
-        <a class="hnode" data-project="evotool" href="https://github.com/dashpay/dash-evo-tool/releases" aria-label="Open evotool"><rect class="hbox" x="368" y="72" width="156" height="50" rx="3"/><text class="hby" x="380" y="91">Dash Core Group </text><text class="hnm" x="380" y="111">Dash Evo Tool </text><text class="hstep" aria-hidden="true" x="515" y="90" text-anchor="end"></text></a>
-        <a class="hnode" data-project="name-contests" href="https://gov.dashhq.org/names" data-family="gov" data-path="/names" aria-label="Open name contests"><rect class="hbox" x="532" y="72" width="156" height="50" rx="3"/><text class="hby" x="544" y="91">pasta </text><text class="hnm" x="544" y="111">Name contests </text><text class="hstep" aria-hidden="true" x="679" y="90" text-anchor="end"></text></a>
-        <a class="hnode htest" data-project="yappr" href="https://yap.pr" data-family="yappr" data-path="/" aria-label="Open yappr"><rect class="hbox" x="696" y="72" width="156" height="50" rx="3"/><text class="hby" x="708" y="91">pasta </text><text class="hnm" x="708" y="111">Yappr </text><text class="hstep" aria-hidden="true" x="843" y="90" text-anchor="end"></text></a>
-        <a class="hnode htest" data-project="pollr" href="https://pollr.dashhq.org" data-family="pollr" data-path="/" aria-label="Open pollr"><rect class="hbox" x="860" y="72" width="156" height="50" rx="3"/><text class="hby" x="872" y="91">pasta </text><text class="hnm" x="872" y="111">Pollr </text><text class="hstep" aria-hidden="true" x="1007" y="90" text-anchor="end"></text></a>
-        <a class="hnode htest" data-project="forge" href="https://forge.dashhq.org" data-family="forge" data-path="/" aria-label="Open forge"><rect class="hbox" x="1024" y="72" width="156" height="50" rx="3"/><text class="hby" x="1036" y="91">pasta </text><text class="hnm" x="1036" y="111">Forge </text><text class="hstep" aria-hidden="true" x="1171" y="90" text-anchor="end"></text></a>
-        <a class="hnode" data-project="platform-explorer" href="https://platform-explorer.com" aria-label="Open platform explorer"><rect class="hbox" x="40" y="212" width="156" height="58" rx="3"/><text class="hby" x="52" y="231">pshenmic </text><text class="hnm hnm2" x="52" y="247">Platform Explorer </text><text class="hnote" x="52" y="262">third-party index </text><text class="hstep" aria-hidden="true" x="187" y="230" text-anchor="end"></text></a>
-        <a class="hnode" data-project="native-explorer" href="https://explorer.dashhq.org" data-family="explorer" data-path="/" aria-label="Open native explorer"><rect class="hbox" x="204" y="212" width="156" height="58" rx="3"/><text class="hby" x="216" y="229">pasta </text><text class="hnm hnm2" x="216" y="246">Explorer </text><text class="hnote" x="216" y="262">browser proof checks </text><text class="hstep" aria-hidden="true" x="351" y="230" text-anchor="end"></text></a>
-        <a class="hnode" data-project="evo-sdk" href="https://evo-sdk.dash.org/" aria-label="Open evo sdk"><rect class="hbox" x="368" y="212" width="156" height="58" rx="3"/><text class="hby" x="380" y="231">Dash Core Group </text><text class="hnm" x="380" y="251">Evo SDK </text><text class="hstep" aria-hidden="true" x="515" y="230" text-anchor="end"></text></a>
-        <a class="hnode" data-project="docs" href="https://docs.dash.org/projects/platform/en/stable/" aria-label="Open docs"><rect class="hbox" x="532" y="212" width="156" height="58" rx="3"/><text class="hby" x="544" y="231">Dash Core Group </text><text class="hnm" x="544" y="251">Platform docs </text><text class="hstep" aria-hidden="true" x="679" y="230" text-anchor="end"></text></a>
-        <a class="hnode htest" data-project="tutorials" href="https://dashpay.github.io/platform-tutorials/" aria-label="Open tutorials"><rect class="hbox" x="696" y="212" width="156" height="58" rx="3"/><text class="hby" x="708" y="231">Dash Core Group </text><text class="hnm" x="708" y="251">Tutorial apps </text><text class="hstep" aria-hidden="true" x="843" y="230" text-anchor="end"></text></a>
-        <a class="hnode" data-project="dapi" href="https://dapi.dashhq.org" data-family="dapi" data-path="/" aria-label="Open dapi"><rect class="hbox" x="40" y="280" width="156" height="58" rx="3"/><text class="hby" x="52" y="299">pasta </text><text class="hnm" x="52" y="319">DAPI console </text><text class="hstep" aria-hidden="true" x="187" y="298" text-anchor="end"></text></a>
-        <a class="hnode" data-project="fees" href="https://explorer.dashhq.org/tools/fees/" data-family="explorer" data-path="/tools/fees/" aria-label="Open fees"><rect class="hbox" x="204" y="280" width="156" height="58" rx="3"/><text class="hby" x="216" y="297">pasta </text><text class="hnm" x="216" y="319">Fee estimator </text><text class="hstep" aria-hidden="true" x="351" y="298" text-anchor="end"></text></a>
-        <a class="hnode" data-project="contract-visualizer" href="https://dashpay.github.io/contract-visualizer/" aria-label="Open contract visualizer"><rect class="hbox" x="368" y="280" width="156" height="58" rx="3"/><text class="hby" x="380" y="299">Dash Core Group </text><text class="hnm" x="380" y="319">Contract visualizer </text><text class="hstep" aria-hidden="true" x="515" y="298" text-anchor="end"></text></a>
-        <a class="hnode" data-project="grovedb" href="https://dashpay.github.io/grovedb-structure-viewer/" aria-label="Open grovedb"><rect class="hbox" x="532" y="280" width="156" height="58" rx="3"/><text class="hby" x="544" y="297">Dash Core Group </text><text class="hnm hnm2" x="544" y="314">GroveDB Structure </text><text class="hnm hnm2" x="544" y="330">Viewer </text><text class="hstep" aria-hidden="true" x="679" y="298" text-anchor="end"></text></a>
-        <a class="hnode" data-project="arch" href="https://arch.dashhq.org" data-family="arch" data-path="/" aria-label="Open arch"><rect class="hbox" x="696" y="280" width="156" height="58" rx="3"/><text class="hby" x="708" y="297">pasta </text><text class="hnm" x="708" y="319">Architecture </text><text class="hstep" aria-hidden="true" x="843" y="298" text-anchor="end"></text></a>
-        <a class="hnode" data-project="bridge" href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet" data-family="bridge" data-path="/?mode=create&amp;journey=start" data-network="testnet" aria-label="Open bridge"><rect class="hbox" x="860" y="356" width="156" height="50" rx="3"/><text class="hby" x="872" y="375">pasta </text><text class="hnm" x="872" y="395">Bridge </text><text class="hstep" aria-hidden="true" x="1007" y="374" text-anchor="end"></text></a>
-        <a class="hnode" data-project="faucet" href="https://faucet.dashhq.org" data-family="faucet" data-path="/" aria-label="Open faucet"><rect class="hbox" x="1024" y="356" width="156" height="50" rx="3"/><text class="hby" x="1036" y="375">pasta </text><text class="hnm" x="1036" y="395">Faucet </text><text class="hstep" aria-hidden="true" x="1171" y="374" text-anchor="end"></text></a>
-        <a class="hnode" data-project="radar" href="https://radar.dashhq.org" data-family="radar" data-path="/" aria-label="Open radar"><rect class="hbox" x="40" y="456" width="156" height="50" rx="3"/><text class="hby" x="52" y="475">pasta </text><text class="hnm" x="52" y="495">Radar </text><text class="hstep" aria-hidden="true" x="187" y="474" text-anchor="end"></text></a>
-        <a class="hnode" data-project="payments" href="https://dashpay.github.io/evonode-payments/" aria-label="Open payments"><rect class="hbox" x="204" y="456" width="156" height="50" rx="3"/><text class="hby" x="216" y="475">Dash Core Group </text><text class="hnm" x="216" y="495">Evonode payments </text><text class="hstep" aria-hidden="true" x="351" y="474" text-anchor="end"></text></a>
-        <a class="hnode" data-project="upgrade" href="https://dashpay.github.io/platform-upgrade-vote-status/" aria-label="Open upgrade"><rect class="hbox" x="368" y="456" width="156" height="50" rx="3"/><text class="hby" x="380" y="475">Dash Core Group </text><text class="hnm" x="380" y="495">Upgrade vote status </text><text class="hstep" aria-hidden="true" x="515" y="474" text-anchor="end"></text></a>
-        <a class="hnode" data-project="dashmate" href="https://docs.dash.org/en/stable/docs/user/network/dashmate/index.html" aria-label="Open dashmate"><rect class="hbox" x="532" y="456" width="156" height="50" rx="3"/><text class="hby" x="544" y="475">Dash Core Group </text><text class="hnm" x="544" y="495">dashmate </text><text class="hstep" aria-hidden="true" x="679" y="474" text-anchor="end"></text></a>
-        <a class="hnode" data-project="govhub" href="https://gov.dashhq.org" data-family="gov" data-path="/" aria-label="Open govhub"><rect class="hbox" x="696" y="456" width="156" height="50" rx="3"/><text class="hby" x="708" y="475">pasta </text><text class="hnm" x="708" y="495">Governance </text><text class="hstep" aria-hidden="true" x="843" y="474" text-anchor="end"></text></a>
-      </svg>
-      </div>
-      <nav class="mapchips" aria-label="Projects by layer">
-        <p class="chiprow"><span class="chiplabel">Apps</span><a class="chip" data-project="dashpay" href="https://play.google.com/store/apps/details?id=hashengineering.darkcoin.wallet" aria-label="Open dashpay">DashPay wallet</a><a class="chip" data-project="extension" href="https://chromewebstore.google.com/detail/dash-platform-extension/odmphbcnlldggfhcpdjgnlhbehoicdnf" aria-label="Open extension">Platform Extension</a><a class="chip" data-project="evotool" href="https://github.com/dashpay/dash-evo-tool/releases" aria-label="Open evotool">Dash Evo Tool</a><a class="chip" data-project="name-contests" href="https://gov.dashhq.org/names" data-family="gov" data-path="/names" aria-label="Open name contests">Name contests</a><a class="chip test" data-project="yappr" href="https://yap.pr" data-family="yappr" data-path="/" aria-label="Open yappr">Yappr</a><a class="chip test" data-project="pollr" href="https://pollr.dashhq.org" data-family="pollr" data-path="/" aria-label="Open pollr">Pollr</a><a class="chip test" data-project="forge" href="https://forge.dashhq.org" data-family="forge" data-path="/" aria-label="Open forge">Forge</a></p>
-        <p class="chiprow"><span class="chiplabel">Platform</span><a class="chip" data-project="platform-explorer" href="https://platform-explorer.com" aria-label="Open platform explorer">Platform Explorer</a><a class="chip" data-project="native-explorer" href="https://explorer.dashhq.org" data-family="explorer" data-path="/" aria-label="Open native explorer">Explorer</a><a class="chip" data-project="evo-sdk" href="https://evo-sdk.dash.org/" aria-label="Open evo sdk">Evo SDK</a><a class="chip" data-project="docs" href="https://docs.dash.org/projects/platform/en/stable/" aria-label="Open docs">Platform docs</a><a class="chip test" data-project="tutorials" href="https://dashpay.github.io/platform-tutorials/" aria-label="Open tutorials">Tutorial apps</a><a class="chip" data-project="dapi" href="https://dapi.dashhq.org" data-family="dapi" data-path="/" aria-label="Open dapi">DAPI console</a><a class="chip" data-project="fees" href="https://explorer.dashhq.org/tools/fees/" data-family="explorer" data-path="/tools/fees/" aria-label="Open fees">Fee estimator</a><a class="chip" data-project="contract-visualizer" href="https://dashpay.github.io/contract-visualizer/" aria-label="Open contract visualizer">Contract visualizer</a><a class="chip" data-project="grovedb" href="https://dashpay.github.io/grovedb-structure-viewer/" aria-label="Open grovedb">GroveDB structure viewer</a><a class="chip" data-project="arch" href="https://arch.dashhq.org" data-family="arch" data-path="/" aria-label="Open arch">Architecture</a><a class="chip" data-project="bridge" href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet" data-family="bridge" data-path="/?mode=create&amp;journey=start" data-network="testnet" aria-label="Open bridge">Bridge</a><a class="chip" data-project="faucet" href="https://faucet.dashhq.org" data-family="faucet" data-path="/" aria-label="Open faucet">Faucet</a></p>
-        <p class="chiprow"><span class="chiplabel">Network</span><a class="chip" data-project="radar" href="https://radar.dashhq.org" data-family="radar" data-path="/" aria-label="Open radar">Radar</a><a class="chip" data-project="payments" href="https://dashpay.github.io/evonode-payments/" aria-label="Open payments">Evonode payments</a><a class="chip" data-project="upgrade" href="https://dashpay.github.io/platform-upgrade-vote-status/" aria-label="Open upgrade">Upgrade vote status</a><a class="chip" data-project="dashmate" href="https://docs.dash.org/en/stable/docs/user/network/dashmate/index.html" aria-label="Open dashmate">dashmate</a><a class="chip" data-project="govhub" href="https://gov.dashhq.org" data-family="gov" data-path="/" aria-label="Open govhub">Governance</a></p>
-      </nav>
-      <div class="route-panel">
-          <p class="rhead">New here? Pick a route to number its stops on the map.</p>
-          <ol class="routes">
-            <li class="route" data-route="bridge faucet native-explorer"><p><button type="button" class="rname dh-btn dh-btn--sm" aria-pressed="false">Use it</button><span class="rwhy">Create keys, fund them, create an identity, then explore.</span></p><p class="rstops"><a href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet" data-family="bridge" data-path="/?mode=create&amp;journey=start" data-network="testnet">Bridge: create keys</a><span class="sep" aria-hidden="true"> → </span><a href="https://faucet.dashhq.org/?network=testnet" data-family="faucet" data-path="/" data-network="testnet">Faucet: fund</a><span class="sep" aria-hidden="true"> → </span><a href="#native-explorer">Explorer</a></p></li>
-            <li class="route" data-route="docs faucet evo-sdk tutorials fees"><p><button type="button" class="rname dh-btn dh-btn--sm" aria-pressed="false">Build on it</button><span class="rwhy">From the docs to your first contract.</span></p><p class="rstops"><a href="#docs">Platform docs</a><span class="sep" aria-hidden="true"> → </span><a href="#faucet">Faucet</a><span class="sep" aria-hidden="true"> → </span><a href="#evo-sdk">Evo SDK</a><span class="sep" aria-hidden="true"> → </span><a href="#tutorials">Tutorial apps</a><span class="sep" aria-hidden="true"> → </span><a href="#fees">Fee estimator</a></p></li>
-            <li class="route" data-route="dashmate radar payments upgrade"><p><button type="button" class="rname dh-btn dh-btn--sm" aria-pressed="false">Run a node</button><span class="rwhy">Set it up, then watch how it does.</span></p><p class="rstops"><a href="#dashmate">dashmate</a><span class="sep" aria-hidden="true"> → </span><a href="#radar">Radar</a><span class="sep" aria-hidden="true"> → </span><a href="#payments">Evonode payments</a><span class="sep" aria-hidden="true"> → </span><a href="#upgrade">Upgrade vote status</a></p></li>
-            <li class="route" data-route="govhub upgrade"><p><button type="button" class="rname dh-btn dh-btn--sm" aria-pressed="false">Have a say</button><span class="rwhy">Spend the treasury, settle a name, pick a version.</span></p><p class="rstops"><a href="#govhub">Governance</a><span class="sep" aria-hidden="true"> → </span><a href="https://gov.dashhq.org/names" data-family="gov" data-path="/names">Name contests</a><span class="sep" aria-hidden="true"> → </span><a href="#upgrade">Upgrade vote status</a></p></li>
-          </ol>
-</div>
-        <div class="tb-stats">
-          <p><span class="tb-k">On the map</span><span class="tb-v"><span data-count="card">24</span> projects</span></p>
-          <p><span class="tb-k">In the directory</span><span class="tb-v"><span data-count="entry">41</span> more</span></p>
-          <div class="tb-key"><span class="tb-k">Key</span><p class="legend">
-            <span><i class="sw" aria-hidden="true"></i> Live on mainnet</span>
-            <span><i class="sw dash" aria-hidden="true"></i> Testnet only for now</span>
-            <span><i class="sw cross" aria-hidden="true"></i> Funds Platform from Core</span>
-          </p></div>
-          <p><span class="tb-k">Updated</span><span class="tb-v"><time datetime="2026-11-05">5 Nov 2026</time></span></p>
-        </div>
-    </div>
-  </div>
 </section>
 
-<!-- ==========================================================
-     APPS
-     ========================================================== -->
-<section class="section dh-section dh-section--rule" id="apps">
-  <div class="dh-container">
-    <details class="catalogue-fold" open><summary class="sechead dh-section__head">
-      <h2 class="dh-section__title">Apps and wallets</h2><span class="fold-count dh-count">6 projects</span><span class="fold-action"><span class="fold-show">Show</span><span class="fold-hide">Hide</span></span>
-      <p class="dh-section__desc">Wallets for everyday use, plus Testnet app previews. Public app activity may be sparse.</p>
-    </summary>
-    <div class="grid">
+<section class="map-band" id="map" aria-labelledby="map-title"><div class="dh-container"><header class="section-head"><h2 id="map-title">Every Dash project, by layer</h2><p>23 on the map, 42 more in the directory</p></header>
+<div class="project-map"><section class="map-layer"><h3>Apps</h3><ul><li><a class="map-node" href="https://play.google.com/store/apps/details?id=hashengineering.darkcoin.wallet"><span>DashPay wallet</span><small>Dash Core Group</small></a></li>
+<li><a class="map-node" href="https://chromewebstore.google.com/detail/dash-platform-extension/odmphbcnlldggfhcpdjgnlhbehoicdnf"><span>Platform Extension</span><small>pshenmic</small></a></li>
+<li><a class="map-node" href="https://github.com/dashpay/dash-evo-tool/releases"><span>Dash Evo Tool</span><small>Dash Core Group</small></a></li>
+<li><a class="map-node testnet" href="https://yap.pr"><span>Yappr</span><small>Testnet preview</small></a></li>
+<li><a class="map-node testnet" href="https://forge.dashhq.org"><span>Forge</span><small>Testnet preview</small></a></li>
+</ul></section>
+<section class="map-layer"><h3>Platform</h3><ul><li><a class="map-node own" href="https://explorer.dashhq.org/identity/" data-family="explorer" data-path="/identity/"><span>Explorer</span></a></li>
+<li><a class="map-node" href="https://platform-explorer.com"><span>Platform Explorer</span><small>pshenmic</small></a></li>
+<li><a class="map-node" href="https://evo-sdk.dash.org/"><span>Evo SDK</span><small>Dash Core Group</small></a></li>
+<li><a class="map-node" href="https://docs.dash.org/projects/platform/en/stable/"><span>Platform docs</span><small>Dash Core Group</small></a></li>
+<li><a class="map-node testnet" href="https://dashpay.github.io/platform-tutorials/"><span>Tutorial apps</span><small>Testnet preview</small></a></li>
+<li><a class="map-node own" href="https://dapi.dashhq.org" data-family="dapi" data-path="/"><span>DAPI console</span></a></li>
+<li><a class="map-node own" href="https://explorer.dashhq.org/tools/fees/" data-family="explorer" data-path="/tools/fees/"><span>Fee estimator</span></a></li>
+<li><a class="map-node" href="https://dashpay.github.io/contract-visualizer/"><span>Contract visualizer</span><small>Dash Core Group</small></a></li>
+<li><a class="map-node" href="https://dashpay.github.io/grovedb-structure-viewer/"><span>GroveDB structure viewer</span><small>Dash Core Group</small></a></li>
+<li><a class="map-node own" href="https://arch.dashhq.org" data-family="arch" data-path="/"><span>Architecture</span></a></li>
+<li><a class="map-node own" href="https://bridge.dashhq.org/" data-family="bridge" data-path="/" data-network="testnet"><span>Start on Testnet</span></a></li>
+<li><a class="map-node own" href="https://faucet.dashhq.org" data-family="faucet" data-path="/"><span>Faucet</span></a></li>
+</ul></section>
+<section class="map-layer"><h3>Network</h3><ul><li><a class="map-node own" href="https://radar.dashhq.org/#platform" data-family="radar" data-path="/#platform"><span>Radar</span></a></li>
+<li><a class="map-node own" href="https://gov.dashhq.org/polls" data-family="gov" data-path="/polls"><span>Governance</span><small>Proposals, polls, name contests</small></a></li>
+<li><a class="map-node own" href="https://gov.dashhq.org/names" data-family="gov" data-path="/names"><span>Name contests in Governance</span></a></li>
+<li><a class="map-node" href="https://dashpay.github.io/evonode-payments/"><span>Evonode payments</span><small>Dash Core Group</small></a></li>
+<li><a class="map-node" href="https://dashpay.github.io/platform-upgrade-vote-status/"><span>Upgrade vote status</span><small>Dash Core Group</small></a></li>
+<li><a class="map-node" href="https://docs.dash.org/en/stable/docs/user/network/dashmate/index.html"><span>dashmate</span><small>Dash Core Group</small></a></li>
+</ul></section>
+</div><p class="map-key"><span><i></i> Live on Mainnet</span><span><i class="testnet"></i> Testnet preview</span><span><i class="own"></i> A dashhq tool</span></p></div></section>
 
-      <article class="card span2" id="dashpay">
-        <p class="tags"><span class="pby">Dash Core Group</span><span class="pnet">Mainnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- a phone, a contact list, one name being paid -->
-            <rect class="sh" x="36" y="8" width="46" height="104" rx="7"/>
-            <rect class="l" x="36" y="8" width="46" height="104" rx="7"/>
-            <path class="lt" d="M53 15 H65"/>
-            <circle class="dq" cx="47" cy="30" r="4"/><path class="lt" d="M55 30 H74"/>
-            <rect class="a" x="41" y="40" width="36" height="14" rx="2.5"/>
-            <circle class="af" cx="47" cy="47" r="4"/><text class="tx" x="55" y="49.5">alice</text>
-            <circle class="dq" cx="47" cy="64" r="4"/><path class="lt" d="M55 64 H70"/>
-            <circle class="dq" cx="47" cy="80" r="4"/><path class="lt" d="M55 80 H72"/>
-            <rect class="lt" x="44" y="92" width="30" height="11" rx="3"/>
-            <g class="mvr mv-slide"><path class="a" d="M82 47 H104 M99 42.5 L104 47 L99 51.5"/></g>
-            <circle class="df" cx="111" cy="44" r="4"/><path class="lt" d="M105 53 H117"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://play.google.com/store/apps/details?id=hashengineering.darkcoin.wallet">DashPay wallet</a></h3>
-          <p class="host"><a class="lbl" href="https://play.google.com/store/apps/details?id=hashengineering.darkcoin.wallet">Google Play</a><a class="lbl" href="https://apps.apple.com/app/id1206647026">App Store</a></p>
-          <p class="desc">The mobile wallet from Dash Core Group. Register a username, add contacts by name and pay them without an address. Masternode owners can also vote on contested names.</p>
-        </div>
-      </article>
+<section class="dh-container resources" id="apps" aria-labelledby="resources-title"><header class="section-head"><h2 id="resources-title">Wallets, apps and references</h2><a href="/directory/">All 65 projects →</a></header>
+<div class="resource-columns"><section class="dgroup"><h3>Wallets <span class="group-count">3</span></h3><ul><li id="dashpay" data-search=""><a href="https://play.google.com/store/apps/details?id=hashengineering.darkcoin.wallet">DashPay wallet <span aria-hidden="true">↗</span></a><p class="dd">Mobile wallet with usernames and contacts.</p><p class="dby">Dash Core Group · Google Play</p></li>
+<li id="evotool" data-search=""><a href="https://github.com/dashpay/dash-evo-tool/releases">Dash Evo Tool <span aria-hidden="true">↗</span></a><p class="dd">Desktop app for identities, names, tokens and contracts.</p><p class="dby">Dash Core Group · Releases</p></li>
+<li id="extension" data-search=""><a href="https://chromewebstore.google.com/detail/dash-platform-extension/odmphbcnlldggfhcpdjgnlhbehoicdnf">Platform Extension <span aria-hidden="true">↗</span></a><p class="dd">Browser wallet that approves what a site asks you to sign.</p><p class="dby">pshenmic · Chrome Web Store</p></li>
+</ul></section>
+<section class="dgroup"><h3>Apps on Testnet <span class="group-count">2</span></h3><ul><li id="yappr" data-search=""><a href="https://yap.pr">Yappr <span aria-hidden="true">↗</span></a><p class="dd">A social network with posts, follows and messages on Platform.</p><p class="dby">yap.pr · Testnet preview</p></li>
+<li id="forge" data-search=""><a href="https://forge.dashhq.org">Forge <span aria-hidden="true">↗</span></a><p class="dd">Git repositories, issues and pull requests on Platform.</p><p class="dby">forge.dashhq.org · Testnet preview</p></li>
+</ul></section>
+<section class="dgroup"><h3>Build <span class="group-count">3</span></h3><ul><li id="docs" data-search=""><a href="https://docs.dash.org/projects/platform/en/stable/">Platform docs <span aria-hidden="true">↗</span></a><p class="dd">Concepts, tutorials and API reference.</p><p class="dby">Dash Core Group</p></li>
+<li id="evo-sdk" data-search=""><a href="https://evo-sdk.dash.org/">Evo SDK <span aria-hidden="true">↗</span></a><p class="dd">The JavaScript SDK with proof checks on every query.</p><p class="dby">Dash Core Group</p></li>
+<li id="dashmate" data-search=""><a href="https://docs.dash.org/en/stable/docs/user/network/dashmate/index.html">dashmate <span aria-hidden="true">↗</span></a><p class="dd">Run a masternode, an evonode or a local network.</p><p class="dby">Dash Core Group</p></li>
+</ul></section>
+</div></section>
 
-      <article class="card span2" id="evotool">
-        <p class="tags"><span class="pby">Dash Core Group</span><span class="pnet">Mainnet and Testnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- desktop window: a sidebar of Platform features, a form, one action -->
-            <rect class="l" x="8" y="16" width="104" height="88" rx="3"/>
-            <path class="lt" d="M8 27 H112 M44 27 V104"/>
-            <rect class="lt" x="12" y="33" width="28" height="11" rx="1.5"/><text class="tx" x="15" y="40.8">ids</text>
-            <rect class="a" x="12" y="48" width="28" height="11" rx="1.5"/><text class="tx txa" x="15" y="55.8">names</text>
-            <rect class="lt" x="12" y="63" width="28" height="11" rx="1.5"/><text class="tx" x="15" y="70.8">tokens</text>
-            <rect class="lt" x="12" y="78" width="28" height="11" rx="1.5"/><text class="tx" x="15" y="85.8">docs</text>
-            <path class="a" d="M40 53.5 H44"/>
-            <path class="lt" d="M52 38 H84"/>
-            <rect class="l" x="52" y="45" width="52" height="9" rx="1.5"/>
-            <path class="lt" d="M52 64 H78"/>
-            <rect class="l" x="52" y="70" width="52" height="9" rx="1.5"/>
-            <rect class="af mvr mv-lift" x="52" y="88" width="28" height="9" rx="2"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://github.com/dashpay/dash-evo-tool/releases">Dash Evo Tool</a></h3>
-          <p class="host"><a class="lbl" href="https://github.com/dashpay/dash-evo-tool/releases">Releases</a><a class="lbl" href="https://docs.dash.org/en/stable/docs/user/network/dash-evo-tool/">Guide</a></p>
-          <p class="desc">A desktop app for everything on Platform: identities, usernames, name voting, tokens, contracts and documents. New builds ship weekly as prereleases.</p>
-        </div>
-      </article>
-
-      <article class="card span2" id="extension">
-        <p class="tags"><span class="pby">pshenmic</span><span class="pnet">Mainnet and Testnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- a browser; the extension drops a signing prompt over the page -->
-            <rect class="l" x="6" y="14" width="108" height="92" rx="3"/>
-            <path class="lt" d="M6 27 H114"/>
-            <circle class="dq" cx="13" cy="20.5" r="1.6"/><circle class="dq" cx="19" cy="20.5" r="1.6"/>
-            <rect class="lt" x="26" y="17.5" width="54" height="6" rx="3"/>
-            <rect class="af" x="98" y="17" width="7" height="7" rx="1.5"/>
-            <path class="lt" d="M14 40 H52 M14 48 H46 M14 56 H50 M14 72 H44 M14 80 H52 M14 88 H38"/>
-            <path class="ad" d="M101.5 24 V32"/>
-            <rect class="sh" x="60" y="32" width="48" height="60" rx="3"/>
-            <rect class="a" x="60" y="32" width="48" height="60" rx="3"/>
-            <circle class="df" cx="72" cy="45" r="4.5"/><path class="lt" d="M80 43 H100 M80 48 H94"/>
-            <path class="l" d="M68 60 H100"/><path class="lt" d="M68 67 H92"/>
-            <rect class="af mvr mv-down" x="68" y="76" width="32" height="9" rx="2"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://chromewebstore.google.com/detail/dash-platform-extension/odmphbcnlldggfhcpdjgnlhbehoicdnf">Dash Platform Extension</a></h3>
-          <p class="host"><a class="lbl" href="https://chromewebstore.google.com/detail/dash-platform-extension/odmphbcnlldggfhcpdjgnlhbehoicdnf">Chrome Web Store</a></p>
-          <p class="desc">A browser wallet for Platform identities. Hold credits and tokens, and approve each transaction a website asks you to sign.</p>
-        </div>
-      </article>
-
-      <article class="card span2" id="forge">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet test">Testnet preview</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- git history; the merge's ref is proved by Platform -->
-            <text class="tx" x="12" y="30">dash://alice/app</text>
-            <path class="l" d="M12 62 H108"/>
-            <path class="l" d="M42 62 C52 62 52 42 62 42 H76 C86 42 86 62 96 62"/>
-            <circle class="df" cx="22" cy="62" r="3"/><circle class="df" cx="42" cy="62" r="3"/>
-            <circle class="dq" cx="69" cy="62" r="3"/>
-            <circle class="df" cx="62" cy="42" r="3"/><circle class="df" cx="76" cy="42" r="3"/>
-            <circle class="af" cx="96" cy="62" r="4.2"/>
-            <circle class="a mvr mv-ping" cx="96" cy="62" r="9"/>
-            <path class="ad" d="M96 72 V84"/>
-            <rect class="lt" x="80" y="84" width="32" height="26" rx="2"/>
-            <path class="lt" d="M96 90 L88 100 M96 90 L104 100"/>
-            <circle class="df" cx="96" cy="90" r="2"/><circle class="dq" cx="88" cy="101" r="2"/><circle class="af" cx="104" cy="101" r="2"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://forge.dashhq.org" data-family="forge" data-path="/">Forge</a></h3>
-          <p class="host"><a href="https://forge.dashhq.org" data-family="forge" data-path="/">forge.dashhq.org</a></p>
-          <p class="desc">A git forge with no server: repositories, pull requests, issues and releases on Platform. Clone with <code>git clone dash://owner/repo</code>.</p>
-        </div>
-      </article>
-
-      <article class="card span2" id="yappr">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet test">Testnet preview</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- a thread: each post is a document -->
-            <path class="ld" d="M22 34 V86"/>
-            <circle class="dq" cx="22" cy="26" r="4"/>
-            <rect class="l" x="32" y="16" width="76" height="22" rx="3"/>
-            <path class="lt" d="M40 25 H92 M40 31 H74"/>
-            <path class="lt" d="M22 55 H32"/>
-            <circle class="af" cx="22" cy="55" r="4"/>
-            <rect class="a mvr mv-far" x="32" y="45" width="76" height="22" rx="3"/>
-            <path class="lt" d="M22 84 H32"/>
-            <circle class="dq" cx="22" cy="84" r="4"/>
-            <rect class="l" x="32" y="74" width="76" height="22" rx="3"/>
-            <path class="lt" d="M40 83 H86 M40 89 H62"/>
-            <path class="lt" d="M22 96 V106 M22 106 H40"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://yap.pr" data-family="yappr" data-path="/">Yappr</a></h3>
-          <p class="host"><a href="https://yap.pr" data-family="yappr" data-path="/">yap.pr</a></p>
-          <p class="desc">A social network where posts, follows, messages and small shops are all Platform documents.</p>
-        </div>
-      </article>
-
-      <article class="card span2" id="pollr">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet test">Testnet preview</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <g transform="translate(-7,6)">
-            <path class="l" d="M28 26 V100"/>
-            <circle class="af" cx="20" cy="38" r="3.2"/>
-            <rect class="sh" x="30" y="32" width="76" height="12" rx="6"/>
-            <rect class="a mvr mv-far" x="30" y="32" width="76" height="12" rx="6"/>
-            <rect class="l" x="30" y="52" width="52" height="12" rx="6"/>
-            <rect class="l" x="30" y="72" width="33" height="12" rx="6"/>
-            <rect class="l" x="30" y="92" width="17" height="8" rx="4"/>
-            </g>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://pollr.dashhq.org" data-family="pollr" data-path="/">Pollr</a></h3>
-          <p class="host"><a href="https://pollr.dashhq.org" data-family="pollr" data-path="/">pollr.dashhq.org</a></p>
-          <p class="desc">Create a poll and collect answers. Each vote is a Platform document, and an index on the contract stops anyone voting twice.</p>
-        </div>
-      </article>
-
-    </div>
-  </details></div>
-</section>
-
-<!-- ==========================================================
-     EXPLORE
-     ========================================================== -->
-<section class="section dh-section dh-section--rule" id="explore">
-  <div class="dh-container">
-    <details class="catalogue-fold"><summary class="sechead dh-section__head">
-      <h2 class="dh-section__title">Explore the network</h2><span class="fold-count dh-count">4 projects</span><span class="fold-action"><span class="fold-show">Show</span><span class="fold-hide">Hide</span></span>
-      <p class="dh-section__desc">See what is on Platform and how the masternodes are doing.</p>
-    </summary>
-    <div class="grid">
-
-      <article class="card span3" id="radar">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet">Mainnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <rect class="lt" x="8" y="20" width="104" height="80" rx="2"/>
-            <path class="lt" d="M8 40 H112 M8 60 H112 M8 80 H112"/>
-            <path class="lt" d="M34 20 C26 46 26 74 34 100 M60 20 V100 M86 20 C94 46 94 74 86 100"/>
-            <g class="dq">
-              <circle cx="24" cy="48" r="2"/><circle cx="30" cy="54" r="2"/><circle cx="36" cy="46" r="2"/>
-              <circle cx="33" cy="60" r="2"/><circle cx="27" cy="66" r="2"/><circle cx="41" cy="55" r="2"/>
-              <circle cx="62" cy="42" r="2"/><circle cx="68" cy="46" r="2"/><circle cx="58" cy="50" r="2"/>
-              <circle cx="72" cy="52" r="2"/><circle cx="65" cy="55" r="2"/><circle cx="75" cy="44" r="2"/>
-              <circle cx="56" cy="38" r="2"/><circle cx="88" cy="58" r="2"/><circle cx="94" cy="64" r="2"/>
-              <circle cx="90" cy="72" r="2"/><circle cx="46" cy="76" r="2"/><circle cx="38" cy="86" r="2"/>
-              <circle cx="80" cy="84" r="2"/><circle cx="99" cy="52" r="2"/><circle cx="19" cy="58" r="2"/>
-            </g>
-            <circle class="af" cx="66" cy="50" r="3"/>
-            <circle class="a mvr mv-ping" cx="66" cy="50" r="9"/>
-            <path class="a" d="M66 34 V42 M66 58 V66 M50 50 H58 M74 50 H82" opacity=".55"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://radar.dashhq.org" data-family="radar" data-path="/">Radar</a></h3>
-          <p class="host"><a href="https://radar.dashhq.org" data-family="radar" data-path="/">radar.dashhq.org</a><a href="https://radar.dashhq.org/map" data-family="radar" data-path="/map">map</a><a href="https://radar.dashhq.org/api" data-family="radar" data-path="/api">API</a></p>
-          <p class="desc">The whole Dash network, crawled continuously: which masternodes answer, what they run, where they are hosted, what they earn, and whether they are ready for the next Core release. With a world map and a JSON API.</p>
-        </div>
-      </article>
-
-      <article class="card span3" id="platform-explorer">
-        <p class="tags"><span class="pby">pshenmic</span><span class="pnet">Mainnet and Testnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- search, results, network activity -->
-            <rect class="l" x="10" y="10" width="100" height="14" rx="7"/>
-            <path class="a" d="M20 13.5 V20.5"/>
-            <circle class="lt" cx="100" cy="17" r="3.5"/>
-            <rect class="lt" x="12" y="36" width="8" height="8" rx="1.5"/><path class="lt" d="M26 40 H70 M84 40 H104"/>
-            <g class="mvr mv-slide">
-              <rect class="a" x="8" y="49" width="104" height="14" rx="2"/>
-              <rect class="af" x="12" y="52" width="8" height="8" rx="1.5"/><path class="l" d="M26 56 H64 M84 56 H104"/>
-            </g>
-            <rect class="lt" x="12" y="68" width="8" height="8" rx="1.5"/><path class="lt" d="M26 72 H58 M84 72 H104"/>
-            <path class="lt" d="M10 110 H110"/>
-            <path class="l" d="M10 106 L22 98 L34 102 L46 92 L58 96 L70 86 L82 90 L94 80 L110 84"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://platform-explorer.com">Platform Explorer</a></h3>
-          <p class="host"><a href="https://platform-explorer.com">platform-explorer.com</a><a class="lbl" href="https://testnet.platform-explorer.com">testnet</a></p>
-          <p class="desc">A third-party indexed view of Platform blocks, validators and history, run by pshenmic. For identity and username lookups with proof checks in your browser, start with the family’s Explorer.</p>
-        </div>
-      </article>
-
-      <article class="card span3" id="native-explorer">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet">Mainnet and Testnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- a GroveDB-style tree with one proof path lit -->
-            <path class="lt" d="M60 30 L36 48 M60 30 L84 48"/>
-            <path class="lt" d="M36 54 L22 76 M36 54 L50 76 M84 54 L98 76"/>
-            <path class="a" d="M60 30 L84 48 M84 54 L70 76"/>
-            <rect class="sh" x="52" y="16" width="16" height="16" rx="2"/>
-            <rect class="l" x="52" y="16" width="16" height="16" rx="2"/>
-            <rect class="l" x="28" y="42" width="16" height="16" rx="2"/>
-            <rect class="l" x="76" y="42" width="16" height="16" rx="2"/>
-            <rect class="l" x="14" y="70" width="16" height="16" rx="2"/>
-            <rect class="l" x="42" y="70" width="16" height="16" rx="2"/>
-            <rect class="af mvr mv-down" x="62" y="70" width="16" height="16" rx="2"/>
-            <rect class="l" x="90" y="70" width="16" height="16" rx="2"/>
-            <path class="lt" d="M16 96 H28 M44 96 H56 M90 96 H104"/>
-            <path class="a" d="M64 96 H78"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://explorer.dashhq.org" data-family="explorer" data-path="/">Explorer</a></h3>
-          <p class="host"><a href="https://explorer.dashhq.org" data-family="explorer" data-path="/">explorer.dashhq.org</a></p>
-          <p class="desc">The family’s recommended starting point for identity and username lookups. An explorer with no server behind it. Your browser fetches each value from the network and checks its proof, and you can open any proof to see how it was verified. Choose Mainnet, Testnet or a devnet in the network menu. Links keep the network you are viewing.</p>
-        </div>
-      </article>
-
-      <article class="card span3" id="payments">
-        <p class="tags"><span class="pby">Dash Core Group</span><span class="pnet">Mainnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- the epoch pool split across evonodes by blocks proposed -->
-            <circle class="sh" cx="60" cy="22" r="12"/><circle class="l" cx="60" cy="22" r="12"/>
-            <path class="lt" d="M60 34 L14 60 M60 34 L27 60 M60 34 L40 60 M60 34 L53 60 M60 34 L79 60 M60 34 L92 60 M60 34 L105 60"/>
-            <path class="a" d="M60 34 L66 60"/>
-            <g class="dq"><circle cx="14" cy="62" r="2.4"/><circle cx="27" cy="62" r="2.4"/><circle cx="40" cy="62" r="2.4"/><circle cx="53" cy="62" r="2.4"/><circle cx="79" cy="62" r="2.4"/><circle cx="92" cy="62" r="2.4"/><circle cx="105" cy="62" r="2.4"/></g>
-            <circle class="af" cx="66" cy="62" r="3"/>
-            <rect class="l" x="10.5" y="86" width="7" height="20" rx="1"/>
-            <rect class="l" x="23.5" y="74" width="7" height="32" rx="1"/>
-            <rect class="l" x="36.5" y="92" width="7" height="14" rx="1"/>
-            <rect class="l" x="49.5" y="80" width="7" height="26" rx="1"/>
-            <rect class="af mvr mv-grow" x="62.5" y="70" width="7" height="36" rx="1"/>
-            <rect class="l" x="75.5" y="88" width="7" height="18" rx="1"/>
-            <rect class="l" x="88.5" y="78" width="7" height="28" rx="1"/>
-            <rect class="l" x="101.5" y="84" width="7" height="22" rx="1"/>
-            <path class="lt" d="M6 106 H114"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://dashpay.github.io/evonode-payments/">Evonode payments</a></h3>
-          <p class="host"><a href="https://dashpay.github.io/evonode-payments/">dashpay.github.io</a></p>
-          <p class="desc">What each evonode earned from Platform in the last epoch: blocks proposed, DASH paid, a monthly estimate and when it next proposes.</p>
-        </div>
-      </article>
-
-    </div>
-  </details></div>
-</section>
-
-<!-- ==========================================================
-     GOVERN
-     ========================================================== -->
-<section class="section dh-section dh-section--rule" id="govern">
-  <div class="dh-container">
-    <details class="catalogue-fold"><summary class="sechead dh-section__head">
-      <h2 class="dh-section__title">Govern and vote</h2><span class="fold-count dh-count">3 projects</span><span class="fold-action"><span class="fold-show">Show</span><span class="fold-hide">Hide</span></span>
-      <p class="dh-section__desc">Masternodes decide the treasury, contested names and protocol upgrades.</p>
-    </summary>
-    <div class="grid">
-
-      <article class="card span2" id="govhub">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet">Mainnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- proposals ranked by net votes; the dashed line is where the budget runs out -->
-            <path class="lt" d="M8 102 H112"/>
-            <g class="af">
-              <rect x="12" y="28" width="12" height="74" rx="1.5"/>
-              <rect x="30" y="40" width="12" height="62" rx="1.5"/>
-              <rect x="48" y="52" width="12" height="50" rx="1.5"/>
-              <rect x="66" y="60" width="12" height="42" rx="1.5"/>
-            </g>
-            <g class="df" opacity=".45">
-              <rect x="84" y="76" width="12" height="26" rx="1.5"/>
-              <rect x="102" y="88" width="10" height="14" rx="1.5"/>
-            </g>
-            <path class="ad mvr mv-down" d="M6 68 H114"/>
-            <text class="txs" x="113" y="62" text-anchor="end">budget</text>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://gov.dashhq.org" data-family="gov" data-path="/">Governance</a></h3>
-          <p class="host"><a href="https://gov.dashhq.org" data-family="gov" data-path="/">gov.dashhq.org</a></p>
-          <p class="desc">Dash's treasury: every proposal with its tally, where it sits in the budget and what it still gets paid, plus name contests and comments. Read from Platform and rechecked in your browser against the chain. Masternode owners sign in to vote.</p>
-        </div>
-      </article>
-
-      <article class="card span2" id="name-contests">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet">Mainnet and Testnet</span></p>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://gov.dashhq.org/names" data-family="gov" data-path="/names">Name contests in Governance</a></h3>
-          <p class="desc">Inspect contested usernames and their votes in Governance. EvoVote has retired; old contest bookmarks forward to the same name and network.</p>
-        </div>
-      </article>
-
-      <article class="card span2" id="upgrade">
-        <p class="tags"><span class="pby">Dash Core Group</span><span class="pnet">Mainnet and Testnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- share of evonodes on the new protocol version, against the lock-in threshold -->
-            <path class="l" d="M16 86 A44 44 0 0 1 95.6 60.1"/>
-            <path class="lt" d="M95.6 60.1 A44 44 0 0 1 104 86"/>
-            <path class="ld" d="M79.3 53.3 L86.5 41.2"/>
-            <g class="mvr mv-needle"><path class="a" d="M60 86 L85 63.8"/></g>
-            <circle class="af" cx="60" cy="86" r="3.4"/>
-            <g class="df"><circle cx="16" cy="104" r="2.2"/><circle cx="24" cy="104" r="2.2"/><circle cx="32" cy="104" r="2.2"/><circle cx="40" cy="104" r="2.2"/><circle cx="48" cy="104" r="2.2"/><circle cx="56" cy="104" r="2.2"/><circle cx="64" cy="104" r="2.2"/><circle cx="72" cy="104" r="2.2"/><circle cx="80" cy="104" r="2.2"/></g>
-            <g class="dq"><circle cx="88" cy="104" r="2.2"/><circle cx="96" cy="104" r="2.2"/><circle cx="104" cy="104" r="2.2"/></g>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://dashpay.github.io/platform-upgrade-vote-status/">Upgrade vote status</a></h3>
-          <p class="host"><a href="https://dashpay.github.io/platform-upgrade-vote-status/">dashpay.github.io</a></p>
-          <p class="desc">Whether the next Platform protocol version has locked in, with each evonode's software version and vote, and a countdown to the epoch change.</p>
-        </div>
-      </article>
-
-    </div>
-  </details></div>
-</section>
-
-<!-- ==========================================================
-     BUILD
-     ========================================================== -->
-<section class="section dh-section dh-section--rule" id="build">
-  <div class="dh-container">
-    <details class="catalogue-fold"><summary class="sechead dh-section__head">
-      <h2 class="dh-section__title">Build on Platform</h2><span class="fold-count dh-count">8 projects</span><span class="fold-action"><span class="fold-show">Show</span><span class="fold-hide">Hide</span></span>
-      <p class="dh-section__desc">Docs, SDKs, test funds and the tools around them.</p>
-    </summary>
-    <div class="grid">
-
-      <article class="card span3" id="docs">
-        <p class="tags"><span class="pby">Dash Core Group</span><span class="pnet none">Docs</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- a page of prose with one runnable snippet -->
-            <path class="sh" d="M24 10 H84 L96 22 V110 H24 Z"/>
-            <path class="l" d="M24 10 H84 L96 22 V110 H24 Z"/>
-            <path class="lt" d="M84 10 V22 H96"/>
-            <path class="l" d="M32 24 H66"/>
-            <path class="lt" d="M32 34 H86 M32 40 H80 M32 46 H84"/>
-            <g class="mvr mv-lift">
-              <rect class="a" x="30" y="55" width="58" height="24" rx="2"/>
-              <path class="lt" d="M36 62 H62 M40 67 H78 M40 72 H70"/>
-            </g>
-            <path class="lt" d="M32 88 H86 M32 94 H74 M32 100 H82"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://docs.dash.org/projects/platform/en/stable/">Platform docs</a></h3>
-          <p class="host"><a href="https://docs.dash.org/projects/platform/en/stable/">docs.dash.org</a></p>
-          <p class="desc">The official developer docs. Concepts, protocol reference, the DAPI endpoint list and step-by-step tutorials, from registering an identity to minting a token.</p>
-        </div>
-      </article>
-
-      <article class="card span3" id="evo-sdk">
-        <p class="tags"><span class="pby">Dash Core Group</span><span class="pnet">Mainnet and Testnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- a query form, run, a verified JSON response -->
-            <path class="lt" d="M8 22 H30"/><rect class="l" x="8" y="26" width="42" height="9" rx="1.5"/>
-            <path class="lt" d="M8 44 H26"/><rect class="l" x="8" y="48" width="42" height="9" rx="1.5"/>
-            <rect class="af" x="8" y="66" width="28" height="10" rx="2"/>
-            <g class="mvr mv-slide"><path class="a" d="M40 71 H56 M51.5 66.5 L56 71 L51.5 75.5"/></g>
-            <rect class="sh" x="62" y="14" width="50" height="92" rx="2"/>
-            <rect class="l" x="62" y="14" width="50" height="92" rx="2"/>
-            <text class="tx" x="67" y="26">{</text>
-            <path class="lt" d="M72 34 H100 M72 42 H94 M78 50 H104 M78 58 H98 M72 66 H96"/>
-            <text class="tx" x="67" y="80">}</text>
-            <path class="a" d="M92 92 L97 97 L106 86"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://evo-sdk.dash.org/">Evo SDK</a></h3>
-          <p class="host"><a href="https://evo-sdk.dash.org/">evo-sdk.dash.org</a><a class="lbl" href="https://github.com/dashpay/platform/tree/HEAD/packages/js-evo-sdk">source</a></p>
-          <p class="desc">The JavaScript SDK for Platform, with proofs checked on every query. The site has a playground where you can run any SDK method in the browser without installing anything.</p>
-        </div>
-      </article>
-
-      <article class="card span2" id="faucet">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet">Testnet and Mainnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- reservoir, aperture, a drop; and an invitation ticket -->
-            <path class="sh" d="M12 14 H100 L74 44 H38 Z"/>
-            <path class="l" d="M12 14 H100 L74 44 H38 Z"/>
-            <path class="l" d="M50 44 V58 H62 V44"/>
-            <circle class="af mvr mv-drop2" cx="56" cy="68" r="4.4"/>
-            <circle class="dq mvr mv-drop" cx="56" cy="80" r="3.2"/>
-            <circle class="dq" cx="56" cy="90" r="2.2"/>
-            <rect class="l" x="20" y="96" width="72" height="16" rx="2"/>
-            <path class="lt" d="M26 105 H86"/>
-            <path class="lt" d="M100 44 V62"/>
-            <rect class="a" x="90" y="62" width="22" height="13" rx="1.5"/>
-            <path class="ad" d="M97 62 V75"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://faucet.dashhq.org" data-family="faucet" data-path="/">Faucet</a></h3>
-          <p class="host"><a href="https://faucet.dashhq.org" data-family="faucet" data-path="/">faucet.dashhq.org</a><a href="https://faucet.dashhq.org/keys" data-family="faucet" data-path="/keys">API keys</a></p>
-          <p class="desc">Free testnet DASH for development, plus mainnet invitations that the DashPay wallet turns into an identity and a username. Create an API key and your scripts and CI can ask for it without a captcha.</p>
-        </div>
-      </article>
-
-      <article class="card span2" id="bridge">
-        <p class="tags"><span class="pby">pasta, in the dashpay org</span><span class="pnet">Mainnet and Testnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- Core blocks on the left, Platform lattice on the right, one span -->
-            <rect class="l" x="8" y="52" width="26" height="9" rx="1"/>
-            <rect class="l" x="8" y="64" width="26" height="9" rx="1"/>
-            <rect class="l" x="8" y="76" width="26" height="9" rx="1"/>
-            <rect class="l" x="8" y="88" width="26" height="9" rx="1"/>
-            <rect class="l" x="86" y="44" width="26" height="53" rx="1"/>
-            <g class="dq">
-              <circle cx="93" cy="52" r="1.8"/><circle cx="105" cy="52" r="1.8"/>
-              <circle cx="93" cy="64" r="1.8"/><circle cx="105" cy="64" r="1.8"/>
-              <circle cx="93" cy="76" r="1.8"/><circle cx="105" cy="76" r="1.8"/>
-              <circle cx="93" cy="88" r="1.8"/><circle cx="105" cy="88" r="1.8"/>
-            </g>
-            <path class="l" d="M34 44 H86"/>
-            <path class="lt" d="M46 44 V98 M74 44 V98"/>
-            <path class="lt" d="M4 100 H116"/>
-            <circle class="af mvr mv-far" cx="52" cy="36" r="5"/>
-            <path class="a" d="M62 36 H72 M68 32 L72 36 L68 40"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet" data-family="bridge" data-path="/?mode=create&amp;journey=start" data-network="testnet">Bridge</a></h3>
-          <p class="host"><a href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet" data-family="bridge" data-path="/?mode=create&amp;journey=start" data-network="testnet">bridge.dashhq.org</a></p>
-          <p class="desc">Move DASH from Core into Platform without a server in between. Create or top up an identity, register a username or publish a contract.</p>
-        </div>
-      </article>
-
-      <article class="card span2" id="tutorials">
-        <p class="tags"><span class="pby">Dash Core Group</span><span class="pnet test">Testnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- six small example apps -->
-            <rect class="l" x="10" y="22" width="30" height="30" rx="2"/><rect class="lt" x="17" y="29" width="16" height="16" rx="1"/>
-            <rect class="l" x="45" y="22" width="30" height="30" rx="2"/><path class="lt" d="M51 31 H69 M51 37 H65 M51 43 H67"/>
-            <g class="mvr mv-lift">
-              <rect class="sh" x="80" y="22" width="30" height="30" rx="2"/>
-              <rect class="a" x="80" y="22" width="30" height="30" rx="2"/>
-              <text class="tx txa" x="95" y="40" text-anchor="middle">#</text>
-            </g>
-            <rect class="l" x="10" y="62" width="30" height="30" rx="2"/><path class="lt" d="M17 85 V77 M23 85 V70 M29 85 V74 M35 85 V80"/>
-            <rect class="l" x="45" y="62" width="30" height="30" rx="2"/><circle class="lt" cx="56" cy="77" r="5"/><circle class="lt" cx="64" cy="77" r="5"/>
-            <rect class="l" x="80" y="62" width="30" height="30" rx="2"/><circle class="dq" cx="89" cy="72" r="2.5"/><circle class="dq" cx="101" cy="72" r="2.5"/><circle class="df" cx="95" cy="83" r="2.5"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://dashpay.github.io/platform-tutorials/">Tutorial apps</a></h3>
-          <p class="host"><a href="https://dashpay.github.io/platform-tutorials/">dashpay.github.io</a></p>
-          <p class="desc">Six small working apps built with the Evo SDK, such as notes, NFT cards, file timestamps and a token run by a group of signers. Read the code, then change it.</p>
-        </div>
-      </article>
-
-      <article class="card span2" id="dapi">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet">Mainnet and Testnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <rect class="l" x="6" y="48" width="22" height="26" rx="2"/>
-            <path class="lt" d="M11 56 H23 M11 62 H20"/>
-            <rect class="sh" x="46" y="16" width="28" height="90" rx="3"/>
-            <rect class="l" x="46" y="16" width="28" height="90" rx="3"/>
-            <path class="a mvr mv-slide" d="M28 61 H44 M39 57 L44 61 L39 65"/>
-            <path class="lt" d="M74 26 H98"/><circle class="dq" cx="102" cy="26" r="2.4"/>
-            <path class="lt" d="M74 42 H98"/><circle class="dq" cx="102" cy="42" r="2.4"/>
-            <path class="a"  d="M74 58 H98"/><circle class="af" cx="102" cy="58" r="3"/>
-            <path class="lt" d="M74 74 H98"/><circle class="dq" cx="102" cy="74" r="2.4"/>
-            <path class="lt" d="M74 90 H98"/><circle class="dq" cx="102" cy="90" r="2.4"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://dapi.dashhq.org" data-family="dapi" data-path="/">DAPI console</a></h3>
-          <p class="host"><a href="https://dapi.dashhq.org" data-family="dapi" data-path="/">dapi.dashhq.org</a></p>
-          <p class="desc">Moving into Explorer. Query the API that every evonode serves and read the raw responses: chain status, blocks, identities, contracts and a live block stream.</p>
-        </div>
-      </article>
-
-      <article class="card span2" id="fees">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet none">Calculator</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <path class="lt" d="M20 104 H108 M20 104 V16"/>
-            <path class="lt" d="M16 88 H20 M16 70 H20 M16 52 H20 M16 34 H20"/>
-            <path class="lt" d="M38 104 V108 M56 104 V108 M74 104 V108 M92 104 V108"/>
-            <path class="l" d="M20 96 H38 V80 H56 V62 H74 V40 H92 V24 H108"/>
-            <path class="ad" d="M74 104 V51 M74 51 H20"/>
-            <circle class="af mvr mv-step" cx="74" cy="51" r="4"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://explorer.dashhq.org/tools/fees/" data-family="explorer" data-path="/tools/fees/">Fee estimator</a></h3>
-          <p class="host"><a href="https://explorer.dashhq.org/tools/fees/" data-family="explorer" data-path="/tools/fees/">In Explorer</a></p>
-          <p class="desc">In Explorer. Paste a data contract and see what registering it will cost, broken down by document types, indexes and tokens.</p>
-        </div>
-      </article>
-
-      <article class="card span2" id="dashmate">
-        <p class="tags"><span class="pby">Dash Core Group</span><span class="pnet none">Command line</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- a terminal showing node status, service by service -->
-            <rect class="sh" x="6" y="14" width="108" height="92" rx="3"/>
-            <rect class="l" x="6" y="14" width="108" height="92" rx="3"/>
-            <path class="lt" d="M6 25 H114"/>
-            <text class="tx" x="12" y="37">$ dashmate status</text>
-            <path class="lt" d="M14 50 H40 M54 50 H84"/><circle class="df" cx="102" cy="50" r="2.4"/>
-            <path class="lt" d="M14 61 H36 M54 61 H78"/><circle class="df" cx="102" cy="61" r="2.4"/>
-            <path class="lt" d="M14 72 H44 M54 72 H88"/><circle class="df" cx="102" cy="72" r="2.4"/>
-            <path class="lt" d="M14 83 H32 M54 83 H74"/><circle class="df" cx="102" cy="83" r="2.4"/>
-            <rect class="af mvr mv-slide" x="12" y="92" width="5" height="8"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://docs.dash.org/en/stable/docs/user/network/dashmate/index.html">dashmate</a></h3>
-          <p class="host"><a href="https://docs.dash.org/en/stable/docs/user/network/dashmate/index.html">docs.dash.org</a></p>
-          <p class="desc">The official way to run an evonode, or a local network for development. It sets up Dash Core and Platform in Docker and reports the health of each service.</p>
-        </div>
-      </article>
-
-    </div>
-  </details></div>
-</section>
-
-<!-- ==========================================================
-     LEARN
-     ========================================================== -->
-<section class="section dh-section dh-section--rule" id="learn">
-  <div class="dh-container">
-    <details class="catalogue-fold"><summary class="sechead dh-section__head">
-      <h2 class="dh-section__title">Learn how it works</h2><span class="fold-count dh-count">3 projects</span><span class="fold-action"><span class="fold-show">Show</span><span class="fold-hide">Hide</span></span>
-      <p class="dh-section__desc">Start with what Platform does, then explore its machinery.</p>
-    </summary>
-    <div class="platform-intro">
-      <h3>What is Dash Platform?</h3>
-      <p>Dash Core moves DASH and secures payments. Platform adds shared application data: an identity gives an app a public account, a username makes that account easier to find, and documents hold things like a post or a poll. A data contract sets the rules for those documents.</p>
-      <p>Evonodes are masternodes that run Platform. They agree on updates and provide proofs so your browser can check an answer against the network’s signed state. A valid proof confirms the stored data; it does not establish that a post is true or an app is safe.</p>
-      <p><a href="https://explorer.dashhq.org/dpns/?name=dashpay.dash&amp;network=mainnet" data-family="explorer" data-path="/dpns/?name=dashpay.dash" data-network="mainnet">Inspect dashpay.dash on Mainnet →</a> · <a href="https://radar.dashhq.org/masternodes?type=Evo" data-family="radar" data-path="/masternodes?type=Evo">Meet the evonodes in Radar →</a></p>
-      <p>The registered name above is a live Mainnet example. <a href="https://pollr.dashhq.org/" data-family="pollr" data-path="/" data-network="testnet">Pollr’s Testnet archive</a> is a separate practice app; activity may be sparse. The diagrams below explain how clients check Platform’s answers.</p>
-    </div>
-    <div class="grid">
-
-      <article class="card span2" id="arch">
-        <p class="tags"><span class="pby">pasta</span><span class="pnet none">Diagram</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- the evonode executes, the client verifies, DAPI in between -->
-            <text class="txs" x="10" y="12">executes</text>
-            <text class="txs" x="110" y="12" text-anchor="end">verifies</text>
-            <rect class="l" x="10" y="18" width="34" height="12" rx="1.5"/>
-            <rect class="l" x="10" y="35" width="34" height="12" rx="1.5"/>
-            <rect class="l" x="10" y="52" width="34" height="12" rx="1.5"/>
-            <rect class="l" x="10" y="69" width="34" height="12" rx="1.5"/>
-            <rect class="l" x="10" y="86" width="34" height="12" rx="1.5"/>
-            <path class="lt" d="M27 30 V35 M27 47 V52 M27 64 V69 M27 81 V86"/>
-            <rect class="sh" x="51" y="44" width="18" height="30" rx="2"/>
-            <rect class="a" x="51" y="44" width="18" height="30" rx="2"/>
-            <rect class="l" x="76" y="18" width="34" height="12" rx="1.5"/>
-            <rect class="l" x="76" y="35" width="34" height="12" rx="1.5"/>
-            <rect class="l" x="76" y="52" width="34" height="12" rx="1.5"/>
-            <rect class="l" x="76" y="69" width="34" height="12" rx="1.5"/>
-            <rect class="l" x="76" y="86" width="34" height="12" rx="1.5"/>
-            <path class="lt" d="M93 30 V35 M93 47 V52 M93 64 V69 M93 81 V86"/>
-            <g class="mvr mv-slide"><path class="a" d="M44 59 H50 M70 59 H75"/></g>
-            <rect class="lt" x="10" y="106" width="100" height="7" rx="1"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://arch.dashhq.org" data-family="arch" data-path="/">Architecture</a></h3>
-          <p class="host"><a href="https://arch.dashhq.org" data-family="arch" data-path="/">arch.dashhq.org</a></p>
-          <p class="desc">How Platform's parts fit together: what runs on an evonode, what the client checks, and DAPI in between. Select any part to see its role and source.</p>
-        </div>
-      </article>
-
-      <article class="card span2" id="grovedb">
-        <p class="tags"><span class="pby">Dash Core Group</span><span class="pnet none">Diagram</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- root keys; zoom into one subtree; scrub protocol versions -->
-            <rect class="l" x="8" y="10" width="104" height="16" rx="1.5"/>
-            <path class="lt" d="M25.3 10 V26 M42.7 10 V26 M77.3 10 V26 M94.7 10 V26"/>
-            <rect class="a" x="60" y="10" width="17.3" height="16"/>
-            <path class="ad" d="M60 26 L32 42 M77.3 26 L108 42"/>
-            <rect class="l" x="32" y="42" width="76" height="50" rx="2"/>
-            <path class="lt" d="M70 55 L52 70 M70 55 L88 70 M52 74 L44 84 M52 74 L60 84 M88 74 L80 84 M88 74 L96 84"/>
-            <circle class="df" cx="70" cy="52" r="3.4"/>
-            <circle class="df" cx="52" cy="72" r="3"/><circle class="df" cx="88" cy="72" r="3"/>
-            <g class="dq"><circle cx="44" cy="86" r="2.4"/><circle cx="60" cy="86" r="2.4"/><circle cx="80" cy="86" r="2.4"/><circle cx="96" cy="86" r="2.4"/></g>
-            <path class="lt" d="M14 106 H106 M14 102 V110 M37 103 V109 M60 103 V109 M83 103 V109 M106 102 V110"/>
-            <circle class="af mvr mv-slide" cx="74" cy="106" r="4"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://dashpay.github.io/grovedb-structure-viewer/">GroveDB structure viewer</a></h3>
-          <p class="host"><a href="https://dashpay.github.io/grovedb-structure-viewer/">dashpay.github.io</a></p>
-          <p class="desc">The layout of Platform's database, one tree at a time. Select a tree to zoom in, and move the slider to see how the layout changed between protocol versions.</p>
-        </div>
-      </article>
-
-      <article class="card span2" id="contract-visualizer">
-        <p class="tags"><span class="pby">Dash Core Group</span><span class="pnet">Mainnet and Testnet</span></p>
-          <div class="plate">
-          <svg class="mk" viewBox="0 0 120 120" aria-hidden="true">
-            <!-- a contract drawn as two related tables -->
-            <g class="mvr mv-lift">
-              <rect class="sh" x="8" y="18" width="46" height="62" rx="2"/>
-              <rect class="l" x="8" y="18" width="46" height="62" rx="2"/>
-              <rect class="af" x="8" y="18" width="46" height="11" rx="2"/>
-              <path class="lt" d="M14 38 H46 M14 46 H40 M14 54 H44 M14 62 H36 M14 70 H42"/>
-            </g>
-            <rect class="l" x="66" y="44" width="46" height="54" rx="2"/>
-            <path class="l" d="M66 55 H112"/>
-            <path class="lt" d="M72 64 H104 M72 72 H96 M72 80 H100 M72 88 H92"/>
-            <path class="ld" d="M54 46 H60 V70 H66"/>
-            <path class="l" d="M62 66 L66 70 L62 74"/>
-          </svg>
-        </div>
-        <div class="meta">
-          <h3 class="cname dh-card__title"><a href="https://dashpay.github.io/contract-visualizer/">Contract visualizer</a></h3>
-          <p class="host"><a href="https://dashpay.github.io/contract-visualizer/">dashpay.github.io</a></p>
-          <p class="desc">Paste a contract ID and see its document types drawn as tables, with fields, indexes and likely relationships. Export the diagram as PNG or SVG.</p>
-        </div>
-      </article>
-
-    </div>
-  </details></div>
-</section>
-
-<!-- ==========================================================
-     DIRECTORY: no plates
-     ========================================================== -->
-<section class="section dh-section dh-section--rule" id="directory"><div class="dh-container"><h2 class="dh-section__title">More tools and resources</h2><p><a class="dh-btn" href="/directory/">Open the full directory →</a></p></div></section><template id="directory-index"><section class="section dh-section dh-section--rule" id="directory">
-  <div class="dh-container">
-    <div class="sechead dh-section__head">
-      <h2 class="dh-section__title">Directory</h2>
-      <p class="dh-section__desc">Libraries, references, services and smaller tools.</p>
-    </div>
-
-    <details class="directory-fold" open><summary>Browse the full directory of wallets, developer tools and resources</summary>
-    <div class="dir"><details class="dgroup" open><summary>Learn</summary><ul><li data-search="identity sign in login key recovery phrase passkey wallet"><a href="/identity/">Your Dash identity</a><p class="dd">What an identity is, what each app asks for when you sign in, and where your keys stay.</p></li></ul></details>
-      <details class="dgroup" open><summary>Wallets and apps <span class="dh-count">5</span></summary>
-        <ul>
-          <li><a href="https://github.com/pshenmic/dash-desktop">Dash Desktop</a><span class="dby">pshenmic</span><p class="dd">Desktop wallet that shows Core balances next to your Platform identities and names. Beta, read-only for now.</p></li>
-          <li><a href="https://evonext.app">EvoNext</a><span class="dby">Sansbank DAO</span><p class="dd">A social app and a studio for small apps published to Platform. The web app runs on testnet.</p></li>
-          <li><a href="https://evotools.dev">evotools</a><span class="dby">247bas</span><p class="dd">Browser tools for getting started: key generation, identities, names, tokens and a contested-name tracker.</p></li>
-          <li><a href="https://scolvr.github.io/Dash-Data-Contract-Web-Wizard/">Token Wizard</a><span class="dby">Scolvr</span><p class="dd">Step-by-step builder for a token contract: supply, permissions and distribution rules.</p></li>
-          <li><a href="https://dash.vote">Dash Vote</a><span class="dby">MNOwatch</span><p class="dd">Which masternodes voted for each side of every contested username.</p></li>
-        </ul>
-      </details>
-
-      <details class="dgroup" open><summary>Libraries <span class="dh-count">11</span></summary>
-        <ul>
-          <li><a href="https://docs.dash.org/projects/platform/en/stable/docs/sdk-rs/overview.html">Rust SDK</a><span class="dby">Dash Core Group</span><p class="dd">Typed, proof-checked access to Platform from Rust. The base for the mobile and WASM SDKs.</p></li>
-          <li><a href="https://github.com/dashpay/platform/tree/HEAD/packages/swift-sdk">Swift SDK</a> and <a href="https://github.com/dashpay/platform/tree/HEAD/packages/kotlin-sdk">Kotlin SDK</a><span class="dby">Dash Core Group</span><p class="dd">Native mobile SDKs, each with an example app. Build from source.</p></li>
-          <li><a href="https://github.com/dashpay/rust-dashcore">rust-dashcore</a><span class="dby">Dash Core Group</span><p class="dd">Core primitives, an SPV client and an HD wallet in Rust, used by the Platform SDKs.</p></li>
-          <li><a href="https://github.com/dashpay/platform/tree/HEAD/packages/wasm-sdk">WASM SDK</a><span class="dby">Dash Core Group</span><p class="dd">The layer under the Evo SDK, for raw queries and state transitions.</p></li>
-          <li><a href="https://github.com/pshenmic/dash-platform-sdk">dash-platform-sdk</a><span class="dby">pshenmic</span><p class="dd">A lightweight JavaScript SDK, used by Platform Explorer and the extension.</p></li>
-          <li><a href="https://github.com/247bas/evo-cookbook">evo-cookbook</a><span class="dby">247bas</span><p class="dd">Tested Evo SDK recipes, and <code>npm create evo-app</code> to start a project.</p></li>
-          <li><a href="https://github.com/hilawe/dash-rawkey-signer">dash-rawkey-signer</a><span class="dby">hilawe</span><p class="dd">Sign state transitions from a single private key, for servers and recovery.</p></li>
-          <li><a href="https://github.com/PastaPastaPasta/platform-auth">platform-auth</a><span class="dby">pasta</span><p class="dd">Login for Platform web apps: identity, password or passkey unlock, and session restore. Source only.</p></li>
-          <li><a href="https://github.com/PastaPastaPasta/dash-platform-workers">dash-platform-workers</a><span class="dby">pasta</span><p class="dd">Proof-verified Platform reads and writes from a Cloudflare Worker, sized to fit the free plan.</p></li>
-          <li><a href="https://github.com/PastaPastaPasta/grovedb-proof-parser">grovedb-proof-parser</a><span class="dby">pasta</span><p class="dd">Turn raw GroveDB proof bytes into a readable tree, in the browser.</p></li>
-          <li><a href="https://github.com/lklimek/claudash">claudash</a><span class="dby">lklimek</span><p class="dd">A Claude Code plugin that teaches the assistant Platform's contracts, SDKs and API.</p></li>
-        </ul>
-      </details>
-
-      <details class="dgroup" open><summary>Specs and reference <span class="dh-count">8</span></summary>
-        <ul>
-          <li><a href="https://github.com/dashpay/platform">Platform source</a><span class="dby">Dash Core Group</span><p class="dd">One repository for Drive, DAPI, every SDK, dashmate and the system contracts.</p></li>
-          <li><a href="https://docs.dash.org/projects/core/en/stable/docs/dips/README.html">Dash Improvement Proposals</a><span class="dby">Dash Core Group</span><p class="dd">The protocol specs, including identities, usernames, DashPay and evonodes.</p></li>
-          <li><a href="https://docs.dash.org/projects/platform/en/stable/docs/reference/dapi-endpoints.html">DAPI endpoint reference</a><span class="dby">Dash Core Group</span><p class="dd">Every request and response the evonode API accepts.</p></li>
-          <li><a href="https://dashpay.github.io/platform/">Platform Book</a><span class="dby">Dash Core Group</span><p class="dd">How the Platform codebase is organized, for contributors.</p></li>
-          <li><a href="https://dashpay.github.io/grovedb/">GroveDB Book</a><span class="dby">Dash Core Group</span><p class="dd">How Platform's storage proves a whole query result, with worked diagrams.</p></li>
-          <li><a href="https://dashpay.github.io/grovedb-proof-visualizer-widget/">GroveDB Proof Visualizer</a><span class="dby">Dash Core Group</span><p class="dd">Paste a proof and see it drawn as a tree.</p></li>
-          <li><a href="https://github.com/dashpay/tenderdash">Tenderdash</a><span class="dby">Dash Core Group</span><p class="dd">The consensus engine that orders Platform blocks.</p></li>
-          <li><a href="https://github.com/dashpay/platform/tree/HEAD/packages">System contracts</a><span class="dby">Dash Core Group</span><p class="dd">Built-in contracts such as DPNS, DashPay, withdrawals and token history.</p></li>
-        </ul>
-      </details>
-
-      <details class="dgroup" open><summary>Network services <span class="dh-count">7</span></summary>
-        <ul>
-          <li><a href="https://faucet.testnet.networks.dash.org/">Testnet faucet</a><span class="dby">Dash Core Group</span><p class="dd">Testnet DASH, or a testnet identity in one click.</p></li>
-          <li><a href="https://insight.testnet.networks.dash.org/insight/">Testnet Insight</a><span class="dby">Dash Core Group</span><p class="dd">Core-chain explorer for testnet. Check the asset lock behind an identity.</p></li>
-          <li><a href="https://status.testnet.networks.dash.org/">Testnet status</a><span class="dby">Dash Core Group</span><p class="dd">Health of Dash Core Group's own testnet masternodes.</p></li>
-          <li><a href="https://quorums.mainnet.networks.dash.org/masternodes">Evonode list</a><span class="dby">Dash Core Group</span><p class="dd">Current evonodes and their Platform ports, as JSON.</p></li>
-          <li><a href="https://dashscan.io">Dashscan</a><span class="dby">pshenmic</span><p class="dd">Explorer for the Core chain: blocks, masternodes and governance.</p></li>
-          <li><a href="https://github.com/pshenmic/dash-platform-mass-send">Mass Send</a><span class="dby">pshenmic</span><p class="dd">Sweep credits from many identities at once, for operators.</p></li>
-          <li><a href="https://github.com/sansbankdao/btcpay-dash-evolution">BTCPay plugin</a><span class="dby">Sansbank DAO</span><p class="dd">Accept Platform and shielded payments in a BTCPay Server store.</p></li>
-        </ul>
-      </details>
-
-      <details class="dgroup" open><summary>Dash Core development <span class="dh-count">7</span></summary>
-        <ul>
-          <li><a href="https://github.com/dashpay/dash-dev-branches/releases">Nightly and PR builds</a><span class="dby">pasta</span><p class="dd">Signed Guix builds of Dash Core's develop branch and of labelled pull requests.</p></li>
-          <li><a href="https://flathub.org/apps/org.dash.dash-core">Dash Core on Flathub</a><span class="dby">pasta</span><p class="dd">Install Dash Core on Linux with <code>flatpak install flathub org.dash.dash-core</code>.</p></li>
-          <li><a href="https://thepastaclaw.github.io/backport-delta/">backport-delta</a><span class="dby">pasta</span><p class="dd">Reports where a Dash backport differs from the Bitcoin commit it came from.</p></li>
-          <li><a href="https://github.com/PastaPastaPasta/dash-backport-review-skill">Backport review checker</a><span class="dby">pasta</span><p class="dd">Checks, hunk by hunk, that a backport PR really contains its upstream changes.</p></li>
-          <li><a href="https://github.com/PastaPastaPasta/dash-platform-e2e">dash-platform-e2e</a><span class="dby">pasta</span><p class="dd">Registers a real testnet identity and username through Dash Core's C++ Platform client.</p></li>
-          <li><a href="https://github.com/PastaPastaPasta/dash-platform-test-vectors">dash-platform-test-vectors</a><span class="dby">pasta</span><p class="dd">Fixtures that keep Dash Core's C++ Platform code in step with the Rust implementation.</p></li>
-          <li><a href="https://thepastaclaw.github.io/dash-subsidy-calculator/">Block Subsidy Calculator</a><span class="dby">pasta</span><p class="dd">The Core block reward at any height, and how it splits between miners, masternodes and treasury.</p></li>
-        </ul>
-      </details>
-
-      <details class="dgroup" open><summary>Plans and talks <span class="dh-count">3</span></summary>
-        <ul>
-          <li><a href="https://pastapastapasta.github.io/dashvm-plan/">DashVM plan board</a><span class="dby">pasta</span><p class="dd">Live progress of the smart-contract work in the Platform repo.</p></li>
-          <li><a href="https://pastapastapasta.github.io/dash-v24-presentation/">Dash Core v24</a><span class="dby">pasta</span><p class="dd">Slides from DashCon Amsterdam, September 2026.</p></li>
-          <li><a href="https://pastapastapasta.github.io/yappr-presentation/">Yappr and Dash Platform</a><span class="dby">pasta</span><p class="dd">DashCon talk slides, opening with the live app.</p></li>
-        </ul>
-      </details>
-    </div>
-    </details>
-  </div>
-</section></template>
-
-
-
-</main>
-
-<dashhq-footer product="home" source="https://github.com/PastaPastaPasta/dashhq">
-<div class="footer-notes"><p>dashhq.org is kept by pasta. It hosts only pasta's projects; everything else links to the people who run it. Something missing or broken? <a href="https://github.com/PastaPastaPasta/dashhq/issues">Open an issue ↗</a>.</p>
-<p><a href="/directory/">Full directory</a></p>
-<p>Directory links last checked <time datetime="2026-11-03">3 Nov 2026</time>.</p>
-<p>No analytics. One cookie, <code>dh_theme</code>, only if you choose a theme.</p></div>
-</dashhq-footer>
-
-
-</body>
+<template id="directory-index"><div class="dir"><section class="dgroup"><h3>Wallets and apps <span class="group-count">10</span></h3><ul><li id="dashpay" data-search=""><a href="https://play.google.com/store/apps/details?id=hashengineering.darkcoin.wallet">DashPay wallet <span aria-hidden="true">↗</span></a><p class="dd">Mobile wallet with usernames and contacts.</p><p class="dby">Dash Core Group · Google Play</p></li>
+<li id="evotool" data-search=""><a href="https://github.com/dashpay/dash-evo-tool/releases">Dash Evo Tool <span aria-hidden="true">↗</span></a><p class="dd">Desktop app for identities, names, tokens and contracts.</p><p class="dby">Dash Core Group · Releases</p></li>
+<li id="extension" data-search=""><a href="https://chromewebstore.google.com/detail/dash-platform-extension/odmphbcnlldggfhcpdjgnlhbehoicdnf">Platform Extension <span aria-hidden="true">↗</span></a><p class="dd">Browser wallet that approves what a site asks you to sign.</p><p class="dby">pshenmic · Chrome Web Store</p></li>
+<li id="yappr" data-search=""><a href="https://yap.pr">Yappr <span aria-hidden="true">↗</span></a><p class="dd">A social network with posts, follows and messages on Platform.</p><p class="dby">yap.pr · Testnet preview</p></li>
+<li id="forge" data-search=""><a href="https://forge.dashhq.org">Forge <span aria-hidden="true">↗</span></a><p class="dd">Git repositories, issues and pull requests on Platform.</p><p class="dby">forge.dashhq.org · Testnet preview</p></li>
+<li id="resource-1-0" data-search=""><a href="https://github.com/pshenmic/dash-desktop">Dash Desktop <span aria-hidden="true">↗</span></a><p class="dd">Desktop wallet that shows Core balances next to your Platform identities and names. Beta, read-only for now.</p><p class="dby">pshenmic</p></li>
+<li id="resource-1-1" data-search=""><a href="https://evonext.app">EvoNext <span aria-hidden="true">↗</span></a><p class="dd">A social app and a studio for small apps published to Platform. The web app runs on testnet.</p><p class="dby">Sansbank DAO</p></li>
+<li id="resource-1-2" data-search=""><a href="https://evotools.dev">evotools <span aria-hidden="true">↗</span></a><p class="dd">Browser tools for getting started: key generation, identities, names, tokens and a contested-name tracker.</p><p class="dby">247bas</p></li>
+<li id="resource-1-3" data-search=""><a href="https://scolvr.github.io/Dash-Data-Contract-Web-Wizard/">Token Wizard <span aria-hidden="true">↗</span></a><p class="dd">Step-by-step builder for a token contract: supply, permissions and distribution rules.</p><p class="dby">Scolvr</p></li>
+<li id="resource-1-4" data-search=""><a href="https://dash.vote">Dash Vote <span aria-hidden="true">↗</span></a><p class="dd">Which masternodes voted for each side of every contested username.</p><p class="dby">MNOwatch</p></li>
+</ul></section>
+<section class="dgroup"><h3>Explore the network <span class="group-count">4</span></h3><ul><li id="radar" data-search=""><a href="https://radar.dashhq.org" data-family="radar" data-path="/">Radar</a><p class="dd">Network health, masternodes and evonodes.</p></li>
+<li id="platform-explorer" data-search=""><a href="https://platform-explorer.com">Platform Explorer <span aria-hidden="true">↗</span></a><p class="dd">A third-party indexed view of Platform blocks, validators and history, run by pshenmic. For identity and username lookups with proof checks in your browser, start with the family’s Explorer.</p><p class="dby">pshenmic</p></li>
+<li id="native-explorer" data-search=""><a href="https://explorer.dashhq.org" data-family="explorer" data-path="/">Explorer</a><p class="dd">Identities, names, contracts and fees, checked in your browser.</p></li>
+<li id="payments" data-search=""><a href="https://dashpay.github.io/evonode-payments/">Evonode payments <span aria-hidden="true">↗</span></a><p class="dd">What each evonode earned from Platform in the last epoch: blocks proposed, DASH paid, a monthly estimate and when it next proposes.</p><p class="dby">Dash Core Group</p></li>
+</ul></section>
+<section class="dgroup"><h3>Govern and vote <span class="group-count">3</span></h3><ul><li id="govhub" data-search=""><a href="https://gov.dashhq.org" data-family="gov" data-path="/">Governance</a><p class="dd">Proposals, polls and name contests.</p></li>
+<li id="name-contests" data-search=""><a href="https://gov.dashhq.org/names" data-family="gov" data-path="/names">Name contests in Governance</a><p class="dd">Inspect contested usernames and their votes in Governance. EvoVote has retired; old contest bookmarks forward to the same name and network.</p></li>
+<li id="upgrade" data-search=""><a href="https://dashpay.github.io/platform-upgrade-vote-status/">Upgrade vote status <span aria-hidden="true">↗</span></a><p class="dd">Whether the next Platform protocol version has locked in, with each evonode&#x27;s software version and vote, and a countdown to the epoch change.</p><p class="dby">Dash Core Group</p></li>
+</ul></section>
+<section class="dgroup"><h3>Build on Platform <span class="group-count">8</span></h3><ul><li id="docs" data-search=""><a href="https://docs.dash.org/projects/platform/en/stable/">Platform docs <span aria-hidden="true">↗</span></a><p class="dd">Concepts, tutorials and API reference.</p><p class="dby">Dash Core Group</p></li>
+<li id="evo-sdk" data-search=""><a href="https://evo-sdk.dash.org/">Evo SDK <span aria-hidden="true">↗</span></a><p class="dd">The JavaScript SDK with proof checks on every query.</p><p class="dby">Dash Core Group</p></li>
+<li id="faucet" data-search=""><a href="https://faucet.dashhq.org" data-family="faucet" data-path="/">Faucet</a><p class="dd">Free testnet DASH for development, plus mainnet invitations that the DashPay wallet turns into an identity and a username. Create an API key and your scripts and CI can ask for it without a captcha.</p></li>
+<li id="bridge" data-search=""><a href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet" data-family="bridge" data-path="/?mode=create&amp;journey=start" data-network="testnet">Start on Testnet</a><p class="dd">Get an address, test DASH, an identity and a username.</p></li>
+<li id="tutorials" data-search=""><a href="https://dashpay.github.io/platform-tutorials/">Tutorial apps <span aria-hidden="true">↗</span></a><p class="dd">Six small working apps built with the Evo SDK, such as notes, NFT cards, file timestamps and a token run by a group of signers. Read the code, then change it.</p><p class="dby">Dash Core Group</p></li>
+<li id="dapi" data-search=""><a href="https://dapi.dashhq.org" data-family="dapi" data-path="/">DAPI console</a><p class="dd">Raw node responses, chain status and live blocks.</p></li>
+<li id="fees" data-search=""><a href="https://explorer.dashhq.org/tools/fees/" data-family="explorer" data-path="/tools/fees/">Fee estimator</a><p class="dd">In Explorer. Paste a data contract and see what registering it will cost, broken down by document types, indexes and tokens.</p></li>
+<li id="dashmate" data-search=""><a href="https://docs.dash.org/en/stable/docs/user/network/dashmate/index.html">dashmate <span aria-hidden="true">↗</span></a><p class="dd">Run a masternode, an evonode or a local network.</p><p class="dby">Dash Core Group</p></li>
+</ul></section>
+<section class="dgroup"><h3>Learn how it works <span class="group-count">4</span></h3><ul><li id="arch" data-search=""><a href="https://arch.dashhq.org" data-family="arch" data-path="/">Architecture</a><p class="dd">How Platform works, from the app to the network.</p></li>
+<li id="grovedb" data-search=""><a href="https://dashpay.github.io/grovedb-structure-viewer/">GroveDB structure viewer <span aria-hidden="true">↗</span></a><p class="dd">The layout of Platform&#x27;s database, one tree at a time. Select a tree to zoom in, and move the slider to see how the layout changed between protocol versions.</p><p class="dby">Dash Core Group</p></li>
+<li id="contract-visualizer" data-search=""><a href="https://dashpay.github.io/contract-visualizer/">Contract visualizer <span aria-hidden="true">↗</span></a><p class="dd">Paste a contract ID and see its document types drawn as tables, with fields, indexes and likely relationships. Export the diagram as PNG or SVG.</p><p class="dby">Dash Core Group</p></li>
+<li id="resource-0-0" data-search="identity sign in login key recovery phrase passkey wallet"><a href="/identity/">Your Dash identity</a><p class="dd">What an identity is, what each app asks for when you sign in, and where your keys stay.</p></li>
+</ul></section>
+<section class="dgroup"><h3>Libraries <span class="group-count">11</span></h3><ul><li id="resource-2-0" data-search=""><a href="https://docs.dash.org/projects/platform/en/stable/docs/sdk-rs/overview.html">Rust SDK <span aria-hidden="true">↗</span></a><p class="dd">Typed, proof-checked access to Platform from Rust. The base for the mobile and WASM SDKs.</p><p class="dby">Dash Core Group</p></li>
+<li id="resource-2-1" data-search=""><a href="https://github.com/dashpay/platform/tree/HEAD/packages/swift-sdk">Swift SDK <span aria-hidden="true">↗</span></a> and <a href="https://github.com/dashpay/platform/tree/HEAD/packages/kotlin-sdk">Kotlin SDK</a><p class="dd">Native mobile SDKs, each with an example app. Build from source.</p><p class="dby">Dash Core Group</p></li>
+<li id="resource-2-2" data-search=""><a href="https://github.com/dashpay/rust-dashcore">rust-dashcore <span aria-hidden="true">↗</span></a><p class="dd">Core primitives, an SPV client and an HD wallet in Rust, used by the Platform SDKs.</p><p class="dby">Dash Core Group</p></li>
+<li id="resource-2-3" data-search=""><a href="https://github.com/dashpay/platform/tree/HEAD/packages/wasm-sdk">WASM SDK <span aria-hidden="true">↗</span></a><p class="dd">The layer under the Evo SDK, for raw queries and state transitions.</p><p class="dby">Dash Core Group</p></li>
+<li id="resource-2-4" data-search=""><a href="https://github.com/pshenmic/dash-platform-sdk">dash-platform-sdk <span aria-hidden="true">↗</span></a><p class="dd">A lightweight JavaScript SDK, used by Platform Explorer and the extension.</p><p class="dby">pshenmic</p></li>
+<li id="resource-2-5" data-search=""><a href="https://github.com/247bas/evo-cookbook">evo-cookbook <span aria-hidden="true">↗</span></a><p class="dd">Tested Evo SDK recipes, and npm create evo-app to start a project.</p><p class="dby">247bas</p></li>
+<li id="resource-2-6" data-search=""><a href="https://github.com/hilawe/dash-rawkey-signer">dash-rawkey-signer <span aria-hidden="true">↗</span></a><p class="dd">Sign state transitions from a single private key, for servers and recovery.</p><p class="dby">hilawe</p></li>
+<li id="resource-2-7" data-search=""><a href="https://github.com/PastaPastaPasta/platform-auth">platform-auth <span aria-hidden="true">↗</span></a><p class="dd">Login for Platform web apps: identity, password or passkey unlock, and session restore. Source only.</p></li>
+<li id="resource-2-8" data-search=""><a href="https://github.com/PastaPastaPasta/dash-platform-workers">dash-platform-workers <span aria-hidden="true">↗</span></a><p class="dd">Proof-verified Platform reads and writes from a Cloudflare Worker, sized to fit the free plan.</p></li>
+<li id="resource-2-9" data-search=""><a href="https://github.com/PastaPastaPasta/grovedb-proof-parser">grovedb-proof-parser <span aria-hidden="true">↗</span></a><p class="dd">Turn raw GroveDB proof bytes into a readable tree, in the browser.</p></li>
+<li id="resource-2-10" data-search=""><a href="https://github.com/lklimek/claudash">claudash <span aria-hidden="true">↗</span></a><p class="dd">A Claude Code plugin that teaches the assistant Platform&#x27;s contracts, SDKs and API.</p><p class="dby">lklimek</p></li>
+</ul></section>
+<section class="dgroup"><h3>Specs and reference <span class="group-count">8</span></h3><ul><li id="resource-3-0" data-search=""><a href="https://github.com/dashpay/platform">Platform source <span aria-hidden="true">↗</span></a><p class="dd">One repository for Drive, DAPI, every SDK, dashmate and the system contracts.</p><p class="dby">Dash Core Group</p></li>
+<li id="resource-3-1" data-search=""><a href="https://docs.dash.org/projects/core/en/stable/docs/dips/README.html">Dash Improvement Proposals <span aria-hidden="true">↗</span></a><p class="dd">The protocol specs, including identities, usernames, DashPay and evonodes.</p><p class="dby">Dash Core Group</p></li>
+<li id="resource-3-2" data-search=""><a href="https://docs.dash.org/projects/platform/en/stable/docs/reference/dapi-endpoints.html">DAPI endpoint reference <span aria-hidden="true">↗</span></a><p class="dd">Every request and response the evonode API accepts.</p><p class="dby">Dash Core Group</p></li>
+<li id="resource-3-3" data-search=""><a href="https://dashpay.github.io/platform/">Platform Book <span aria-hidden="true">↗</span></a><p class="dd">How the Platform codebase is organized, for contributors.</p><p class="dby">Dash Core Group</p></li>
+<li id="resource-3-4" data-search=""><a href="https://dashpay.github.io/grovedb/">GroveDB Book <span aria-hidden="true">↗</span></a><p class="dd">How Platform&#x27;s storage proves a whole query result, with worked diagrams.</p><p class="dby">Dash Core Group</p></li>
+<li id="resource-3-5" data-search=""><a href="https://dashpay.github.io/grovedb-proof-visualizer-widget/">GroveDB Proof Visualizer <span aria-hidden="true">↗</span></a><p class="dd">Paste a proof and see it drawn as a tree.</p><p class="dby">Dash Core Group</p></li>
+<li id="resource-3-6" data-search=""><a href="https://github.com/dashpay/tenderdash">Tenderdash <span aria-hidden="true">↗</span></a><p class="dd">The consensus engine that orders Platform blocks.</p><p class="dby">Dash Core Group</p></li>
+<li id="resource-3-7" data-search=""><a href="https://github.com/dashpay/platform/tree/HEAD/packages">System contracts <span aria-hidden="true">↗</span></a><p class="dd">Built-in contracts such as DPNS, DashPay, withdrawals and token history.</p><p class="dby">Dash Core Group</p></li>
+</ul></section>
+<section class="dgroup"><h3>Network services <span class="group-count">7</span></h3><ul><li id="resource-4-0" data-search=""><a href="https://faucet.testnet.networks.dash.org/">Testnet faucet <span aria-hidden="true">↗</span></a><p class="dd">Testnet DASH, or a testnet identity in one click.</p><p class="dby">Dash Core Group</p></li>
+<li id="resource-4-1" data-search=""><a href="https://insight.testnet.networks.dash.org/insight/">Testnet Insight <span aria-hidden="true">↗</span></a><p class="dd">Core-chain explorer for testnet. Check the asset lock behind an identity.</p><p class="dby">Dash Core Group</p></li>
+<li id="resource-4-2" data-search=""><a href="https://status.testnet.networks.dash.org/">Testnet status <span aria-hidden="true">↗</span></a><p class="dd">Health of Dash Core Group&#x27;s own testnet masternodes.</p><p class="dby">Dash Core Group</p></li>
+<li id="resource-4-3" data-search=""><a href="https://quorums.mainnet.networks.dash.org/masternodes">Evonode list <span aria-hidden="true">↗</span></a><p class="dd">Current evonodes and their Platform ports, as JSON.</p><p class="dby">Dash Core Group</p></li>
+<li id="resource-4-4" data-search=""><a href="https://dashscan.io">Dashscan <span aria-hidden="true">↗</span></a><p class="dd">Explorer for the Core chain: blocks, masternodes and governance.</p><p class="dby">pshenmic</p></li>
+<li id="resource-4-5" data-search=""><a href="https://github.com/pshenmic/dash-platform-mass-send">Mass Send <span aria-hidden="true">↗</span></a><p class="dd">Sweep credits from many identities at once, for operators.</p><p class="dby">pshenmic</p></li>
+<li id="resource-4-6" data-search=""><a href="https://github.com/sansbankdao/btcpay-dash-evolution">BTCPay plugin <span aria-hidden="true">↗</span></a><p class="dd">Accept Platform and shielded payments in a BTCPay Server store.</p><p class="dby">Sansbank DAO</p></li>
+</ul></section>
+<section class="dgroup"><h3>Dash Core development <span class="group-count">7</span></h3><ul><li id="resource-5-0" data-search=""><a href="https://github.com/dashpay/dash-dev-branches/releases">Nightly and PR builds <span aria-hidden="true">↗</span></a><p class="dd">Signed Guix builds of Dash Core&#x27;s develop branch and of labelled pull requests.</p></li>
+<li id="resource-5-1" data-search=""><a href="https://flathub.org/apps/org.dash.dash-core">Dash Core on Flathub <span aria-hidden="true">↗</span></a><p class="dd">Install Dash Core on Linux with flatpak install flathub org.dash.dash-core .</p></li>
+<li id="resource-5-2" data-search=""><a href="https://thepastaclaw.github.io/backport-delta/">backport-delta <span aria-hidden="true">↗</span></a><p class="dd">Reports where a Dash backport differs from the Bitcoin commit it came from.</p></li>
+<li id="resource-5-3" data-search=""><a href="https://github.com/PastaPastaPasta/dash-backport-review-skill">Backport review checker <span aria-hidden="true">↗</span></a><p class="dd">Checks, hunk by hunk, that a backport PR really contains its upstream changes.</p></li>
+<li id="resource-5-4" data-search=""><a href="https://github.com/PastaPastaPasta/dash-platform-e2e">dash-platform-e2e <span aria-hidden="true">↗</span></a><p class="dd">Registers a real testnet identity and username through Dash Core&#x27;s C++ Platform client.</p></li>
+<li id="resource-5-5" data-search=""><a href="https://github.com/PastaPastaPasta/dash-platform-test-vectors">dash-platform-test-vectors <span aria-hidden="true">↗</span></a><p class="dd">Fixtures that keep Dash Core&#x27;s C++ Platform code in step with the Rust implementation.</p></li>
+<li id="resource-5-6" data-search=""><a href="https://thepastaclaw.github.io/dash-subsidy-calculator/">Block Subsidy Calculator <span aria-hidden="true">↗</span></a><p class="dd">The Core block reward at any height, and how it splits between miners, masternodes and treasury.</p></li>
+</ul></section>
+<section class="dgroup"><h3>Plans and talks <span class="group-count">3</span></h3><ul><li id="resource-6-0" data-search=""><a href="https://pastapastapasta.github.io/dashvm-plan/">DashVM plan board <span aria-hidden="true">↗</span></a><p class="dd">Live progress of the smart-contract work in the Platform repo.</p></li>
+<li id="resource-6-1" data-search=""><a href="https://pastapastapasta.github.io/dash-v24-presentation/">Dash Core v24 <span aria-hidden="true">↗</span></a><p class="dd">Slides from DashCon Amsterdam, September 2026.</p></li>
+<li id="resource-6-2" data-search=""><a href="https://pastapastapasta.github.io/yappr-presentation/">Yappr and Dash Platform <span aria-hidden="true">↗</span></a><p class="dd">DashCon talk slides, opening with the live app.</p></li>
+</ul></section>
+</div></template>
+</main><dashhq-footer product="home" source="https://github.com/PastaPastaPasta/dashhq"><span slot="sentence">Kept by pasta. Links checked 3 Nov 2026. No analytics; one cookie, dh_theme, if you pick a theme.</span> <a slot="links" href="https://github.com/PastaPastaPasta/dashhq/issues">Report a problem ↗</a></dashhq-footer></body>
 </html>

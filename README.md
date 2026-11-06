@@ -1,15 +1,13 @@
 # dashhq.org
 
-The family front door and a cyanotype map of the Dash ecosystem. Static HTML, CSS and JavaScript; no build dependencies or backend.
+The front door and directory for the Dash ecosystem. Static HTML, CSS and JavaScript; no build dependencies or backend.
 
-`index.html` contains the map, six starting points and expandable project groups. `/directory/` holds the full resource directory. `hub.css` maps the site's drafting surface onto the family tokens. `hub.js` handles the finder and numbered routes. The pinned shell, Archivo font and mark live in `dashhq/`; see `SHELL.md` for the version and checksum. The shell resolves declarative family destinations; SVG map links use `dashhq.href()` explicitly.
+`index.html` holds four task cards, a compact Mainnet observation line, the map band and selected resource rows. The map becomes three plain link lists on phones. `/directory/` lists all map projects and additional resources without disclosures. `/identity/` explains sign-ins and key handling.
 
-The finder returns destination links from the project cards and directory without hiding the catalogue. Map routes highlight and number their stops. The finder is hidden without JavaScript; the full directory and production destination links remain usable.
+`hub.js` searches the inert `#directory-index` template without hiding the page. Keep that template in sync with `/directory/` when editing resources. Search handles public ProTx hashes, IPs, Platform IDs and Dash names, with task-specific routes for treasury, fees, voting and polls. Escape clears the field. Without JavaScript the finder stays hidden; every visible destination remains a normal link.
 
-A plate needs an `<article class="card spanN" id="…">`, a matching `<a class="hnode">` in the map, and a matching `<a class="chip">` in the phone list. Keep the three ID lists identical. At desktop width each grid row spans six columns: two `span3` cards or three `span2` cards. Route `data-route` values are ordered plate IDs.
+`pulse.js` reads Radar’s public Mainnet summary with a bounded timeout and five-minute refresh. It shows observation age, stale-data warnings and retry on failure. Counts and source details remain available through the adjacent snapshot link and metric titles. No other data service is contacted. Fonts and assets are local, and CSP permits no inline scripts or styles.
 
-Counts come from the page. The family-route check is explicitly labelled as a local lab check; the full directory link-check date remains historical. Only update a check date after checking that scope.
+The shell is pinned under `dashhq/`; see `SHELL.md`. The hub has a text wordmark and a local lowercase d favicon. Yappr and Forge are outbound links; Polls lives in Governance and fees in Explorer.
 
-The page uses a strict first-party CSP. `pulse.js` reads Radar’s public Mainnet summary with a bounded timeout, shows the source observation times, and keeps a useful retry state if reads fail. No other data service is contacted. All fonts and assets are local. `og.png` remains the previous map preview and can be regenerated separately when publishing.
-
-Local checks: `node --check hub.js`, `node --check pulse.js`, and the static copy build. There is no package-managed test, lint or typecheck suite. In the family lab, use `../../lab/build.sh hub` and the guarded screenshot runner from the lab root.
+Local checks: `node --check hub.js`, `node --check pulse.js`, and `node scripts/qa-r7-hub.mjs` in the running family lab. There is no package-managed lint, typecheck or unit-test suite. Build with `../../lab/build.sh hub` from the lab root (`lab/build.sh hub`), then use the guarded screenshot runner.

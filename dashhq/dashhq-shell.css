@@ -64,7 +64,15 @@ dashhq-bar > [slot="nav"] [data-dh-desktop] { display: var(--dh-nav-only-desk, f
 dashhq-bar > [slot="nav"] [hidden] { display: none !important; }
 
 dashhq-bar > [slot="actions"] { display: flex; align-items: center; gap: 6px; }
-dashhq-bar > [slot="logo"] { display: block; width: 20px; height: 20px; }
+dashhq-bar > [slot="logo"] { display: block; width: 22px; height: 22px; }
 
 /* Off-screen buffer used by the copy fallback on insecure origins. */
 .dh-copy-buffer { position: fixed; left: -9999px; top: 0; opacity: 0; }
+
+html[data-dh-sheet-open] { overflow: hidden; }
+@supports selector(:state(compact)) {
+  dashhq-bar:state(compact) > [slot="logo"] { width: 26px; height: 26px; }
+}
+/* Slots carry inline footer copy and links, never another layout. */
+dashhq-footer :is(p, div, nav, span) { display: inline; margin: 0; padding: 0; }
+dashhq-footer a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }

@@ -1,5 +1,3 @@
-Vendored dashhq shell 1.8.1 from the local family design release.
+# Family shell
 
-`dashhq/dashhq-shell.js` SHA-256: `daaec6449c94ad5e091792f3cecc70c2a2dbf025bdf21b1627bf41d70ec6d377`.
-
-The vendored files are unchanged. See `dashhq/README.md` for the component contract.
+Vendored from `design/shell` release **1.9.0** in the local family lab. Assets are first-party under `/dashhq/`; `dashhq/SHA256SUMS` records the release hashes. The home product has a wordmark, no family menu, one theme control and a single footer band.

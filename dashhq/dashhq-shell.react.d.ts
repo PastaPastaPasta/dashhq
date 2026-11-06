@@ -62,7 +62,7 @@ declare module 'react' {
         'list-href'?: string;
         'list-label'?: string;
       };
-      /** A retired product's page. Forwards after 10 s unless the visitor stays; carries network, query and hash. */
+      /** A retired product’s page. Forwards immediately; carries network, query and hash. */
       'dashhq-moved': ShellAttrs & {
         /** The new home's product key. */
         to: DashhqProduct;
