@@ -39,7 +39,7 @@
 <a class="skip" href="#apps">Skip to the projects</a>
 
 <dashhq-bar product="home" sticky>
-  <nav class="mnav" slot="nav" aria-label="Sections"><a href="https://radar.dashhq.org/" data-family="radar">Radar</a><a href="https://gov.dashhq.org/" data-family="gov">Governance</a><a href="https://explorer.dashhq.org/" data-family="explorer">Explorer</a><a href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet" data-family="bridge" data-path="/?mode=create&amp;journey=start" data-network="testnet">Start</a><a href="#apps">Apps</a><a href="/directory/">Directory</a></nav>
+  <nav class="mnav" slot="nav" aria-label="Sections"><a href="https://radar.dashhq.org/" data-family="radar">Radar</a><a href="https://gov.dashhq.org/" data-family="gov">Governance</a><a href="https://explorer.dashhq.org/" data-family="explorer">Explorer</a><a href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet" data-family="bridge" data-path="/?mode=create&amp;journey=start" data-network="testnet">Start on Testnet</a><a href="#apps">Apps</a><a href="/directory/">Directory</a></nav>
 </dashhq-bar>
 
 <main id="main">
@@ -60,14 +60,6 @@
 
       </div>
 
-      <nav class="doors" aria-label="Choose a starting point">
-        <a class="door dh-card dh-card--link" href="https://arch.dashhq.org/" data-family="arch" data-path="/"><strong class="dh-card__title">What is Platform?</strong><span>Shared accounts, names and data for apps. Start with a three-step explanation and a registered name.</span></a>
-<a class="door dh-card dh-card--link" href="https://radar.dashhq.org/" data-family="radar" data-path="/"><strong class="dh-card__title">Radar</strong><span>Live network health, masternodes and evonodes</span></a>
-        <a class="door dh-card dh-card--link" href="https://gov.dashhq.org/" data-family="gov" data-path="/"><strong class="dh-card__title">Governance</strong><span>Proposals, votes, name contests</span></a>
-        <a class="door dh-card dh-card--link" href="https://explorer.dashhq.org/" data-family="explorer" data-path="/"><strong class="dh-card__title">Explorer</strong><span>Find identities, names and contracts; inspect their proofs</span></a>
-        <a class="door dh-card dh-card--link" href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet" data-family="bridge" data-path="/?mode=create&amp;journey=start" data-network="testnet"><strong class="dh-card__title">Start on Testnet</strong><span>Create keys in Bridge, fund with Faucet, then create an identity</span></a>
-        <a class="door dh-card dh-card--link" href="https://dashhq.org/#apps" data-family="home" data-path="/#apps"><strong class="dh-card__title">Apps</strong><span>Forge, Pollr and Yappr, plus wallets. The three apps are Testnet previews.</span></a>
-      </nav>
           <search class="finder dh-field" role="search">
             <label class="dh-field__label" for="q">Find</label>
             <input class="dh-input" id="q" type="search" autocomplete="off" spellcheck="false" placeholder="wallet, explorer, treasury, Rust, testnet…">
@@ -83,6 +75,15 @@
         <button id="pulse-retry" class="dh-btn dh-btn--sm" hidden>Retry network status</button>
       </section></details>
 
+      <nav class="doors" aria-label="Choose a starting point">
+        <a class="door dh-card dh-card--link" href="https://arch.dashhq.org/" data-family="arch" data-path="/"><strong class="dh-card__title">What is Platform?</strong><span>Shared accounts, names and data for apps. Start with a three-step explanation and a registered name.</span></a>
+<a class="door dh-card dh-card--link" href="https://radar.dashhq.org/" data-family="radar" data-path="/"><strong class="dh-card__title">Radar</strong><span>Live network health, masternodes and evonodes</span></a>
+        <a class="door dh-card dh-card--link" href="https://gov.dashhq.org/" data-family="gov" data-path="/"><strong class="dh-card__title">Governance</strong><span>Proposals, votes, name contests</span></a>
+        <a class="door dh-card dh-card--link" href="https://explorer.dashhq.org/" data-family="explorer" data-path="/"><strong class="dh-card__title">Explorer</strong><span>Find identities, names and contracts; inspect their proofs</span></a>
+        <a class="door dh-card dh-card--link" href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet" data-family="bridge" data-path="/?mode=create&amp;journey=start" data-network="testnet"><strong class="dh-card__title">Start on Testnet</strong><span>Create keys in Bridge, fund with Faucet, then create an identity</span></a>
+        <a class="door dh-card dh-card--link" href="https://dashhq.org/#apps" data-family="home" data-path="/#apps"><strong class="dh-card__title">Apps</strong><span>Forge, Pollr and Yappr, plus wallets. The three apps are Testnet previews.</span></a>
+      </nav>
+
       <p class="map-help">Select a project to open it. Expand the groups below for descriptions.</p><div class="mapscroll">
       <svg class="hsvg" viewBox="0 0 1220 522" role="group" aria-labelledby="maptitle">
         <title id="maptitle">Map of the Dash Platform ecosystem. Each project sits on the layer it works with; select one to open it.</title>
@@ -96,8 +97,8 @@
         <text class="hnote" x="846" y="186" text-anchor="end">reads and writes Platform data</text>
         <text class="hnote" x="846" y="430" text-anchor="end">masternodes and Dash Core</text>
         <text class="hnote" x="846" y="386" text-anchor="end">these two fund Platform from Core DASH</text>
-        <path class="hstem" d="M118 122 V196 M282 122 V196 M446 122 V196 M610 122 V196 M774 122 V196 M938 122 V196 M1102 122 V196 M118 196 V212 M282 196 V212 M446 196 V212 M610 196 V212 M774 196 V212 M118 440 V456 M282 440 V456 M446 440 V456 M610 440 V456 M774 440 V456"/>
-        <path class="hcross" d="M886 196 V356 M886 406 V440 M1050 196 V356 M1050 406 V440"/>
+        <path class="hstem" d="M118 122 V196 M282 122 V196 M446 122 V196 M610 122 V196 M774 122 V158 H858 V196 M938 122 V196 M1102 122 V196 M118 196 V212 M282 196 V212 M446 196 V212 M610 196 V212 M774 196 V212 M118 440 V456 M282 440 V456 M446 440 V456 M610 440 V456 M774 440 V456"/>
+        <path class="hcross" d="M938 196 V356 M938 406 V440 M1102 196 V356 M1102 406 V440"/>
         <a class="hnode" data-project="dashpay" href="https://play.google.com/store/apps/details?id=hashengineering.darkcoin.wallet" aria-label="Open dashpay"><rect class="hbox" x="40" y="72" width="156" height="50" rx="3"/><text class="hby" x="52" y="91">Dash Core Group </text><text class="hnm" x="52" y="111">DashPay wallet </text><text class="hstep" aria-hidden="true" x="187" y="90" text-anchor="end"></text></a>
         <a class="hnode" data-project="extension" href="https://chromewebstore.google.com/detail/dash-platform-extension/odmphbcnlldggfhcpdjgnlhbehoicdnf" aria-label="Open extension"><rect class="hbox" x="204" y="72" width="156" height="50" rx="3"/><text class="hby" x="216" y="91">pshenmic </text><text class="hnm" x="216" y="111">Platform Extension </text><text class="hstep" aria-hidden="true" x="351" y="90" text-anchor="end"></text></a>
         <a class="hnode" data-project="evotool" href="https://github.com/dashpay/dash-evo-tool/releases" aria-label="Open evotool"><rect class="hbox" x="368" y="72" width="156" height="50" rx="3"/><text class="hby" x="380" y="91">Dash Core Group </text><text class="hnm" x="380" y="111">Dash Evo Tool </text><text class="hstep" aria-hidden="true" x="515" y="90" text-anchor="end"></text></a>
@@ -915,10 +916,10 @@
 </main>
 
 <dashhq-footer product="home" source="https://github.com/PastaPastaPasta/dashhq">
-<p>dashhq.org is kept by pasta. It hosts only pasta's projects; everything else links to the people who run it. Something missing or broken? <a href="https://github.com/PastaPastaPasta/dashhq/issues">Open an issue ↗</a>.</p>
+<div class="footer-notes"><p>dashhq.org is kept by pasta. It hosts only pasta's projects; everything else links to the people who run it. Something missing or broken? <a href="https://github.com/PastaPastaPasta/dashhq/issues">Open an issue ↗</a>.</p>
 <p><a href="/directory/">Full directory</a></p>
 <p>Directory links last checked <time datetime="2026-11-03">3 Nov 2026</time>.</p>
-<p>No analytics. One cookie, <code>dh_theme</code>, only if you choose a theme.</p>
+<p>No analytics. One cookie, <code>dh_theme</code>, only if you choose a theme.</p></div>
 </dashhq-footer>
 
 

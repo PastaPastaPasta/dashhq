@@ -94,11 +94,6 @@
 
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') unpin(); });
 
-  var phone = matchMedia('(max-width:760px)');
-  function sizePulse(){ document.querySelector('.pulse-fold').open = !phone.matches; }
-  phone.addEventListener('change', sizePulse);
-  sizePulse();
-
   // Search destinations without hiding the catalogue or its navigation.
   var q = document.getElementById('q');
   if(!q) return;
@@ -140,6 +135,15 @@
     else if (/^(?:\d{1,3}\.){3}\d{1,3}(?::\d+)?$/.test(raw)) destinations.unshift({title:'Find this IP in Radar', href:dashhq.href('radar', '/masternodes?q=' + encodeURIComponent(raw))});
     else if (/^[1-9A-HJ-NP-Za-km-z]{43,44}$/.test(raw)) destinations.unshift({title:'Look up this Platform ID in Explorer', href:dashhq.href('explorer', '/search/?q=' + encodeURIComponent(raw))});
     else if (/^[a-z0-9-]+\.dash$/i.test(raw)) destinations.unshift({title:'Check ' + raw + ' in Explorer', href:dashhq.href('explorer', '/dpns/?name=' + encodeURIComponent(raw))});
+    var tasks = [
+      {terms:/treasury|budget|spending|funded/, title:'Treasury', product:'gov', path:'/treasury'},
+      {terms:/my masternode|my node|masternode vote|voting key/, title:'My masternodes', product:'gov', path:'/masternodes'},
+      {terms:/fee|contract cost|estimate/, title:'Estimate contract fees', product:'explorer', path:'/tools/fees/'},
+      {terms:/name contest|contested|username vote/, title:'Name contests', product:'gov', path:'/names'}
+    ];
+    tasks.filter(function(task){ return task.terms.test(text); }).reverse().forEach(function(task){
+      destinations.unshift({title:task.title, href:dashhq.href(task.product, task.path)});
+    });
     var unique = destinations.filter(function(item, index, all){ return all.findIndex(function(other){return other.href === item.href;}) === index; });
     unique.slice(0,8).forEach(function(item){
       var row = document.createElement('li');

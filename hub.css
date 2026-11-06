@@ -358,3 +358,16 @@ html.finder-on .finder{display:grid;grid-template-columns:minmax(0,1fr) auto;max
 .directory-page > .dh-container { padding: 0; }
 @media(max-width:760px) { .network-pulse { gap: 12px; } .network-pulse strong { font-size: 18px; } }
 .desc a, .dd a, .platform-intro a { color: var(--dh-brand-ink); text-decoration: underline; text-underline-offset: 3px; }
+
+.catalogue-fold > summary { min-height: 56px; padding-block: 12px; margin-bottom: 0; gap: 8px; }
+.catalogue-fold:not([open]) > summary p { display: none; }
+.catalogue-fold > summary h2 { font-size: 18px; }
+.fold-action { margin-left: 12px; }
+.footer-notes { display: grid; grid-template-columns: 2fr 1fr; gap: 8px 32px; }
+.footer-notes p { margin: 0; }
+@media(max-width:760px) {
+  .footer-notes { grid-template-columns: 1fr; }
+  .network-pulse { padding-block: 8px 16px; }
+  .pulse-fold > summary { padding-block: 8px; }
+  .catalogue-fold > summary h2 { font-size: 17px; }
+}
