@@ -16,6 +16,7 @@ code{font-family:var(--dh-mono);font-size:max(12px,.9em)}
 .finder-on .finder{display:block}
 .search-input{display:flex;gap:8px}
 .search-input input{width:100%;min-width:0;height:48px;background:var(--dh-surface);font-size:16px}
+.search-input input::-webkit-search-cancel-button{display:none}
 .search-input button{align-self:center}
 .fin-c{color:var(--dh-ink-2);font-size:13px;margin-top:8px}
 .fin-c:empty{display:none}

@@ -80,7 +80,6 @@
   function clearQ(){q.value='';run();q.focus();}
   q.addEventListener('input',run);
   qclear.addEventListener('click',clearQ);
-  document.getElementById('noclear').addEventListener('click',clearQ);
   q.addEventListener('keydown',function(e){if(e.key==='Escape' && q.value){e.stopPropagation();clearQ();}});
   window.addEventListener('pageshow',run);
   root.classList.add('finder-on');

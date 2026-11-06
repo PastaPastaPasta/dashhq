@@ -43,7 +43,11 @@ try {
     assert(await page.locator('#find-results .result-description').first().isVisible());
     await page.locator('#q').fill('zzzz-does-not-exist');
     assert(await page.locator('#noresult').isVisible());
-    if(width!==360) await page.screenshot({path:new URL(`empty-${width}-${theme}.png`,out).pathname});
+    assert.equal(await page.getByRole('button',{name:/^Clear(?: search)?$/}).count(),1);
+    await page.getByRole('button',{name:'Clear',exact:true}).click();
+    assert.equal(await page.locator('#q').inputValue(),'');
+    assert(await page.locator('#q').evaluate(el=>document.activeElement===el));
+    await page.locator('#q').fill('forge');
     await page.keyboard.press('Escape');
     assert.equal(await page.locator('#q').inputValue(),'');
     assert(await page.locator('#q').evaluate(el=>document.activeElement===el));
@@ -89,7 +93,6 @@ try {
   await page.goto(base);
   await page.locator('#pulse-retry').waitFor({state:'visible'});
   assert((await page.locator('#pulse-summary').innerText()).includes('unavailable'));
-  await page.screenshot({path:new URL('network-unavailable.png',out).pathname});
   fixture='success';await page.locator('#pulse-retry').click();
   await page.waitForFunction(()=>document.getElementById('pulse-summary').textContent.includes('98.0%'));
   assert((await page.locator('#pulse-summary').innerText()).includes('90.0%'));
