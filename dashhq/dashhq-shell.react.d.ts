@@ -56,6 +56,8 @@ declare module 'react' {
         found?: DashhqNetwork | 'none' | 'unknown';
         /** The record on the found network. Default: this URL with ?network= swapped. */
         href?: string;
+        /** With a lookup: the record's id. A new lookup function for the same record keeps the answer. */
+        record?: string;
         /** This network's list or search, and its label: "Browse Testnet masternodes". */
         'list-href'?: string;
         'list-label'?: string;

@@ -1,4 +1,4 @@
-# dashhq shell 1.6.1
+# dashhq shell 1.6.2
 
 The shared shell for the dashhq.org family: the family bar, the footer, the hash display, the sign-in explanation,
 the wrong-network and retired-page notices, the theme, and the tokens they all draw with. Read `../DESIGN.md` for the
@@ -13,6 +13,7 @@ rules and `../ADOPTION-r5.md` for your site's changes this round.
 | **`<dashhq-moved>`**: one retired-page behaviour. What moved where, one primary link, and a forward after 20 seconds that "Stay here" (or any use of the page) stops. The network, query and hash travel; the bar shows the network you'll land on. | EvoVote, Basics, the Fee estimator | The element's section below; `moved.html` |
 | **Compact sign-in help.** On phones (or `compact="always"`) `<dashhq-signin-help>` is one line, "Uses your Dash identity · What's this? ›", above the ways in; the explanation opens in place. | Nobody: re-vendor | The element's section below; `app.html?signin` at 390px |
 | **The committing button is amber everywhere.** `.dh-btn--primary` no longer takes `--dh-accent`. `.dh-btn--lg` is retired and draws at the family height. An app's accent now marks its brand, selection and highlights, turned on with `<html data-dh-accent="forge\|pollr\|yappr">`. Links stay blue. | Forge, Pollr, Yappr: swap the `:root` line for the attribute | "App accents" below; `components.html#accents` |
+| **1.6.2:** a new lookup is a new question: it shows "Checking" and never an earlier answer, and a dropped lookup's late answer is discarded. Apps that pass a new lookup function on every render set `record`, so the same record keeps its answer. Focus stays in a notice when its button changes. The retired-page warning is said when the tab is first visible, and a scroll that starts on its buttons stops the forward. | Everyone: re-vendor 1.6.2 | |
 | **1.6.1:** review fixes, same API. "Open it on Mainnet" is dispatched from the page's bar, so SPAs that route the bar's network switch route this one too. Both notices keep one live region and announce each result once. The retired-page forward is 20 seconds (WCAG 2.2.1), and pressing "Stay here" from the keyboard can't also open the link (Firefox). `found` values other than a network, `none` or `unknown` read as "couldn't check", never as "nowhere". Repeated query keys all travel. `.dh-fill` resets the body margin. | Everyone: re-vendor 1.6.1 | |
 | **Fixes.** The footer and switcher no longer mark Explorer's door current on Architecture, Basics or the DAPI console (Opus #15). A stepper step before the current one can say it isn't done (`data-state="todo"`, Sol #14). Two link styles, `.dh-link` and `.dh-link--go` (Opus #25). `.dh-fill` keeps a short page's footer at the bottom (Opus #22). | Bridge (`todo`); anyone with a floating footer | `components.html#steps`, `#misc` |
 
@@ -276,7 +277,8 @@ instead. Use it in place of your own not-found block on every record page, under
 | `id-label` | What the id is called in the "none" line: `ProTx hash`, `name`, `hash`. Default `ID`. |
 | `network` | Where the page looked. Default: the page bar's network (and it re-checks when that changes). |
 | `networks` | Where to look. Default `mainnet testnet`; the shell's order. |
-| `found` | Set it yourself if your app already knows: a network, `none` or `unknown`. Leave it off while you check. |
+| `found` | Set it yourself if your app already knows: a network, `none` or `unknown`. Leave it off (or `checking`) while you check; anything else reads as `unknown`. Keep the last answer while you re-check the same record, so the notice doesn't flash. |
+| `record` | With a `lookup`: the record's id (`proposal:Dash-Music`, the ProTx). A new `record` is a new question; a new lookup function for the same `record` keeps the answer. Without it, every new lookup function is a new question, so pass a stable function (React: `useCallback` on the id and network) or set `record`. |
 | `href` | The record on the found network. Default: this URL with `?network=` swapped, which is right for every family URL shape (`/mn/<protx>`, `/p/<name>`, `/identity/?id=`). |
 | `list-href`, `list-label` | This network's list or search: "Browse Testnet masternodes", "Search Testnet". |
 
@@ -291,7 +293,8 @@ const el = document.querySelector('dashhq-not-found');
 el.lookup = async (network, signal) => (await fetch(`/api/mn/${protx}?network=${network}`, { signal })).ok;
 ```
 
-The lookup resolves `true` or `false`; a throw counts as "couldn't check". Without the element,
+The lookup resolves `true` or `false`; a throw counts as "couldn't check". A question starts a microtask after the change
+that asked it, so setting `record` and `lookup` in the same step asks once, with the new lookup. Without the element,
 `await dashhq.network.findElsewhere(lookup, { network: 'testnet' })` returns `'mainnet'`, `'none'` or `'unknown'`.
 
 | Stack | How |

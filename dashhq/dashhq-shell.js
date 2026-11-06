@@ -1,4 +1,4 @@
-/*! dashhq-shell 1.6.1 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
+/*! dashhq-shell 1.6.2 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
 /* Load as a classic, blocking script in <head>, before any stylesheet that depends on [data-theme]:
      <script src="/dashhq/dashhq-shell.js"></script>
    CSP: needs only script-src 'self'. No inline script, no eval, no innerHTML, no style attributes,
@@ -7,7 +7,7 @@
   'use strict';
   if (window.dashhq && window.dashhq.version) return;
 
-  const VERSION = '1.6.1';
+  const VERSION = '1.6.2';
   const doc = document;
   const root = doc.documentElement;
   const host = location.hostname;
@@ -1176,7 +1176,11 @@
       }
       const f = this.shadowRoot.activeElement && this.shadowRoot.activeElement.dataset.f;
       this._box.replaceChildren(...nodes.filter(Boolean));
-      if (f) { const el = this._box.querySelector(`[data-f="${f}"]`); if (el) el.focus(); }
+      if (!f) return;
+      // The same control if it is still there, else the next one, else the notice itself: focus never falls to <body>.
+      let el = this._box.querySelector(`[data-f="${f}"]`) || this._box.querySelector('[data-f]');
+      if (!el && this._box.firstElementChild) { el = this._box.firstElementChild; el.tabIndex = -1; }
+      if (el) el.focus({ preventScroll: true });
     }
     // Say it once, a moment after the region exists, so it is announced rather than read as part of the page.
     _say(text) {
@@ -1193,34 +1197,47 @@
   // "none" | "unknown" itself, or hands the element a lookup: el.lookup = (network, signal) => Promise<boolean>.
   class DashhqNotFound extends NoticeElement {
     static get observedAttributes() {
-      return ['thing', 'id-label', 'network', 'networks', 'found', 'href', 'list-href', 'list-label'];
+      return ['thing', 'id-label', 'network', 'networks', 'found', 'href', 'list-href', 'list-label', 'record'];
     }
     static css = NOTFOUND_CSS;
 
+    // Which question is being asked: this network, and either the `record` attribute or, without one, this lookup
+    // function. A new question shows "Checking" at once and never an earlier answer. With `record` set, a new lookup
+    // function for the same record (a framework re-rendering) is the same question: its answer stays.
+    _key(here) {
+      const own = this.getAttribute('record');
+      return here + ' ' + (own != null ? 'record:' + own : 'lookup:' + (this._fnId || 0));
+    }
     get lookup() { return this._lookup || null; }
     set lookup(fn) {
       fn = typeof fn === 'function' ? fn : null;
       if (fn === this._lookup) return;
-      // A new lookup may be for a new record, so ask again; the last answer stays on screen until the new one comes.
       this._lookup = fn;
-      this._ranFor = null;
+      this._fnId = (this._fnId || 0) + 1;
+      if (!fn) this._abort(); // a dropped lookup's late answer must never show under the next one
       if (this.shadowRoot && this.isConnected) this.render();
     }
     disconnectedCallback() {
       super.disconnectedCallback();
+      this._abort();
+    }
+    _abort() {
       if (this._ac) this._ac.abort();
       this._ac = null;
-      this._ranFor = null;
+      this._ranKey = null;
     }
     _nets() { return sortNetworks((this.getAttribute('networks') || 'mainnet testnet').split(/[\s,]+/)); }
-    _run(here) {
+    // A check already running for the same question is left to finish; later ones use the newest lookup.
+    _run(here, key) {
       if (this._ac) this._ac.abort();
       const ac = this._ac = new AbortController();
-      this._ranFor = here;
-      findElsewhere(this._lookup, { network: here, networks: this._nets(), signal: ac.signal }).then((found) => {
-        if (ac.signal.aborted || (found === this._found && here === this._foundFor)) return;
+      this._ranKey = key;
+      findElsewhere((n, signal) => this._lookup(n, signal), { network: here, networks: this._nets(), signal: ac.signal }).then((found) => {
+        if (ac.signal.aborted) return;
+        this._ac = null;
+        if (found === this._found && key === this._foundKey) return;
         this._found = found;
-        this._foundFor = here;
+        this._foundKey = key;
         this.render();
       });
     }
@@ -1232,7 +1249,7 @@
     // mean "nowhere", so it reads as "couldn't check".
     _answer(here) {
       const raw = this.getAttribute('found');
-      if (raw == null) return this._lookup && this._foundFor === here ? this._found : null;
+      if (raw == null) return this._lookup && this._foundKey === this._key(here) ? this._found : null;
       const v = raw.trim().toLowerCase();
       if (v === '' || v === 'checking') return null;
       return v === 'none' || v === 'unknown' ? v : parseNetwork(v) || 'unknown';
@@ -1242,7 +1259,9 @@
       this._drop();
       if (!this.hasAttribute('network')) this._on(netListeners, () => this.render());
       const here = parseNetwork(this.getAttribute('network')) || activeNetwork();
-      if (this._lookup && !this.hasAttribute('found') && this._ranFor !== here) this._run(here);
+      // Start a new question a microtask later, so a record and its lookup set in the same step are asked together.
+      const due = () => this._lookup && !this.hasAttribute('found') && this.isConnected && this._ranKey !== this._key(here);
+      if (due()) queueMicrotask(() => { if (due()) this._run(here, this._key(here)); });
       const found = this._answer(here);
       const thing = (this.getAttribute('thing') || 'record').trim();
       const idLabel = (this.getAttribute('id-label') || 'ID').trim();
@@ -1281,7 +1300,7 @@
       this._show(h('div', { class: 'nf' }, h('h2', null, title),
         h('p', null, line || h('span', { class: 'chk' }, h('span', { class: 'spin', 'aria-hidden': 'true' }), `Checking ${othersL}…`)),
         h('slot'), (action || list) && h('div', { class: 'acts' }, action, list)));
-      this._say(line ? `${title}. ${line}` : '');
+      if (line) this._say(`${title}. ${line}`); // checking says nothing, so a re-check doesn't repeat the same answer
     }
   }
 
@@ -1311,12 +1330,20 @@
           this._stop();
         };
         this._onShow = (e) => { if (e.persisted) this._stop(); };
+        // A scroll that starts on a control (both are full width on phones) is still someone reading the page.
+        this._onCancel = () => { if (!this._stopped) this._stop(); };
+        // The warning is said when the count starts, which is when the tab is visible, not when it opened behind another.
+        this._warn = () => {
+          if (this._warned || this._stopped || doc.hidden) return;
+          this._warned = true;
+          this._say(`Opening ${this._names().toName} automatically in ${MOVED_DELAY} seconds. Choose Stay here to stop.`);
+        };
       }
       super.connectedCallback();
-      if (first && !this._stopped) {
-        this._say(`Opening ${this._names().toName} automatically in ${MOVED_DELAY} seconds. Choose Stay here to stop.`);
-      }
+      this._warn();
+      doc.addEventListener('visibilitychange', this._warn);
       doc.addEventListener('pointerdown', this._onUse, true);
+      doc.addEventListener('pointercancel', this._onCancel, true);
       doc.addEventListener('keydown', this._onUse, true);
       addEventListener('pageshow', this._onShow);
       if (!this._stopped && !this._tick) {
@@ -1331,7 +1358,9 @@
     }
     disconnectedCallback() {
       super.disconnectedCallback();
+      doc.removeEventListener('visibilitychange', this._warn);
       doc.removeEventListener('pointerdown', this._onUse, true);
+      doc.removeEventListener('pointercancel', this._onCancel, true);
       doc.removeEventListener('keydown', this._onUse, true);
       removeEventListener('pageshow', this._onShow);
       this._clearTick();
