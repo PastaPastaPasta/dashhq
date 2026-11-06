@@ -443,7 +443,7 @@
     'margin-top:4px}' +
     /* devnets sit behind one toggle unless the page is on one: internal networks are not for every visitor */
     'button.opt{width:100%;text-align:left;color:var(--dh-ink-2)}' +
-    'button.opt .ic{margin-left:auto;transition:transform var(--dh-dur-2) var(--dh-ease)}' +
+    '.netpop button.opt .ic{margin-left:auto;transition:transform var(--dh-dur-2) var(--dh-ease)}' +
     'button.opt[aria-expanded=true] .ic{transform:rotate(180deg)}' +
     '.doors{list-style:none;margin:0;padding:0}' +
     '.door{display:grid;grid-template-columns:150px minmax(0,1fr);align-items:center;min-height:40px;' +
