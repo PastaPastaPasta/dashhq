@@ -103,6 +103,8 @@ try {
     assert(!(await page.locator('body').innerText()).includes('starts once Dash Core 24 is released'));
     await shot('radar-node-index');
     await page.locator('.node-sections a[href="#readiness"]').click();
+    const readinessBadge = await page.locator('#readiness .card-head .dh-status').boundingBox();
+    assert(readinessBadge.x + readinessBadge.width <= (device === 'phone' ? 390 : 1440), 'readiness badge fits');
     await shot('radar-readiness');
     await noOverflow();
     await page.goto(urls.arch);
