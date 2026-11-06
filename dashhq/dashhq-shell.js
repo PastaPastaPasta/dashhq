@@ -1,4 +1,4 @@
-/*! dashhq-shell 1.6.2 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
+/*! dashhq-shell 1.8.0 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
 /* Load as a classic, blocking script in <head>, before any stylesheet that depends on [data-theme]:
      <script src="/dashhq/dashhq-shell.js"></script>
    CSP: needs only script-src 'self'. No inline script, no eval, no innerHTML, no style attributes,
@@ -7,7 +7,7 @@
   'use strict';
   if (window.dashhq && window.dashhq.version) return;
 
-  const VERSION = '1.6.2';
+  const VERSION = '1.8.0';
   const doc = document;
   const root = doc.documentElement;
   const host = location.hostname;
@@ -44,6 +44,14 @@
   const ALSO = ['arch', 'fees', 'dapi'];
   // Products folded into another one: family menus link straight to the new home instead of the old host's notice.
   const MOVED = { fees: ['explorer', '/tools/fees/'] };
+  // Retired products: the address people have bookmarked, and the product that is its new home. <dashhq-moved>
+  // forwards there at once with ?moved-from=<key>, and the new home's bar says so once.
+  const RETIRED = {
+    vote: { to: 'gov', was: 'vote.dashhq.org' },
+    fees: { to: 'explorer', was: 'fees.dashhq.org' },
+    basics: { to: 'explorer', was: 'basics.dashhq.org' }
+  };
+  const ARRIVAL_PARAM = 'moved-from';
   // The door a product is: only a door's own products mark it current. Architecture, the DAPI console, the retired
   // tools and the apps mark their own entry under Also or Apps, never Explorer's or Governance's door.
   const doorOf = (key) => {
@@ -112,6 +120,47 @@
   }
 
   canonicalizeNetworkParam();
+
+  // Arriving from a retired product: remember where from, then take the marker out of the address before any app
+  // reads it, so a reload, a copied link or the app's router never sees it. Every other byte of the query is kept.
+  const arrival = (() => {
+    const parts = location.search.slice(1).split('&').filter(Boolean);
+    let from = null;
+    const kept = parts.filter((p) => {
+      const i = p.indexOf('=');
+      if ((i < 0 ? p : p.slice(0, i)) !== ARRIVAL_PARAM) return true;
+      if (from == null) {
+        try { from = decodeURIComponent(i < 0 ? '' : p.slice(i + 1)); } catch { from = ''; }
+      }
+      return false;
+    });
+    if (kept.length === parts.length) return null;
+    try {
+      history.replaceState(history.state, '', location.pathname + (kept.length ? '?' + kept.join('&') : '') + location.hash);
+    } catch { /* an opaque or sandboxed document keeps its address */ }
+    return Object.hasOwn(RETIRED, from) ? { from, path: location.pathname, bar: null, done: false } : null;
+  })();
+  // The arrival notice ends when dismissed, or when the visitor moves on to another page of the app (a push or a Back,
+  // not an app canonicalising its own address). Focus that was on it moves to the product's name.
+  function endArrival(refocus) {
+    if (!arrival || arrival.done) return;
+    arrival.done = true;
+    const bar = arrival.bar, el = bar && bar._arr;
+    if (!el) return;
+    const had = refocus && el.contains(bar.shadowRoot.activeElement);
+    el.remove();
+    bar._arr = null;
+    const to = had && (bar.shadowRoot.querySelector('.product') || bar.shadowRoot.querySelector('.home'));
+    if (to) to.focus();
+  }
+  if (arrival) {
+    const moved = (e) => {
+      if (e && e.navigationType === 'replace') { arrival.path = location.pathname; return; }
+      if (location.pathname !== arrival.path) endArrival(false);
+    };
+    addEventListener('popstate', () => moved());
+    if (window.navigation && typeof navigation.addEventListener === 'function') navigation.addEventListener('currententrychange', moved);
+  }
 
   // The page's network: from the most recently connected <dashhq-bar network>, else from the URL.
   const bars = new Set();
@@ -287,6 +336,7 @@
       'M10 1.8v2M10 16.2v2M1.8 10h2M16.2 10h2M4.2 4.2l1.4 1.4M14.4 14.4l1.4 1.4M4.2 15.8l1.4-1.4M14.4 5.6l1.4-1.4'],
     copy: ['M7 7h8.5v8.5H7z', 'M4.5 12.5V4.5h8'],
     check: ['M4.5 10.5l3.5 3.5 7.5-8'],
+    info: ['M10 2.8a7.2 7.2 0 1 1 0 14.4 7.2 7.2 0 0 1 0-14.4z', 'M10 9.2v4.6', 'M10 6.4v.1'],
     identity: ['M2.5 4.5h15v11h-15z', 'M8.6 9.2a1.8 1.8 0 1 1-3.6 0 1.8 1.8 0 0 1 3.6 0z', 'M4.4 13.3c.6-1.2 1.4-1.8 2.4-1.8s1.8.6 2.4 1.8',
       'M11.5 8.5h3.8M11.5 11.5h2.8']
   };
@@ -336,9 +386,11 @@
     '.pl{display:flex;align-items:center;gap:7px;min-width:0}' +
     '.fam{display:none}' +
     '.product:hover .pn{text-decoration:underline;text-decoration-color:var(--dh-line-2);text-underline-offset:4px}' +
-    '.switch{width:28px;height:32px;display:grid;place-items:center;border-radius:var(--dh-r2);' +
-    'color:var(--dh-ink-2);flex:none}' +
-    '.switch:hover,.switch[aria-expanded=true]{background:var(--dh-hover);color:var(--dh-ink)}' +
+    '.switch{display:flex;align-items:center;gap:3px;height:28px;margin-left:6px;padding:0 5px 0 9px;' +
+    'border:1px solid var(--dh-line);border-radius:var(--dh-r2);color:var(--dh-ink-2);font-size:13px;font-weight:540;' +
+    'white-space:nowrap;flex:none}' +
+    '.switch:hover,.switch[aria-expanded=true]{background:var(--dh-hover);color:var(--dh-ink);border-color:var(--dh-line-2)}' +
+    '.bar.nolabel .switch{padding:0 5px}.bar.nolabel .swl{display:none}' +
     '.switch .ic{transition:transform var(--dh-dur-2) var(--dh-ease)}' +
     '.switch[aria-expanded=true] .ic{transform:rotate(180deg)}' +
     '.sheet{display:contents}' +
@@ -436,14 +488,26 @@
     '.bar.compact .nav.empty{display:none}' +
     '.bar.compact .family{display:block;border-top:1px solid var(--dh-line);padding-top:8px}' +
     '.bar.compact .nav.empty+.family{border-top:0;padding-top:0}' +
-    '.bar.compact .family .doors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px}' +
-    '.bar.compact .family .door{display:flex;align-items:center;min-height:44px;padding:0 12px 0 14px}' +
-    '.bar.compact .family .dd,.bar.compact .family .steps{display:none}' +
-    /* Start keeps its explanation and both destinations on phones: it is where newcomers go */
-    '.bar.compact .family .door.start{grid-column:1/-1;display:grid;gap:1px;padding:9px 12px 2px 14px}' +
-    '.bar.compact .family .door.start .dd{display:block}' +
-    '.bar.compact .family .door.start .steps{display:flex;gap:0;margin:0 0 0 -10px}' +
-    '.bar.compact .steps a{display:inline-flex;align-items:center;min-height:40px;padding:0 10px}' +
+    /* The phone menu's family part is a short switcher: the four doors as a 2x2 grid of names, then everything else
+       behind one "More tools" row, then the theme. Whatever the product's own sections already link to is left out. */
+    '.fl{margin:0;padding:6px 14px 2px;font-size:13px;color:var(--dh-ink-2)}' +
+    '.pd{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px}' +
+    '.pd li{position:relative;min-width:0}' +
+    '.pd a{display:flex;align-items:center;min-height:44px;padding:0 12px 0 14px;border-radius:var(--dh-r2);' +
+    'font-size:15px;font-weight:620}' +
+    '@media (hover:hover){.pd a:hover,.more:hover,.hm:hover{background:var(--dh-hover)}.more:hover{color:var(--dh-ink)}}' +
+    '.pd li[aria-current] a{background:var(--dh-sunken)}' +
+    '.pd li[aria-current]::before{content:"";position:absolute;left:4px;top:11px;bottom:11px;width:3px;border-radius:2px;' +
+    'background:var(--dh-brand)}' +
+    '.more{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;margin-top:2px;padding:0 12px 0 14px;' +
+    'border-radius:var(--dh-r2);font-size:15px;font-weight:540;color:var(--dh-ink-2);text-align:left}' +
+    '.more[aria-expanded=true]{color:var(--dh-ink)}' +
+    '.more .ic{margin-left:auto;transition:transform var(--dh-dur-2) var(--dh-ease)}' +
+    '.more[aria-expanded=true] .ic{transform:rotate(180deg)}' +
+    '.hm{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 8px;min-height:44px;padding:11px 12px 11px 14px;' +
+    'margin-top:6px;border-top:1px solid var(--dh-line);font-size:15px;font-weight:620}' +
+    '.hm span{font-size:13px;font-weight:400;color:var(--dh-ink-2)}' +
+    '[hidden]{display:none!important}' +
     /* Apps and Also: 44px rows in two columns, like the doors, not packed inline links */
     '.bar.compact .grp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 2px;padding:6px 0 0}' +
     '.bar.compact .gl{grid-column:1/-1;padding:6px 14px 2px}' +
@@ -467,6 +531,18 @@
     '.bar.compact .menu{width:40px;height:40px;margin-right:-4px}' +
     '.bar.compact .seg button{height:40px;padding:0 14px}' +
     'button.net{position:relative}.bar.compact button.net::after{content:"";position:absolute;inset:-4px -2px}' +
+    /* Arriving from a retired product: one quiet line under the row, in the bar so every product gets it. */
+    '.arrive{border-top:1px solid var(--dh-line);background:var(--dh-info-soft)}' +
+    '.ain{max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;padding:4px var(--dh-gutter);display:flex;' +
+    'align-items:center;gap:10px;min-height:40px;font-size:14px;line-height:1.4;color:var(--dh-ink)}' +
+    '.ain>.ic{color:var(--dh-info);flex:none}' +
+    '.at{margin:0;flex:1 1 auto;min-width:0;overflow-wrap:anywhere}' +
+    '.at b{font-weight:620}' +
+    '.ax{width:32px;height:32px;display:grid;place-items:center;flex:none;margin-right:-6px;border-radius:var(--dh-r2);' +
+    'color:var(--dh-ink-2)}' +
+    '.ax:hover{background:var(--dh-hover);color:var(--dh-ink)}' +
+    '.bar.compact .am{display:none}' +
+    '@media (pointer:coarse){.ax{width:40px;height:40px;margin-right:-10px}}' +
     '@media (prefers-reduced-motion:no-preference){.pop:not([hidden]),.bar.compact.open .sheet{' +
     'animation:dh-in var(--dh-dur-2) var(--dh-ease)}}' +
     '@keyframes dh-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}';
@@ -585,7 +661,7 @@
     '@media (prefers-reduced-motion:reduce){.spin{animation-duration:2.4s}}' +
     '@keyframes dh-rot{to{transform:rotate(360deg)}}';
 
-  // A retired product's page: what moved where, one way on, and the same timed forward everywhere.
+  // A retired product's page: what moved where and the one way on, while it forwards.
   const MOVED_CSS = BASE_CSS + ACT_CSS +
     ':host{display:block}' +
     'h1{margin:0;font:var(--dh-w-head) var(--dh-fs-h1)/var(--dh-lh-head) var(--dh-font);font-stretch:var(--dh-stretch-head);' +
@@ -593,13 +669,15 @@
     '.l{margin:8px 0 0;max-width:64ch;font-size:var(--dh-fs-lead);line-height:1.55;color:var(--dh-ink-2)}' +
     '.n{display:grid;gap:4px;margin-top:var(--dh-5);padding:12px 16px;border-left:3px solid var(--dh-info);' +
     'border-radius:var(--dh-r2);background:var(--dh-info-soft);font-size:var(--dh-fs-ui);line-height:1.5}' +
-    '.nt{margin:0;font-weight:620}' +
+    '.nt{display:flex;align-items:center;gap:10px;margin:0;font-weight:620}' +
+    '.spin{width:14px;height:14px;flex:none;border-radius:50%;border:2px solid var(--dh-line);border-top-color:var(--dh-brand);' +
+    'animation:dh-rot .8s linear infinite}' +
+    '@media (prefers-reduced-motion:reduce){.spin{animation-duration:2.4s}}' +
+    '@keyframes dh-rot{to{transform:rotate(360deg)}}' +
     '.nb{margin:0;color:var(--dh-ink)}' +
-    '.btn{font-weight:520}' +
     '.pri{border-color:transparent;background:var(--dh-act);color:var(--dh-act-ink);font-weight:620}' +
     '.pri:hover{background:var(--dh-act);background-image:linear-gradient(var(--dh-shade-1),var(--dh-shade-1))}' +
-    '@media (max-width:480px){h1{font-size:26px}.l{font-size:var(--dh-fs-body)}' +
-    '.acts{flex-direction:column-reverse;align-items:stretch}.btn{width:100%}}';
+    '@media (max-width:480px){h1{font-size:26px}.l{font-size:var(--dh-fs-body)}.btn{width:100%}}';
 
   /* ---------------------------------------------------------------- base element */
   // Shadow root + one adopted stylesheet per element class; re-render on any observed attribute change.
@@ -714,8 +792,11 @@
       this.close();
       this._drop();
 
+      // The family switcher says what it is ("dashhq tools", as the phone menu's heading does); the words give way to the
+      // bare chevron only when the row is short of room.
       const switchBtn = h('button', { class: 'switch', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'dh-doors',
-        'aria-label': 'All dashhq tools', 'data-f': 'switch' }, icon('chevron', 16));
+        'aria-label': 'All dashhq tools', 'data-f': 'switch' }, h('span', { class: 'swl', 'aria-hidden': 'true' }, 'dashhq tools'),
+        icon('chevron', 16));
       const doorPop = h('nav', { class: 'pop doorpop', id: 'dh-doors', hidden: true, 'aria-label': 'dashhq tools' },
         this._family(key, net));
       switchBtn.addEventListener('click', () => this._toggle('door', switchBtn, doorPop));
@@ -726,8 +807,8 @@
       this._navSlot = h('slot', { name: 'nav' });
       this._navSlot.addEventListener('slotchange', this._fit);
       this._nav = h('div', { class: 'nav empty', part: 'nav' }, this._navSlot);
-      const sheetEl = h('div', { class: 'sheet', id: 'dh-sheet' }, !this._tabs && this._nav,
-        h('div', { class: 'family' }, this._family(key, net)));
+      this._pf = h('div', { class: 'family' }, this._phoneFamily(key, net));
+      const sheetEl = h('div', { class: 'sheet', id: 'dh-sheet' }, !this._tabs && this._nav, this._pf);
 
       const end = h('div', { class: 'end' }, net && this._netControl(net, kind));
       if (!this.hasAttribute('no-theme')) {
@@ -761,7 +842,7 @@
         product && [h('span', { class: 'slash', 'aria-hidden': 'true' }, '/'), product],
         switchBtn, doorPop, this._tabs && this._nav, sheetEl, end);
       this._bar = h('header', { class: `bar ${kind}${key === 'home' ? ' is-home' : ''}${this._tabs ? ' tabs' : ''}`,
-        part: 'bar' }, this._row);
+        part: 'bar' }, this._row, this._arrival(key));
       // Following any link inside the bar (including the product's slotted nav) closes what is open.
       this._bar.addEventListener('click', (e) => { if (e.target.closest && e.target.closest('a')) this.close(); });
       this._paint(this._bar);
@@ -773,28 +854,59 @@
       if (net !== this._net) { this._net = net; queueMicrotask(netChanged); }
     }
 
-    // Doors, Apps, Also and the theme choice: the desktop popover and the phone sheet each get a copy.
+    // Doors with their descriptions, Apps, Also and the theme choice: the desktop switcher.
     _family(key, net) {
       const cur = doorOf(key);
       const to = (k) => doorHref(k, net);
-      const link = (k, tag = true) => h('a', { href: to(k), 'aria-current': current(key === k, 'page') }, PRODUCTS[k].name,
-        tag && PRODUCTS[k].only && h('span', { class: 'only' }, PRODUCTS[k].only));
       const doors = h('ul', { class: 'doors' }, DOORS.map((d) =>
         h('li', { class: d.steps ? 'door start' : 'door', 'aria-current': current(cur === d.door) },
           h('a', { class: 'dn', href: to(d.key) }, d.label),
           h('span', { class: 'dd' }, d.desc),
-          d.steps && h('span', { class: 'steps' }, link(d.steps[0]), h('span', { 'aria-hidden': 'true' }, '→'), link(d.steps[1])))));
-      // A group whose products all run on one network says so once, beside its label, instead of on every link.
-      const group = (label, keys) => {
-        const only = new Set(keys.map((k) => PRODUCTS[k].only));
-        const shared = only.size === 1 ? [...only][0] : null;
-        // Short names (Forge, Pollr, Yappr) share one row of three on phones; longer ones take two columns.
-        const cls = keys.every((k) => PRODUCTS[k].name.length <= 6) ? 'grp g3' : 'grp';
-        return h('div', { class: cls, role: 'group', 'aria-label': shared ? `${label}, ${shared} only` : label },
-          h('span', { class: 'gl', 'aria-hidden': 'true' }, label, shared && h('span', { class: 'only' }, shared)),
-          keys.map((k) => link(k, !shared)));
-      };
+          d.steps && h('span', { class: 'steps' }, this._link(key, net, d.steps[0]), h('span', { 'aria-hidden': 'true' }, '→'),
+            this._link(key, net, d.steps[1])))));
+      return [doors, this._group(key, net, 'Apps', APPS), this._group(key, net, 'Also', ALSO), this._themes()];
+    }
 
+    // The phone menu's copy, kept short: the four doors by name, then one "More tools" row that opens the apps, the
+    // other tools and the hub. Start on Testnet is one door here (Bridge hands over to the Faucet); the Faucet itself
+    // is under More tools for anyone who only wants testnet DASH.
+    _phoneFamily(key, net) {
+      const cur = doorOf(key);
+      // The product's own door is left out: its sections are right above, and the bar's name already goes home.
+      const doors = DOORS.filter((d) => d.door !== 'home' && PRODUCTS[d.key] !== PRODUCTS[key]);
+      const list = h('ul', { class: 'pd', 'aria-labelledby': 'dh-fl' }, doors.map((d) =>
+        h('li', { 'aria-current': current(cur === d.door), 'data-k': d.key },
+          h('a', { href: doorHref(d.key, net) }, d.label))));
+      const box = h('div', { id: 'dh-more', hidden: true },
+        this._group(key, net, 'Apps', APPS), this._group(key, net, 'Also', [...ALSO, 'faucet']),
+        key !== 'home' && h('a', { class: 'hm', href: doorHref('home'), 'data-k': 'home' },
+          'dashhq.org', h('span', null, DOORS[0].desc)));
+      const more = h('button', { class: 'more', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'dh-more' },
+        'More tools', icon('chevron', 16));
+      more.addEventListener('click', () => {
+        box.hidden = !box.hidden;
+        more.setAttribute('aria-expanded', String(!box.hidden));
+      });
+      return [h('div', { 'data-list': '' }, h('p', { class: 'fl', id: 'dh-fl' }, 'dashhq tools'), list), more, box, this._themes()];
+    }
+
+    _link(key, net, k, tag = true) {
+      return h('a', { href: doorHref(k, net), 'aria-current': current(key === k, 'page'), 'data-k': k }, PRODUCTS[k].name,
+        tag && PRODUCTS[k].only && h('span', { class: 'only' }, PRODUCTS[k].only));
+    }
+
+    // A group whose products all run on one network says so once, beside its label, instead of on every link.
+    _group(key, net, label, keys) {
+      const only = new Set(keys.map((k) => PRODUCTS[k].only));
+      const shared = only.size === 1 ? [...only][0] : null;
+      // Short names (Forge, Pollr, Yappr) share one row of three on phones; longer ones take two columns.
+      const cls = keys.every((k) => PRODUCTS[k].name.length <= 6) ? 'grp g3' : 'grp';
+      return h('div', { class: cls, role: 'group', 'aria-label': shared ? `${label}, ${shared} only` : label, 'data-list': '' },
+        h('span', { class: 'gl', 'aria-hidden': 'true' }, label, shared && h('span', { class: 'only' }, shared)),
+        keys.map((k) => this._link(key, net, k, !shared)));
+    }
+
+    _themes() {
       const btns = [['system', 'System'], ['light', 'Light'], ['dark', 'Dark']].map(([p, label]) => {
         const b = h('button', { type: 'button' }, label);
         b.addEventListener('click', () => setPref(p));
@@ -803,10 +915,52 @@
       const sync = () => btns.forEach(([p, b]) => b.setAttribute('aria-pressed', String(p === pref)));
       sync();
       this._on(themeListeners, sync);
-      const themes = h('div', { class: 'themes' }, h('span', { class: 'gl' }, 'Theme'),
+      return h('div', { class: 'themes' }, h('span', { class: 'gl' }, 'Theme'),
         h('div', { class: 'seg', role: 'group', 'aria-label': 'Theme' }, btns.map(([, b]) => b)));
+    }
 
-      return [doors, group('Apps', APPS), group('Also', ALSO), themes];
+    // Anything the product's own sections already link to (the hub's Radar, Governance, Explorer and Start; a nav
+    // that links to a sibling tool) leaves the phone menu's family part, so nothing is listed twice. Run when the
+    // menu opens: slotted links can change (and declarative family links resolve) after the bar renders.
+    _dedupe() {
+      const place = (u) => { try { const x = new URL(u, location.href); return x.origin + x.pathname; } catch { return ''; } };
+      const keys = new Set(), places = new Set();
+      for (const el of this._navSlot.assignedElements()) {
+        for (const a of el.matches('a') ? [el] : el.querySelectorAll('a')) {
+          if (!a.getClientRects().length) continue; // an item hidden in this layout doesn't count
+          const k = a.dataset.family;
+          if (k && Object.hasOwn(PRODUCTS, k)) keys.add(PRODUCTS[k] === PRODUCTS.radar ? 'radar' : k);
+          places.add(place(a.href));
+        }
+      }
+      for (const item of this._pf.querySelectorAll('[data-k]')) {
+        const a = item.matches('a') ? item : item.querySelector('a');
+        item.hidden = keys.has(item.dataset.k) || places.has(place(a.href));
+      }
+      for (const list of this._pf.querySelectorAll('[data-list]')) list.hidden = !list.querySelector('[data-k]:not([hidden])');
+    }
+
+    // After a retired product's forward: "fees.dashhq.org is now part of Explorer." Only the bar of the product it
+    // moved into shows it, so a hand-made link can't make another tool claim the move. One node for the bar's life,
+    // so a re-render doesn't announce it again; it goes when dismissed or when the visitor leaves that page.
+    _arrival(key) {
+      const a = arrival;
+      if (!a || a.done || (a.bar && a.bar !== this) || RETIRED[a.from].to !== key) return null;
+      a.bar = this;
+      if (!this._arr) {
+        const r = RETIRED[a.from];
+        const said = `${r.was} is now part of ${PRODUCTS[r.to].name}.`;
+        const x = h('button', { class: 'ax', type: 'button', 'aria-label': 'Dismiss', title: 'Dismiss' }, icon('close', 16));
+        x.addEventListener('click', () => endArrival(true));
+        const live = h('p', { class: 'sr', role: 'status' });
+        this._arr = h('div', { class: 'arrive', part: 'arrival' },
+          h('div', { class: 'ain' }, icon('info', 18),
+            h('p', { class: 'at', 'aria-hidden': 'true' }, h('b', null, r.was), said.slice(r.was.length),
+              h('span', { class: 'am' }, ' Old links open the same place here.')), x),
+          live);
+        setTimeout(() => { live.textContent = `${said} Old links open the same place here.`; }, 60);
+      }
+      return this._arr;
     }
 
     _netControl(net, kind) {
@@ -880,6 +1034,7 @@
       this._open = { which, trigger, panel };
       this._setOpen(this._open, true);
       if (which === 'sheet') {
+        this._dedupe();
         // The sheet comes before the menu button in DOM order, so put keyboard focus on its first link.
         const first = (!this._tabs && this._navSlot.assignedElements()
           .map((el) => (el.matches('a') ? el : el.querySelector('a')))
@@ -935,9 +1090,10 @@
       const was = bar.classList.contains('compact');
       // Measure the wide row as the wide row: product CSS keyed to :state(compact) must not still apply, or the
       // bar would flip back and forth between layouts.
-      bar.classList.remove('compact', 'squeeze');
+      bar.classList.remove('compact', 'squeeze', 'nolabel');
       setState(this, 'compact', false);
       const over = () => row.scrollWidth > row.clientWidth + 1;
+      if (over()) bar.classList.add('nolabel'); // the switcher's words go first, then the whole row collapses
       const compact = w > 0 && (w < 600 || over());
       bar.classList.toggle('compact', compact);
       setState(this, 'compact', compact);
@@ -983,7 +1139,7 @@
           h('div', { class: 'meta' },
             h('span', null, key === 'home' ? 'Tools for the Dash network.' : `${PRODUCTS[key].name} is part of dashhq.org.`),
             src && h('a', { href: src }, 'Source'),
-            h('a', { href: href('home', '/#directory') }, 'Directory')))));
+            h('a', { href: href('home', '/directory/') }, 'Directory')))));
     }
   }
 
@@ -1305,101 +1461,53 @@
   }
 
   /* ---------------------------------------------------------------- <dashhq-moved> */
-  // A retired product's page. One behaviour for the family: say what moved where, offer the one way on, and forward
-  // after MOVED_DELAY seconds unless the visitor stops it (Stay here, or by using the page). The old link's network
-  // and query travel with it; the page's bar shows the network the visitor will land on.
-  // 20 s: WCAG 2.2.1 gives anyone warned of a time limit at least 20 seconds to act on it.
-  const MOVED_DELAY = 20;
+  // A retired product's page. It forwards at once to the exact new place, with the old link's network, query and hash,
+  // and adds ?moved-from=<product> so the new home's bar says, once, what happened. An instant redirect sets no time
+  // limit (WCAG 2.2.1), so there is nothing to stop or extend. What it draws is for the few it doesn't forward at once:
+  // a slow destination, or someone who came Back to it on purpose. Its children are the page without JavaScript.
   class DashhqMoved extends NoticeElement {
     static get observedAttributes() { return ['to', 'path', 'product', 'network', 'heading', 'lede', 'label']; }
     static css = MOVED_CSS;
 
     connectedCallback() {
-      const first = !this.shadowRoot;
-      if (first) {
-        this._left = MOVED_DELAY;
+      if (this._going === undefined) {
         const nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
-        // Back to this page (from the new home, say): forwarding again would trap the visitor.
-        this._stopped = !!(nav && nav.type === 'back_forward');
-        // Any use of the page stops the forward, except the two controls, which act on their own clicks.
-        this._onUse = (e) => {
-          if (this._stopped) return;
-          const path = e.composedPath();
-          if (path.includes(this._pri) || path.includes(this._stay)) return;
-          if (e.type === 'keydown' && /^(Shift|Control|Alt|Meta)$/.test(e.key)) return;
-          this._stop();
-        };
-        this._onShow = (e) => { if (e.persisted) this._stop(); };
-        // A scroll that starts on a control (both are full width on phones) is still someone reading the page.
-        this._onCancel = () => { if (!this._stopped) this._stop(); };
-        // The warning is said when the count starts, which is when the tab is visible, not when it opened behind another.
-        this._warn = () => {
-          if (this._warned || this._stopped || doc.hidden) return;
-          this._warned = true;
-          this._say(`Opening ${this._names().toName} automatically in ${MOVED_DELAY} seconds. Choose Stay here to stop.`);
-        };
+        this._going = !(nav && nav.type === 'back_forward');
+        if (this._going) {
+          // After the site's route map: deferred scripts run before DOMContentLoaded.
+          const go = () => { if (this.isConnected && this._going) location.replace(this._dest()); };
+          if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', go, { once: true });
+          else setTimeout(go, 0);
+        }
+        // Restored from the back-forward cache: show the way on rather than "Opening…" forever.
+        addEventListener('pageshow', (e) => { if (e.persisted && this._going) { this._going = false; this.render(); } });
       }
       super.connectedCallback();
-      this._warn();
-      doc.addEventListener('visibilitychange', this._warn);
-      doc.addEventListener('pointerdown', this._onUse, true);
-      doc.addEventListener('pointercancel', this._onCancel, true);
-      doc.addEventListener('keydown', this._onUse, true);
-      addEventListener('pageshow', this._onShow);
-      if (!this._stopped && !this._tick) {
-        this._tick = setInterval(() => {
-          if (doc.hidden) return; // a background tab waits until someone looks at it
-          this._left -= 1;
-          if (this._left > 0) return this._sync();
-          this._clearTick();
-          location.replace(this._dest());
-        }, 1000);
-      }
-    }
-    disconnectedCallback() {
-      super.disconnectedCallback();
-      doc.removeEventListener('visibilitychange', this._warn);
-      doc.removeEventListener('pointerdown', this._onUse, true);
-      doc.removeEventListener('pointercancel', this._onCancel, true);
-      doc.removeEventListener('keydown', this._onUse, true);
-      removeEventListener('pageshow', this._onShow);
-      this._clearTick();
-    }
-    _clearTick() { clearInterval(this._tick); this._tick = null; }
-    _stop() {
-      this._clearTick();
-      if (this._stopped) return;
-      this._stopped = true;
-      this._sync();
-      this._say('Staying on this page.');
     }
     _names() {
       const to = this.getAttribute('to');
       const from = PRODUCTS[this.getAttribute('product')] ? this.getAttribute('product') : pageProduct();
       return { to: PRODUCTS[to] ? to : 'home', toName: PRODUCTS[to] ? PRODUCTS[to].name : 'dashhq.org',
-        fromName: from && from !== 'home' ? PRODUCTS[from].name : 'This tool' };
+        from: from && from !== 'home' ? from : null, fromName: from && from !== 'home' ? PRODUCTS[from].name : 'This tool' };
     }
     _net() {
       const sp = new URL(location.href).searchParams;
       return parseNetwork(sp.get('network') || sp.get('net')) || parseNetwork(this.getAttribute('network')) || 'mainnet';
     }
     // The new home, with the old link's network, its query (contract, id, filters, every value of a repeated key) unless
-    // the new path sets that key, and its hash unless the path has one or the old hash was a hash route ("#/c/german":
-    // the site maps that into path).
+    // the new path sets that key, its hash unless the path has one or the old hash was a hash route ("#/c/german":
+    // the site maps that into path), and where it came from.
     _dest() {
-      const { to } = this._names();
+      const { to, from } = this._names();
       let u;
       try { u = new URL(href(to, this.getAttribute('path') || '/', { network: this._net() })); } catch { u = new URL(href(to)); }
       const own = new Set(u.searchParams.keys());
       for (const [k, v] of new URL(location.href).searchParams) {
-        if (k !== 'network' && k !== 'net' && !own.has(k)) u.searchParams.append(k, v);
+        if (k !== 'network' && k !== 'net' && k !== ARRIVAL_PARAM && !own.has(k)) u.searchParams.append(k, v);
       }
+      if (from) u.searchParams.set(ARRIVAL_PARAM, from);
       if (!u.hash && location.hash && !location.hash.startsWith('#/')) u.hash = location.hash;
       return u.href;
-    }
-    _sync() {
-      this._title.textContent = this._stopped ? 'Staying on this page' : `Opening ${this._names().toName} in ${this._left} s`;
-      this._stay.hidden = this._stopped;
     }
 
     render() {
@@ -1409,20 +1517,16 @@
       // The same header on every retired page: the bar shows the network the visitor will land on.
       const bar = [...bars].pop();
       if (bar && aware && bar.getAttribute('network') !== net) bar.setAttribute('network', net);
-      this._pri = h('a', { class: 'btn pri', href: this._dest(), 'data-f': 'pri' }, this.getAttribute('label') || `Open ${toName}`, arrow());
-      this._stay = h('button', { class: 'btn', type: 'button', 'data-f': 'stay' }, 'Stay here');
-      // Focus moves on once the click is done, so the key that pressed Stay here can't also open the link.
-      this._stay.addEventListener('click', () => { this._stop(); this._pri.focus(); });
-      this._title = h('p', { class: 'nt', 'aria-hidden': 'true' });
       const lede = (this.getAttribute('lede') || '').trim();
       this._show(h('div', { class: 'm' },
         h('h1', null, this.getAttribute('heading') || `${fromName} has moved to ${toName}`),
         lede && h('p', { class: 'l' }, lede),
-        h('div', { class: 'n' }, this._title,
+        h('div', { class: 'n' },
+          this._going && h('p', { class: 'nt' }, h('span', { class: 'spin', 'aria-hidden': 'true' }), `Opening ${toName}…`),
           h('p', { class: 'nb' }, `Links to ${fromName} keep working: they open the same place in ${toName}` +
             (aware ? `, on ${networkLabel(net)}.` : '.')),
-          h('div', { class: 'acts' }, this._stay, this._pri))));
-      this._sync();
+          h('div', { class: 'acts' },
+            h('a', { class: 'btn pri', href: this._dest(), 'data-f': 'pri' }, this.getAttribute('label') || `Open ${toName}`, arrow())))));
     }
   }
 

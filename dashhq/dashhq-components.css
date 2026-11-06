@@ -536,6 +536,35 @@
 .dh-proof--failed { color: var(--dh-bad); border-color: currentColor; }
 .dh-proof--failed::before { background: currentColor; }
 
+/* ---------- sources beside figures: a source or check label never sits inside a sentence ----------
+   .dh-src: a quiet tag after a space at the end of a label line, in a table header, or after a complete value:
+     Asked for <span class="dh-src">Platform records</span>. Dotted = reported; --ok (solid green) = checked in this
+     browser; --warn (dashed) = stale or not checked. Like a badge it is a label, never a link: the detail goes in a
+     numbered line or the proof badge.
+   .dh-ref + .dh-sources: a superscript number after the sentence's full stop, and a numbered line under the block.
+     <p>… largest first.<sup class="dh-ref"><a href="#src-1" aria-label="Source 1">1</a></sup></p>
+     <ol class="dh-sources" aria-label="Sources"><li id="src-1">Standings: …</li></ol>
+   Many figures with one source: one plain <p class="dh-sources">Sources: …</p> under the block, and no markers. */
+.dh-src {
+  box-sizing: border-box; display: inline-flex; align-items: center; height: 20px; padding: 0 6px; margin: 0;
+  vertical-align: 1px; border: 1px dotted var(--dh-line-2); border-radius: var(--dh-r1);
+  font: var(--dh-w-ui) var(--dh-fs-xs)/1 var(--dh-font); letter-spacing: 0; text-transform: none; color: var(--dh-ink-2);
+  white-space: nowrap; text-decoration: none; }
+.dh-src--ok { color: var(--dh-good); border-style: solid; border-color: color-mix(in srgb, var(--dh-good) 45%, transparent); }
+.dh-src--warn { color: var(--dh-warn); border-style: dashed; border-color: currentColor; }
+.dh-ref { font-size: .72em; line-height: 0; vertical-align: super; font-weight: var(--dh-w-strong); font-variant-numeric: tabular-nums; }
+.dh-ref a { padding: 0 1px; border-radius: var(--dh-r1); color: var(--dh-brand-ink); text-decoration: none; }
+.dh-ref a:hover { text-decoration: underline; text-underline-offset: 2px; }
+.dh-sources { box-sizing: border-box; display: block; max-width: 80ch; margin: var(--dh-3) 0 0; padding: var(--dh-2) 0 0;
+  border-top: 1px solid var(--dh-line); font-size: var(--dh-fs-xs); line-height: 1.45; color: var(--dh-ink-2); }
+ol.dh-sources { display: grid; gap: 3px; list-style: none; counter-reset: dh-src; }
+ol.dh-sources > li { counter-increment: dh-src; display: grid; grid-template-columns: 1.6em minmax(0, 1fr);
+  scroll-margin-top: calc(var(--dh-bar-h) + var(--dh-4)); }
+ol.dh-sources > li::before { content: counter(dh-src); font-weight: var(--dh-w-strong); font-variant-numeric: tabular-nums; }
+ol.dh-sources > li:target { color: var(--dh-ink); background: var(--dh-brand-soft); border-radius: var(--dh-r1);
+  box-shadow: 0 0 0 4px var(--dh-brand-soft); }
+.dh-sources a { color: var(--dh-brand-ink); }
+
 /* ================================================================ notices
    Page context, in four tones. Errors that replace content use .dh-error (below) instead.
    <div class="dh-notice dh-notice--warn" role="status"> <p class="dh-notice__title">…</p> <p>…</p>
@@ -659,9 +688,10 @@
 
 /* ================================================================ shared behaviour */
 /* Inline components keep their own width when they sit in a grid (stacks, fields, notices, page headers). */
-.dh-seg:not(.dh-seg--block), .dh-badge, .dh-pill, .dh-proof, .dh-status, .dh-btn:not(.dh-btn--block) { justify-self: start; }
+.dh-seg:not(.dh-seg--block), .dh-badge, .dh-pill, .dh-proof, .dh-src, .dh-status, .dh-btn:not(.dh-btn--block) { justify-self: start; }
 /* The one focus ring, on the layer's link-like pieces too. */
 .dh-link:focus-visible, .dh-link--go:focus-visible, .dh-crumbs a:focus-visible, .dh-elsewhere a:focus-visible, .dh-table a:focus-visible,
+.dh-ref a:focus-visible, .dh-sources a:focus-visible,
 .dh-error summary:focus-visible, .dh-empty a:focus-visible, .dh-notice a:focus-visible {
   outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); border-radius: var(--dh-r1); }
 /* Touch screens: every target the layer draws is at least 40px tall. Links inside running text are exempt. */

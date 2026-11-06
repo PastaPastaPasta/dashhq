@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Where a retired product's link lands: any family page, with nothing added for it. The shell reads ?moved-from=vote,
+     takes it out of the address and shows one line in the bar. Open it as arrived.html?moved-from=vote. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>german.dash · Name contests · Governance · dashhq</title>
+<link rel="icon" href="mark/favicon.svg" type="image/svg+xml">
+<script src="dashhq-shell.js"></script>
+<link rel="preload" href="fonts/archivo-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="dashhq-tokens.css">
+<link rel="stylesheet" href="dashhq-shell.css">
+<link rel="stylesheet" href="dashhq-components.css">
+<link rel="stylesheet" href="components-demo.css">
+</head>
+<body class="dh-fill">
+
+<dashhq-bar product="gov" network="mainnet" networks="mainnet testnet" sticky>
+  <nav slot="nav" aria-label="Governance">
+    <a href="#proposals">Proposals</a>
+    <a href="#names" aria-current="page">Name contests</a>
+    <a href="#masternodes">My masternodes</a>
+    <a href="#create">Create</a>
+  </nav>
+</dashhq-bar>
+
+<main class="dh-container dh-page">
+  <header class="dh-page-header">
+    <p class="dh-crumbs"><a href="#names">Name contests</a> / german.dash</p>
+    <div class="dh-page-header__row">
+      <div class="dh-page-header__text">
+        <p class="dh-page-header__kicker">Name contest</p>
+        <h1 class="dh-page-header__title">german.dash</h1>
+        <p class="dh-page-header__lede">Two identities asked for this name. Masternodes decide who gets it, or that nobody does.</p>
+      </div>
+    </div>
+  </header>
+  <section class="dh-card">
+    <dl class="dh-kv dh-kv--ruled">
+      <div><dt>Contenders</dt><dd>2</dd></div>
+      <div><dt>Voting closes</dt><dd>17 Nov 2026, 18:52 UTC</dd></div>
+      <div><dt>Leading</dt><dd>The first contender, by 41 votes</dd></div>
+    </dl>
+  </section>
+</main>
+
+<dashhq-footer product="gov" source="https://github.com/PastaPastaPasta/govhub"></dashhq-footer>
+</body>
+</html>

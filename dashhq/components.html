@@ -384,6 +384,34 @@
     </div>
   </section>
 
+  <section class="dh-section" id="sources" aria-labelledby="h-sources">
+    <div class="dh-section__head">
+      <h2 class="dh-section__title" id="h-sources">Sources beside figures</h2>
+      <p class="dh-section__desc">A source or check label never sits inside a sentence: it follows a label or a value, or it is a numbered line under the block.</p>
+    </div>
+    <div class="dh-stack dh-stack--lg">
+      <div class="dh-stats" data-test="src-stats">
+        <div class="dh-stat dh-stat--key"><span class="dh-stat__label">This payout can pay <span class="dh-src dh-src--ok" data-test="src-ok">Consensus limit</span></span><span class="dh-stat__value">6,828 <small>DASH</small></span><span class="dh-stat__note">≈ $309,000</span></div>
+        <div class="dh-stat"><span class="dh-stat__label">Asked for <span class="dh-src" data-test="src">Platform records</span></span><span class="dh-stat__value">8,125 <small>DASH</small></span><span class="dh-stat__note">119% of what it can pay</span></div>
+        <div class="dh-stat"><span class="dh-stat__label">Has the votes <span class="dh-src">Reported tally</span></span><span class="dh-stat__value">6,410 <small>DASH</small></span><span class="dh-stat__note">5,980 DASH of it fits the budget</span></div>
+        <div class="dh-stat"><span class="dh-stat__label">USD price <span class="dh-src dh-src--warn" data-test="src-warn">Stale</span></span><span class="dh-stat__value">48.74 <small>USD</small></span><span class="dh-stat__note">a DASH, 25 min ago</span></div>
+      </div>
+      <div class="dh-card dh-narrow" data-test="src-prose">
+        <h3 class="dh-card__title">What it pays for</h3>
+        <p>Proposals are grouped by where they stand, largest first.<sup class="dh-ref"><a href="#src-1" aria-label="Source 1" data-test="ref-1">1</a></sup> Titles in quotes are the owners’ own words.<sup class="dh-ref"><a href="#src-2" aria-label="Source 2">2</a></sup> At today’s price, the next payout is worth about $309,000.<sup class="dh-ref"><a href="#src-3" aria-label="Source 3">3</a></sup></p>
+        <ol class="dh-sources" aria-label="Sources" data-test="sources">
+          <li id="src-1">Standings: vote tallies reported by the governance data service at block 2,384,512. Each proposal’s page recounts its own.</li>
+          <li id="src-2">Titles and summaries: each owner’s proposal page. Nobody has checked them.</li>
+          <li id="src-3">USD: Coinbase’s DASH price, fetched 6 Nov 2026, 01:22 UTC.</li>
+        </ol>
+      </div>
+      <div>
+        <p>Many figures with one source say it once, under the block, with no markers:</p>
+        <p class="dh-sources" data-test="sources-once">Sources: proposals and amounts from Platform records; votes reported by the governance data service; USD at <a href="#sources">Coinbase’s price</a>, 01:22 UTC.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="dh-section" id="notices" aria-labelledby="h-notices">
     <div class="dh-section__head"><h2 class="dh-section__title" id="h-notices">Notices</h2></div>
     <div class="dh-grid notices">

@@ -1,8 +1,25 @@
-# dashhq shell 1.6.2
+# dashhq shell 1.8.0
 
 The shared shell for the dashhq.org family: the family bar, the footer, the hash display, the sign-in explanation,
 the wrong-network and retired-page notices, the theme, and the tokens they all draw with. Read `../DESIGN.md` for the
-rules and `../ADOPTION-r5.md` for your site's changes this round.
+rules and `../ADOPTION-r6.md` for your site's changes this round (then `-r5`, `-r4`).
+
+## New in 1.8 (round 6): sources beside figures, and a switcher that says what it is
+
+| What | Who acts | How |
+|---|---|---|
+| **Sources beside figures.** A source or check label never sits inside a sentence. Three classes in the component layer: `.dh-src`, a quiet tag after a label or a complete value ("Asked for [Platform records]"; `--ok` checked in this browser, `--warn` stale or not checked); `.dh-ref`, a superscript number after a sentence's full stop; `.dh-sources`, the numbered lines closing the block (`ol`), or one "Sources: …" line for a block that shares a source (`p`). | Governance (Treasury, budget header), Explorer and anyone with a chip in a sentence; anyone showing fiat | "Sources beside figures" below; `components.html#sources`; checks `sources-*`; `../ADOPTION-r6.md` §4 |
+| **Fiat reads as an estimate**: "≈ $309,000", three significant figures (`../PRICE.md`, with a reference `formatUsdEstimate`). | Governance, Explorer, Bridge | `../PRICE.md` |
+| **The desktop switcher says what it is**: "dashhq tools ⌄" beside the product name (Sol #14), the phone menu's heading too. Short of room, the words give way to the chevron before the row collapses. Its accessible name is unchanged ("All dashhq tools"). | Nobody: re-vendor | check `switcher-says-what-it-is-*`; `bars.html` |
+
+## New in 1.7 (round 6): no waiting at a retired address, and a phone menu that lists nothing twice
+
+| What | Who acts | How |
+|---|---|---|
+| **Retired pages forward at once.** `<dashhq-moved>` opens the exact new place with `location.replace` as soon as the page's route map has run: no countdown, no "Stay here", no 20 seconds on an empty page. The network, query and plain hash travel as before, plus `?moved-from=<product>`. An instant redirect sets no time limit, so WCAG 2.2.1 has nothing to adjust. Someone who comes Back to the old address gets the page with its one link instead of a second bounce; without JavaScript, the element's children (heading, lede, one real link) are the page. | EvoVote, Basics, the Fee estimator: re-vendor; drop `networks` from the bar; make the no-JS link a primary button with `moved-from` | `<dashhq-moved>` below; `moved.html`; checks `moved-*` |
+| **The arrival notice is the shell's.** On any family page, the shell reads `?moved-from=`, takes it out of the address before the app starts (every other byte of the query is kept), and the bar shows one dismissible line: "**fees.dashhq.org** is now part of Explorer. Old links open the same place here." (the first sentence only on phones). It shows only on the product the retired one moved into, is announced once, and goes when dismissed or when the visitor moves on to another page. | Nobody: re-vendor. Governance deletes its own `MovedFromVote` notice | "Arriving from a retired product" below; `arrived.html?moved-from=vote`; checks `arrival-*` |
+| **A short phone menu.** The product's sections, then "dashhq tools": the other doors by name (never the product's own door, which its sections already cover), then one **More tools** row that opens the apps, Architecture, the Fee estimator, the DAPI console, the Faucet and dashhq.org, then the theme. Anything your own sections already link to leaves the family part, so the hub's menu no longer lists Radar, Governance, Explorer and Start twice. With `phone-nav="tabs"` the menu holds only the family part, as before. | Nobody: re-vendor. See `../ADOPTION-r6.md` §2 for the sites whose nav repeats family links | "Phone menu" below; checks `phone-menu-*` |
+| **Footer:** "Directory" opens `dashhq.org/directory/`, like the hub's own nav, instead of a fold half-way down the hub. | Nobody | check `footer-directory-is-the-directory-page` |
 
 ## New in 1.6 (round 5): the same situation, handled the same way everywhere
 
@@ -10,7 +27,7 @@ rules and `../ADOPTION-r5.md` for your site's changes this round.
 |---|---|---|
 | **The shell owns the network order.** Every network menu reads Mainnet, Testnet, then "Developer networks" (devnets A to Z, open only on a devnet), whatever order `networks` lists. `dashhq.network.sort()` gives the same order to any list of your own. | Nobody for the bar. Explorer and Bridge: sort their own network pickers. | `<dashhq-bar>`; check `network-order-is-the-shells` |
 | **`<dashhq-not-found>`** and **`dashhq.network.findElsewhere()`**: a record looked up on one network that isn't there says "Not on Testnet. This masternode exists on Mainnet", with "Open it on Mainnet", or "Not on Testnet or Mainnet". | Radar, Governance, Explorer, Bridge, DAPI | The element's section below; `demo.html#not-found` |
-| **`<dashhq-moved>`**: one retired-page behaviour. What moved where, one primary link, and a forward after 20 seconds that "Stay here" (or any use of the page) stops. The network, query and hash travel; the bar shows the network you'll land on. | EvoVote, Basics, the Fee estimator | The element's section below; `moved.html` |
+| **`<dashhq-moved>`**: one retired-page behaviour (the 20-second forward is gone in 1.7: it forwards at once). | EvoVote, Basics, the Fee estimator | The element's section below; `moved.html` |
 | **Compact sign-in help.** On phones (or `compact="always"`) `<dashhq-signin-help>` is one line, "Uses your Dash identity · What's this? ›", above the ways in; the explanation opens in place. | Nobody: re-vendor | The element's section below; `app.html?signin` at 390px |
 | **The committing button is amber everywhere.** `.dh-btn--primary` no longer takes `--dh-accent`. `.dh-btn--lg` is retired and draws at the family height. An app's accent now marks its brand, selection and highlights, turned on with `<html data-dh-accent="forge\|pollr\|yappr">`. Links stay blue. | Forge, Pollr, Yappr: swap the `:root` line for the attribute | "App accents" below; `components.html#accents` |
 | **1.6.2:** a new lookup is a new question: it shows "Checking" and never an earlier answer, and a dropped lookup's late answer is discarded. Apps that pass a new lookup function on every render set `record`, so the same record keeps its answer. Focus stays in a notice when its button changes. The retired-page warning is said when the tab is first visible, and a scroll that starts on its buttons stops the forward. | Everyone: re-vendor 1.6.2 | |
@@ -47,6 +64,7 @@ rules and `../ADOPTION-r5.md` for your site's changes this round.
 | `app.html` | An app page: section nav as phone tabs, the sign-in dialog with `<dashhq-signin-help>`, one footer | no |
 | `components.html` | Every component in every state, with the app accents; `?accent=forge\|pollr\|yappr` previews one page-wide | no |
 | `moved.html`, `moved.js` | A retired product's page as every retired site writes it (EvoVote's, with its one route map) | no |
+| `arrived.html` | Where a retired link lands (a Governance contest): open it as `arrived.html?moved-from=vote` to see the arrival notice | no |
 
 ## Vendor it
 
@@ -156,18 +174,30 @@ Events and API:
 - `window.dashhq.network.findElsewhere(exists, { network, networks, signal })`: see `<dashhq-not-found>`.
 - `window.dashhq.theme.set('dark' | 'light' | 'system')`, `.toggle()`, `.pref`, `.resolved`.
 
-The bar decides its own layout: it collapses to the phone layout whenever the full row would not fit, not at a fixed
-breakpoint. You do not need a media query for it. The phone lockup is the same on every site: the mark, then
+On wide screens the family switcher sits beside the product name as **dashhq tools ⌄** (accessible name "All dashhq
+tools"). The bar decides its own layout: when the full row would not fit, the switcher's words go first (the chevron
+stays), and then it collapses to the phone layout, not at a fixed breakpoint. You do not need a media query for it. The phone lockup is the same on every site: the mark, then
 `dashhq` set small over the product name (and the app's logo). It never drops the family name. If the row is still
 short of room (a long name, a network menu and an account control at 320px), the network pill keeps its dot and
 chevron but loses its word, and only then does the product name truncate, with the full name as its tooltip. At 360px
 and wider every product fits whole (`bars.html`, checked by `render-demo.mjs`).
 
-In the phone menu, the doors are a grid of names, except Start, which keeps its line ("Address, testnet DASH,
-identity, username") and its Bridge → Faucet links; Apps and Also are 44px rows. The desktop switcher keeps every
-description. A group whose products all run on one network says so once, beside its label ("Apps · Testnet"), so
-nobody crosses from a Mainnet tool into a practice app unawares. The Fee estimator and DAPI console receive the page's
-network like the other network-aware tools.
+**Phone menu.** Short, and nothing in it twice. From the top:
+
+1. Your sections (`slot="nav"`), 44px rows. Not with `phone-nav="tabs"`: the tab bar already shows them.
+2. **dashhq tools**: the other doors by name in a 2×2 grid of 44px rows: Radar, Governance, Explorer, Start on Testnet.
+   Your own door is left out: your sections are right above it, and the bar's product name already goes home. (The
+   Faucet keeps Start, marked current, because Start's door is Bridge.)
+3. **More tools**, one 44px row that opens in place: the apps (tagged Testnet once), Architecture, the Fee estimator,
+   the DAPI console, the Faucet, and dashhq.org.
+4. The theme.
+
+Whatever your sections already link to leaves the family part when the menu opens: a link with `data-family`, or a link
+to the same address. That is how the hub's menu (whose nav is Radar, Governance, Explorer, Start on Testnet, Apps,
+Directory) shows its nav and More tools, not the same four doors again. The desktop switcher keeps every door
+with its description, Start's Bridge → Faucet, Apps, Also, the theme. A group whose products all run on one network says
+so once, beside its label ("Apps · Testnet"), so nobody crosses from a Mainnet tool into a practice app unawares. The
+Fee estimator and DAPI console receive the page's network like the other network-aware tools.
 
 **Following the bar from product CSS.** The bar never writes attributes on itself. It exposes its layout as a custom
 state, `dashhq-bar:state(compact)`, for the rare control in your actions slot that must change with it. With
@@ -312,27 +342,33 @@ Explorer, DAPI) routes this one with no new code. If nobody cancels it, it is an
 
 The page a retired product leaves behind. One behaviour for the family, decided once:
 
-- **What moved where, calmly:** the heading ("EvoVote has moved to Governance", or yours), one lede, and "Links to
-  EvoVote keep working: they open the same place in Governance, on Testnet."
-- **One way on:** an amber primary link to the exact new place.
-- **The same timed forward everywhere: 20 seconds** (the time WCAG 2.2.1 gives anyone warned of a limit), counted in
-  the notice ("Opening Governance in 17 s") and announced once to screen readers. **Stay here** stops it, and so does any use of the page (a tap, a key, the network menu).
-  The count waits while the tab is in the background, and coming back to the page (Back) never forwards again.
-- **Nothing is lost:** the old link's network (`?network=`, or the element's `network`, else Mainnet), its query, and
-  its hash (unless the hash was an old hash route such as `#/c/german`, which your route map turns into `path`).
-- **The same header and footer:** your product's bar, which the element sets to the network the visitor will land
-  on, `<main class="dh-container dh-page"><div class="dh-narrow">`, and your `<dashhq-footer>`. Put `class="dh-fill"`
-  on `<body>` so the footer sits at the bottom.
+- **It forwards at once.** As soon as the page's route map has run (deferred scripts run before `DOMContentLoaded`),
+  the element replaces the address with the exact new place. Nobody waits, nobody has to find a button, and Back from
+  the new place skips the old address. An instant redirect sets no time limit, so there is nothing for WCAG 2.2.1 to
+  adjust and no "Stay here".
+- **Nothing is lost:** the old link's network (`?network=`, or the element's `network`, else Mainnet), its query (every
+  value of a repeated key), and its hash (unless the hash was an old hash route such as `#/c/german`, which your route
+  map turns into `path`).
+- **The new home says what happened**, not the old one: the element adds `?moved-from=<product>`, and the new home's
+  bar shows "**vote.dashhq.org** is now part of Governance. Old links open the same place here." (below).
+- **What it draws is for the few it doesn't forward at once:** a slow destination ("Opening Governance…" with the one
+  link), or someone who comes Back to the old address on purpose, who gets the page and its link instead of a second
+  bounce. Its children are the page without JavaScript: the heading, the lede and a real production link.
+- **The same header and footer:** your product's bar, without `networks` (the page has no network content; the element
+  sets a static pill to the network the visitor will land on), `<main class="dh-container dh-page"><div class="dh-narrow">`,
+  and your `<dashhq-footer>`. Put `class="dh-fill"` on `<body>` so the footer sits at the bottom.
 
 ```html
 <body class="dh-fill">
-<dashhq-bar product="vote" networks="mainnet testnet" sticky></dashhq-bar>
+<dashhq-bar product="vote" network="mainnet" sticky></dashhq-bar>
 <main class="dh-container dh-page"><div class="dh-narrow">
-  <dashhq-moved to="gov" path="/names?from=vote" heading="Name contests moved to Governance"
-    lede="Browse name contests, inspect tallies and choose how to vote, all in one place.">
+  <dashhq-moved to="gov" path="/names" heading="Name contests moved to Governance"
+    lede="Browse name contests, inspect tallies and choose how to vote, all in one place." label="Open name contests">
     <h1 class="dh-page-header__title">Name contests moved to Governance</h1>
-    <p><a class="dh-btn dh-btn--primary" href="https://gov.dashhq.org/names?network=mainnet&amp;from=vote">Open name contests →</a></p>
+    <p class="dh-page-header__lede">Browse name contests, inspect tallies and choose how to vote, all in one place.</p>
+    <p><a class="dh-btn dh-btn--primary" href="https://gov.dashhq.org/names?network=mainnet&amp;moved-from=vote">Open name contests →</a></p>
   </dashhq-moved>
+  <noscript><p>JavaScript is off, so this page can't open your contest directly. The link above opens the contest list on Mainnet.</p></noscript>
 </div></main>
 <dashhq-footer product="vote" source="…"></dashhq-footer>
 </body>
@@ -341,15 +377,33 @@ The page a retired product leaves behind. One behaviour for the family, decided 
 | Attribute | Meaning |
 |---|---|
 | `to` | **Required.** The new home's product key (`gov`, `explorer`). |
-| `path` | The exact place there, with any query: `/names/german?from=vote`, `/tools/fees/`, `/dpns/search/`. Update it from script when the old URL maps to a deeper place (`moved.js` maps EvoVote's `#/c/<label>`). Default `/`. |
+| `path` | The exact place there, with any query: `/names/a11ce`, `/tools/fees/`, `/dpns/search/`. Set it from a deferred script when the old URL maps to a deeper place (`moved.js` maps EvoVote's `#/c/<label>`); the forward waits for deferred scripts. Default `/`. |
 | `heading` | The H1. Default "*Old* has moved to *New*". Say what moved if that's clearer: "Name contests moved to Governance". |
 | `lede` | One sentence: what the new home does for the visitor. |
 | `label` | The primary link's words. Default "Open *New*". |
 | `network` | The network when the old link names none (Basics' old pages were Testnet). Default Mainnet. |
 | `product` | The retired product. Default: the page bar's. |
 
-The children are the version without JavaScript: the heading and a real production link. A retired site keeps only
-its route map; delete its own countdown, pause button and redirect script.
+A retired site keeps only its pages and its route map: no countdown, no pause button, no redirect script.
+
+### Arriving from a retired product
+
+Nothing to add on the new home. The shell reads `?moved-from=` when it loads (before your app's router does) and takes
+it out of the address with `history.replaceState`, keeping every other byte of the query and the hash, so a reload, a
+copied link or your router never see it. The bar of the product the retired one moved into then shows one line under
+its row, on the info ground, with a Dismiss button:
+
+> **fees.dashhq.org** is now part of Explorer. Old links open the same place here.
+
+- Phones show the first sentence only.
+- It shows only on the product that is the retired one's new home (`vote` on Governance, `fees` and `basics` on
+  Explorer), so a hand-made link can't make another tool claim a move. Any other value is taken out of the address
+  and ignored.
+- Screen readers hear it once; re-rendering the bar (a network switch) keeps the same node and says nothing new.
+- It goes when dismissed (focus moves to the product's name) or when the visitor moves on to another page: a push or
+  Back in your SPA (with the Navigation API; elsewhere it stays until dismissed). An app canonicalising its own address
+  with `replaceState` doesn't end it.
+- It is part of the bar, so it sticks with a `sticky` bar until dismissed. The phone menu opens over it.
 
 ## Components (`dashhq-components.css`)
 
@@ -401,10 +455,45 @@ accent, and never set text in it: Forge's ember would read as the dark theme's w
 | Tables | `dh-table` (`--compact`, `--cards`, `--stack`), `dh-table-wrap`, `dh-r`, `dh-sub`; row cards: `dh-rc-title`, `dh-rc-end`, `dh-rc-line`, `dh-rc-actions`, `dh-rc-hide` | Every `td` gets `data-label`. `--cards` turns list tables into Radar-style row cards under 640px: the title's link covers the card, controls in any cell stay clickable above it, and `dh-rc-actions` cells (buttons, checkboxes) move to the card's last line without a label. `--stack` turns record tables (keys, checks) into label/value blocks. Captions stay for screen readers. |
 | Key/value | `dh-kv` (`--ruled`, `--grid`) | `<dt>`/`<dd>` pairs, optionally wrapped in `<div>`. Long values wrap; they never overflow. |
 | Badges | `dh-badge` (`--good`, `--warn`, `--bad`, `--info`, `--outline`, `--dot`), `dh-status` (`--good`, `--warn`, `--bad`, `--info`), `dh-proof` (`--checking`, `--ok`, `--reported`, `--unverified`, `--failed`) | Never clickable, except the proof badge, which opens what was checked. `dh-pill` = `dh-badge`. |
+| Sources | `dh-src` (`--ok`, `--warn`), `dh-ref`, `dh-sources` (on an `ol`, numbered; on a `p`, one plain line) | Never inside a sentence. Tag after a label or a complete value; marker after the full stop; the lines close the section or card. See below. |
 | Notices | `dh-notice` (`--info`, `--success`, `--warn`, `--error`), `__title`, `__actions` | Page context. Use `role="status"`, or `role="alert"` for errors. |
 | States | `dh-empty` (`--inline`), `__title`; `dh-loading` (`--block`), `__note`, `dh-spin`, `dh-skel` (`--text`, `--title`, `--num`, `--row`, `--block`), `dh-skel-group`, `dh-progress`; `dh-error` (`--stale`), `__title` | Empty says what would be here and offers one next step. Loading names what is loading. Error says what failed, what is safe and how to retry, with the raw detail under Details. `--stale` keeps the last good data on screen and says how old it is. |
 | Stepper | `dh-steps` on an `<ol>`, `aria-current="step"` on the current `<li>`, links on done steps | Numbers come from the list. Write "Address", not "1 Address". Steps before the current one show as done (or set `data-state="done"`). An earlier step the visitor hasn't done gets `data-state="todo"` (a dashed grey ring), so opening a later step never claims progress. |
 | Misc | `dh-code`, `dh-toolbar` + `dh-grow`, `dh-pager`, `dh-elsewhere`, `dh-sr`, `dh-num`, `dh-mono`, `dh-unit`, `dh-link`, `dh-link--go` | |
+
+### Sources beside figures
+
+A source or check label never sits inside a sentence: "119% of what it can pay, by the proposals due at this payout
+[Platform records]" can't be quoted. Write the sentence plainly and put the source in one of three places
+(`../DESIGN.md` §6):
+
+```html
+<!-- 1. A tag after a label (or a table header, or a complete value). Write a space before it. -->
+<div class="dh-stat">
+  <span class="dh-stat__label">Asked for <span class="dh-src">Platform records</span></span>
+  <span class="dh-stat__value">8,125 <small>DASH</small></span>
+  <span class="dh-stat__note">119% of what it can pay</span>
+</div>
+
+<!-- 2. A marker after the sentence's full stop, and the numbered lines closing the section or card. -->
+<p>Proposals are grouped by where they stand, largest first.<sup class="dh-ref"><a href="#tr-src-1" aria-label="Source 1">1</a></sup></p>
+<ol class="dh-sources" aria-label="Sources">
+  <li id="tr-src-1">Standings: vote tallies reported by the governance data service at block 2,384,512. Each proposal's page recounts its own.</li>
+</ol>
+
+<!-- 3. A block whose figures share a source says it once, with no markers. -->
+<p class="dh-sources">Sources: proposals and amounts from Platform records; USD at Coinbase's price, 01:22 UTC.</p>
+```
+
+- `.dh-src` is dotted (reported). `.dh-src--ok` is solid green: worked out or checked in this browser ("Consensus
+  limit"). `.dh-src--warn` is dashed: stale or not checked ("Stale" on a price older than 10 minutes). It is a label,
+  like a badge, never a link: put the detail in a numbered line, or in the record's proof badge.
+- Number the markers in reading order within the page and give each line an `id` unique on the page (`tr-src-1`).
+  `aria-label="Source 1"` on the marker's link; `aria-label="Sources"` on the list. A jump lands the line clear of a
+  sticky bar and highlights it.
+- "Verified" is still the proof badge's word, one per record, beside its title.
+- A caveat that changes what the reader should do is a sentence of its own; one that only qualifies a source goes in
+  the source's line.
 
 ### Using it from each stack
 

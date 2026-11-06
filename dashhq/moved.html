@@ -6,7 +6,7 @@
 <!-- A retired product's page, as every retired site writes it. Same strict policy as demo.html. -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Name contests moved · EvoVote · dashhq</title>
-<meta name="description" content="EvoVote has retired. Name contests now live in Governance; your contest and network travel with you.">
+<meta name="description" content="EvoVote has retired. Name contests now live in Governance; old links open the same contest there.">
 <link rel="icon" href="mark/favicon.svg" type="image/svg+xml">
 <script src="dashhq-shell.js"></script>
 <link rel="preload" href="fonts/archivo-latin-var.woff2" as="font" type="font/woff2" crossorigin>
@@ -18,16 +18,19 @@
 </head>
 <body class="dh-fill">
 
-<!-- The retired product's own bar: no nav. <dashhq-moved> sets its network to the one the visitor lands on. -->
-<dashhq-bar product="vote" networks="mainnet testnet" sticky></dashhq-bar>
+<!-- The retired product's own bar: no nav and no network menu (the page has no network content). <dashhq-moved> sets
+     its static pill to the network the visitor lands on. -->
+<dashhq-bar product="vote" sticky></dashhq-bar>
 
 <main class="dh-container dh-page">
   <div class="dh-narrow">
-    <!-- The children are the version without JavaScript: the same heading and a real link. -->
-    <dashhq-moved to="gov" path="/names?from=vote" heading="Name contests moved to Governance"
-      lede="Browse name contests, inspect tallies and choose how to vote, all in one place.">
+    <!-- With JavaScript the element forwards at once. Its children are the page without it: the heading, one line and a
+         real link (production address, Mainnet, the moved-from marker so Governance can say what happened). -->
+    <dashhq-moved to="gov" path="/names" heading="Name contests moved to Governance"
+      lede="Browse name contests, inspect tallies and choose how to vote, all in one place." label="Open name contests">
       <h1 class="dh-page-header__title">Name contests moved to Governance</h1>
-      <p><a class="dh-btn dh-btn--primary" href="https://gov.dashhq.org/names?network=mainnet&amp;from=vote">Open name contests →</a></p>
+      <p class="dh-page-header__lede">Browse name contests, inspect tallies and choose how to vote, all in one place.</p>
+      <p><a class="dh-btn dh-btn--primary" href="https://gov.dashhq.org/names?network=mainnet&amp;moved-from=vote">Open name contests →</a></p>
     </dashhq-moved>
   </div>
 </main>
