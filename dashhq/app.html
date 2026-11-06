@@ -6,7 +6,6 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="theme-color" content="#FFFFFF">
 <title>An app in the family · dashhq shell</title>
-<link rel="icon" href="mark/favicon.svg" type="image/svg+xml">
 <script src="dashhq-shell.js"></script>
 <link rel="preload" href="fonts/archivo-latin-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="dashhq-tokens.css">
@@ -17,11 +16,9 @@
 </head>
 <body class="demo-app">
 
-<!-- An app: one section nav (slot="nav"). Desktop shows it in the bar; phones get it as the bottom tab bar
-     (phone-nav="tabs"), and the menu holds only the family. Account lives in the actions slot. -->
-<dashhq-bar product="pollr" network="testnet" phone-nav="tabs" sticky>
-  <svg slot="logo" class="logo-pollr" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 16V4M4 16h12M7.5 13V9M11 13V6.5M14.5 13v-2.5"/></svg>
-  <nav slot="nav" aria-label="Pollr">
+<!-- Governance sections use the bar and phone sheet. Account lives in the actions slot. -->
+<dashhq-bar product="gov" network="testnet" sticky>
+  <nav slot="nav" aria-label="Governance">
     <a href="#polls" aria-current="page"><svg class="dh-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V5M4 20h16M8.5 16v-5M13 16V8M17.5 16v-3"/></svg>Polls</a>
     <a href="#create"><svg class="dh-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Create</a>
     <a href="#mine"><svg class="dh-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 8a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zM5 20c1-3.5 3.8-5.5 7-5.5s6 2 7 5.5"/></svg>My polls</a>
@@ -71,7 +68,7 @@
 <!-- The sign-in entry pattern: title, one lede, the family's explanation, then this app's way in. -->
 <dialog class="dh-dialog" id="signin" aria-labelledby="signin-title">
   <div class="dh-dialog__head">
-    <h2 class="dh-dialog__title" id="signin-title">Sign in to Pollr</h2>
+    <h2 class="dh-dialog__title" id="signin-title">Sign in to Governance</h2>
     <button class="dh-btn dh-btn--quiet dh-btn--icon" type="button" data-close aria-label="Close"><svg class="demo-ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg></button>
   </div>
   <p class="dh-dialog__lede">Reading is free. Sign in to create a poll or vote.</p>

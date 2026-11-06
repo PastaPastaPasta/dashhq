@@ -46,7 +46,7 @@
       const data = await response.json();
       const c = data.crawl, p = data.platform;
       if (!c || ![c.mn_total, c.mn_reachable, c.finished].every(Number.isFinite) || c.mn_total < 0 || c.mn_reachable < 0 || c.mn_reachable > c.mn_total || c.finished <= 0 || c.finished > Date.now() / 1000 + 60 ||
-        (p && (![p.healthy, p.checked, p.updated].every(Number.isFinite) || p.checked < 0 || p.healthy < 0 || p.healthy > p.checked || p.updated <= 0 || p.updated > Date.now() / 1000 + 60))) throw new Error('invalid');
+        (p && (![p.healthy, p.checked].every(Number.isFinite) || p.checked < 0 || p.healthy < 0 || p.healthy > p.checked || (p.checked > 0 && (!Number.isFinite(p.updated) || p.updated <= 0 || p.updated > Date.now() / 1000 + 60))))) throw new Error('invalid');
       last = data;
       render();
       retry.hidden = true;

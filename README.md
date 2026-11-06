@@ -10,4 +10,4 @@ The front door and directory for the Dash ecosystem. Static HTML, CSS and JavaSc
 
 The shell is pinned under `dashhq/`; see `SHELL.md`. The hub has a text wordmark and a local lowercase d favicon. Yappr and Forge are outbound links; Polls lives in Governance and fees in Explorer.
 
-Local checks: `node --check hub.js`, `node --check pulse.js`, and `node scripts/qa-r7-hub.mjs` in the running family lab. There is no package-managed lint, typecheck or unit-test suite. Build with `../../lab/build.sh hub` from the lab root (`lab/build.sh hub`), then use the guarded screenshot runner.
+Local checks: `node --check hub.js`, `node --check pulse.js`, and `node scripts/qa-r7-hub.mjs` in the running family lab. There is no package-managed lint, typecheck or unit-test suite. Build with `lab/build.sh hub` from the lab root, then use the guarded screenshot runner.

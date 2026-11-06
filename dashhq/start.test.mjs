@@ -9,7 +9,7 @@ let checks = 0;
 try {
   for (const mobile of [false, true]) {
     for (const product of ['radar', 'gov', 'explorer']) {
-      const context = await browser.newContext({ serviceWorkers: 'block', viewport: { width: mobile ? 390 : 1440, height: 900 }, isMobile: mobile, hasTouch: mobile });
+      const context = await browser.newContext({ serviceWorkers: 'block', viewport: { width: mobile ? 390 : 1440, height: 900 }, deviceScaleFactor: 2, isMobile: mobile, hasTouch: mobile });
       await installQaGuard(context);
       const page = await context.newPage();
       await page.route('http://*.dashhq.localhost:8787/**', route => {
@@ -19,10 +19,9 @@ try {
       await page.goto(`http://${product}.dashhq.localhost:8787/?network=mainnet`);
       const result = await page.evaluate(() => {
         const bar = document.querySelector('dashhq-bar').shadowRoot;
-        const starts = [...bar.querySelectorAll('.door')].filter(el => el.querySelector('.dn').textContent === 'Start on Testnet');
-        const links = starts.flatMap(el => [...el.querySelectorAll('a')].map(a => a.href));
-        links.push([...document.querySelector('dashhq-footer').shadowRoot.querySelectorAll('a')].find(a => a.textContent === 'Start on Testnet').href);
-        return { links, first: starts[0].querySelector('a').href,
+        const starts = [...bar.querySelectorAll('.door')].filter(el => el.querySelector('.dn')?.textContent === 'Start on Testnet');
+        const links = starts.map(el => el.href);
+        return { links, first: starts[0].href,
           defaultBridge: dashhq.href('bridge'), defaultFaucet: dashhq.href('faucet'),
           explicit: dashhq.href('bridge', '/', { network: 'mainnet' }),
           invitation: document.querySelector('[data-network="mainnet"]').href,
