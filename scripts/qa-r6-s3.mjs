@@ -113,8 +113,13 @@ try {
     await page.locator('.action-map').scrollIntoViewIfNeeded();
     await shot('arch-action-map');
     await page.getByRole('link',{name:'Explore the technical component map ↓',exact:true}).click();
+    await page.waitForFunction(() => {
+      const map = document.querySelector('#relationships');
+      return Math.abs(map.getBoundingClientRect().top - parseFloat(getComputedStyle(map).scrollMarginTop)) <= 1;
+    });
     await shot('arch-technical-arrival');
-    assert((await page.locator('#relationships').boundingBox()).y >= 48);
+    const mapArrival = await page.locator('#relationships').boundingBox();
+    assert(mapArrival.y >= 54 && mapArrival.y < 100, 'technical map arrives below the bar');
     await noOverflow();
     await page.goto(urls.explorer + `/identity/?network=mainnet&id=${identity}`);
     await page.getByRole('link', {name:/Estimate a contract/}).click();
