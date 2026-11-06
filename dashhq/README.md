@@ -1,4 +1,4 @@
-# dashhq shell 1.8.0
+# dashhq shell 1.8.1
 
 The shared shell for the dashhq.org family: the family bar, the footer, the hash display, the sign-in explanation,
 the wrong-network and retired-page notices, the theme, and the tokens they all draw with. Read `../DESIGN.md` for the
@@ -11,7 +11,8 @@ rules and `../ADOPTION-r6.md` for your site's changes this round (then `-r5`, `-
 | **Sources beside figures.** A source or check label never sits inside a sentence. Three classes in the component layer: `.dh-src`, a quiet tag after a label or a complete value ("Asked for [Platform records]"; `--ok` checked in this browser, `--warn` stale or not checked); `.dh-ref`, a superscript number after a sentence's full stop; `.dh-sources`, the numbered lines closing the block (`ol`), or one "Sources: …" line for a block that shares a source (`p`). | Governance (Treasury, budget header), Explorer and anyone with a chip in a sentence; anyone showing fiat | "Sources beside figures" below; `components.html#sources`; checks `sources-*`; `../ADOPTION-r6.md` §4 |
 | **Fiat reads as an estimate**: "≈ $309,000", three significant figures (`../PRICE.md`, with a reference `formatUsdEstimate`). | Governance, Explorer, Bridge | `../PRICE.md` |
 | **The desktop switcher says what it is**: "dashhq tools ⌄" beside the product name (Sol #14), the phone menu's heading too. Short of room, the words give way to the chevron before the row collapses. Its accessible name is unchanged ("All dashhq tools"). | Nobody: re-vendor | check `switcher-says-what-it-is-*`; `bars.html` |
-| **Fixes to 1.7.0, same API.** The desktop network menu's "Network settings" row keeps its look (1.7.0's phone "More tools" style leaked onto it in Governance and Explorer). The arrival notice shows only where the retired product's links land, survives the page replacing its bar, keeps focus on Dismiss across re-renders, waits for a visible tab before speaking, and pads `<html>`'s scroll while it makes the bar taller. A retired page never forwards in a loop, and waits for DOMContentLoaded even when it is added late. | Everyone on 1.7.0: re-vendor 1.8.0 | checks `network-settings-row-unchanged`, `arrival-*`, `moved-never-loops` |
+| **1.8.1, same API.** A numbered source line keeps a link or `<time>` inline (1.8.0 put them in the number's column); a long `.dh-src` tag wraps inside its tile instead of widening a phone page. A retired page mounted late forwards even where the browser keeps no navigation timing. The arrival notice moves to a new bar whichever order a framework swaps bars in, and pads the scroll only under a `sticky` bar. The address loses no more than the marker (no stray `?`). `PRICE.md`'s `formatUsdEstimate` uses only long-supported Intl options. | Everyone on 1.8.0: re-vendor 1.8.1 | checks `sources-*`, `arrival-handover-insert-then-remove`, `moved-late-without-timing-forwards-once`, `switcher-drops-words-before-collapsing` |
+| **Fixes to 1.7.0, same API.** The desktop network menu's "Network settings" row keeps its look (1.7.0's phone "More tools" style leaked onto it in Governance and Explorer). The arrival notice shows only where the retired product's links land, survives the page replacing its bar, keeps focus on Dismiss across re-renders, waits for a visible tab before speaking, and pads `<html>`'s scroll while it makes the bar taller. A retired page never forwards in a loop, and waits for DOMContentLoaded even when it is added late. | Everyone on 1.7.0: re-vendor 1.8.1 | checks `network-settings-row-unchanged`, `arrival-*`, `moved-never-loops` |
 
 ## New in 1.7 (round 6): no waiting at a retired address, and a phone menu that lists nothing twice
 
@@ -402,12 +403,13 @@ its row, on the info ground, with a Dismiss button:
   A hand-made link elsewhere can't make a page claim the move: the marker is taken out of the address and ignored.
 - Screen readers hear it once, when the tab is visible (a tab opened in the background waits until it is shown). Re-rendering
   the bar keeps the same node, says nothing new and keeps focus on Dismiss. If your framework replaces the bar element,
-  the new bar takes the same node over.
+  in either order (remove then insert, or insert then remove), the new bar takes the same node over.
 - It goes when dismissed (focus moves to the product's name) or when the visitor moves on to another page in your SPA
   (a push or a traverse, through the Navigation API; without it, it stays until dismissed). Your app canonicalising its
   own address with `replaceState` doesn't end it.
-- While it shows, the bar is taller, so the shell adds its height to `<html>`'s `scroll-padding-top` (on top of yours):
-  anchors and `scrollIntoView` sized for the bar alone still land clear of it. Dismissing gives your value back.
+- While it shows under a `sticky` bar, the bar is taller, so the shell adds its height to `<html>`'s
+  `scroll-padding-top` (on top of yours, as computed when the notice appeared): anchors and `scrollIntoView` sized for
+  the bar alone still land clear of it. Dismissing gives your value back.
 - `<dashhq-moved>` never forwards a page that was itself reached by a forward, or one whose map points back at itself.
 - It is part of the bar, so it sticks with a `sticky` bar until dismissed. The phone menu opens over it.
 
@@ -483,7 +485,7 @@ A source or check label never sits inside a sentence: "119% of what it can pay, 
 
 <!-- 2. A marker after the sentence's full stop, and the numbered lines closing the section or card. -->
 <p>Proposals are grouped by where they stand, largest first.<sup class="dh-ref"><a href="#tr-src-1" aria-label="Source 1">1</a></sup></p>
-<ol class="dh-sources" aria-label="Sources">
+<ol class="dh-sources" role="list" aria-label="Sources">
   <li id="tr-src-1">Standings: vote tallies reported by the governance data service at block 2,384,512. Each proposal's page recounts its own.</li>
 </ol>
 
@@ -492,10 +494,13 @@ A source or check label never sits inside a sentence: "119% of what it can pay, 
 ```
 
 - `.dh-src` is dotted (reported). `.dh-src--ok` is solid green: worked out or checked in this browser ("Consensus
-  limit"). `.dh-src--warn` is dashed: stale or not checked ("Stale" on a price older than 10 minutes). It is a label,
-  like a badge, never a link: put the detail in a numbered line, or in the record's proof badge.
+  limit"); say so to screen readers too, which hear no border: `<span class="dh-src dh-src--ok">Consensus
+  limit<span class="dh-sr">, worked out in this browser</span></span>`. `.dh-src--warn` is dashed: stale or not checked
+  ("Stale" on a price older than 10 minutes). A long tag wraps inside its tile. It is a label, like a badge, never a
+  link: put the detail in a numbered line, or in the record's proof badge.
 - Number the markers in reading order within the page and give each line an `id` unique on the page (`tr-src-1`).
-  `aria-label="Source 1"` on the marker's link; `aria-label="Sources"` on the list. A jump lands the line clear of a
+  `aria-label="Source 1"` on the marker's link; `role="list" aria-label="Sources"` on the list (Safari drops a styled
+  list's role otherwise). A line may hold links and a `<time>`; they stay inline. A jump lands the line clear of a
   sticky bar and highlights it.
 - "Verified" is still the proof badge's word, one per record, beside its title.
 - A caveat that changes what the reader should do is a sentence of its own; one that only qualifies a source goes in

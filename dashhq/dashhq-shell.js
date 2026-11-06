@@ -1,4 +1,4 @@
-/*! dashhq-shell 1.8.0 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
+/*! dashhq-shell 1.8.1 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
 /* Load as a classic, blocking script in <head>, before any stylesheet that depends on [data-theme]:
      <script src="/dashhq/dashhq-shell.js"></script>
    CSP: needs only script-src 'self'. No inline script, no eval, no innerHTML, no style attributes,
@@ -7,7 +7,7 @@
   'use strict';
   if (window.dashhq && window.dashhq.version) return;
 
-  const VERSION = '1.8.0';
+  const VERSION = '1.8.1';
   const doc = document;
   const root = doc.documentElement;
   const host = location.hostname;
@@ -46,10 +46,10 @@
   const MOVED = { fees: ['explorer', '/tools/fees/'] };
   // Retired products: the address people have bookmarked, and the product that is its new home. <dashhq-moved>
   // forwards there at once with ?moved-from=<key>, and the new home's bar says so once.
-  // paths: where its forward can land, the only pages that show the notice.
+  // paths: where its forward can land, the only pages that show the notice (trailing slashes don't matter).
   const RETIRED = {
     vote: { to: 'gov', was: 'vote.dashhq.org', paths: ['/names'] },
-    fees: { to: 'explorer', was: 'fees.dashhq.org', paths: ['/tools/fees/'] },
+    fees: { to: MOVED.fees[0], was: 'fees.dashhq.org', paths: [MOVED.fees[1]] },
     basics: { to: 'explorer', was: 'basics.dashhq.org', paths: ['/', '/identity/', '/dpns/'] }
   };
   const ARRIVAL_PARAM = 'moved-from';
@@ -141,7 +141,7 @@
     forwarded = true;
     const href = location.href, cut = href.search(/[?#]/), hash = href.indexOf('#');
     try {
-      history.replaceState(history.state, '', href.slice(0, cut) + (kept.length ? '?' + kept.join('&') : '') +
+      history.replaceState(history.state, '', href.slice(0, cut) + (kept.some(Boolean) ? '?' + kept.join('&') : '') +
         (hash < 0 ? '' : href.slice(hash)));
     } catch { /* an opaque or sandboxed document keeps its address */ }
     // Only where the old product's links land, so a hand-made link can't make another page claim the move.
@@ -149,30 +149,36 @@
     const norm = (x) => (x.length > 1 ? x.replace(/\/+$/, '') : x);
     const here = norm(location.pathname);
     const lands = r && r.paths.map(norm).some((p) => (p === '/' ? here === '/' : here === p || here.startsWith(p + '/')));
-    return lands ? { from, bar: null, done: false } : null;
+    return lands ? { from, bar: null, el: null, ro: null, done: false } : null;
   })();
-  // While the notice shows, the sticky bar is taller: pad the page's scroll by its height so anchors and
-  // scrollIntoView (sized for the bar alone) still land clear of it. The page's own value comes back after.
+  // While the notice shows, a sticky bar is taller: pad the page's scroll by its height so anchors and
+  // scrollIntoView (sized for the bar alone) still land clear of it. The page's own value (read once, when the padding
+  // starts) comes back after. null restores.
   let padWas = null;
   function padScroll(px) {
+    if (px == null) {
+      if (padWas) root.style.scrollPaddingTop = padWas.inline;
+      padWas = null;
+      return;
+    }
     if (padWas === null) padWas = { inline: root.style.scrollPaddingTop, base: getComputedStyle(root).scrollPaddingTop };
-    if (px == null) { root.style.scrollPaddingTop = padWas.inline; padWas = null; return; }
     root.style.scrollPaddingTop = padWas.base === 'auto' ? `${px}px` : `calc(${padWas.base} + ${px}px)`;
   }
   // The arrival notice ends when dismissed, or when the visitor moves on to another page of the app (a push or a
   // traverse in the Navigation API; an app canonicalising its own address with replaceState doesn't count). Without the
   // Navigation API it stays until dismissed. Focus that was on it moves to the product's name.
   function endArrival(refocus) {
-    if (!arrival || arrival.done) return;
+    if (arrival.done) return;
     arrival.done = true;
-    const bar = arrival.bar, el = bar && bar._arr;
-    if (!el) return;
-    const had = refocus && el.contains(bar.shadowRoot.activeElement);
-    if (bar._arrRo) bar._arrRo.disconnect();
-    el.remove();
-    bar._arr = null;
+    if (arrival.ro) arrival.ro.disconnect();
     padScroll(null);
-    const to = had && (bar.shadowRoot.querySelector('.product') || bar.shadowRoot.querySelector('.home'));
+    const el = arrival.el;
+    if (!el) return;
+    const sr = el.getRootNode();
+    const had = refocus && sr.activeElement && el.contains(sr.activeElement);
+    el.remove();
+    arrival.el = null;
+    const to = had && (sr.querySelector('.product') || sr.querySelector('.home'));
     if (to) to.focus();
   }
   if (arrival && window.navigation && typeof navigation.addEventListener === 'function') {
@@ -450,7 +456,7 @@
     'button.opt{width:100%;text-align:left;color:var(--dh-ink-2)}' +
     'button.opt .ic{margin-left:auto;transition:transform var(--dh-dur-2) var(--dh-ease)}' +
     'button.opt[aria-expanded=true] .ic{transform:rotate(180deg)}' +
-    /* the doors list, used in the desktop popover and the phone sheet */
+    /* the desktop popover's doors list */
     '.doors{list-style:none;margin:0;padding:0}' +
     '.door{position:relative;display:grid;gap:1px;padding:9px 12px 9px 14px;border-radius:var(--dh-r2)}' +
     '.door:hover{background:var(--dh-hover)}' +
@@ -514,8 +520,8 @@
     '.fl{margin:0;padding:6px 14px 2px;font-size:13px;color:var(--dh-ink-2)}' +
     '.pd{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px}' +
     '.pd li{position:relative;min-width:0}' +
-    '.pd a{display:flex;align-items:center;min-height:44px;padding:0 12px 0 14px;border-radius:var(--dh-r2);' +
-    'font-size:15px;font-weight:620}' +
+    '.pd a,.bar.compact .grp a{display:flex;align-items:center;min-height:44px;padding:0 12px 0 14px;' +
+    'border-radius:var(--dh-r2);font-size:15px}.pd a{font-weight:620}' +
     '@media (hover:hover){.pd a:hover,.mtools:hover,.hm:hover{background:var(--dh-hover)}.mtools:hover{color:var(--dh-ink)}}' +
     '.pd li[aria-current] a{background:var(--dh-sunken)}' +
     '.pd li[aria-current]::before{content:"";position:absolute;left:4px;top:11px;bottom:11px;width:3px;border-radius:2px;' +
@@ -533,8 +539,6 @@
     '.bar.compact .grp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 2px;padding:6px 0 0}' +
     '.bar.compact .gl{grid-column:1/-1;padding:6px 14px 2px}' +
     '.bar.compact .grp.g3{grid-template-columns:repeat(3,minmax(0,1fr))}' +
-    '.bar.compact .grp a{display:flex;align-items:center;min-height:44px;padding:0 12px 0 14px;border-radius:var(--dh-r2);' +
-    'font-size:15px}' +
     '.bar.compact .grp a:hover{background:var(--dh-hover);color:var(--dh-ink)}' +
     '.bar.compact .grp a[aria-current]{background:var(--dh-sunken);color:var(--dh-ink);text-decoration:none}' +
     '.bar.compact .themes{padding-left:14px;padding-right:0}' +
@@ -661,8 +665,11 @@
     'border:1px solid var(--dh-line-2);border-radius:var(--dh-r2);background:var(--dh-surface);color:var(--dh-ink);' +
     'font-size:14px;font-weight:600;white-space:nowrap}' +
     '.btn:hover{background:var(--dh-sunken)}' +
-    '.btn[hidden]{display:none}' +
-    '.ar{margin-left:.3em}';
+    '.ar{margin-left:.3em}' +
+    '.spin{width:14px;height:14px;flex:none;border-radius:50%;border:2px solid var(--dh-line);border-top-color:var(--dh-brand);' +
+    'animation:dh-rot .8s linear infinite}' +
+    '@media (prefers-reduced-motion:reduce){.spin{animation-duration:2.4s}}' +
+    '@keyframes dh-rot{to{transform:rotate(360deg)}}';
 
   // Not on this network: a dashed well (dashed = nothing real here) that says where the record is instead.
   const NOTFOUND_CSS = BASE_CSS + ACT_CSS +
@@ -672,15 +679,11 @@
     'h2{margin:0;font-size:17px;font-weight:620;line-height:1.3}' +
     'p{margin:0;color:var(--dh-ink-2);max-width:64ch}' +
     '.chk{display:flex;align-items:center;gap:10px}' +
-    '.spin{width:14px;height:14px;flex:none;border-radius:50%;border:2px solid var(--dh-line);border-top-color:var(--dh-brand);' +
-    'animation:dh-rot .8s linear infinite}' +
     '.acts{column-gap:20px}' +
     '.lk{color:var(--dh-brand-ink);font-size:14px;font-weight:600}' +
     '.lk:hover{text-decoration:underline;text-underline-offset:3px}' +
     '@media (pointer:coarse){.lk{display:inline-flex;align-items:center;min-height:40px}}' +
-    '@media (max-width:480px){.nf{padding:16px}}' +
-    '@media (prefers-reduced-motion:reduce){.spin{animation-duration:2.4s}}' +
-    '@keyframes dh-rot{to{transform:rotate(360deg)}}';
+    '@media (max-width:480px){.nf{padding:16px}}';
 
   // A retired product's page: what moved where and the one way on, while it forwards.
   const MOVED_CSS = BASE_CSS + ACT_CSS +
@@ -691,10 +694,6 @@
     '.n{display:grid;gap:4px;margin-top:var(--dh-5);padding:12px 16px;border-left:3px solid var(--dh-info);' +
     'border-radius:var(--dh-r2);background:var(--dh-info-soft);font-size:var(--dh-fs-ui);line-height:1.5}' +
     '.nt{display:flex;align-items:center;gap:10px;margin:0;font-weight:620}' +
-    '.spin{width:14px;height:14px;flex:none;border-radius:50%;border:2px solid var(--dh-line);border-top-color:var(--dh-brand);' +
-    'animation:dh-rot .8s linear infinite}' +
-    '@media (prefers-reduced-motion:reduce){.spin{animation-duration:2.4s}}' +
-    '@keyframes dh-rot{to{transform:rotate(360deg)}}' +
     '.nb{margin:0;color:var(--dh-ink)}' +
     '.pri{border-color:transparent;background:var(--dh-act);color:var(--dh-act-ink);font-weight:620}' +
     '.pri:hover{background:var(--dh-act);background-image:linear-gradient(var(--dh-shade-1),var(--dh-shade-1))}' +
@@ -798,6 +797,12 @@
       doc.removeEventListener('keydown', this._onKey);
       this._ro.disconnect();
       this.close();
+      if (arrival && arrival.bar === this && !arrival.done) {
+        queueMicrotask(() => {
+          const next = arrival.bar === this && [...bars].find((b) => productOf(b) === RETIRED[arrival.from].to);
+          if (next) next.render();
+        });
+      }
       tabBars.delete(this);
       syncTabs();
       if (this._net) { this._net = null; netChanged(); }
@@ -878,10 +883,9 @@
     // Doors with their descriptions, Apps, Also and the theme choice: the desktop switcher.
     _family(key, net) {
       const cur = doorOf(key);
-      const to = (k) => doorHref(k, net);
       const doors = h('ul', { class: 'doors' }, DOORS.map((d) =>
         h('li', { class: d.steps ? 'door start' : 'door', 'aria-current': current(cur === d.door) },
-          h('a', { class: 'dn', href: to(d.key) }, d.label),
+          h('a', { class: 'dn', href: doorHref(d.key, net) }, d.label),
           h('span', { class: 'dd' }, d.desc),
           d.steps && h('span', { class: 'steps' }, this._link(key, net, d.steps[0]), h('span', { 'aria-hidden': 'true' }, '→'),
             this._link(key, net, d.steps[1])))));
@@ -901,7 +905,7 @@
       const box = h('div', { id: 'dh-more', hidden: true },
         this._group(key, net, 'Apps', APPS), this._group(key, net, 'Also', [...ALSO, 'faucet']),
         key !== 'home' && h('a', { class: 'hm', href: doorHref('home'), 'data-k': 'home' },
-          'dashhq.org', h('span', null, DOORS[0].desc)));
+          'dashhq.org', h('span', null, DOORS.find((d) => d.door === 'home').desc)));
       const more = h('button', { class: 'mtools', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'dh-more', 'data-f': 'mtools' },
         'More tools', icon('chevron', 16));
       more.addEventListener('click', () => {
@@ -963,42 +967,38 @@
 
     // After a retired product's forward: "fees.dashhq.org is now part of Explorer." Only the bar of the product it
     // moved into shows it (and only where that product's links land), so a hand-made link can't make another tool claim
-    // the move. One node for its whole life, handed to a new bar if the page replaces its bar, so nothing is announced
-    // twice; it goes when dismissed or when the visitor moves on.
+    // the move. One node for its whole life, which a new bar of the product takes over if the page replaces its bar, so
+    // nothing is announced twice; it goes when dismissed or when the visitor moves on.
     _arrival(key) {
       const a = arrival;
       if (!a || a.done || RETIRED[a.from].to !== key) return null;
-      if (a.bar && a.bar !== this) {
-        if (a.bar.isConnected) return null;
-        this._arr = a.bar._arr;
-        this._arrRo = a.bar._arrRo;
-        a.bar._arr = a.bar._arrRo = null;
-      }
+      if (a.bar && a.bar !== this && a.bar.isConnected) return null;
       a.bar = this;
-      if (!this._arr) {
+      if (!a.el) {
         const r = RETIRED[a.from];
-        const lead = ` is now part of ${PRODUCTS[r.to].name}.`, more = ' Old links open the same place here.';
         const live = h('p', { class: 'sr', role: 'status', id: 'dh-arrive-said' });
         const x = h('button', { class: 'ax', type: 'button', 'aria-label': 'Dismiss', 'aria-describedby': 'dh-arrive-said',
           title: 'Dismiss', 'data-f': 'arrive-x' }, icon('close', 16));
         x.addEventListener('click', () => endArrival(true));
-        this._arr = h('div', { class: 'arrive', part: 'arrival' },
-          h('div', { class: 'ain' }, icon('info', 18),
-            h('p', { class: 'at', 'aria-hidden': 'true' }, h('b', null, r.was), lead, h('span', { class: 'am' }, more)), x),
-          live);
+        const said = h('p', { class: 'at', 'aria-hidden': 'true' }, h('b', null, r.was), ` is now part of ${PRODUCTS[r.to].name}.`,
+          h('span', { class: 'am' }, ' Old links open the same place here.'));
+        a.el = h('div', { class: 'arrive', part: 'arrival' }, h('div', { class: 'ain' }, icon('info', 18), said, x), live);
         // Said once, while someone is looking: a tab opened in the background waits until it is shown.
         const say = () => {
           if (doc.hidden) return;
           doc.removeEventListener('visibilitychange', say);
-          setTimeout(() => { live.textContent = r.was + lead + more; }, 60);
+          setTimeout(() => { live.textContent = said.textContent; }, 60);
         };
         doc.addEventListener('visibilitychange', say);
         say();
-        const node = this._arr;
-        this._arrRo = new ResizeObserver(() => { if (node.isConnected && !a.done) padScroll(node.getBoundingClientRect().height); });
-        this._arrRo.observe(node);
+        // Only a bar that sticks covers the page's anchors.
+        a.ro = new ResizeObserver(() => {
+          const shown = a.el && a.el.isConnected && a.bar.hasAttribute('sticky');
+          padScroll(shown ? a.el.getBoundingClientRect().height : null);
+        });
+        a.ro.observe(a.el);
       }
-      return this._arr;
+      return a.el;
     }
 
     _netControl(net, kind) {
@@ -1512,30 +1512,40 @@
         const nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
         this._going = !(nav && nav.type === 'back_forward');
         if (this._going) {
+          const stay = () => { this._going = false; this.render(); };
           const go = () => {
             if (!this.isConnected || !this._going) return;
             const to = new URL(this._dest());
             // A map pointing back at this page, or a retired page reached by another one's forward, would bounce the
             // visitor forever: stay, and show the way on.
-            if (forwarded || to.origin + to.pathname === location.origin + location.pathname) { this._going = false; this.render(); return; }
+            if (forwarded || to.origin + to.pathname === location.origin + location.pathname) return stay();
             location.replace(to.href);
           };
           // After the site's route map. Deferred scripts run before DOMContentLoaded, which can still be ahead after
-          // parsing has finished (this element added by a deferred script), so ask the navigation entry.
-          const ready = doc.readyState === 'complete' || !!(nav && nav.domContentLoadedEventStart > 0);
-          if (ready) setTimeout(go, 0);
-          else doc.addEventListener('DOMContentLoaded', go, { once: true });
+          // parsing has finished (this element added by a deferred script), so ask the navigation entry. Without one,
+          // go at DOMContentLoaded or load, whichever comes first: DOMContentLoaded may already have passed.
+          if (doc.readyState === 'complete' || (nav && nav.domContentLoadedEventStart > 0)) setTimeout(go, 0);
+          else {
+            const once = () => {
+              doc.removeEventListener('DOMContentLoaded', once);
+              removeEventListener('load', once);
+              setTimeout(go, 0);
+            };
+            doc.addEventListener('DOMContentLoaded', once);
+            addEventListener('load', once);
+          }
+          // Restored from the back-forward cache: show the way on rather than "Opening…" forever.
+          addEventListener('pageshow', (e) => { if (e.persisted && this._going) stay(); });
         }
-        // Restored from the back-forward cache: show the way on rather than "Opening…" forever.
-        addEventListener('pageshow', (e) => { if (e.persisted && this._going) { this._going = false; this.render(); } });
       }
       super.connectedCallback();
     }
     _names() {
       const to = this.getAttribute('to');
-      const from = PRODUCTS[this.getAttribute('product')] ? this.getAttribute('product') : pageProduct();
+      let from = PRODUCTS[this.getAttribute('product')] ? this.getAttribute('product') : pageProduct();
+      if (from === 'home') from = null;
       return { to: PRODUCTS[to] ? to : 'home', toName: PRODUCTS[to] ? PRODUCTS[to].name : 'dashhq.org',
-        from: from && from !== 'home' ? from : null, fromName: from && from !== 'home' ? PRODUCTS[from].name : 'This tool' };
+        from, fromName: from ? PRODUCTS[from].name : 'This tool' };
     }
     _net() {
       const sp = new URL(location.href).searchParams;
