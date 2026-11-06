@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
 import { chromium } from '../../../lab/node_modules/playwright/index.mjs';
 import { installQaGuard } from '../../../lab/qa-guard.mjs';
 
@@ -10,6 +11,14 @@ const urls = { hub: 'http://dashhq.localhost:8787', bridge: 'http://bridge.dashh
 const protx = 'd353cdcae53071401345c38ab482935cb62442be2174a1d3210ca356c9017eff';
 const identity = '7P3ZsJHh61jhvVwaxh1xyNx7wkCqiDdkhw2EpCfTn9J';
 const results = [];
+const sources = Object.fromEntries(await Promise.all(['bridge', 'faucet', 'nodes', 'hub', 'arch'].map(async site => [site, {
+  head: execFileSync('git', ['rev-parse', 'HEAD'], {cwd: new URL(`repos/${site}/`, root), encoding: 'utf8'}).trim(),
+  build: JSON.parse(await fs.readFile(new URL(`lab/logs/${site}.build.json`, root), 'utf8')),
+}])));
+for (const [site, source] of Object.entries(sources)) {
+  assert.equal(source.build.headSha, source.head, `${site}: rebuild before capturing`);
+  assert.equal(source.build.status, 'built');
+}
 const browser = await chromium.launch({args:['--host-resolver-rules=MAP *.localhost 127.0.0.1','--disable-dev-shm-usage']});
 try {
   for (const device of ['phone', 'desktop']) for (const theme of ['light','dark']) {
@@ -21,9 +30,34 @@ try {
     page.on('pageerror',error=>errors.push(error.message));
     const shot = async name => page.screenshot({path:new URL(`${name}__${device}__${theme}.png`,out).pathname,animations:'disabled'});
     const noOverflow = async () => assert(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth),'page overflows');
+    const menu = async () => {
+      const bar = page.locator('dashhq-bar');
+      if (device === 'phone') {
+        await bar.getByRole('button', {name:'Menu', exact:true}).click();
+        const more = bar.getByRole('button', {name:'More tools', exact:true});
+        assert(await more.isVisible());
+        const links = await bar.locator('.sheet a').evaluateAll(els => els.filter(el => el.getClientRects().length).map(el => {
+          const url = new URL(el.href);
+          return url.origin + url.pathname + url.hash;
+        }));
+        const local = await bar.locator('[slot="nav"] a').evaluateAll(els => els.filter(el => el.getClientRects().length).map(el => {
+          const url = new URL(el.href);
+          return url.origin + url.pathname + url.hash;
+        }));
+        assert.equal(new Set([...links, ...local]).size, links.length + local.length, 'repeated phone destination');
+        assert((await more.boundingBox()).y < 844, 'More tools fits first screen');
+        if ([urls.hub, urls.radar].includes(new URL(page.url()).origin)) await shot('family-menu-' + new URL(page.url()).hostname.split('.')[0]);
+        await more.click();
+        assert(await bar.locator('#dh-more').isVisible());
+        await bar.getByRole('button', {name:'Close menu', exact:true}).click();
+      }
+      const directory = new URL(await page.locator('dashhq-footer').getByRole('link', {name:'Directory', exact:true}).getAttribute('href'));
+      assert.equal(directory.pathname, '/directory/');
+    };
     await page.goto(urls.hub);
     await page.locator('#q').waitFor({state:'visible'});
-    assert((await page.locator('#q').boundingBox()).y < (await page.locator('.doors').boundingBox()).y);
+    await menu();
+    assert((await page.locator('#q').boundingBox()).y < (await page.locator('main nav.doors').boundingBox()).y);
     assert(await page.locator('.pulse-fold').evaluate(el=>el.open));
     for (const [query,path] of [['treasury','/treasury'],['my masternodes','/masternodes'],['contract cost','/tools/fees/'],['name contests','/names']]) {
       await page.locator('#q').fill(query);
@@ -31,7 +65,7 @@ try {
     }
     await shot('hub-task-search');
     await page.locator('#q').fill('');
-    const folds = await page.locator('.catalogue-fold > summary').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().height));
+    const folds = await page.locator('.catalogue-fold:not([open]) > summary').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().height));
     assert(folds.every(height=>height <= 80),`collapsed rows too tall: ${folds}`);
     await noOverflow();
     await page.goto(urls.hub + '/identity/');
@@ -40,12 +74,13 @@ try {
     await noOverflow();
     await page.goto(urls.radar);
     await page.locator('#host-donut .donut-value').waitFor({timeout:45000});
+    await menu();
     const providers = (await page.locator('#host-donut .donut-value').textContent()).trim();
     const countries = (await page.locator('#country-donut .donut-value').textContent()).trim();
     assert((await page.locator('#where-lede').textContent()).includes(`${providers} identified providers across ${countries} countries`));
     assert((await page.locator('#host-list button').textContent()).startsWith(`Show all ${providers} providers`));
     assert((await page.locator('#country-list button').textContent()).startsWith(`Show all ${countries} countries`));
-    await page.locator('#where').scrollIntoViewIfNeeded();
+    await page.locator('#where').evaluate(el=>el.scrollIntoView({block:'start'}));
     await shot('radar-counts');
     await page.locator('#host-list button').click();
     const hostRows = await page.locator('#host-list li').allTextContents();
@@ -60,6 +95,7 @@ try {
     await noOverflow();
     await page.goto(urls.arch);
     await page.locator('.action-map').waitFor();
+    await menu();
     await page.locator('.action-map').scrollIntoViewIfNeeded();
     await shot('arch-action-map');
     await page.getByRole('link',{name:'Explore the technical component map ↓',exact:true}).click();
@@ -67,6 +103,7 @@ try {
     assert((await page.locator('#relationships').boundingBox()).y >= 48);
     await noOverflow();
     await page.goto(urls.bridge + `/?mode=contract&network=mainnet&identity=${identity}`);
+    await menu();
     await page.locator('#contract-choose-existing-btn').click();
     assert.equal(await page.locator('#contract-identity-id-input').inputValue(),identity);
     assert.equal(await page.locator('#contract-private-key-input').inputValue(),'');
@@ -74,6 +111,7 @@ try {
     await shot('bridge-public-identity');
     await noOverflow();
     await page.goto(urls.faucet);
+    await menu();
     assert(await page.locator('.dh-steps').isHidden());
     const address = 'yZgQUp3D4cxQSa5YvAZcmmu17xkuSk1uKs';
     await page.goto(urls.faucet + `/?from=bridge&journey=start&address=${address}`);
@@ -92,12 +130,44 @@ try {
     assert.equal(page.url(),resume.href);
     assert((await page.locator('.family-deposit-address').textContent()).includes(address));
     await shot('bridge-resume');
+    if (device === 'phone') {
+      await page.goto(urls.hub);
+      await page.locator('main nav.doors').getByRole('link',{name:/Start on Testnet/}).click();
+      await page.locator('#continue-btn').click();
+      await page.locator('#backup-saved').waitFor({timeout:60000});
+      const phrase = await page.locator('.mnemonic-copy').getAttribute('data-copy');
+      assert(phrase && phrase.split(' ').length >= 12);
+      await page.locator('#backup-saved').check();
+      await page.locator('#backup-continue-btn').click();
+      const funding = page.locator('.family-faucet-link');
+      await funding.waitFor({timeout:60000});
+      const generatedAddress = new URL(await funding.getAttribute('href')).searchParams.get('address');
+      const popupPromise = page.waitForEvent('popup');
+      await funding.click();
+      const faucet = await popupPromise;
+      await faucet.locator('#returnBridgeBtn').waitFor();
+      assert.equal(await faucet.locator('#addressInput').inputValue(),generatedAddress);
+      await faucet.locator('#returnBridgeBtn').click();
+      await faucet.locator('#restore-backup-input').waitFor();
+      assert((await faucet.locator('.family-deposit-address').textContent()).includes(generatedAddress));
+      await faucet.getByText('Saved only your recovery phrase?',{exact:true}).click();
+      await faucet.locator('#restore-phrase-input').fill(phrase);
+      await faucet.locator('#restore-phrase-btn').click();
+      await faucet.locator('#backup-saved').waitFor({timeout:60000});
+      await faucet.locator('#backup-saved').check();
+      await faucet.locator('#backup-continue-btn').click();
+      await faucet.locator('.family-faucet-link').waitFor({timeout:60000});
+      assert.equal(new URL(await faucet.locator('.family-faucet-link').getAttribute('href')).searchParams.get('address'),generatedAddress);
+      await faucet.screenshot({path:new URL(`phone-start-restored__${theme}.png`,out).pathname,animations:'disabled'});
+      await faucet.close();
+    }
     assert.equal(blocked.length,0,`unexpected writes: ${blocked.join(', ')}`);
+    assert.deepEqual(errors, [], 'browser page errors');
     results.push({device,theme,checks:'hub task search/health/folds; Radar counts/index/readiness; Arch map/anchors; Bridge identity; Faucet direct/start/same-tab resume',errors,blocked});
     console.log(`${device} ${theme}: PASS`);
     await context.close();
   }
 } finally {
   await browser.close();
-  await fs.writeFile(new URL('report.json',out),JSON.stringify(results,null,2)+'\n');
+  await fs.writeFile(new URL('report.json',out),JSON.stringify({sources,fixture:'Live public reads under lab/qa-guard.mjs; local keys generated only in browser memory; no chain writes.',results},null,2)+'\n');
 }
