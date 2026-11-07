@@ -1,4 +1,4 @@
-/*! dashhq-shell 1.9.2 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
+/*! dashhq-shell 1.9.3 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
 /* Load as a classic, blocking script in <head>, before any stylesheet that depends on [data-theme]:
      <script src="/dashhq/dashhq-shell.js"></script>
    CSP: needs only script-src 'self'. No inline script, no eval, no innerHTML, no style attributes,
@@ -7,7 +7,7 @@
   'use strict';
   if (window.dashhq && window.dashhq.version) return;
 
-  const VERSION = '1.9.2';
+  const VERSION = '1.9.3';
   const doc = document;
   const root = doc.documentElement;
   const host = location.hostname;
