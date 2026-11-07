@@ -1,4 +1,6 @@
-# dashhq shell 1.9.0
+# dashhq shell 1.9.1
+
+1.9.1 gives the Testnet network control a solid outline. The Testnet bar rule and preview chips remain dashed.
 
 The shared shell for the dashhq.org family: the family bar, the footer, the hash display, the sign-in explanation,
 the wrong-network and retired-page notices, the theme, and the tokens they all draw with. Read `../DESIGN.md` for the

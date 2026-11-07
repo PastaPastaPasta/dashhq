@@ -36,6 +36,12 @@ try {
       assert.equal(new URL(result.explicit).searchParams.get('network'), 'mainnet');
       assert.equal(new URL(result.invitation).searchParams.get('network'), 'mainnet');
       checks += 4;
+      await page.evaluate(() => {
+        document.documentElement.style.setProperty('--dh-line-2', '#678');
+        document.querySelector('dashhq-bar').setAttribute('network', 'testnet');
+      });
+      assert.equal(await page.locator('dashhq-bar .net').evaluate(el => getComputedStyle(el).borderTopStyle), 'solid');
+      checks++;
       await context.close();
     }
   }

@@ -1,4 +1,4 @@
-/*! dashhq-shell 1.9.0 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
+/*! dashhq-shell 1.9.1 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
 /* Load as a classic, blocking script in <head>, before any stylesheet that depends on [data-theme]:
      <script src="/dashhq/dashhq-shell.js"></script>
    CSP: needs only script-src 'self'. No inline script, no eval, no innerHTML, no style attributes,
@@ -7,7 +7,7 @@
   'use strict';
   if (window.dashhq && window.dashhq.version) return;
 
-  const VERSION = '1.9.0';
+  const VERSION = '1.9.1';
   const doc = document;
   const root = doc.documentElement;
   const host = location.hostname;
@@ -416,7 +416,7 @@
     '.tbtn,.menu{width:36px;height:36px;display:grid;place-items:center;border-radius:var(--dh-r2);color:var(--dh-ink-2)}' +
     '.tbtn:hover,.tbtn[aria-expanded=true],.menu:hover,.menu[aria-expanded=true]{background:var(--dh-hover);color:var(--dh-ink)}' +
     '.menu{display:none}' +
-    /* network pill: solid = mainnet (live, real DASH); dashed = testnet; dotted = devnet. Same key as the hub map. */
+    /* Network names distinguish live funds from practice funds. */
     '.netwrap{position:relative;flex:none}' +
     '.net{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 10px;border:1px solid var(--dh-line-2);' +
     'border-radius:var(--dh-r2);background:var(--dh-surface);font-size:13px;font-weight:540;white-space:nowrap;' +
@@ -425,7 +425,7 @@
     'button.net:hover{background:var(--dh-hover)}' +
     '.net .dot{width:7px;height:7px;border-radius:50%;background:var(--dh-good);flex:none}' +
     '.net.test,.net.dev{background:var(--dh-sunken)}' +
-    '.net.test{border-style:dashed}.net.dev{border-style:dotted;border-width:1.5px}' +
+    '.net.dev{border-style:dotted;border-width:1.5px}' +
     '.net.test .dot,.net.dev .dot{background:transparent;border:1.5px solid var(--dh-ink-2)}' +
     '.net .ic{color:var(--dh-ink-2)}' +
     /* popovers */
