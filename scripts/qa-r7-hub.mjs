@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import { chromium } from '../../../lab/node_modules/playwright/index.mjs';
 import { installQaGuard } from '../../../lab/qa-guard.mjs';
 
-const out = new URL('../../../reviews/round7-shots/S2/', import.meta.url);
+const out = new URL('../../../shots/r7-fix/hub/checks/', import.meta.url);
 await fs.mkdir(out, { recursive: true });
 const browser = await chromium.launch({args:['--host-resolver-rules=MAP *.localhost 127.0.0.1','--disable-dev-shm-usage']});
 const report = [];
@@ -33,6 +33,13 @@ try {
       return Object.entries(counts).filter(([,count])=>count>2);
     });
     assert.deepEqual(repeatLinks,[],'repeated destinations');
+    assert.equal(await page.locator('#title').evaluate(el=>getComputedStyle(el).fontStretch),'116%');
+    assert(await page.locator('.door strong').evaluateAll(els=>els.every(el=>getComputedStyle(el).fontStretch==='110%')));
+    const heights = await page.locator('.map-node').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().height));
+    assert.equal(new Set(heights).size,1,'map node heights');
+    assert.equal(await page.locator('.map-node').count(),22);
+    assert.equal(await page.locator('.map-node small').count(),22);
+    assert.equal(await page.locator('.resource-columns').count(),0);
     for(const [query,path] of [['treasury','/treasury'],['my masternodes','/masternodes'],['contract cost','/tools/fees/'],['name contests','/names'],['pollr','/polls'],['alice.dash','/dpns/'],['1'.repeat(64),'/mn/'+'1'.repeat(64)],['1'.repeat(43),'/search/'],['203.0.113.1','/masternodes']]) {
       await page.locator('#q').fill(query);
       assert.equal(new URL(await page.locator('#find-results a').first().getAttribute('href'),base).pathname,path,query);
@@ -41,8 +48,24 @@ try {
     assert((await page.locator('#find-results a').first().innerText()).includes('↗'));
     assert(await page.locator('#find-results .result-site').first().isVisible());
     assert(await page.locator('#find-results .result-description').first().isVisible());
-    await page.locator('#q').fill('zzzz-does-not-exist');
-    assert(await page.locator('#noresult').isVisible());
+    await page.locator('#q').fill('pasta');
+    const username = new URL(await page.locator('#find-results li>a').first().getAttribute('href'));
+    assert.equal(username.pathname,'/dpns/');
+    assert.equal(username.searchParams.get('name'),'pasta.dash');
+    assert.equal(username.searchParams.get('network'),'mainnet');
+    assert((await page.locator('#find-results li>a').first().innerText()).includes('Look up pasta.dash in Explorer'));
+    await page.locator('#q').fill('wallet');
+    assert.equal(await page.locator('#find-results .result-title').filter({hasText:'App Store'}).count(),0);
+    assert.equal(await page.locator('#find-results .result-title').filter({hasText:'API keys'}).count(),0);
+    assert.equal(await page.locator('#find-results .result-site').filter({hasText:'Faucet'}).count(),0);
+    assert.equal(await page.locator('#find-results li').filter({hasText:'DashPay wallet'}).getByRole('link',{name:'App Store ↗',exact:true}).count(),1);
+    for(const invalid of ['no matching resource !!!','-pasta','pasta-','ab','a'.repeat(64),'x<script>']) {
+      await page.locator('#q').fill(invalid);
+      assert.equal(await page.locator('#find-results li>a[href*="/dpns/"]').count(),0,invalid);
+    }
+    await page.locator('#q').fill('no matching resource !!!');
+    await page.waitForFunction(()=>document.querySelector('#qcount').textContent.startsWith('No destinations match'));
+    assert.equal(await page.locator('#noresult').count(),0);
     assert.equal(await page.getByRole('button',{name:/^Clear(?: search)?$/}).count(),1);
     await page.getByRole('button',{name:'Clear',exact:true}).click();
     assert.equal(await page.locator('#q').inputValue(),'');
@@ -67,6 +90,25 @@ try {
         assert.equal(await page.locator('.dgroup li').count(),65);
         assert.equal(await page.getByRole('link',{name:/Kotlin SDK/}).count(),1);
         assert.equal(await page.getByRole('link',{name:/^Pollr/}).count(),0);
+        assert.equal(await page.locator('.category-links a').count(),10);
+        await page.locator('#q').fill('grovedb');
+        assert.equal(await page.locator('.dgroup li:visible').count(),4);
+        assert.equal(await page.locator('.dgroup:visible').count(),3);
+        assert.equal(await page.locator('#qcount').textContent(),'4 of 65 resources');
+        assert.equal(new URL(page.url()).searchParams.get('q'),'grovedb');
+        await page.reload();
+        assert.equal(await page.locator('#q').inputValue(),'grovedb');
+        await page.locator('#q').fill('no matching resource !!!');
+        assert.equal(await page.locator('.dgroup:visible').count(),0);
+        assert((await page.locator('#qcount').textContent()).startsWith('No resources match'));
+        await page.getByRole('button',{name:'Clear filter',exact:true}).click();
+        assert.equal(await page.locator('.dgroup li:visible').count(),65);
+        assert.equal(new URL(page.url()).searchParams.has('q'),false);
+        assert(await page.locator('#q').evaluate(el=>document.activeElement===el));
+        await page.locator('.category-links a').last().click();
+        assert.equal(new URL(page.url()).hash,'#category-10');
+        assert((await page.locator('#category-10').boundingBox()).y>=52);
+        await noOverflow();
       } else {
         assert((await page.locator('#forge').innerText()).includes('wallet-imported keys can be unlimited'));
       }
@@ -77,6 +119,30 @@ try {
     console.log(`PASS ${width} ${theme}: ${pageHeight}px home`);
     await context.close();
   }
+  for(const network of ['mainnet','testnet']) {
+    const context = await browser.newContext({serviceWorkers:'block'});
+    await installQaGuard(context);
+    const page=await context.newPage();
+    await page.goto(base+'/?network='+network);
+    for(const query of ['pasta','Pasta.dash','foo-bar','a'.repeat(63)]) {
+      await page.locator('#q').fill(query);
+      const url=new URL(await page.locator('#find-results li>a').first().getAttribute('href'));
+      assert.equal(url.hostname,'explorer.dashhq.localhost');
+      assert.equal(url.searchParams.get('network'),network);
+      assert.equal(url.searchParams.get('name'),query.toLowerCase().replace(/\.dash$/,'')+'.dash');
+    }
+    await context.close();
+  }
+  const plain = await browser.newContext({javaScriptEnabled:false,serviceWorkers:'block'});
+  await installQaGuard(plain);
+  const plainPage=await plain.newPage();
+  await plainPage.goto(base+'/directory/');
+  assert.equal(await plainPage.locator('.dgroup li:visible').count(),65);
+  assert.equal(await plainPage.locator('.category-links a').count(),10);
+  assert(await plainPage.locator('.finder').isHidden());
+  await plainPage.locator('.category-links a').last().click();
+  assert.equal(new URL(plainPage.url()).hash,'#category-10');
+  await plain.close();
   // Deterministic read fixtures cover success, stale, invalid and retry states.
   const context = await browser.newContext({viewport:{width:1440,height:900},deviceScaleFactor:2,serviceWorkers:'block'});
   await installQaGuard(context);

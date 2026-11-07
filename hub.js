@@ -17,35 +17,83 @@
   if(!q) return;
   var qclear = document.getElementById('qclear');
   var qcount = document.getElementById('qcount');
-  var none = document.getElementById('noresult');
   var results = document.getElementById('find-results');
   var countTimer;
+  q.value = new URL(location.href).searchParams.get('q') || q.value;
+  function termsFor(value){
+    return value.toLowerCase().trim().split(/\s+/).filter(function(term){ return !/^(what|is|the|a|an|how|do|i|my|to|on|does|work|works)$/.test(term); });
+  }
+  function searchText(row){
+    return (row.textContent + ' ' + row.id + ' ' + (row.dataset.search || '')).toLowerCase().replace(/\s+/g,' ');
+  }
+  function matches(text, terms){
+    return terms.every(function(term){return text.includes(term);});
+  }
+  function bindFinder(run){
+    function clearQ(){q.value='';run();q.focus();}
+    q.addEventListener('input',run);
+    qclear.addEventListener('click',clearQ);
+    q.addEventListener('keydown',function(e){if(e.key==='Escape' && q.value){e.stopPropagation();clearQ();}});
+    window.addEventListener('pageshow',run);
+    root.classList.add('finder-on');
+    run();
+  }
+  var directory = document.getElementById('directory');
+  if(directory){
+    var rows = Array.from(directory.querySelectorAll('.dgroup li')).map(function(row){return {row:row,text:searchText(row)};});
+    var groups = Array.from(directory.querySelectorAll('.dgroup'));
+    bindFinder(function(){
+      var terms = termsFor(q.value);
+      var count = 0;
+      rows.forEach(function(item){item.row.hidden=!matches(item.text,terms);if(!item.row.hidden) count++;});
+      groups.forEach(function(group){
+        var visible = group.querySelectorAll('li:not([hidden])').length;
+        group.hidden = !visible;
+        group.querySelector('.group-count').textContent = visible;
+        document.querySelector('.category-links a[href="#'+group.id+'"]').hidden = !visible;
+      });
+      qclear.hidden = !q.value;
+      qcount.textContent = count ? count+' of '+rows.length+' resources' : 'No resources match. Clear the filter or try another search.';
+      var url = new URL(location.href);
+      if(q.value.trim()) url.searchParams.set('q',q.value);else url.searchParams.delete('q');
+      if(url.href !== location.href) history.replaceState(null,'',url);
+    });
+    return;
+  }
   var entries = Array.from(document.getElementById('directory-index').content.querySelectorAll('.dgroup li')).flatMap(function(row){
-    return Array.from(row.querySelectorAll('a')).map(function(link){
+    return Array.from(row.querySelectorAll(':scope > a')).map(function(link){
       return {title:link.textContent.replace('↗','').trim(), description:row.querySelector('.dd').textContent,
-        href:link.dataset.family ? dashhq.href(link.dataset.family, link.dataset.path || '/', link.dataset.network ? {network:link.dataset.network} : undefined) : link.href,
-        site:link.dataset.family, text:(row.textContent + ' ' + row.id + ' ' + (row.dataset.search || '')).toLowerCase().replace(/\s+/g,' ')};
+        href:linkHref(link), site:link.dataset.family, text:searchText(row),
+        links:Array.from(row.querySelectorAll('.dby a,.resource-links a')).map(function(extra){return {title:extra.textContent.trim(),href:linkHref(extra)};})};
     });
   });
+  function linkHref(link){
+    return link.dataset.family ? dashhq.href(link.dataset.family, link.dataset.path || '/', link.dataset.network ? {network:link.dataset.network} : undefined) : link.href;
+  }
   function destination(title, product, path, description){
     return {title:title, href:dashhq.href(product,path), site:product, description:description};
   }
   function run(){
     var raw = q.value.trim();
     var text = raw.toLowerCase();
-    var terms = text.split(/\s+/).filter(function(term){ return !/^(what|is|the|a|an|how|do|i|my|to|on|does|work|works)$/.test(term); });
+    var terms = termsFor(raw);
     qclear.hidden = !raw;
     results.replaceChildren();
-    var destinations = raw && terms.length ? entries.filter(function(item){return terms.every(function(term){return item.text.includes(term);});}).sort(function(a,b){
-      return Number(b.title.toLowerCase() === text) - Number(a.title.toLowerCase() === text);
+    var destinations = raw && terms.length ? entries.filter(function(item){return matches(item.text,terms);}).sort(function(a,b){
+      return Number(b.title.toLowerCase() === text) - Number(a.title.toLowerCase() === text) || Number(matches(b.title.toLowerCase(),terms)) - Number(matches(a.title.toLowerCase(),terms));
     }) : [];
+    if (/^wallets?$/.test(text)) destinations = destinations.filter(function(item){return item.site !== 'faucet';});
     if (/identity|identities|sign in|login|key|recovery phrase|passkey|wallet/.test(text)) destinations.unshift({title:'Your Dash identity', href:'/identity/',site:'dashhq',description:'Sign-ins, keys, and where each app keeps them.'});
     if (/platform|identity|identities|username|learn|beginner/.test(text)) destinations.unshift(destination('What is Platform?', 'arch', '/', 'A plain-language walkthrough of the data layer.'));
     if (/masternode|evonode|my node/.test(text)) destinations.unshift(destination('Find your masternode', 'radar', '/masternodes', 'Reachability, earnings and Platform health.'));
     if (/^[a-f0-9]{64}$/i.test(raw)) destinations.unshift(destination('Inspect this masternode', 'radar', '/mn/'+raw, 'Open the public ProTx record in Radar.'));
     else if (/^(?:\d{1,3}\.){3}\d{1,3}(?::\d+)?$/.test(raw)) destinations.unshift(destination('Find this IP', 'radar', '/masternodes?q='+encodeURIComponent(raw), 'Search Radar’s masternode list.'));
     else if (/^[1-9A-HJ-NP-Za-km-z]{43,44}$/.test(raw)) destinations.unshift(destination('Look up this Platform ID', 'explorer', '/search/?q='+encodeURIComponent(raw), 'Inspect an identity or contract in Explorer.'));
-    else if (/^[a-z0-9-]+\.dash$/i.test(raw)) destinations.unshift(destination('Check '+raw, 'explorer', '/dpns/?name='+encodeURIComponent(raw), 'Look up the registered Dash username.'));
+    else if (/^[a-z0-9](?:[a-z0-9-]{1,61}[a-z0-9])(?:\.dash)?$/i.test(raw)) {
+      var name = text.endsWith('.dash') ? text : text+'.dash';
+      var lookup = destination('Look up '+name+' in Explorer', 'explorer', '/dpns/?name='+encodeURIComponent(name), 'Check this Dash username on the selected network.');
+      if(text.endsWith('.dash') || !destinations.length) destinations.unshift(lookup);else destinations.push(lookup);
+    }
     var tasks = [
       {terms:/treasury|budget|spending|funded/, title:'Treasury', product:'gov', path:'/treasury', description:'See proposals, funding and treasury payments.'},
       {terms:/my masternode|my node|masternode vote|voting key/, title:'My masternodes', product:'gov', path:'/masternodes', description:'Review your masternodes’ governance votes.'},
@@ -70,18 +118,17 @@
       var title = document.createElement('span');title.className='result-title';title.textContent=item.title+(external?' ↗':' →');
       var site = document.createElement('span');site.className='result-site';site.textContent=item.site ? ({gov:'Governance',radar:'Radar',explorer:'Explorer',arch:'Architecture',bridge:'Bridge',dapi:'DAPI',faucet:'Faucet',dashhq:'dashhq'}[item.site] || item.site) : url.host;
       var description = document.createElement('span');description.className='result-description';description.textContent=item.description;
-      link.append(title,site,description);row.append(link);results.append(row);
+      link.append(title,site,description);row.append(link);
+      if(item.links && item.links.length){
+        var extras = document.createElement('p');extras.className='resource-links dh-meta';
+        item.links.forEach(function(extra){var a=document.createElement('a');a.href=extra.href;a.textContent=extra.title;extras.append(a);});
+        row.append(extras);
+      }
+      results.append(row);
     });
     results.hidden = !raw || !unique.length;
-    none.hidden = !raw || unique.length > 0;
     clearTimeout(countTimer);qcount.textContent='';
-    if(raw) countTimer=setTimeout(function(){qcount.textContent=unique.length+' destination'+(unique.length===1?'':'s')+(unique.length>8?'; showing the first 8':'');},300);
+    if(raw) countTimer=setTimeout(function(){qcount.textContent=unique.length ? unique.length+' destination'+(unique.length===1?'':'s')+(unique.length>8?'; showing the first 8':'') : 'No destinations match. Try “wallet” or “masternode”, or paste a public ID.';},300);
   }
-  function clearQ(){q.value='';run();q.focus();}
-  q.addEventListener('input',run);
-  qclear.addEventListener('click',clearQ);
-  q.addEventListener('keydown',function(e){if(e.key==='Escape' && q.value){e.stopPropagation();clearQ();}});
-  window.addEventListener('pageshow',run);
-  root.classList.add('finder-on');
-  run();
+  bindFinder(run);
 })();

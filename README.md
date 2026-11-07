@@ -2,9 +2,9 @@
 
 The front door and directory for the Dash ecosystem. Static HTML, CSS and JavaScript; no build dependencies or backend.
 
-`index.html` holds four task cards, a compact Mainnet observation line, the map band and selected resource rows. The map becomes three plain link lists on phones. `/directory/` lists all map projects and additional resources without disclosures. `/identity/` explains sign-ins and key handling.
+`index.html` holds four task cards, a compact Mainnet observation line and the map band. The map uses consistent two-line links in each layer, with two columns on phones. `/directory/` lists all map projects and additional resources without disclosures. `/identity/` explains sign-ins and key handling.
 
-`hub.js` searches the inert `#directory-index` template without hiding the page. Keep that template in sync with `/directory/` when editing resources. Search handles public ProTx hashes, IPs, Platform IDs and Dash names, with task-specific routes for treasury, fees, voting and polls. Escape clears the field. Without JavaScript the finder stays hidden; every visible destination remains a normal link.
+`hub.js` searches the inert `#directory-index` template without hiding the page. Keep that template in sync with `/directory/` when editing resources. Search handles public ProTx hashes, IPs, Platform IDs and bare or suffixed Dash names, with task-specific routes for treasury, fees, voting and polls. Store and guide links stay within their resource result. Escape clears the field. The directory reuses the same matching, with counts, a clear button, a query URL and category anchors that also work without JavaScript. Without JavaScript the finder stays hidden; every visible destination remains a normal link.
 
 `pulse.js` reads Radar’s public Mainnet summary with a bounded timeout and five-minute refresh. It shows observation age, stale-data warnings and retry on failure. Counts and source details remain available through the adjacent snapshot link and metric titles. No other data service is contacted. Fonts and assets are local, and CSP permits no inline scripts or styles.
 

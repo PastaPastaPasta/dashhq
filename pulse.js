@@ -26,13 +26,20 @@
     const { crawl, platform } = last;
     const old = Date.now() / 1000 - crawl.finished > 3600;
     const stalePlatform = platform?.checked && Date.now() / 1000 - platform.updated > 2700;
-    summary.replaceChildren('Mainnet now · ',
+    const label = document.createElement('span');
+    label.textContent = 'Mainnet now';
+    summary.replaceChildren(label,
       metric(crawl.mn_total ? `${(crawl.mn_reachable / crawl.mn_total * 100).toFixed(1)}%` : 'Not checked', ' of masternodes answered', ' Core answered', `${crawl.mn_reachable} of ${crawl.mn_total} enabled masternodes · P2P reachability`),
-      ' · ', metric(platform?.checked ? `${(platform.healthy / platform.checked * 100).toFixed(1)}%` : 'Not checked', ' of evonodes passed Platform checks', ' Platform passed', platform?.checked ? `${platform.healthy} of ${platform.checked} checked evonodes · Tenderdash and DAPI · ${new Date(platform.updated * 1000).toISOString()}` : 'No Platform observations published'));
-    if (stalePlatform) summary.append(' · Platform check overdue');
-    age.textContent = `${ago(crawl.finished)}${old ? ' · overdue' : ''}`;
+      metric(platform?.checked ? `${(platform.healthy / platform.checked * 100).toFixed(1)}%` : 'Not checked', ' of evonodes passed Platform checks', ' Platform passed', platform?.checked ? `${platform.healthy} of ${platform.checked} checked evonodes · Tenderdash and DAPI · ${new Date(platform.updated * 1000).toISOString()}` : 'No Platform observations published'));
+    if (stalePlatform) note('Platform check overdue');
+    age.textContent = `${ago(crawl.finished)}${old ? ' (overdue)' : ''}`;
     age.dateTime = new Date(crawl.finished * 1000).toISOString();
     age.title = `Core: ${age.dateTime}${platform?.updated ? '; Platform: ' + new Date(platform.updated * 1000).toISOString() : ''}`;
+  }
+  function note(text) {
+    const span = document.createElement('span');
+    span.textContent = text;
+    summary.append(span);
   }
   async function load() {
     if (refreshing) return;
@@ -51,7 +58,7 @@
       render();
       retry.hidden = true;
     } catch {
-      if (last) { render(); summary.append(' · Refresh failed; last observation shown'); }
+      if (last) { render(); note('Refresh failed; last observation shown'); }
       else {
         summary.textContent = 'Mainnet observations unavailable. Open Radar for diagnostics.';
         age.textContent = 'unavailable';
