@@ -462,9 +462,9 @@
   .dh-table--stack thead { display: none; }
   .dh-table--stack tr { padding: 10px 14px; border-bottom: 1px solid var(--dh-line); }
   .dh-table--stack tr:last-child { border-bottom: 0; }
-  .dh-table--stack td { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 3px 0; border: 0;
+  .dh-table--stack td { display: table; table-layout: fixed; width: 100%; padding: 3px 0; border: 0;
     text-align: right; white-space: normal; overflow-wrap: anywhere; min-width: 0; }
-  .dh-table--stack td::before { content: attr(data-label); flex: none; max-width: 45%; text-align: left;
+  .dh-table--stack td::before { content: attr(data-label); display: table-cell; width: 32%; padding-inline-end: 12px; text-align: left; vertical-align: baseline;
     font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
   .dh-table--stack td.dh-rc-title { display: block; text-align: left; font-weight: var(--dh-w-strong); padding-bottom: 4px; }
   .dh-table--stack td.dh-rc-title::before { content: none; }

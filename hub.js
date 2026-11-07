@@ -130,5 +130,10 @@
     clearTimeout(countTimer);qcount.textContent='';
     if(raw) countTimer=setTimeout(function(){qcount.textContent=unique.length ? unique.length+' destination'+(unique.length===1?'':'s')+(unique.length>8?'; showing the first 8':'') : 'No destinations match. Try “wallet” or “masternode”, or paste a public ID.';},300);
   }
+  q.addEventListener('keydown',function(e){
+    if(e.key !== 'Enter' || e.isComposing || results.hidden) return;
+    var first = results.querySelector('a');
+    if(first){e.preventDefault();first.click();}
+  });
   bindFinder(run);
 })();

@@ -1,4 +1,8 @@
-# dashhq shell 1.9.2
+# dashhq shell 1.9.3
+
+1.9.3 keeps mixed text, emphasis, links and code together as one value beside the label in phone
+`.dh-table--stack` records. It uses anonymous table cells without requiring value wrappers or markup changes.
+
 
 1.9.2 raises dark secondary controls and badges above cards with `--dh-raised`, `--dh-raised-hover`,
 `--dh-raised-line`, `--dh-chip` and `--dh-chip-line`. Disabled buttons use `--dh-disabled` (the card surface in
