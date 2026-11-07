@@ -1,6 +1,34 @@
-# dashhq shell 1.9.1
+# dashhq shell 1.9.2
 
-1.9.1 gives the Testnet network control a solid outline. The Testnet bar rule and preview chips remain dashed.
+1.9.2 raises dark secondary controls and badges above cards with `--dh-raised`, `--dh-raised-hover`,
+`--dh-raised-line`, `--dh-chip` and `--dh-chip-line`. Disabled buttons use `--dh-disabled` (the card surface in
+dark mode) and low-contrast ink. Light-mode fills stay unchanged.
+
+Phone menus retain and highlight the current product, including Bridge's Start on Testnet entry. Local navigation
+uses full ink and weight 580, above family links at 540. The Start door opens
+`/?mode=create&journey=start&network=testnet` inside Bridge in both menus; theme handoff stays shared.
+
+### Metadata and disclosures
+
+Use one child per metadata item, with no authored separators. The component wraps between items and keeps each dot
+with the preceding item, so a wrapped line never starts with a separator:
+
+```html
+<p class="dh-meta"><span>Reported tally</span><span>Coinbase, 03:05 UTC</span><time>Updated 2 minutes ago</time></p>
+```
+
+The disclosure supplies its own inline chevron and hides the browser marker. Do not add another chevron:
+
+```html
+<details class="dh-disclosure">
+  <summary><span>How this was checked</span></summary>
+  <p>Sources and methods.</p>
+</details>
+```
+
+Product layout rules must preserve the summary's flex row. See `components.html#r7` for both components.
+
+1.9.1 gave the Testnet network control a solid outline. The Testnet bar rule and preview chips remain dashed.
 
 The shared shell for the dashhq.org family: the family bar, the footer, the hash display, the sign-in explanation,
 the wrong-network and retired-page notices, the theme, and the tokens they all draw with. Read `../DESIGN.md` for the

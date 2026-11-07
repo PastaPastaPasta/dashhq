@@ -1,4 +1,4 @@
-/*! dashhq-shell 1.9.1 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
+/*! dashhq-shell 1.9.2 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
 /* Load as a classic, blocking script in <head>, before any stylesheet that depends on [data-theme]:
      <script src="/dashhq/dashhq-shell.js"></script>
    CSP: needs only script-src 'self'. No inline script, no eval, no innerHTML, no style attributes,
@@ -7,7 +7,7 @@
   'use strict';
   if (window.dashhq && window.dashhq.version) return;
 
-  const VERSION = '1.9.1';
+  const VERSION = '1.9.2';
   const doc = document;
   const root = doc.documentElement;
   const host = location.hostname;
@@ -424,7 +424,7 @@
     'button.net{padding-right:6px}' +
     'button.net:hover{background:var(--dh-hover)}' +
     '.net .dot{width:7px;height:7px;border-radius:50%;background:var(--dh-good);flex:none}' +
-    '.net.test,.net.dev{background:var(--dh-sunken)}' +
+    '.net.test,.net.dev{background:var(--dh-chip)}' +
     '.net.dev{border-style:dotted;border-width:1.5px}' +
     '.net.test .dot,.net.dev .dot{background:transparent;border:1.5px solid var(--dh-ink-2)}' +
     '.net .ic{color:var(--dh-ink-2)}' +
@@ -449,7 +449,7 @@
     '.door{display:grid;grid-template-columns:150px minmax(0,1fr);align-items:center;min-height:40px;' +
     'padding:9px 12px;border-radius:var(--dh-r2);line-height:22px}' +
     '.door:hover{background:var(--dh-hover)}' +
-    '.door[aria-current]{background:var(--dh-sunken);box-shadow:inset 3px 0 var(--dh-brand)}' +
+    '.door[aria-current]{background:var(--dh-chip);box-shadow:inset 3px 0 var(--dh-brand)}' +
     '.dn{font-weight:580;font-size:15px;white-space:nowrap}' +
     '.dd{font-size:13.5px;color:var(--dh-ink-2);white-space:nowrap}' +
     '.sep{height:1px;background:var(--dh-line);margin:8px 12px}' +
@@ -457,7 +457,7 @@
     '.themewrap{position:relative;flex:none}' +
     '.themepop{right:0;width:220px}' +
     '.themeopt{width:100%;text-align:left;min-height:40px}' +
-    '.themeopt[aria-checked=true]{background:var(--dh-sunken);font-weight:580}' +
+    '.themeopt[aria-checked=true]{background:var(--dh-chip);font-weight:580}' +
     '.themeopt .tick{margin-left:auto}' +
     '.themeopt .ic{flex:none;color:var(--dh-ink-2)}' +
     '.themeopt .tick .ic{color:var(--dh-brand-ink)}' +
@@ -481,7 +481,7 @@
     '.bar.squeeze .net{gap:4px;padding:0 10px}.bar.squeeze button.net{padding-right:6px}' +
     '.bar.compact .menu{display:grid}' +
     '.bar.compact .sheet{display:none;--dh-nav-dir:column;--dh-nav-h:44px;--dh-nav-fs:15px;--dh-nav-pad:12px;' +
-    '--dh-nav-align:stretch;--dh-nav-current-mark:inset 3px 0 var(--dh-brand)}' +
+    '--dh-nav-align:stretch;--dh-nav-weight:580;--dh-nav-ink:var(--dh-ink);--dh-nav-current-mark:inset 3px 0 var(--dh-brand)}' +
     '.sheet:focus{outline:none}' +
     '.scrim{display:none}' +
     '.bar.open .scrim{display:block;position:absolute;left:0;right:0;top:100%;height:100dvh;' +
@@ -500,7 +500,7 @@
     '.pd a,.hm{display:flex;align-items:center;min-height:44px;padding:0 12px;' +
     'border-radius:var(--dh-r2);font-size:15px;font-weight:540}' +
     '@media (hover:hover){.pd a:hover,.hm:hover{background:var(--dh-hover)}}' +
-    '.pd a[aria-current]{background:var(--dh-sunken);box-shadow:inset 3px 0 var(--dh-brand)}' +
+    '.pd a[aria-current]{background:var(--dh-chip);box-shadow:inset 3px 0 var(--dh-brand)}' +
     '.hm{color:var(--dh-brand-ink)}' +
     '[hidden]{display:none!important}' +
     /* phone-nav="tabs": the product's sections become a bottom tab bar; the menu then holds only the family */
@@ -617,9 +617,9 @@
   const ACT_CSS =
     '.acts{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}' +
     '.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:var(--dh-ctl-h);padding:0 14px;' +
-    'border:1px solid var(--dh-line-2);border-radius:var(--dh-r2);background:var(--dh-surface);color:var(--dh-ink);' +
+    'border:1px solid var(--dh-raised-line);border-radius:var(--dh-r2);background:var(--dh-raised);color:var(--dh-ink);' +
     'font-size:14px;font-weight:600;white-space:nowrap}' +
-    '.btn:hover{background:var(--dh-sunken)}' +
+    '.btn:hover{background:var(--dh-raised-hover)}' +
     '.ar{margin-left:.3em}' +
     '.spin{width:14px;height:14px;flex:none;border-radius:50%;border:2px solid var(--dh-line);border-top-color:var(--dh-brand);' +
     'animation:dh-rot .8s linear infinite}' +
@@ -844,9 +844,9 @@
     _phoneFamily(key, net) {
       if (key === 'home') return null;
       const list = (items) => h('ul', { class: 'pd' }, items.map(([k, label]) =>
-        h('li', { 'data-k': k }, h('a', { href: doorHref(k, net), 'aria-current': current(k === key, 'page') }, label))));
+        h('li', { 'data-k': k }, h('a', { href: doorHref(k, net), 'aria-current': current(PRODUCTS[k] === PRODUCTS[key], 'page') }, label))));
       return [h('div', { 'data-list': '' }, h('p', { class: 'fl' }, 'dashhq tools'),
-        list(DOORS.filter(d => PRODUCTS[d.key] !== PRODUCTS[key]).map(d => [d.key, d.label]))),
+        list(DOORS.map(d => [d.key, d.label]))),
         h('div', { 'data-list': '' }, h('div', { class: 'sep', role: 'separator' }),
           list(ALSO.map(k => [k, PRODUCTS[k].name]))),
         h('div', { 'data-list': '' }, h('div', { class: 'sep', role: 'separator' }),
@@ -884,9 +884,7 @@
       return h('div', { class: 'themewrap' }, btn, pop);
     }
 
-    // Anything the product's own sections already link to (the hub's Radar, Governance, Explorer and Start; a nav
-    // that links to a sibling tool) leaves the phone menu's family part, so nothing is listed twice. Run when the
-    // menu opens: slotted links can change (and declarative family links resolve) after the bar renders.
+    // Deduplicate sibling destinations already in local navigation, keeping the current product in the family list.
     _dedupe() {
       const place = (u) => { try { const x = new URL(u, location.href); return x.origin + x.pathname; } catch { return ''; } };
       const keys = new Set(), places = new Set();
@@ -900,7 +898,8 @@
       }
       for (const item of this._pf.querySelectorAll('[data-k]')) {
         const a = item.matches('a') ? item : item.querySelector('a');
-        item.hidden = keys.has(item.dataset.k) || places.has(place(a.href));
+        item.hidden = PRODUCTS[item.dataset.k] !== PRODUCTS[productOf(this)] &&
+          (keys.has(item.dataset.k) || places.has(place(a.href)));
       }
       for (const list of this._pf.querySelectorAll('[data-list]')) list.hidden = !list.querySelector('[data-k]:not([hidden])');
     }

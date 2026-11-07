@@ -19,6 +19,12 @@
   --dh-surface: #FFFFFF;       /* panels, cards, inputs, the bar */
   --dh-sunken: #E2E9EE;        /* wells, segmented-control track, table header, code */
   --dh-hover: rgba(12, 29, 43, .045);
+  --dh-raised: var(--dh-surface);
+  --dh-raised-hover: var(--dh-sunken);
+  --dh-raised-line: var(--dh-line-2);
+  --dh-chip: var(--dh-sunken);
+  --dh-chip-line: transparent;
+  --dh-disabled: var(--dh-sunken);
 
   /* ink */
   --dh-ink: #0C1D2B;           /* text */
@@ -154,6 +160,12 @@
     --dh-page: #06131B;
     --dh-surface: #0C1E2A;
     --dh-sunken: #030C12;
+    --dh-raised: #193342;
+    --dh-raised-hover: #234353;
+    --dh-raised-line: #557384;
+    --dh-chip: var(--dh-raised);
+    --dh-chip-line: var(--dh-line);
+    --dh-disabled: var(--dh-surface);
     --dh-hover: rgba(220, 232, 240, .05);
     --dh-ink: #DCE8F0;
     --dh-ink-2: #8FA7B6;
@@ -182,6 +194,12 @@
   --dh-page: #06131B;
   --dh-surface: #0C1E2A;
   --dh-sunken: #030C12;
+  --dh-raised: #193342;
+  --dh-raised-hover: #234353;
+  --dh-raised-line: #557384;
+  --dh-chip: var(--dh-raised);
+  --dh-chip-line: var(--dh-line);
+  --dh-disabled: var(--dh-surface);
   --dh-hover: rgba(220, 232, 240, .05);
   --dh-ink: #DCE8F0;
   --dh-ink-2: #8FA7B6;

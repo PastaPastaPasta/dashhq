@@ -44,15 +44,15 @@ dashhq-bar > [slot="nav"] :is(a, button) {
   justify-content: var(--dh-nav-item-justify, flex-start); gap: var(--dh-nav-item-gap, 8px);
   box-sizing: border-box; width: auto; height: var(--dh-nav-h, 32px); margin: 0; padding: 0 var(--dh-nav-pad, 10px);
   border: 0; border-radius: var(--dh-nav-radius, var(--dh-r2)); background: none; cursor: pointer;
-  font-family: var(--dh-font); font-size: var(--dh-nav-fs, 14px); font-weight: 520; line-height: 1;
-  color: var(--dh-ink-2); text-decoration: none; white-space: var(--dh-nav-ws, nowrap); text-align: center;
+  font-family: var(--dh-font); font-size: var(--dh-nav-fs, 14px); font-weight: var(--dh-nav-weight, 520); line-height: 1;
+  color: var(--dh-nav-ink, var(--dh-ink-2)); text-decoration: none; white-space: var(--dh-nav-ws, nowrap); text-align: center;
   -webkit-tap-highlight-color: transparent;
 }
 @media (hover: hover) {
   dashhq-bar > [slot="nav"] :is(a, button):hover { color: var(--dh-ink); background: var(--dh-hover); }
 }
 dashhq-bar > [slot="nav"] :is(a, button):is([aria-current="page"], [aria-current="true"]) {
-  color: var(--dh-nav-current-ink, var(--dh-ink)); background: var(--dh-nav-current-bg, var(--dh-sunken));
+  color: var(--dh-nav-current-ink, var(--dh-ink)); background: var(--dh-nav-current-bg, var(--dh-chip));
   box-shadow: var(--dh-nav-current-mark, none);
 }
 dashhq-bar > [slot="nav"] :is(a, button):focus-visible { outline: 2px solid var(--dh-focus); outline-offset: 2px; }

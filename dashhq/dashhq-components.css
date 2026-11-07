@@ -132,14 +132,14 @@
 .dh-btn {
   box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   height: var(--dh-ctl-h); min-width: 0; margin: 0; padding: 0 14px;
-  border: 1px solid var(--dh-line-2); border-radius: var(--dh-r2);
-  background: var(--dh-surface); color: var(--dh-ink);
+  border: 1px solid var(--dh-raised-line); border-radius: var(--dh-r2);
+  background: var(--dh-raised); color: var(--dh-ink);
   font: var(--dh-w-ui) var(--dh-fs-ui)/1 var(--dh-font); text-transform: none; letter-spacing: 0;
   white-space: nowrap; text-decoration: none; vertical-align: middle; cursor: pointer;
   -webkit-appearance: none; appearance: none; -webkit-tap-highlight-color: transparent;
   transition: background-color var(--dh-dur-1) var(--dh-ease), border-color var(--dh-dur-1) var(--dh-ease);
 }
-.dh-btn:hover { background-color: var(--dh-sunken); color: var(--dh-ink); text-decoration: none; }
+.dh-btn:hover { background-color: var(--dh-raised-hover); color: var(--dh-ink); text-decoration: none; }
 .dh-btn:active { background-color: var(--dh-line); }
 .dh-btn:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
 
@@ -182,7 +182,7 @@
   border: 2px solid currentColor; border-right-color: transparent; animation: dh-rot .8s linear infinite;
 }
 .dh-btn:disabled, .dh-btn[aria-disabled="true"], .dh-btn:disabled:hover, .dh-btn[aria-disabled="true"]:hover {
-  background-color: var(--dh-sunken); background-image: none; border-color: var(--dh-line); color: var(--dh-ink-3);
+  background-color: var(--dh-disabled); background-image: none; border-color: var(--dh-line); color: var(--dh-ink-3);
   cursor: not-allowed; text-decoration: none;
 }
 .dh-btn--link:disabled, .dh-btn--link[aria-disabled="true"],
@@ -501,7 +501,7 @@
 .dh-badge, .dh-pill {
   box-sizing: border-box; display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 7px; border-radius: var(--dh-r1);
   font: var(--dh-w-ui) var(--dh-fs-xs)/1 var(--dh-font); text-transform: none; letter-spacing: 0; white-space: nowrap; vertical-align: middle;
-  background: var(--dh-sunken); color: var(--dh-ink-2);
+  background: var(--dh-chip); color: var(--dh-ink-2); box-shadow: inset 0 0 0 1px var(--dh-chip-line);
 }
 .dh-badge::before, .dh-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: none; flex: none; }
 .dh-badge--dot::before, .dh-pill--dot::before { display: block; }
@@ -521,7 +521,7 @@
 /* ---------- proof badge: "Verified" means a cryptographic check passed in this browser, nothing else ---------- */
 .dh-proof {
   box-sizing: border-box; display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 9px 0 7px;
-  border: 1px solid var(--dh-line); border-radius: var(--dh-r2); background: var(--dh-surface);
+  border: 1px solid var(--dh-line); border-radius: var(--dh-r2); background: var(--dh-raised);
   font: var(--dh-w-ui) var(--dh-fs-sm)/1 var(--dh-font); color: var(--dh-ink-2); white-space: nowrap; text-decoration: none;
 }
 .dh-proof::before { content: ""; width: 10px; height: 10px; flex: none; border-radius: 50%; border: 1.5px solid currentColor; box-sizing: border-box; }
@@ -531,6 +531,7 @@
 .dh-proof--checking::before { border-color: var(--dh-line-2); border-top-color: var(--dh-brand); animation: dh-rot .8s linear infinite; }
 .dh-proof--reported { color: var(--dh-ink-2); }
 .dh-proof--reported { border-style: dashed; }
+:root[data-theme="dark"] .dh-proof--reported { background: var(--dh-raised); box-shadow: inset 0 0 0 1px var(--dh-chip-line); }
 .dh-proof--reported::before, .dh-proof--unverified::before { display: none; }
 .dh-proof--unverified { color: var(--dh-warn); border-style: dashed; border-color: currentColor; }
 .dh-proof--unverified::before { border-style: dashed; }
@@ -721,16 +722,22 @@ ol.dh-sources > li:target { color: var(--dh-ink); background: var(--dh-brand-sof
 @keyframes dh-shimmer { to { background-position: -150% 0; } }
 
 /* Disclosures and freshness */
-.dh-disclosure > summary { display: flex; align-items: center; gap: 8px; list-style: none; padding-block: 10px;
+.dh-disclosure > summary { display: flex; flex-wrap: nowrap; align-items: center; gap: 8px; list-style: none; padding-block: 10px;
   font: 560 15px/1.5 var(--dh-font); color: var(--dh-brand-ink); cursor: pointer; }
 .dh-disclosure > summary::marker { content: ""; }
 .dh-disclosure > summary::-webkit-details-marker { display: none; }
-.dh-disclosure > summary::before { content: ""; display: block; flex: none; width: 16px; height: 16px;
+.dh-disclosure > summary::before { content: ""; display: inline-block; vertical-align: middle; flex: none; width: 16px; height: 16px;
   background: currentColor; clip-path: polygon(35% 15%, 70% 50%, 35% 85%, 28% 78%, 56% 50%, 28% 22%);
   transition: transform var(--dh-dur-2) var(--dh-ease); }
 .dh-disclosure[open] > summary::before { transform: rotate(90deg); }
 .dh-disclosure > summary:focus-visible { outline: 2px solid var(--dh-focus); outline-offset: 2px; border-radius: var(--dh-r2); }
 .dh-time { font-variant-numeric: tabular-nums; color: var(--dh-ink-2); white-space: nowrap; }
 .dh-chip--test { display: inline-flex; align-items: center; padding: 2px 7px; border: 1px dashed var(--dh-line-2);
-  border-radius: var(--dh-r1); font-size: 12.5px; line-height: 1.4; color: var(--dh-ink-2); background: var(--dh-sunken); }
+  border-radius: var(--dh-r1); font-size: 12.5px; line-height: 1.4; color: var(--dh-ink-2); background: var(--dh-chip); }
 .dh-chip--test::before { content: none; display: none; }
+
+/* Keep each separator with the preceding metadata item when the row wraps. */
+.dh-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; min-width: 0;
+  margin: 0; padding: 0; list-style: none; color: var(--dh-ink-2); font-size: var(--dh-fs-sm); }
+.dh-meta > * { display: inline-flex; align-items: baseline; min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+.dh-meta > :not(:last-child)::after { content: "·"; flex: none; margin-inline-start: 8px; color: var(--dh-ink-3); }

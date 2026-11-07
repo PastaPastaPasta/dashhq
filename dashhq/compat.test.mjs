@@ -2,13 +2,17 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { chromium } from '../../lab/node_modules/playwright/index.mjs';
 import { installQaGuard } from '../../lab/qa-guard.mjs';
+const shellCss = await readFile(new URL('./dashhq-shell.css', import.meta.url), 'utf8');
+const tokens = await readFile(new URL('./dashhq-tokens.css', import.meta.url), 'utf8');
 const shell = await readFile(new URL('./dashhq-shell.js', import.meta.url), 'utf8');
 const browser = await chromium.launch();
 let checks = 0;
 try {
   const context = await browser.newContext({ serviceWorkers: 'block', viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   await installQaGuard(context);
-  await context.route('http://*.dashhq.localhost:8787/**', route => route.fulfill({ contentType: route.request().url().endsWith('/shell.js') ? 'text/javascript; charset=utf-8' : 'text/html; charset=utf-8', body: route.request().url().endsWith('/shell.js') ? shell : '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script src="/shell.js"></script><dashhq-bar product="gov" network="mainnet" networks="devnet-z testnet mainnet devnet-a" network-settings="/settings"><nav slot="nav"><a href="/#proposals">Proposals</a></nav></dashhq-bar><dashhq-footer product="gov" source="/source"></dashhq-footer>' }));
+  await context.route('http://*.dashhq.localhost:8787/**', route => {
+    if (route.request().url().endsWith('/shell.css')) return route.fulfill({ contentType: 'text/css', body: tokens + shellCss });
+    return route.fulfill({ contentType: route.request().url().endsWith('/shell.js') ? 'text/javascript; charset=utf-8' : 'text/html; charset=utf-8', body: route.request().url().endsWith('/shell.js') ? shell : '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/shell.css"><script src="/shell.js"></script><dashhq-bar product="gov" network="mainnet" networks="devnet-z testnet mainnet devnet-a" network-settings="/settings"><nav slot="nav"><a href="/#proposals">Proposals</a></nav></dashhq-bar><dashhq-footer product="gov" source="/source"></dashhq-footer>' }); });
   const page = await context.newPage();
   await page.goto('http://gov.dashhq.localhost:8787/?mn=record&network=mainnet');
   const registry = await page.evaluate(async () => ({
@@ -38,6 +42,17 @@ try {
   assert.equal(event.network, 'testnet');
   assert.equal(new URL(event.href).searchParams.get('mn'), 'record');
   assert.equal(new URL(page.url()).searchParams.get('network'), 'mainnet'); checks += 4;
+  await bar.locator('.menu').click();
+  const own = bar.locator('.pd [data-k=gov] a');
+  assert.equal(await own.isVisible(), true);
+  assert.equal(await own.getAttribute('aria-current'), 'page');
+  const nav = page.locator('dashhq-bar > [slot=nav] a');
+  const hierarchy = await nav.evaluate(el => ({ weight: Number(getComputedStyle(el).fontWeight), ink: getComputedStyle(el).color }));
+  const family = await own.evaluate(el => ({ weight: Number(getComputedStyle(el).fontWeight), ink: getComputedStyle(el).color }));
+  assert.ok(hierarchy.weight >= family.weight);
+  assert.equal(hierarchy.ink, family.ink);
+  checks += 4;
+  await page.keyboard.press('Escape');
   // A retirement marker is consumed before the app reads its query; the notice survives bar replacement.
   await page.goto('http://gov.dashhq.localhost:8787/polls/example?network=testnet&moved-from=pollr&id=record');
   assert.equal(new URL(page.url()).searchParams.has('moved-from'), false);

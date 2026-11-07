@@ -1,7 +1,7 @@
 # Family shell
 
-Vendored dashhq shell **1.9.1** from design revision `f0895f8563caede397c9c39b73fb1b310a5201a4`.
+Vendored dashhq shell **1.9.2** from design revision `71a8717bb1f311abc754f9d85f7caae5cb41b19b`.
 
-`dashhq/dashhq-shell.js` SHA-256: `da56e0a0da875aeeea087c3ae5c33b284e4a72e50db1cb3d93e34218484d88d1`.
+`dashhq/dashhq-shell.js` SHA-256: `84be4a7271cbba2fd71da3633b6b07c1970889df13110db7e8b682c5c808c8f2`.
 
 The vendored files are unchanged. See `dashhq/README.md` for the API.

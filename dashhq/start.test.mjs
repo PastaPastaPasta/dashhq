@@ -8,7 +8,7 @@ const browser = await chromium.launch();
 let checks = 0;
 try {
   for (const mobile of [false, true]) {
-    for (const product of ['radar', 'gov', 'explorer']) {
+    for (const product of ['radar', 'gov', 'explorer', 'bridge', 'faucet', 'arch']) {
       const context = await browser.newContext({ serviceWorkers: 'block', viewport: { width: mobile ? 390 : 1440, height: 900 }, deviceScaleFactor: 2, isMobile: mobile, hasTouch: mobile });
       await installQaGuard(context);
       const page = await context.newPage();
@@ -21,7 +21,8 @@ try {
         const bar = document.querySelector('dashhq-bar').shadowRoot;
         const starts = [...bar.querySelectorAll('.door')].filter(el => el.querySelector('.dn')?.textContent === 'Start on Testnet');
         const links = starts.map(el => el.href);
-        return { links, first: starts[0].href,
+        return { links, first: starts[0].href, phoneStart: bar.querySelector('.pd [data-k=bridge] a')?.href,
+          current: [...bar.querySelectorAll('.pd [aria-current]')].map(a => a.textContent),
           defaultBridge: dashhq.href('bridge'), defaultFaucet: dashhq.href('faucet'),
           explicit: dashhq.href('bridge', '/', { network: 'mainnet' }),
           invitation: document.querySelector('[data-network="mainnet"]').href,
@@ -33,6 +34,10 @@ try {
       }
       assert.equal(new URL(result.first).hostname, 'bridge.dashhq.localhost');
       assert.equal(new URL(result.first).searchParams.get('mode'), 'create');
+      assert.equal(new URL(result.first).searchParams.get('journey'), 'start');
+      assert.equal(result.phoneStart, result.first);
+      assert.equal(result.current.length, 1);
+      checks += 3;
       assert.equal(new URL(result.explicit).searchParams.get('network'), 'mainnet');
       assert.equal(new URL(result.invitation).searchParams.get('network'), 'mainnet');
       checks += 4;
