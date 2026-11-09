@@ -68,7 +68,7 @@
     return {node:chip.querySelector('a.map-node'),entry:chip.dataset.entry,text:searchText(chip)+' '+searchText(rowById.get(chip.dataset.entry))};
   });
   var entries = indexRows.flatMap(function(row){
-    return Array.from(row.querySelectorAll(':scope > a')).map(function(link){
+    return Array.from(row.querySelectorAll('.catalog-name > a')).map(function(link){
       return {title:link.textContent.replace('↗','').trim(), description:row.querySelector('.dd').textContent,
         href:linkHref(link), site:link.dataset.family, text:searchText(row),
         links:Array.from(row.querySelectorAll('.dby a,.resource-links a')).map(function(extra){return {title:extra.textContent.trim(),href:linkHref(extra)};})};
@@ -107,7 +107,7 @@
     else if (/^[a-z0-9](?:[a-z0-9-]{1,61}[a-z0-9])(?:\.dash)?$/i.test(raw)) {
       var name = text.endsWith('.dash') ? text : text+'.dash';
       var lookup = destination('Look up '+name+' in Explorer', 'explorer', '/dpns/?name='+encodeURIComponent(name), 'Check this Dash username on the selected network.');
-      if(text.endsWith('.dash') || !destinations.length) destinations.unshift(lookup);else destinations.push(lookup);
+      if(text.endsWith('.dash') || !destinations.some(function(item){return matches(item.title.toLowerCase(),terms);})) destinations.unshift(lookup);else destinations.push(lookup);
     }
     var tasks = [
       {terms:/treasury|budget|spending|funded/, title:'Treasury', product:'gov', path:'/treasury', description:'See proposals, funding and treasury payments.'},
