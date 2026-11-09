@@ -10,7 +10,8 @@ const report = [];
 const base = 'http://dashhq.localhost:8787';
 try {
   for (const width of [1440,390,360]) for (const theme of ['light','dark']) {
-    const context = await browser.newContext({viewport:{width,height:width<600?844:900},isMobile:width<600,hasTouch:width<600,deviceScaleFactor:2,colorScheme:theme,serviceWorkers:'block',locale:'en-US',timezoneId:'UTC'});
+    const height = width<600?844:900;
+    const context = await browser.newContext({viewport:{width,height},isMobile:width<600,hasTouch:width<600,deviceScaleFactor:2,colorScheme:theme,serviceWorkers:'block',locale:'en-US',timezoneId:'UTC'});
     const blocked = [], errors = [];
     await installQaGuard(context,{onBlocked:r=>blocked.push(r)});
     const page = await context.newPage();
@@ -38,7 +39,17 @@ try {
     const heights = await page.locator('.map-node').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().height));
     assert.equal(new Set(heights).size,1,'map node heights');
     assert.equal(await page.locator('.map-node').count(),22);
-    assert.equal(await page.locator('.map-node small').count(),3);
+    assert.equal(await page.locator('.map-node small').count(),22,'every map node names its maintainer');
+    assert.equal(await page.locator('.map-node small').filter({hasText:'Testnet preview'}).count(),3);
+    assert(await page.locator('.map-node small').evaluateAll(els=>els.every(el=>el.textContent.trim() && el.scrollWidth<=el.clientWidth)),'maintainer labels fit');
+    assert(await page.locator('.map-node>span').evaluateAll(els=>els.every(el=>parseFloat(getComputedStyle(el).fontSize)>=13 && el.scrollWidth<=el.clientWidth)),'map names at 13px or more, unclipped');
+    assert(await page.locator('.map-node small').evaluateAll(els=>els.every(el=>parseFloat(getComputedStyle(el).fontSize)>=12)),'map makers at 12px or more');
+    if(width>=1100) {
+      const [map,top,h1,search]=await Promise.all(['.eco','.hub-top','#title','#q'].map(s=>page.locator(s).boundingBox()));
+      assert(Math.abs(map.width-(top.width-80))<2,'map spans the content width');
+      assert(map.y+map.height<=height && h1.y<height && search.y+search.height<height,'headline, search and the whole map sit in the first screen');
+      assert((await page.locator('.doors').boundingBox()).y>map.y+map.height,'task cards sit under the map');
+    }
     const mapEntries = await page.locator('li[data-entry]').evaluateAll(els=>els.map(el=>({id:el.dataset.entry,href:el.querySelector('a').getAttribute('href'),context:el.querySelector('a').title})));
     assert(mapEntries.every(entry=>entry.href==='/directory/#'+entry.id && entry.context.includes('View directory entry.')));
     const catalog = await page.locator('#directory-index').evaluate(el=>Array.from(el.content.querySelectorAll('.dgroup li')).map(row=>({id:row.id,text:row.textContent})));
@@ -58,6 +69,8 @@ try {
     assert.equal(username.searchParams.get('network'),'mainnet');
     assert((await page.locator('#find-results li>a').first().innerText()).includes('Look up pasta.dash in Explorer'));
     await page.locator('#q').fill('wallet');
+    assert.equal(await page.locator('#find-results .result-tile').count(),await page.locator('#find-results li').count(),'every result carries a layer tile');
+    assert(await page.locator('#find-results .result-tile').evaluateAll(els=>els.every(el=>el.dataset.tier && el.textContent.trim().length>=2)));
     assert.equal(await page.locator('#find-results .result-title').filter({hasText:'App Store'}).count(),0);
     assert.equal(await page.locator('#find-results .result-title').filter({hasText:'API keys'}).count(),0);
     assert.equal(await page.locator('#find-results .result-site').filter({hasText:'Faucet'}).count(),0);
@@ -100,6 +113,8 @@ try {
         assert.equal(await page.locator('#evotool .catalog-status').innerText(),'Mainnet · Testnet');
         assert((await page.locator('.dgroup li').first().boundingBox()).y<480,'resources start in the first screen');
         assert((await page.locator('.category-links').boundingBox()).height<=(width<600?60:100),'categories fit two rows on desktop and one strip on phones');
+        if(width>=600) assert(await page.locator('.category-links a').evaluateAll(els=>els.every(el=>{const b=el.getBoundingClientRect();return b.left>=0 && b.right<=innerWidth;})),'every category chip is visible');
+        if(width>=1400) assert.equal(await page.locator('.dgroup li').evaluateAll(els=>els.filter(el=>Math.round(el.getBoundingClientRect().y)===Math.round(els[0].getBoundingClientRect().y)).length),4,'four cards across at 1400 and wider');
         for(const entry of mapEntries) assert.equal(await page.locator('#'+entry.id).count(),1,'map entry has a directory target');
         assert.equal(await page.getByRole('link',{name:/Kotlin SDK/}).count(),1);
         assert.equal(await page.getByRole('link',{name:/^Pollr/}).count(),0);
