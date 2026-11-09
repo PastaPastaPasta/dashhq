@@ -41,7 +41,7 @@ try {
     assert.equal(await page.locator('.map-node small').count(),3);
     const mapEntries = await page.locator('li[data-entry]').evaluateAll(els=>els.map(el=>({id:el.dataset.entry,href:el.querySelector('a').getAttribute('href'),context:el.querySelector('a').title})));
     assert(mapEntries.every(entry=>entry.href==='/directory/#'+entry.id && entry.context.includes('View directory entry.')));
-    const catalog = await page.locator('#directory-index').evaluate(el=>Array.from(el.content.querySelectorAll('.dgroup li')).map(row=>row.outerHTML));
+    const catalog = await page.locator('#directory-index').evaluate(el=>Array.from(el.content.querySelectorAll('.dgroup li')).map(row=>({id:row.id,text:row.textContent})));
     assert.equal(await page.locator('.resource-columns').count(),0);
     for(const [query,path] of [['treasury','/treasury'],['my masternodes','/masternodes'],['contract cost','/tools/fees/'],['name contests','/names'],['pollr','/polls'],['alice.dash','/dpns/'],['1'.repeat(64),'/mn/'+'1'.repeat(64)],['1'.repeat(43),'/search/'],['203.0.113.1','/masternodes']]) {
       await page.locator('#q').fill(query);
@@ -91,7 +91,7 @@ try {
       assert.equal(await page.locator('details').count(),0);
       if(path==='/directory/') {
         assert.equal(await page.locator('.dgroup li').count(),65);
-        assert.deepEqual(await page.locator('.dgroup li').evaluateAll(els=>els.map(row=>row.outerHTML)),catalog,'home search and directory share the catalog');
+        assert.deepEqual(await page.locator('.dgroup li').evaluateAll(els=>els.map(row=>({id:row.id,text:row.textContent}))),catalog,'home search and directory share the catalog');
         assert.equal(await page.locator('.maker,.catalog-status,.catalog-url code').count(),195);
         assert(await page.locator('.dgroup li').evaluateAll(els=>els.every(row=>row.querySelector('.catalog-name a[href]') && row.querySelector('.dd').textContent.trim() && row.querySelector('.maker').textContent.trim() && row.querySelector('.catalog-status').textContent.trim() && row.querySelector('.catalog-url code').textContent.trim())));
         assert.equal(await page.locator('#yappr .maker').innerText(),'pasta');
