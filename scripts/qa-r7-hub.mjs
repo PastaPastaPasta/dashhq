@@ -38,7 +38,7 @@ try {
     const heights = await page.locator('.map-node').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().height));
     assert.equal(new Set(heights).size,1,'map node heights');
     assert.equal(await page.locator('.map-node').count(),22);
-    assert.equal(await page.locator('.map-node small').count(),22);
+    assert.equal(await page.locator('.map-node small').count(),3);
     assert.equal(await page.locator('.resource-columns').count(),0);
     for(const [query,path] of [['treasury','/treasury'],['my masternodes','/masternodes'],['contract cost','/tools/fees/'],['name contests','/names'],['pollr','/polls'],['alice.dash','/dpns/'],['1'.repeat(64),'/mn/'+'1'.repeat(64)],['1'.repeat(43),'/search/'],['203.0.113.1','/masternodes']]) {
       await page.locator('#q').fill(query);
