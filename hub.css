@@ -118,7 +118,7 @@ code{font-family:var(--dh-mono);font-size:max(12px,.9em)}
 .catalog-status[data-kind="mainnet"],.catalog-status[data-kind="both"]{background:var(--dh-surface);border:1px solid var(--dh-line-2);color:var(--dh-ink)}
 .catalog-status[data-kind="mainnet"]::before,.catalog-status[data-kind="both"]::before{content:"";display:block;flex:none;width:7px;height:7px;margin-right:6px;border-radius:50%;background:var(--dh-good)}
 .catalog-status[data-kind="testnet"]{background:var(--dh-surface);border:1px solid var(--dh-line-2);color:var(--dh-ink)}
-.catalog-status[data-kind="testnet"]::before{content:"";display:block;flex:none;box-sizing:border-box;width:8px;height:8px;margin-right:6px;border-radius:50%;border:1.5px solid var(--dh-ink-2)}
+.catalog-status[data-kind="testnet"]::before{content:"";display:block;flex:none;box-sizing:border-box;width:8px;height:8px;margin-right:6px;border-radius:50%;border:1.5px solid var(--dh-ink-2);background:transparent}
 .dir-key{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:13px;color:var(--dh-ink-2)}
 .dir-key i{display:inline-flex;align-items:center;gap:6px;font-style:normal}
 .dir-key i::before{content:"";width:12px;height:12px;border-radius:3px;background:var(--tier);box-shadow:inset 0 0 0 1px var(--tier-edge)}
