@@ -21,7 +21,7 @@
   var countTimer;
   q.value = new URL(location.href).searchParams.get('q') || q.value;
   function termsFor(value){
-    return value.toLowerCase().trim().split(/\s+/).filter(function(term){ return !/^(what|is|the|a|an|how|do|i|my|to|on|does|work|works)$/.test(term); });
+    return value.toLowerCase().trim().split(/\s+/).filter(function(term){ return term && !/^(what|is|the|a|an|how|do|i|my|to|on|does|work|works)$/.test(term); });
   }
   function searchText(row){
     return (row.textContent + ' ' + row.id + ' ' + (row.dataset.search || '')).toLowerCase().replace(/\s+/g,' ');

@@ -57,7 +57,7 @@ code{font-family:var(--dh-mono);font-size:max(12px,.9em)}
 .tier ul{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding-top:10px}
 .link-band{height:18px}
 .map-node{display:flex;flex-direction:column;justify-content:center;height:42px;padding:3px 8px;border:1px solid var(--map-line);border-radius:4px;background:var(--map-bg);font:600 13.5px/1.15 var(--dh-font);font-stretch:var(--dh-stretch-dense);text-decoration:none}
-.map-node small{font:500 12px/1.2 var(--dh-font);color:var(--map-muted)}
+.map-node small{font:500 12px/1.2 var(--dh-font);font-stretch:var(--dh-stretch-dense);white-space:nowrap;color:var(--map-muted)}
 .map-node.own{background:color-mix(in srgb,var(--dh-brand-ink) 10%,var(--map-bg))}
 .map-node:hover{border-color:var(--dh-brand-ink);text-decoration:underline}
 .fund{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;align-items:center;padding-block:10px}
