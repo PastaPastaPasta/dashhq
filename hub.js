@@ -50,7 +50,10 @@
         var visible = group.querySelectorAll('li:not([hidden])').length;
         group.hidden = !visible;
         group.querySelector('.group-count').textContent = visible;
-        document.querySelector('.category-links a[href="#'+group.id+'"]').hidden = !visible;
+        var chip = document.querySelector('.category-links a[href="#'+group.id+'"]');
+        chip.hidden = !visible;
+        var chipCount = chip.querySelector('b');
+        if(chipCount) chipCount.textContent = visible;
       });
       qclear.hidden = !q.value;
       qcount.textContent = count ? count+' of '+rows.length+' resources' : 'No resources match. Clear the filter or try another search.';

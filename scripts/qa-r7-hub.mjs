@@ -99,7 +99,7 @@ try {
         assert.equal(await page.locator('#dashpay .catalog-status').innerText(),'Mainnet');
         assert.equal(await page.locator('#evotool .catalog-status').innerText(),'Mainnet · Testnet');
         assert((await page.locator('.dgroup li').first().boundingBox()).y<480,'resources start in the first screen');
-        assert((await page.locator('.category-links').boundingBox()).height<=60,'categories use one line');
+        assert((await page.locator('.category-links').boundingBox()).height<=(width<600?60:100),'categories fit two rows on desktop and one strip on phones');
         for(const entry of mapEntries) assert.equal(await page.locator('#'+entry.id).count(),1,'map entry has a directory target');
         assert.equal(await page.getByRole('link',{name:/Kotlin SDK/}).count(),1);
         assert.equal(await page.getByRole('link',{name:/^Pollr/}).count(),0);

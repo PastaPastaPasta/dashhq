@@ -8,11 +8,12 @@
     const minutes = Math.max(0, Math.floor((Date.now() / 1000 - timestamp) / 60));
     return minutes < 1 ? 'just now' : minutes < 60 ? `${minutes} min ago` : `${Math.floor(minutes / 60)} h ago`;
   };
-  function metric(value, label, shortLabel, title) {
+  function metric(value, label, shortLabel, title, share, goodFrom) {
     const span = document.createElement('span');
     span.title = title;
     const strong = document.createElement('strong');
     strong.textContent = value;
+    if (Number.isFinite(share)) strong.className = share >= goodFrom ? 'good' : share >= goodFrom - 15 ? 'warn' : 'bad';
     const full = document.createElement('span');
     full.className = 'long-label';
     full.textContent = label;
@@ -29,8 +30,8 @@
     const label = document.createElement('span');
     label.textContent = 'Mainnet now';
     summary.replaceChildren(label,
-      metric(crawl.mn_total ? `${(crawl.mn_reachable / crawl.mn_total * 100).toFixed(1)}%` : 'Not checked', ' of masternodes answered', ' Core answered', `${crawl.mn_reachable} of ${crawl.mn_total} enabled masternodes · P2P reachability`),
-      metric(platform?.checked ? `${(platform.healthy / platform.checked * 100).toFixed(1)}%` : 'Not checked', ' of evonodes passed Platform checks', ' Platform passed', platform?.checked ? `${platform.healthy} of ${platform.checked} checked evonodes · Tenderdash and DAPI · ${new Date(platform.updated * 1000).toISOString()}` : 'No Platform observations published'));
+      metric(crawl.mn_total ? `${(crawl.mn_reachable / crawl.mn_total * 100).toFixed(1)}%` : 'Not checked', ' of masternodes answered', ' Core answered', `${crawl.mn_reachable} of ${crawl.mn_total} enabled masternodes · P2P reachability`, crawl.mn_total ? crawl.mn_reachable / crawl.mn_total * 100 : NaN, 97),
+      metric(platform?.checked ? `${(platform.healthy / platform.checked * 100).toFixed(1)}%` : 'Not checked', ' of evonodes passed Platform checks', ' Platform passed', platform?.checked ? `${platform.healthy} of ${platform.checked} checked evonodes · Tenderdash and DAPI · ${new Date(platform.updated * 1000).toISOString()}` : 'No Platform observations published', platform?.checked ? platform.healthy / platform.checked * 100 : NaN, 95));
     if (stalePlatform) note('Platform check overdue');
     age.textContent = `${ago(crawl.finished)}${old ? ' (overdue)' : ''}`;
     age.dateTime = new Date(crawl.finished * 1000).toISOString();
