@@ -38,8 +38,8 @@ try {
     assert(await page.locator('.door strong').evaluateAll(els=>els.every(el=>getComputedStyle(el).fontStretch==='110%')));
     const heights = await page.locator('.map-node').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().height));
     assert.equal(new Set(heights).size,1,'map node heights');
-    assert.equal(await page.locator('.map-node').count(),22);
-    assert.equal(await page.locator('.map-node small').count(),22,'every map node names its maintainer');
+    assert.equal(await page.locator('.map-node').count(),24);
+    assert.equal(await page.locator('.map-node small').count(),24,'every map node names its maintainer');
     assert.equal(await page.locator('.map-node small').filter({hasText:'Testnet preview'}).count(),3);
     assert(await page.locator('.map-node small').evaluateAll(els=>els.every(el=>el.textContent.trim() && el.scrollWidth<=el.clientWidth)),'maintainer labels fit');
     assert(await page.locator('.map-node>span').evaluateAll(els=>els.every(el=>parseFloat(getComputedStyle(el).fontSize)>=13 && el.scrollWidth<=el.clientWidth)),'map names at 13px or more, unclipped');
@@ -103,7 +103,7 @@ try {
       await noOverflow();
       assert.equal(await page.locator('details').count(),0);
       if(path==='/directory/') {
-        assert.equal(await page.locator('.dgroup li').count(),65);
+        assert.equal(await page.locator('.dgroup li').count(),67);
         assert.deepEqual(await page.locator('.dgroup li').evaluateAll(els=>els.map(row=>({id:row.id,text:row.textContent}))),catalog,'home search and directory share the catalog');
         assert.equal(await page.locator('.maker,.catalog-status,.catalog-url code').count(),195);
         assert(await page.locator('.dgroup li').evaluateAll(els=>els.every(row=>row.querySelector('.catalog-name a[href]') && row.querySelector('.dd').textContent.trim() && row.querySelector('.maker').textContent.trim() && row.querySelector('.catalog-status').textContent.trim() && row.querySelector('.catalog-url code').textContent.trim())));
@@ -120,13 +120,13 @@ try {
         assert.equal(await page.getByRole('link',{name:/^Pollr/}).count(),0);
         assert.equal(await page.locator('.category-links a').count(),10);
         await page.locator('#q').fill('pshenmic');
-        assert.equal(await page.locator('.dgroup li:visible').count(),6,'maker filter');
+        assert.equal(await page.locator('.dgroup li:visible').count(),8,'maker filter');
         await page.locator('#q').fill('testnet preview');
         assert.equal(await page.locator('.dgroup li:visible').count(),8,'preview filter');
         await page.locator('#q').fill('grovedb');
         assert.equal(await page.locator('.dgroup li:visible').count(),4);
         assert.equal(await page.locator('.dgroup:visible').count(),3);
-        assert.equal(await page.locator('#qcount').textContent(),'4 of 65 resources');
+        assert.equal(await page.locator('#qcount').textContent(),'4 of 67 resources');
         assert.equal(new URL(page.url()).searchParams.get('q'),'grovedb');
         await page.reload();
         assert.equal(await page.locator('#q').inputValue(),'grovedb');
@@ -134,7 +134,7 @@ try {
         assert.equal(await page.locator('.dgroup:visible').count(),0);
         assert((await page.locator('#qcount').textContent()).startsWith('No resources match'));
         await page.getByRole('button',{name:'Clear filter',exact:true}).click();
-        assert.equal(await page.locator('.dgroup li:visible').count(),65);
+        assert.equal(await page.locator('.dgroup li:visible').count(),67);
         assert.equal(new URL(page.url()).searchParams.has('q'),false);
         assert(await page.locator('#q').evaluate(el=>document.activeElement===el));
         await page.locator('.category-links a').last().click();
@@ -169,7 +169,7 @@ try {
   await installQaGuard(plain);
   const plainPage=await plain.newPage();
   await plainPage.goto(base+'/directory/');
-  assert.equal(await plainPage.locator('.dgroup li:visible').count(),65);
+  assert.equal(await plainPage.locator('.dgroup li:visible').count(),67);
   assert.equal(await plainPage.locator('.category-links a').count(),10);
   assert(await plainPage.locator('.finder').isHidden());
   await plainPage.locator('.category-links a').last().click();
