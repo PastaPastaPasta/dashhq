@@ -60,7 +60,14 @@
     });
     return;
   }
-  var entries = Array.from(document.getElementById('directory-index').content.querySelectorAll('.dgroup li')).flatMap(function(row){
+  var indexRows = Array.from(document.getElementById('directory-index').content.querySelectorAll('.dgroup li'));
+  var rowById = new Map(indexRows.map(function(row){return [row.id,row];}));
+  var eco = document.querySelector('figure.eco');
+  var ecoCount = document.getElementById('eco-count');
+  var chips = Array.from(eco.querySelectorAll('li[data-entry]')).map(function(chip){
+    return {node:chip.querySelector('a.map-node'),entry:chip.dataset.entry,text:searchText(chip)+' '+searchText(rowById.get(chip.dataset.entry))};
+  });
+  var entries = indexRows.flatMap(function(row){
     return Array.from(row.querySelectorAll(':scope > a')).map(function(link){
       return {title:link.textContent.replace('↗','').trim(), description:row.querySelector('.dd').textContent,
         href:linkHref(link), site:link.dataset.family, text:searchText(row),
@@ -77,6 +84,14 @@
     var raw = q.value.trim();
     var text = raw.toLowerCase();
     var terms = termsFor(raw);
+    var chipCount = 0;
+    chips.forEach(function(chip){
+      var hit = terms.length > 0 && matches(chip.text,terms) && !(/^wallets?$/.test(text) && chip.entry === 'faucet');
+      chip.node.classList.toggle('hit',hit);
+      if(hit) chipCount++;
+    });
+    eco.classList.toggle('searching',!!raw);
+    ecoCount.textContent = (raw ? chipCount+' of ' : '')+chips.length+' on the map';
     qclear.hidden = !raw;
     results.replaceChildren();
     var destinations = raw && terms.length ? entries.filter(function(item){return matches(item.text,terms);}).sort(function(a,b){
@@ -128,7 +143,7 @@
     });
     results.hidden = !raw || !unique.length;
     clearTimeout(countTimer);qcount.textContent='';
-    if(raw) countTimer=setTimeout(function(){qcount.textContent=unique.length ? unique.length+' destination'+(unique.length===1?'':'s')+(unique.length>8?'; showing the first 8':'') : 'No destinations match. Try “wallet” or “masternode”, or paste a public ID.';},300);
+    if(raw) countTimer=setTimeout(function(){qcount.textContent=(unique.length ? unique.length+' destination'+(unique.length===1?'':'s')+(unique.length>8?'; showing the first 8':'') : 'No destinations match. Try “wallet” or “masternode”, or paste a public ID.')+(chipCount ? '; '+chipCount+' of '+chips.length+' on the map, highlighted' : '');},300);
   }
   q.addEventListener('keydown',function(e){
     if(e.key !== 'Enter' || e.isComposing || results.hidden) return;

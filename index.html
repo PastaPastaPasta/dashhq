@@ -34,45 +34,46 @@
 <body><a class="skip" href="#main">Skip to content</a>
 <dashhq-bar product="home" sticky=""><nav aria-label="Tools" class="mnav" slot="nav"><a data-family="radar" href="https://radar.dashhq.org/">Radar</a><a data-family="gov" href="https://gov.dashhq.org/">Governance</a><a data-family="explorer" href="https://explorer.dashhq.org/">Explorer</a><a data-family="bridge" data-network="testnet" data-path="/?mode=create&amp;journey=start" href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet">Start on Testnet</a><a href="/directory/">Directory</a></nav></dashhq-bar>
 <main id="main">
-<section aria-labelledby="title" class="dh-container hub-intro">
+<section aria-labelledby="title" class="hub-top dh-container">
+<div class="hub-intro">
 <h1 class="dh-display" id="title">Tools for the Dash network</h1>
 <p class="lede">Dash is digital cash run by about 2,200 masternodes, with a treasury they vote on and Platform for app data. Check how it is doing, see where the money goes, or start building.</p>
 <search class="finder" role="search"><label class="dh-sr" for="q">Find a tool, or paste a ProTx, identity or name</label><div class="search-input"><input autocomplete="off" class="dh-input" id="q" placeholder="Find a tool, identity or name…" spellcheck="false" type="search"/><button class="dh-btn dh-btn--quiet dh-btn--sm" hidden="" id="qclear" type="button">Clear</button></div><p aria-live="polite" class="fin-c" id="qcount" role="status"></p><ul aria-label="Search destinations" class="find-results" hidden="" id="find-results"></ul></search>
+</div>
+<section aria-label="Mainnet network observations" class="network-pulse"><p class="dh-meta" id="pulse-summary" role="status"><span>Mainnet now</span><span>Checking network observations…</span></p><div class="pulse-source"><p class="dh-meta"><span>Radar crawl</span><time class="dh-time" id="pulse-age">checking</time><a data-family="radar" data-network="mainnet" data-path="/api/v1/mainnet/summary" href="https://radar.dashhq.org/api/v1/mainnet/summary">details</a></p><button class="dh-btn dh-btn--link dh-btn--sm" hidden="" id="pulse-retry">Retry</button></div></section>
 <nav aria-label="Choose a starting point" class="doors">
 <a class="door" data-family="radar" data-path="/masternodes" href="https://radar.dashhq.org/masternodes"><strong class="dh-h3">Check a masternode</strong><span>Reachability, Platform health and earnings.</span><b>Radar →</b></a>
 <a class="door" data-family="gov" data-path="/treasury" href="https://gov.dashhq.org/treasury"><strong class="dh-h3">See what the treasury funds</strong><span>Proposals, votes and what was paid.</span><b>Governance →</b></a>
 <a class="door" data-family="explorer" href="https://explorer.dashhq.org/"><strong class="dh-h3">Look up an identity or name</strong><span>Balances, keys, usernames and contracts.</span><b>Explorer →</b></a>
 <a class="door" data-family="bridge" data-network="testnet" data-path="/?mode=create&amp;journey=start" href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet"><strong class="dh-h3">Start building on Testnet</strong><span>An address, test DASH, an identity and a username.</span><b>Start on Testnet →</b></a>
 </nav>
-<section aria-label="Mainnet network observations" class="network-pulse"><p class="dh-meta" id="pulse-summary" role="status"><span>Mainnet now</span><span>Checking network observations…</span></p><div class="pulse-source"><p class="dh-meta"><span>Radar crawl</span><time class="dh-time" id="pulse-age">checking</time><a data-family="radar" data-network="mainnet" data-path="/api/v1/mainnet/summary" href="https://radar.dashhq.org/api/v1/mainnet/summary">details</a></p><button class="dh-btn dh-btn--link dh-btn--sm" hidden="" id="pulse-retry">Retry</button></div></section>
+<figure aria-labelledby="map-title" class="eco" id="map">
+<figcaption class="eco-head"><h2 id="map-title">Every Dash project, by layer</h2><p id="eco-count">22 on the map</p><a href="/directory/">All 65 projects →</a></figcaption>
+<div class="tier" id="apps"><div class="tier-head"><h3>Apps</h3><p>what people install and use</p></div><ul class="risers"><li id="dashpay" data-entry="dashpay"><a class="map-node" href="https://play.google.com/store/apps/details?id=hashengineering.darkcoin.wallet"><span>DashPay wallet</span></a></li>
+<li id="extension" data-entry="extension"><a class="map-node" href="https://chromewebstore.google.com/detail/dash-platform-extension/odmphbcnlldggfhcpdjgnlhbehoicdnf"><span>Platform Extension</span></a></li>
+<li id="evotool" data-entry="evotool" data-search="wallet"><a class="map-node" href="https://github.com/dashpay/dash-evo-tool/releases"><span>Dash Evo Tool</span></a></li>
+<li id="yappr" data-entry="yappr"><a class="map-node testnet" href="https://yap.pr"><span>Yappr</span><small>Testnet preview</small></a></li>
+<li id="forge" data-entry="forge"><a class="map-node testnet" href="https://forge.dashhq.org"><span>Forge</span><small>Testnet preview</small></a></li></ul></div>
+<div aria-hidden="true" class="link-band risers"></div>
+<div class="tier"><div class="tier-head"><h3>Platform</h3><p>reads and writes Platform data</p></div><ul class="risers"><li id="native-explorer" data-entry="native-explorer"><a class="map-node own" data-family="explorer" data-path="/identity/" href="https://explorer.dashhq.org/identity/"><span>Explorer</span></a></li>
+<li id="platform-explorer" data-entry="platform-explorer"><a class="map-node" href="https://platform-explorer.com"><span>Platform Explorer</span></a></li>
+<li id="evo-sdk" data-entry="evo-sdk"><a class="map-node" href="https://evo-sdk.dash.org/"><span>Evo SDK</span></a></li>
+<li id="docs" data-entry="docs"><a class="map-node" href="https://docs.dash.org/projects/platform/en/stable/"><span>Platform docs</span></a></li>
+<li id="tutorials" data-entry="tutorials"><a class="map-node testnet" href="https://dashpay.github.io/platform-tutorials/"><span>Tutorial apps</span><small>Testnet preview</small></a></li>
+<li id="dapi" data-entry="dapi"><a class="map-node own" data-family="dapi" data-path="/" href="https://dapi.dashhq.org"><span>DAPI console</span></a></li>
+<li id="fees" data-entry="fees"><a class="map-node own" data-family="explorer" data-path="/tools/fees/" href="https://explorer.dashhq.org/tools/fees/"><span>Fee estimator</span></a></li>
+<li id="contract-visualizer" data-entry="contract-visualizer"><a class="map-node" href="https://dashpay.github.io/contract-visualizer/"><span>Contract visualizer</span></a></li>
+<li id="grovedb" data-entry="grovedb"><a class="map-node" href="https://dashpay.github.io/grovedb-structure-viewer/"><span>GroveDB viewer</span></a></li>
+<li id="arch" data-entry="arch"><a class="map-node own" data-family="arch" data-path="/" href="https://arch.dashhq.org"><span>Architecture</span></a></li></ul></div>
+<div class="fund risers"><p>these two fund Platform from Core DASH</p><ul aria-label="Fund Platform"><li id="bridge" data-entry="bridge" class="fund-wire"><a class="map-node own" data-family="bridge" data-network="testnet" data-path="/?mode=create&amp;journey=start" href="https://bridge.dashhq.org/?mode=create&amp;journey=start&amp;network=testnet"><span>Start on Testnet</span></a></li><li id="faucet" data-entry="faucet" class="fund-wire"><a class="map-node own" data-family="faucet" data-path="/" href="https://faucet.dashhq.org"><span>Faucet</span></a></li></ul></div>
+<div class="tier"><div class="tier-head"><h3>Network</h3><p>masternodes and Dash Core</p></div><ul class="risers"><li id="radar" data-entry="radar"><a class="map-node own" data-family="radar" data-path="/#platform" href="https://radar.dashhq.org/#platform"><span>Radar</span></a></li>
+<li id="govhub" data-entry="govhub"><a class="map-node own" data-family="gov" data-path="/" href="https://gov.dashhq.org/"><span>Governance</span></a></li>
+<li id="payments" data-entry="payments"><a class="map-node" href="https://dashpay.github.io/evonode-payments/"><span>Evonode payments</span></a></li>
+<li id="upgrade" data-entry="upgrade"><a class="map-node" href="https://dashpay.github.io/platform-upgrade-vote-status/"><span>Upgrade vote status</span></a></li>
+<li id="dashmate" data-entry="dashmate"><a class="map-node" href="https://docs.dash.org/en/stable/docs/user/network/dashmate/index.html"><span>dashmate</span></a></li></ul></div>
+<p class="map-key"><span><i></i>Live on Mainnet</span><span><i class="own"></i>A dashhq tool</span><span><i class="wire"></i>Funds Platform from Core</span></p>
+</figure>
 </section>
-<section aria-labelledby="map-title" class="map-band" id="map"><div class="dh-container"><header class="section-head"><h2 class="dh-h2" id="map-title">Every Dash project, by layer</h2><p>22 on the map, 43 more in the directory</p><a href="/directory/">All 65 projects →</a></header>
-<div class="project-map"><section class="map-layer" id="apps"><h3 class="dh-h3">Apps</h3><ul><li id="dashpay"><a class="map-node" href="https://play.google.com/store/apps/details?id=hashengineering.darkcoin.wallet"><span>DashPay wallet</span><small>Dash Core Group</small></a></li>
-<li id="extension"><a class="map-node" href="https://chromewebstore.google.com/detail/dash-platform-extension/odmphbcnlldggfhcpdjgnlhbehoicdnf"><span>Platform Extension</span><small>pshenmic</small></a></li>
-<li id="evotool"><a class="map-node" href="https://github.com/dashpay/dash-evo-tool/releases"><span>Dash Evo Tool</span><small>Dash Core Group</small></a></li>
-<li id="yappr"><a class="map-node testnet" href="https://yap.pr"><span>Yappr</span><small>Testnet preview</small></a></li>
-<li id="forge"><a class="map-node testnet" href="https://forge.dashhq.org"><span>Forge</span><small>Testnet preview</small></a></li>
-</ul></section>
-<section class="map-layer"><h3 class="dh-h3">Platform</h3><ul><li><a class="map-node own" data-family="explorer" data-path="/identity/" href="https://explorer.dashhq.org/identity/"><span>Explorer</span><small>Identities and names</small></a></li>
-<li><a class="map-node" href="https://platform-explorer.com"><span>Platform Explorer</span><small>pshenmic</small></a></li>
-<li id="evo-sdk"><a class="map-node" href="https://evo-sdk.dash.org/"><span>Evo SDK</span><small>Dash Core Group</small></a></li>
-<li id="docs"><a class="map-node" href="https://docs.dash.org/projects/platform/en/stable/"><span>Platform docs</span><small>Dash Core Group</small></a></li>
-<li><a class="map-node testnet" href="https://dashpay.github.io/platform-tutorials/"><span>Tutorial apps</span><small>Testnet preview</small></a></li>
-<li><a class="map-node own" data-family="dapi" data-path="/" href="https://dapi.dashhq.org"><span>DAPI console</span><small>Raw node responses</small></a></li>
-<li><a class="map-node own" data-family="explorer" data-path="/tools/fees/" href="https://explorer.dashhq.org/tools/fees/"><span>Fee estimator</span><small>Contract costs</small></a></li>
-<li><a class="map-node" href="https://dashpay.github.io/contract-visualizer/"><span>Contract visualizer</span><small>Dash Core Group</small></a></li>
-<li><a class="map-node" href="https://dashpay.github.io/grovedb-structure-viewer/"><span>GroveDB structure viewer</span><small>Dash Core Group</small></a></li>
-<li><a class="map-node own" data-family="arch" data-path="/" href="https://arch.dashhq.org"><span>Architecture</span><small>How Platform works</small></a></li>
-<li><a class="map-node own" data-family="bridge" data-network="testnet" data-path="/" href="https://bridge.dashhq.org/"><span>Start on Testnet</span><small>Address to username</small></a></li>
-<li><a class="map-node own" data-family="faucet" data-path="/" href="https://faucet.dashhq.org"><span>Faucet</span><small>Testnet DASH</small></a></li>
-</ul></section>
-<section class="map-layer"><h3 class="dh-h3">Network</h3><ul><li><a class="map-node own" data-family="radar" data-path="/#platform" href="https://radar.dashhq.org/#platform"><span>Radar</span><small>Network health</small></a></li>
-<li><a class="map-node own" data-family="gov" data-path="/" href="https://gov.dashhq.org/"><span>Governance</span><small>Proposals, polls, names</small></a></li>
-<li><a class="map-node" href="https://dashpay.github.io/evonode-payments/"><span>Evonode payments</span><small>Dash Core Group</small></a></li>
-<li><a class="map-node" href="https://dashpay.github.io/platform-upgrade-vote-status/"><span>Upgrade vote status</span><small>Dash Core Group</small></a></li>
-<li id="dashmate"><a class="map-node" href="https://docs.dash.org/en/stable/docs/user/network/dashmate/index.html"><span>dashmate</span><small>Dash Core Group</small></a></li>
-</ul></section>
-</div><p class="map-key"><span><i></i> Live on Mainnet</span><span>Testnet preview: labelled on each link</span><span><i class="own"></i> A dashhq tool</span></p></div></section>
 <template id="directory-index"><div class="dir"><section class="dgroup"><h3 class="dh-h3">Wallets and apps <span class="group-count">10</span></h3><ul><li data-search="" id="dashpay"><a href="https://play.google.com/store/apps/details?id=hashengineering.darkcoin.wallet">DashPay wallet <span aria-hidden="true">↗</span></a><p class="dd">Mobile wallet with usernames and contacts.</p><p class="dby dh-meta"><span>Dash Core Group</span><span>Google Play</span><a href="https://apps.apple.com/app/id1206647026">App Store ↗</a></p></li>
 <li data-search="" id="evotool"><a href="https://github.com/dashpay/dash-evo-tool/releases">Dash Evo Tool <span aria-hidden="true">↗</span></a><p class="dd">Desktop app for identities, names, tokens and contracts.</p><p class="dby dh-meta"><span>Dash Core Group</span><span>Releases</span><a href="https://docs.dash.org/en/stable/docs/user/network/dash-evo-tool/">Guide ↗</a></p></li>
 <li data-search="" id="extension"><a href="https://chromewebstore.google.com/detail/dash-platform-extension/odmphbcnlldggfhcpdjgnlhbehoicdnf">Platform Extension <span aria-hidden="true">↗</span></a><p class="dd">Browser wallet that approves what a site asks you to sign.</p><p class="dby dh-meta"><span>pshenmic</span><span>Chrome Web Store</span></p></li>
