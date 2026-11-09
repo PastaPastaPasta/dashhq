@@ -105,7 +105,7 @@ try {
       if(path==='/directory/') {
         assert.equal(await page.locator('.dgroup li').count(),67);
         assert.deepEqual(await page.locator('.dgroup li').evaluateAll(els=>els.map(row=>({id:row.id,text:row.textContent}))),catalog,'home search and directory share the catalog');
-        assert.equal(await page.locator('.maker,.catalog-status,.catalog-url code').count(),195);
+        assert.equal(await page.locator('.maker,.catalog-status,.catalog-url code').count(),201);
         assert(await page.locator('.dgroup li').evaluateAll(els=>els.every(row=>row.querySelector('.catalog-name a[href]') && row.querySelector('.dd').textContent.trim() && row.querySelector('.maker').textContent.trim() && row.querySelector('.catalog-status').textContent.trim() && row.querySelector('.catalog-url code').textContent.trim())));
         assert.equal(await page.locator('#yappr .maker').innerText(),'pasta');
         assert.equal(await page.locator('#forge .catalog-status').innerText(),'Testnet preview');
