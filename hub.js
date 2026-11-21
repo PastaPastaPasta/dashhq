@@ -114,7 +114,7 @@
       if(text.endsWith('.dash') || !destinations.some(function(item){return matches(item.title.toLowerCase(),terms);})) destinations.unshift(lookup);else destinations.push(lookup);
     }
     var tasks = [
-      {terms:/treasury|budget|spending|funded/, title:'Treasury', product:'gov', path:'/treasury', description:'See proposals, funding and treasury payments.'},
+      {terms:/treasury|budget|spending|funded/, title:'Treasury', product:'gov', path:'/', description:'See proposals, funding and treasury payments.'},
       {terms:/my masternode|my node|masternode vote|voting key/, title:'My masternodes', product:'gov', path:'/masternodes', description:'Review your masternodes’ governance votes.'},
       {terms:/fee|contract cost|estimate/, title:'Estimate contract fees', product:'fees', path:'/', description:'Estimate what registering a data contract costs.'},
       {terms:/name contest|contested|username vote/, title:'Name contests', product:'gov', path:'/names', description:'Inspect contested usernames and their votes.'},
