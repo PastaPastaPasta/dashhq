@@ -107,10 +107,10 @@
     if (/masternode|evonode|my node/.test(text)) destinations.unshift(destination('Find your masternode', 'radar', '/masternodes', 'Reachability, earnings and Platform health.'));
     if (/^[a-f0-9]{64}$/i.test(raw)) destinations.unshift(destination('Inspect this masternode', 'radar', '/mn/'+raw, 'Open the public ProTx record in Radar.'));
     else if (/^(?:\d{1,3}\.){3}\d{1,3}(?::\d+)?$/.test(raw)) destinations.unshift(destination('Find this IP', 'radar', '/masternodes?q='+encodeURIComponent(raw), 'Search Radar’s masternode list.'));
-    else if (/^[1-9A-HJ-NP-Za-km-z]{43,44}$/.test(raw)) destinations.unshift(destination('Look up this Platform ID', 'explorer', '/search/?q='+encodeURIComponent(raw), 'Inspect an identity or contract in Explorer.'));
+    else if (/^[1-9A-HJ-NP-Za-km-z]{43,44}$/.test(raw)) destinations.unshift(destination('Look up this Platform ID', 'explorer', '/search?q='+encodeURIComponent(raw), 'Inspect an identity or contract in Radar Explorer.'));
     else if (/^[a-z0-9](?:[a-z0-9-]{1,61}[a-z0-9])(?:\.dash)?$/i.test(raw)) {
       var name = text.endsWith('.dash') ? text : text+'.dash';
-      var lookup = destination('Look up '+name+' in Explorer', 'explorer', '/dpns/?name='+encodeURIComponent(name), 'Check this Dash username on the selected network.');
+      var lookup = destination('Look up '+name+' in Radar Explorer', 'explorer', '/name/'+encodeURIComponent(name.slice(0,-5)), 'Check this Dash username on the selected network.');
       if(text.endsWith('.dash') || !destinations.some(function(item){return matches(item.title.toLowerCase(),terms);})) destinations.unshift(lookup);else destinations.push(lookup);
     }
     var tasks = [
@@ -136,7 +136,7 @@
       var external = !item.site && url.origin !== location.origin;
       var tile = document.createElement('span');tile.className='result-tile';tile.dataset.tier=item.tier;tile.textContent=item.mono;tile.setAttribute('aria-hidden','true');
       var title = document.createElement('span');title.className='result-title';title.textContent=item.title+(external?' ↗':' →');
-      var site = document.createElement('span');site.className='result-site';site.textContent=item.site ? ({gov:'Governance',radar:'Radar',explorer:'Explorer',arch:'Architecture',bridge:'Bridge',dapi:'DAPI',faucet:'Faucet',dashhq:'dashhq'}[item.site] || item.site) : url.host;
+      var site = document.createElement('span');site.className='result-site';site.textContent=item.site ? ({gov:'Governance',radar:'Radar',explorer:'Radar Explorer',arch:'Architecture',bridge:'Bridge',dapi:'DAPI',faucet:'Faucet',dashhq:'dashhq'}[item.site] || item.site) : url.host;
       var description = document.createElement('span');description.className='result-description';description.textContent=item.description;
       link.append(tile,title,site,description);row.append(link);
       if(item.links && item.links.length){
