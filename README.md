@@ -1,34 +1,13 @@
 # dashhq.org
 
-The landing page at [dashhq.org](https://dashhq.org): a map of the Dash ecosystem.
+The front door and directory for the Dash ecosystem. Static HTML, CSS and JavaScript; no build dependencies or backend.
 
-One static file, `index.html`, plus self-hosted Barlow fonts (SIL Open Font License) in `fonts/`. No build step.
-GitHub Pages serves the `main` branch root.
+`index.html` opens with the headline, the lede and the search, then the connected three-tier ecosystem map at the full content width, then four task cards. Every map node names its maintainer. The map uses five columns on desktop, with amber funding wires, and two columns on phones. Search results carry a layer tile and also highlight matching projects in place. A compact Mainnet observation line keeps its live source beside the figures. `/directory/` lists all 68 projects and resources as cards in tinted category bands, four across from 1400 px, with a description, maker, status and monospace host for each. Network tags come from the catalog; docs, diagrams and source libraries use descriptive status tags. Map links open their directory entries. `/identity/` explains sign-ins and key handling.
 
-## How it is put together
+`hub.js` searches the inert `#directory-index` template without hiding the page. Keep that template in sync with `/directory/` when editing resources. Search handles public ProTx hashes, IPs, Platform IDs and bare or suffixed Dash names, with task-specific routes for treasury, fees, voting and polls. Store and guide links stay within their resource result. Escape clears the field. The directory reuses the same matching, with counts, a clear button, a query URL and category anchors in a single scrolling strip that also works without JavaScript. Without JavaScript the finder stays hidden; every visible destination remains a normal link.
 
-- **The sheet** at the top is one SVG: every project on the layer it works with. Phones get the same projects
-  as chips instead, because a 1040 px drawing does not fit.
-- **Routes** number the stops of a journey on that map. Each `<li class="route">` carries its stops in
-  `data-route`, as a space-separated list of card ids.
-- **Plates** are the cards below, one per project, each with a hand-drawn SVG mark.
-- **The directory** is the plain list at the end, for everything that does not need a drawing.
-- **The finder** (the `Find` field) filters plates and directory entries, and lights up the matching projects
-  on the map. It is progressive enhancement: without JavaScript the field is hidden and the whole page is there.
+`pulse.js` reads Radar’s public Mainnet summary with a bounded timeout and five-minute refresh. It shows observation age, stale-data warnings and retry on failure. Counts and source details remain available through the adjacent snapshot link and metric titles. No other data service is contacted. Fonts and assets are local, and CSP permits no inline scripts or styles.
 
-Counts in the title block are computed from the page at load, so they cannot drift. The `Links checked` date
-is not: bump it when you have actually re-checked the links.
+The shell is pinned under `dashhq/`; see `SHELL.md`. The hub has a text wordmark and a local lowercase d favicon. Yappr, Forge, EvoVote and Pollr are outbound links; the Fee estimator opens fees.dashhq.org, and explorer.dashhq.org is Radar Explorer.
 
-## Adding a project
-
-A plate needs a `<article class="card spanN" id="...">`, a matching `<a class="hnode">` in the map, and a matching
-`<a class="chip">` in the phone list. The three id lists must stay identical; `.span3` and `.span2` have to add up
-to 6 per row.
-
-The map link's accessible name is its `aria-label`, written in the order the words are drawn
-(`author, name`). The `<text>` elements end with a space so the drawn words do not run together.
-
-`og.png` is the link preview: a 1200x630 render of the map plus a title block, made from the page's own SVG and
-fonts. Re-render it when the map changes; nothing on the page reads it, only the `og:image` tag does.
-
-Something missing, dead or wrong? Open an issue with the link.
+Local checks: `node --check hub.js` and `node --check pulse.js`. The browser checks live with the family lab (`lab/hub-qa.mjs`). Pages serves this directory as it is, so keep lab notes and scripts out of it. There is no package-managed lint, typecheck or unit-test suite. Build with `lab/build.sh hub` from the lab root, then use the guarded screenshot runner.

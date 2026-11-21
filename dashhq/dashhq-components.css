@@ -1,0 +1,743 @@
+/* dashhq-components.css: the family's component layer. Framework-free, CSP-safe (no inline styles, no images,
+   no url()), drawn only with dashhq-tokens.css, which it requires.
+
+   Use the classes directly (plain-CSS and React+CSS sites), or map your framework's components onto the same
+   tokens (Tailwind, Chakra): DESIGN.md §6 has the recipes. Measurements here are the definition of "the same".
+
+   Decided once for the family:
+   - Radius: 6px (--dh-r2) for every control, 10px (--dh-r3) for every card, 3px (--dh-r1) for badges. No pills.
+   - Heights: --dh-ctl-h-sm / --dh-ctl-h = 28 / 34, and 40 / 42 on touch screens. Every button that matters is the
+     middle one; --sm is for dense rows (tables, toolbars). --lg is retired: it draws at the family height.
+   - Focus: 2px --dh-focus outline, 2px offset, on every interactive element (--dh-ring-shadow for shadow systems).
+   - Casing: sentence case. Components reset text-transform and letter-spacing so framework defaults can't
+     uppercase a label; the words themselves must be written in sentence case ("Create identity", "Sign in").
+   - Primary: the one committing action in view, filled amber (--dh-act) everywhere, apps included.
+   - Selection: --dh-select and --dh-select-soft (Dash blue; an app's accent with <html data-dh-accent>). Links stay blue.
+
+   Contents: layout · page header · section · buttons · fields · segmented control · tabs · cards · choices · stats ·
+   tables (+ phone row cards) · key/value · badges · notices · states · stepper · misc */
+
+/* ================================================================ layout */
+/* Short pages keep the footer at the bottom of the screen: put .dh-fill on <body> (or the element that holds the bar,
+   <main> and the footer). <main>, or a child marked .dh-fill__main, takes the spare height. */
+.dh-fill { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; margin: 0; }
+.dh-fill > main, .dh-fill > .dh-fill__main { flex: 1 0 auto; }
+/* The container lines up with the bar: same max width, same gutter, border-box, so the page's left edge is the
+   bar's left edge on every site. Put all page content inside one; full-bleed bands sit outside it. */
+.dh-container {
+  box-sizing: border-box; width: 100%; max-width: var(--dh-shell-max, var(--dh-max));
+  margin-inline: auto; padding-inline: var(--dh-gutter);
+}
+.dh-page { padding-block: var(--dh-6) var(--dh-8); }
+.dh-narrow { max-width: var(--dh-w-narrow); }        /* forms and reading columns: left-aligned, never centred */
+.dh-measure { max-width: 64ch; }
+.dh-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--dh-4); }
+.dh-stack--lg { gap: var(--dh-6); }
+.dh-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(var(--dh-grid-min, 280px), 100%), 1fr));
+  gap: var(--dh-4); }
+/* Main column plus a 320px aside; the aside drops below the main column under 960px. */
+.dh-split { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: var(--dh-6); align-items: start; }
+.dh-band { background: var(--dh-surface); border-block: 1px solid var(--dh-line); }
+@media (max-width: 960px) { .dh-split { grid-template-columns: minmax(0, 1fr); gap: var(--dh-5); } }
+@media (max-width: 640px) { .dh-page { padding-block: var(--dh-5) var(--dh-7); } }
+
+/* ================================================================ type */
+.dh-display { font: var(--dh-w-head) var(--dh-fs-display)/var(--dh-lh-display) var(--dh-font);
+  font-stretch: var(--dh-stretch-display); letter-spacing: -.02em; text-wrap: balance; margin: 0; }
+.dh-h1 { font: var(--dh-w-head) var(--dh-fs-h1)/var(--dh-lh-head) var(--dh-font);
+  font-stretch: var(--dh-stretch-head); letter-spacing: -.015em; text-wrap: balance; margin: 0; }
+.dh-h2 { font: var(--dh-w-head) var(--dh-fs-h2)/var(--dh-lh-head) var(--dh-font);
+  font-stretch: var(--dh-stretch-head); letter-spacing: -.008em; text-wrap: balance; margin: 0; }
+.dh-h3 { font: var(--dh-w-strong) var(--dh-fs-h3)/var(--dh-lh-head) var(--dh-font); margin: 0; }
+.dh-lead { font-size: var(--dh-fs-lead); line-height: 1.55; color: var(--dh-ink-2); max-width: 64ch; margin: 0; }
+.dh-label { font-size: var(--dh-fs-sm); font-weight: var(--dh-w-ui); color: var(--dh-ink-2); }
+.dh-muted { color: var(--dh-ink-2); }
+.dh-mono { font-family: var(--dh-mono); font-size: .92em; font-variant-ligatures: none; }
+.dh-num { font-variant-numeric: tabular-nums; }
+.dh-unit { font-size: .8em; font-weight: var(--dh-w-ui); color: var(--dh-ink-2); }
+.dh-link { color: var(--dh-brand-ink); text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  text-underline-offset: 3px; }
+.dh-link:hover { text-decoration-color: currentColor; }
+/* Two link styles in the family. Inline links in sentences: .dh-link (underlined). A link that is a next step on its own
+   ("Top up in Bridge", "Return to your identity"): .dh-link--go, semibold with an arrow, underlined on hover. */
+.dh-link--go { color: var(--dh-brand-ink); font-weight: var(--dh-w-strong); text-decoration: none; }
+.dh-link--go::after { content: "\2192"; content: "\2192" / ""; margin-left: .3em; }
+.dh-link--go:hover { text-decoration: underline; text-underline-offset: 3px; }
+.dh-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 480px) { .dh-h1 { font-size: 26px; } }
+
+/* ================================================================ page header */
+/* <header class="dh-page-header">
+     <nav class="dh-crumbs">…</nav>                       optional: where this record lives
+     <div class="dh-page-header__row">
+       <div class="dh-page-header__text"> <p class="dh-page-header__kicker">Evonode</p> <h1 class="dh-page-header__title">
+         <p class="dh-page-header__lede"> </div>
+       <div class="dh-page-header__actions"> buttons, at most one primary </div>
+     </div>
+     <div class="dh-page-header__meta"> badges, proof badge, freshness </div>
+   </header> */
+.dh-page-header { display: grid; gap: var(--dh-3); margin-block: 0 var(--dh-6); min-width: 0; }
+.dh-page-header__row { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: var(--dh-4) var(--dh-6); }
+.dh-page-header__text { display: grid; gap: var(--dh-2); flex: 1 1 420px; min-width: 0; }
+.dh-page-header__kicker { margin: 0; font-size: var(--dh-fs-sm); font-weight: var(--dh-w-ui); color: var(--dh-ink-2);
+  text-transform: none; letter-spacing: 0; }
+.dh-page-header__title { margin: 0; font: var(--dh-w-head) var(--dh-fs-h1)/var(--dh-lh-head) var(--dh-font);
+  font-stretch: var(--dh-stretch-head); letter-spacing: -.015em; text-wrap: balance; overflow-wrap: anywhere; }
+.dh-page-header--home .dh-page-header__title { font-size: var(--dh-fs-display); line-height: var(--dh-lh-display);
+  font-stretch: var(--dh-stretch-display); letter-spacing: -.02em; }
+.dh-page-header__lede { margin: 0; max-width: 64ch; font-size: var(--dh-fs-lead); line-height: 1.55; color: var(--dh-ink-2); }
+.dh-page-header__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dh-2); flex: none; max-width: 100%; }
+.dh-page-header__meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dh-2) var(--dh-3);
+  font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
+.dh-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin: 0; padding: 0; list-style: none;
+  font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
+.dh-crumbs > * + *::before { content: "/"; margin-right: 8px; color: var(--dh-line-2); }
+.dh-crumbs :where(a:not(.dh-btn)) { color: var(--dh-brand-ink); text-decoration: none; border-radius: var(--dh-r1); }
+.dh-crumbs :where(a:not(.dh-btn)):hover { text-decoration: underline; text-underline-offset: 3px; }
+.dh-crumbs [aria-current] { color: var(--dh-ink-2); }
+@media (max-width: 480px) {
+  .dh-page-header { margin-bottom: var(--dh-5); }
+  .dh-page-header__title { font-size: 26px; }
+  .dh-page-header__lede { font-size: var(--dh-fs-body); }
+}
+
+/* ================================================================ section */
+/* <section class="dh-section"> <div class="dh-section__head"> <h2 class="dh-section__title"> <div class="dh-section__actions">
+   <p class="dh-section__desc"> </div> … </section> */
+.dh-section { margin-block: 0 var(--dh-7); min-width: 0; }
+.dh-section--rule { padding-top: var(--dh-6); border-top: 1px solid var(--dh-line); }
+.dh-section__head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center;
+  gap: var(--dh-2) var(--dh-4); margin-bottom: var(--dh-4); }
+.dh-section__title { grid-column: 1; margin: 0; font: var(--dh-w-head) var(--dh-fs-h2)/var(--dh-lh-head) var(--dh-font);
+  font-stretch: var(--dh-stretch-head); letter-spacing: -.008em; text-wrap: balance; }
+.dh-section__desc { grid-column: 1 / -1; grid-row: 2; margin: 0; max-width: 72ch; font-size: var(--dh-fs-ui); color: var(--dh-ink-2); }
+.dh-section__actions { grid-column: 2; grid-row: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--dh-2); }
+@media (max-width: 640px) {
+  .dh-section { margin-bottom: var(--dh-6); } .dh-section--rule { padding-top: var(--dh-5); }
+  .dh-section__head { grid-template-columns: minmax(0, 1fr); }
+  .dh-section__actions { grid-column: 1; grid-row: 3; justify-content: flex-start; }
+}
+
+/* ================================================================ buttons
+   .dh-btn                    secondary (the default): navigation and everything that doesn't commit
+   .dh-btn--primary           the one committing action in view: Vote, Get tDASH, Create identity, Send (--act: alias)
+   .dh-btn--quiet             toolbars, Cancel, icon buttons
+   .dh-btn--link              an action that reads as a link ("Show all 25", "Copy")
+   .dh-btn--destructive       remove, revoke, delete; always behind a confirm that names the thing (--danger: alias)
+   .dh-btn--sm                28px (40 on touch), dense rows only; default 34 (42). --lg is retired: same as default.
+   .dh-btn--block / --icon    full width / square icon button (give it an aria-label)
+   :disabled, [aria-disabled="true"]   flat and grey, whatever the variant, with the reason written nearby
+   [aria-busy="true"]         spinner before the label; change the label too ("Sending…") and ignore presses
+   Load this file before Tailwind's CSS so utilities can refine it; preflight's element resets lose to these classes. */
+.dh-btn {
+  box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: var(--dh-ctl-h); min-width: 0; margin: 0; padding: 0 14px;
+  border: 1px solid var(--dh-raised-line); border-radius: var(--dh-r2);
+  background: var(--dh-raised); color: var(--dh-ink);
+  font: var(--dh-w-ui) var(--dh-fs-ui)/1 var(--dh-font); text-transform: none; letter-spacing: 0;
+  white-space: nowrap; text-decoration: none; vertical-align: middle; cursor: pointer;
+  -webkit-appearance: none; appearance: none; -webkit-tap-highlight-color: transparent;
+  transition: background-color var(--dh-dur-1) var(--dh-ease), border-color var(--dh-dur-1) var(--dh-ease);
+}
+.dh-btn:hover { background-color: var(--dh-raised-hover); color: var(--dh-ink); text-decoration: none; }
+.dh-btn:active { background-color: var(--dh-line); }
+.dh-btn:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
+
+/* The committing action is amber in every product, apps included: an app's accent marks its brand and selection, never
+   this button. */
+.dh-btn--primary, .dh-btn--act { border-color: transparent; background-color: var(--dh-act); color: var(--dh-act-ink);
+  font-weight: var(--dh-w-strong); }
+.dh-btn--primary:hover, .dh-btn--act:hover {
+  background-color: var(--dh-act); color: var(--dh-act-ink);
+  background-image: linear-gradient(var(--dh-shade-1), var(--dh-shade-1));
+}
+.dh-btn--primary:active, .dh-btn--act:active { background-color: var(--dh-act); background-image: linear-gradient(var(--dh-shade-2), var(--dh-shade-2)); }
+
+.dh-btn--secondary { /* the default; the name exists so markup can say what it means */ }
+
+.dh-btn--quiet { border-color: transparent; background-color: transparent; color: var(--dh-ink-2); padding: 0 10px; }
+.dh-btn--quiet:hover { background-color: var(--dh-hover); color: var(--dh-ink); }
+.dh-btn--quiet:active { background-color: var(--dh-sunken); }
+
+.dh-btn--link {
+  background-color: transparent; height: auto; min-height: 0; padding: 0; border: 0; color: var(--dh-brand-ink);
+  font-weight: var(--dh-w-ui); text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  text-underline-offset: 3px; white-space: normal; text-align: left;
+}
+.dh-btn--link:hover, .dh-btn--link:active { background-color: transparent; color: var(--dh-brand-ink); text-decoration: underline; text-decoration-color: currentColor; }
+
+.dh-btn--destructive, .dh-btn--danger { border-color: var(--dh-bad); color: var(--dh-bad); }
+.dh-btn--destructive:hover, .dh-btn--danger:hover { background-color: var(--dh-bad-soft); color: var(--dh-bad); }
+.dh-btn--destructive:active, .dh-btn--danger:active { background-color: var(--dh-bad-soft); color: var(--dh-bad); box-shadow: inset 0 0 0 1px var(--dh-bad); }
+
+.dh-btn--sm { height: var(--dh-ctl-h-sm); padding: 0 10px; gap: 6px; font-size: var(--dh-fs-sm); }
+.dh-btn--block { display: flex; width: 100%; }
+.dh-btn--icon { width: var(--dh-ctl-h); padding: 0; }
+.dh-btn--icon.dh-btn--sm { width: var(--dh-ctl-h-sm); }
+.dh-btn > svg { flex: none; width: 16px; height: 16px; }
+
+.dh-btn[aria-busy="true"] { cursor: progress; }
+.dh-btn[aria-busy="true"]::before {
+  content: ""; width: 14px; height: 14px; flex: none; box-sizing: border-box; margin-left: -2px; border-radius: 50%;
+  border: 2px solid currentColor; border-right-color: transparent; animation: dh-rot .8s linear infinite;
+}
+.dh-btn:disabled, .dh-btn[aria-disabled="true"], .dh-btn:disabled:hover, .dh-btn[aria-disabled="true"]:hover {
+  background-color: var(--dh-disabled); background-image: none; border-color: var(--dh-line); color: var(--dh-ink-3);
+  cursor: not-allowed; text-decoration: none;
+}
+.dh-btn--link:disabled, .dh-btn--link[aria-disabled="true"],
+.dh-btn--link:disabled:hover, .dh-btn--link[aria-disabled="true"]:hover { background-color: transparent; }
+.dh-btn .dh-spin { margin-left: -2px; }
+
+/* A row of buttons. The primary goes last on desktop (reading order ends on the commitment); on phones
+   .dh-actions--stack makes them full width, primary first. */
+.dh-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dh-2); }
+.dh-actions--end { justify-content: flex-end; margin-left: auto; }
+.dh-actions__note { font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
+@media (max-width: 480px) {
+  .dh-actions--stack { flex-direction: column-reverse; align-items: stretch; width: 100%; margin-left: 0; }
+  .dh-actions--stack > .dh-btn { width: 100%; }
+}
+
+/* ================================================================ fields */
+/* <div class="dh-field"> <label class="dh-field__label" for=x>Address <span class="dh-field__optional">optional</span></label>
+   <input class="dh-input" id=x aria-describedby="x-help"> <p class="dh-field__help" id="x-help">Starts with y</p>
+   <p class="dh-field__error" id="x-err">…</p> </div>   Invalid: aria-invalid="true" on the control. */
+.dh-field { display: grid; gap: 6px; min-width: 0; margin: 0; }
+.dh-field > label, .dh-field__label { font-size: var(--dh-fs-sm); font-weight: var(--dh-w-ui); color: var(--dh-ink);
+  text-transform: none; letter-spacing: 0; }
+.dh-field__optional { font-weight: var(--dh-w-body); color: var(--dh-ink-2); }
+.dh-field__optional::before { content: "("; } .dh-field__optional::after { content: ")"; }
+.dh-field__help, .dh-field__hint { margin: 0; font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
+.dh-field__error { margin: 0; font-size: var(--dh-fs-sm); color: var(--dh-bad); font-weight: var(--dh-w-ui); }
+.dh-form { display: grid; gap: var(--dh-4); max-width: var(--dh-w-narrow); }
+.dh-form__row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: var(--dh-4); }
+.dh-fieldset { margin: 0; padding: 0; border: 0; min-width: 0; display: grid; gap: var(--dh-3); }
+.dh-fieldset > legend { padding: 0; margin-bottom: var(--dh-2); font-size: var(--dh-fs-ui); font-weight: var(--dh-w-strong); color: var(--dh-ink); }
+
+.dh-input, .dh-select, .dh-textarea {
+  box-sizing: border-box; display: block; height: var(--dh-ctl-h); width: 100%; min-width: 0; margin: 0; padding: 0 10px;
+  border: 1px solid var(--dh-line-2); border-radius: var(--dh-r2); background-color: var(--dh-surface); color: var(--dh-ink);
+  font: var(--dh-w-body) var(--dh-fs-ui)/1.2 var(--dh-font); letter-spacing: 0; box-shadow: none;
+  transition: border-color var(--dh-dur-1) var(--dh-ease);
+}
+.dh-textarea, textarea.dh-input { height: auto; min-height: 96px; padding: 8px 10px; line-height: 1.45; resize: vertical; }
+.dh-input--mono { font-family: var(--dh-mono); font-size: 13px; font-variant-ligatures: none; }
+.dh-input--sm, .dh-select--sm { height: var(--dh-ctl-h-sm); font-size: var(--dh-fs-sm); }
+.dh-input::placeholder, .dh-textarea::placeholder { color: var(--dh-ink-2); opacity: 1; }
+.dh-input:hover, .dh-select:hover, .dh-textarea:hover { border-color: var(--dh-ink-2); }
+.dh-input:focus, .dh-select:focus, .dh-textarea:focus {
+  outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); border-color: var(--dh-line-2); box-shadow: none;
+}
+.dh-input[aria-invalid="true"], .dh-select[aria-invalid="true"], .dh-textarea[aria-invalid="true"] { border-color: var(--dh-bad); }
+.dh-input:disabled, .dh-select:disabled, .dh-textarea:disabled { background-color: var(--dh-sunken); border-color: var(--dh-line);
+  color: var(--dh-ink-3); cursor: not-allowed; }
+.dh-input[readonly], .dh-textarea[readonly] { background-color: var(--dh-sunken); border-color: var(--dh-line); }
+/* Native select with a chevron drawn from gradients: no image, so img-src stays untouched. */
+.dh-select {
+  -webkit-appearance: none; appearance: none; padding-right: 30px; cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, var(--dh-ink-2) 50%), linear-gradient(-45deg, transparent 50%, var(--dh-ink-2) 50%);
+  background-position: calc(100% - 16px) 52%, calc(100% - 11px) 52%;
+  background-size: 5px 5px; background-repeat: no-repeat;
+}
+/* An input with a unit or a button stuck to it: "DASH", "Paste". */
+.dh-input-group { display: flex; align-items: stretch; min-width: 0; }
+.dh-input-group > .dh-input { flex: 1 1 auto; border-start-end-radius: 0; border-end-end-radius: 0; }
+.dh-input-group > .dh-input-group__addon, .dh-input-group > .dh-btn { flex: none; border-start-start-radius: 0; border-end-start-radius: 0; margin-left: -1px; }
+.dh-input-group__addon { box-sizing: border-box; display: inline-flex; align-items: center; height: var(--dh-ctl-h); padding: 0 10px;
+  border: 1px solid var(--dh-line-2); border-radius: var(--dh-r2); background: var(--dh-sunken); color: var(--dh-ink-2); font-size: var(--dh-fs-sm); }
+/* An input and its button on one row (search, the faucet's address + Get tDASH); stacks on phones. */
+.dh-inline-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--dh-2); }
+.dh-inline-form > .dh-field, .dh-inline-form > .dh-input { flex: 1 1 280px; }
+@media (max-width: 480px) { .dh-inline-form > .dh-btn { flex: 1 1 100%; } }
+/* Checkbox and radio rows. */
+.dh-check { display: flex; align-items: flex-start; gap: 10px; min-height: 24px; font-size: var(--dh-fs-ui); color: var(--dh-ink); cursor: pointer; }
+.dh-check > input { flex: none; width: 16px; height: 16px; margin: 2px 0 0; accent-color: var(--dh-select); }
+.dh-check > input:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
+.dh-check small { display: block; color: var(--dh-ink-2); font-size: var(--dh-fs-sm); }
+@media (pointer: coarse) {
+  .dh-input, .dh-select, .dh-textarea { font-size: 16px; }     /* stops iOS zooming on focus */
+  .dh-check { min-height: 40px; align-items: center; }
+  .dh-check > input { width: 20px; height: 20px; margin: 0; }
+}
+
+/* ================================================================ segmented control
+   2 to 5 mutually exclusive views of the same data. Buttons with aria-pressed, or links with aria-current. */
+.dh-seg { box-sizing: border-box; display: inline-flex; gap: 2px; padding: 2px; border-radius: var(--dh-r2); background: var(--dh-sunken);
+  max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.dh-seg > button, .dh-seg > a {
+  box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: calc(var(--dh-ctl-h) - 4px); margin: 0; padding: 0 12px;
+  border: 0; border-radius: 4px; background: transparent; color: var(--dh-ink-2); text-decoration: none; white-space: nowrap;
+  font: var(--dh-w-ui) var(--dh-fs-sm)/1 var(--dh-font); text-transform: none; letter-spacing: 0; cursor: pointer;
+}
+.dh-seg > :hover { color: var(--dh-ink); }
+.dh-seg > [aria-pressed="true"], .dh-seg > [aria-current="page"], .dh-seg > [aria-current="true"], .dh-seg > [aria-selected="true"] {
+  background: var(--dh-surface); color: var(--dh-ink); box-shadow: 0 0 0 1px var(--dh-line), 0 1px 2px rgba(8, 24, 36, .08);
+}
+.dh-seg > :focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: 0; }
+.dh-seg .dh-count { color: var(--dh-ink-2); font-weight: 400; }
+.dh-seg--block { display: flex; width: 100%; }
+.dh-seg--block > * { flex: 1 1 0; }
+
+/* ================================================================ tabs
+   Sections of one page or record; changes the URL. Links with aria-current, or role=tab with aria-selected. */
+.dh-tabs { display: flex; gap: 20px; margin: 0 0 var(--dh-4); padding: 0; border-bottom: 1px solid var(--dh-line);
+  overflow-x: auto; scrollbar-width: thin; list-style: none; }
+.dh-tabs > a, .dh-tabs > button {
+  position: relative; box-sizing: border-box; display: inline-flex; align-items: center; gap: 6px; height: 40px; margin: 0; padding: 0 2px;
+  border: 0; background: none; color: var(--dh-ink-2); text-decoration: none; white-space: nowrap; flex: none;
+  font: var(--dh-w-ui) var(--dh-fs-ui)/1 var(--dh-font); text-transform: none; letter-spacing: 0; cursor: pointer;
+}
+.dh-tabs > :hover { color: var(--dh-ink); }
+.dh-tabs > [aria-current="page"], .dh-tabs > [aria-current="true"], .dh-tabs > [aria-selected="true"] { color: var(--dh-ink); }
+.dh-tabs > [aria-current="page"]::after, .dh-tabs > [aria-current="true"]::after, .dh-tabs > [aria-selected="true"]::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 2px; background: var(--dh-select);
+}
+.dh-tabs > :focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: -2px; border-radius: var(--dh-r1); }
+.dh-tabs .dh-count { color: var(--dh-ink-2); font-weight: 400; }
+@media (pointer: coarse) { .dh-tabs > a, .dh-tabs > button { height: 44px; } }
+
+/* ================================================================ cards and panels
+   Surface, 1px line, radius 10, no shadow. Never a card inside a card: nest with hairlines instead. */
+.dh-panel, .dh-card { box-sizing: border-box; min-width: 0; background: var(--dh-surface); border: 1px solid var(--dh-line);
+  border-radius: var(--dh-r3); padding: var(--dh-4) var(--dh-5); }
+.dh-panel__head, .dh-card__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+  gap: var(--dh-2) var(--dh-3); margin-bottom: var(--dh-3); }
+.dh-card__title { margin: 0; font: var(--dh-w-strong) var(--dh-fs-h3)/var(--dh-lh-head) var(--dh-font); letter-spacing: 0; }
+.dh-card__desc { margin: 0; flex-basis: 100%; font-size: var(--dh-fs-ui); color: var(--dh-ink-2); }
+.dh-card__foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dh-2) var(--dh-3);
+  margin-top: var(--dh-4); padding-top: var(--dh-3); border-top: 1px solid var(--dh-line); }
+.dh-card__rule { height: 0; margin: var(--dh-4) calc(-1 * var(--dh-5)); border: 0; border-top: 1px solid var(--dh-line); }
+.dh-panel--flush, .dh-card--flush { padding: 0; overflow: hidden; }
+.dh-card--flush > .dh-card__head { padding: var(--dh-4) var(--dh-5) 0; }
+.dh-card--flush > .dh-card__foot { margin: 0; padding: var(--dh-3) var(--dh-5); }
+/* A whole card that is one link (directory entries, app cards). Title in ink; the border answers hover. */
+.dh-card--link { display: block; color: var(--dh-ink); text-decoration: none; transition: border-color var(--dh-dur-1) var(--dh-ease); }
+.dh-card--link:hover { border-color: var(--dh-line-2); text-decoration: none; }
+.dh-card--link:hover .dh-card__title { color: var(--dh-brand-ink); }
+.dh-card--link:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
+@media (max-width: 640px) {
+  .dh-panel:not(.dh-panel--flush), .dh-card:not(.dh-card--flush) { padding: var(--dh-4); }
+  .dh-card__rule { margin-inline: calc(-1 * var(--dh-4)); }
+  .dh-card--flush > .dh-card__head { padding: var(--dh-4) var(--dh-4) 0; }
+  .dh-card--flush > .dh-card__foot { padding: var(--dh-3) var(--dh-4); }
+}
+
+/* ================================================================ choice cards
+   Ways to do one thing, side by side: sign-in methods, "new identity or one I have". Each is one button or link
+   with a title, a line or two of description and an optional facts line ("Kept: this tab only"). Comparable
+   choices share one shape; the recommended one comes first and may carry a dh-badge. A way that isn't available
+   yet goes last, disabled (dashed, like everything not real yet), and says why.
+   <div class="dh-choices"> <button class="dh-choice" type="button"> <svg class="dh-choice__icon">
+     <span class="dh-choice__title">Use a passkey</span> <span class="dh-choice__desc">…</span>
+     <span class="dh-choice__meta">…</span> </button> </div> */
+.dh-choices { display: grid; gap: var(--dh-2); }
+.dh-choices--2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+.dh-choice { box-sizing: border-box; display: grid; grid-template-columns: auto minmax(0, 1fr); align-content: start;
+  row-gap: 2px; width: 100%; min-width: 0; min-height: 44px; margin: 0; padding: var(--dh-3) var(--dh-4);
+  appearance: none; background: var(--dh-surface); border: 1px solid var(--dh-line); border-radius: var(--dh-r3);
+  color: var(--dh-ink); font: var(--dh-w-body) var(--dh-fs-ui)/1.45 var(--dh-font); text-align: left;
+  text-decoration: none; text-transform: none; letter-spacing: 0; cursor: pointer;
+  transition: border-color var(--dh-dur-1) var(--dh-ease); -webkit-tap-highlight-color: transparent; }
+.dh-choice > * { grid-column: 2; min-width: 0; }
+.dh-choice > .dh-choice__icon { grid-column: 1; grid-row: 1 / span 3; width: 20px; height: 20px; margin: 1px var(--dh-3) 0 0;
+  color: var(--dh-brand-ink); }
+.dh-choice__title { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: var(--dh-fs-body);
+  font-weight: var(--dh-w-strong); line-height: 1.3; color: var(--dh-ink); }
+.dh-choice__desc { color: var(--dh-ink-2); }
+.dh-choice__meta { margin-top: 4px; font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
+.dh-choice:hover { border-color: var(--dh-line-2); text-decoration: none; }
+.dh-choice:hover .dh-choice__title { color: var(--dh-brand-ink); }
+.dh-choice:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
+.dh-choice:is([aria-pressed="true"], [aria-checked="true"], [aria-current]:not([aria-current="false"])) {
+  border-color: var(--dh-select); box-shadow: 0 0 0 1px var(--dh-select); }
+.dh-choice:is(:disabled, [aria-disabled="true"]) { cursor: default; background: var(--dh-sunken); border-style: dashed;
+  border-color: var(--dh-line-2); }
+.dh-choice:is(:disabled, [aria-disabled="true"]) :is(.dh-choice__title, .dh-choice__icon) { color: var(--dh-ink-2); }
+
+/* ================================================================ dialog
+   The frame for a modal (a native <dialog>, or a framework's dialog content): title left, close top right, one
+   lede, then the body. Sign-in uses it: title "Sign in to Pollr", a lede saying what signing in lets you do,
+   <dashhq-signin-help>, then the ways in. */
+.dh-dialog { box-sizing: border-box; width: min(520px, calc(100vw - 2 * var(--dh-gutter))); max-height: calc(100dvh - 32px);
+  margin: auto; padding: var(--dh-5); overflow: auto; background: var(--dh-surface); color: var(--dh-ink);
+  border: 0; border-radius: var(--dh-r3); box-shadow: var(--dh-shadow-pop); font: var(--dh-w-body) var(--dh-fs-body)/var(--dh-lh-body) var(--dh-font); }
+.dh-dialog::backdrop { background: rgba(6, 19, 27, .52); }
+.dh-dialog__head { display: flex; align-items: flex-start; gap: var(--dh-3); margin-bottom: var(--dh-2); }
+.dh-dialog__title { flex: 1; margin: 0; font: var(--dh-w-head) var(--dh-fs-h2)/var(--dh-lh-head) var(--dh-font);
+  font-stretch: var(--dh-stretch-head); letter-spacing: -.015em; text-transform: none; }
+.dh-dialog__head > .dh-btn { margin: -4px -8px 0 0; }
+.dh-dialog__lede { margin: 0 0 var(--dh-4); color: var(--dh-ink-2); }
+.dh-dialog__body { display: grid; gap: var(--dh-4); }
+@media (max-width: 640px) { .dh-dialog { padding: var(--dh-4); } }
+
+/* ================================================================ stats */
+.dh-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.dh-stat { display: grid; gap: 2px; align-content: start; padding: 18px; border: 1px solid var(--dh-line); border-radius: 10px; background: var(--dh-surface); min-width: 0; }
+.dh-stat--key { border-left: 3px solid var(--dh-select); padding-left: 16px; }
+.dh-stat--good { border-left: 3px solid var(--dh-good); padding-left: 16px; }
+.dh-stat--warn { border-left: 3px solid var(--dh-warn); padding-left: 16px; }
+.dh-stat__label { font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
+.dh-stat__value { font: var(--dh-w-head) var(--dh-fs-stat)/1.15 var(--dh-font); font-stretch: var(--dh-stretch-stat);
+  letter-spacing: -.015em; font-variant-numeric: tabular-nums; }
+.dh-stat__value small { font-size: 14px; font-weight: var(--dh-w-ui); font-stretch: 100%; color: var(--dh-ink-2); letter-spacing: 0; }
+.dh-stat__note { font-size: 12.5px; color: var(--dh-ink-2); }
+@media (max-width: 480px) {
+  .dh-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .dh-stat__value { font-size: 22px; }
+}
+
+/* ================================================================ tables */
+.dh-table-wrap { overflow-x: auto; }
+.dh-table { width: 100%; border-collapse: collapse; font-size: var(--dh-fs-ui); font-variant-numeric: tabular-nums; }
+.dh-table caption { padding: 0 0 var(--dh-2); text-align: left; font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
+.dh-table th { text-align: left; font-size: var(--dh-fs-sm); font-weight: var(--dh-w-ui); color: var(--dh-ink-2);
+  text-transform: none; letter-spacing: 0; padding: 8px 12px; border-bottom: 1px solid var(--dh-line); white-space: nowrap;
+  background: var(--dh-surface); vertical-align: bottom; }
+.dh-table td { padding: 9px 12px; border-bottom: 1px solid var(--dh-line); vertical-align: middle; }
+.dh-table tbody tr:hover td { background: var(--dh-hover); }
+.dh-table tbody tr[aria-selected="true"] td, .dh-table tbody tr.is-selected td { background: var(--dh-select-soft); }
+.dh-table tbody tr:last-child td { border-bottom: 0; }
+.dh-table .dh-r, .dh-table th.dh-r { text-align: right; }
+.dh-table td .dh-sub { display: block; font-size: 12.5px; color: var(--dh-ink-2); }
+.dh-table th[aria-sort] { color: var(--dh-ink); }
+.dh-table th[aria-sort="ascending"]::after { content: " ↑"; }
+.dh-table th[aria-sort="descending"]::after { content: " ↓"; }
+.dh-table th > button { all: unset; cursor: pointer; border-radius: var(--dh-r1); }
+.dh-table th > button:hover { color: var(--dh-ink); }
+.dh-table th > button:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
+.dh-table :where(a:not(.dh-btn)) { color: var(--dh-brand-ink); text-decoration: none; }
+.dh-table :where(a:not(.dh-btn)):hover { text-decoration: underline; text-underline-offset: 3px; }
+.dh-table--compact th { padding: 6px 10px; } .dh-table--compact td { padding: 6px 10px; }
+/* Tables in a flush card line their first and last columns up with the card's own padding. */
+@media (min-width: 641px) {
+  .dh-panel--flush > .dh-table th:first-child, .dh-panel--flush > .dh-table-wrap > .dh-table th:first-child,
+  .dh-card--flush > .dh-table th:first-child, .dh-card--flush > .dh-table-wrap > .dh-table th:first-child,
+  .dh-panel--flush > .dh-table td:first-child, .dh-panel--flush > .dh-table-wrap > .dh-table td:first-child,
+  .dh-card--flush > .dh-table td:first-child, .dh-card--flush > .dh-table-wrap > .dh-table td:first-child { padding-left: var(--dh-5); }
+  .dh-panel--flush > .dh-table th:last-child, .dh-panel--flush > .dh-table-wrap > .dh-table th:last-child,
+  .dh-card--flush > .dh-table th:last-child, .dh-card--flush > .dh-table-wrap > .dh-table th:last-child,
+  .dh-panel--flush > .dh-table td:last-child, .dh-panel--flush > .dh-table-wrap > .dh-table td:last-child,
+  .dh-card--flush > .dh-table td:last-child, .dh-card--flush > .dh-table-wrap > .dh-table td:last-child { padding-right: var(--dh-5); }
+}
+
+/* Phone, list tables: rows become cards (Radar's masternode list). Give every cell data-label.
+     td.dh-rc-title   the entity, first line (its link makes the whole card tappable)
+     td.dh-rc-end     right end of the first line: state or the one number that matters
+     td.dh-rc-line    a full-width line of its own (an address)
+     td.dh-rc-hide    dropped on phones
+     td.dh-rc-actions buttons or checkboxes: no label, on the card's last line
+   Every other cell becomes a "Label value" fact on the next line, joined by " · ". */
+@media (max-width: 640px) {
+  .dh-table--cards, .dh-table--cards tbody { display: block; }
+  .dh-table--cards thead { display: none; }
+  .dh-table--cards caption, .dh-table--stack caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .dh-table--cards tr { position: relative; display: flex; flex-wrap: wrap; align-items: baseline; row-gap: 3px;
+    padding: 12px 14px; border-bottom: 1px solid var(--dh-line); }
+  .dh-table--cards tr:last-child { border-bottom: 0; }
+  .dh-table--cards tr::after { content: ""; order: 1; flex-basis: 100%; }
+  .dh-table--cards tr:has(> .dh-rc-actions)::before { content: ""; order: 3; flex-basis: 100%; height: 5px; }
+  .dh-table--cards td.dh-rc-actions { order: 4; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-right: 12px; color: var(--dh-ink); }
+  .dh-table--cards td { order: 2; display: block; padding: 0; border: 0; text-align: left; min-width: 0;
+    font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
+  .dh-table--cards td.dh-rc-title { order: 0; flex: 1 1 1px; font-size: var(--dh-fs-body); font-weight: var(--dh-w-strong); color: var(--dh-ink);
+    overflow-wrap: anywhere; }
+  .dh-table--cards td.dh-rc-end { order: 0; flex: none; margin-left: auto; padding-left: 12px; font-size: var(--dh-fs-ui); color: var(--dh-ink); }
+  .dh-table--cards td.dh-rc-line { flex-basis: 100%; font-size: var(--dh-fs-ui); color: var(--dh-ink); overflow-wrap: anywhere; }
+  .dh-table--cards td[data-label]:not(.dh-rc-title, .dh-rc-end, .dh-rc-line, .dh-rc-actions)::before { content: attr(data-label) " "; }
+  .dh-table--cards td[data-label]:not(.dh-rc-title, .dh-rc-end, .dh-rc-line, .dh-rc-actions, .dh-rc-hide)
+    ~ td[data-label]:not(.dh-rc-title, .dh-rc-end, .dh-rc-line, .dh-rc-actions)::before { content: "\00a0·\00a0 " attr(data-label) " "; }
+  .dh-table--cards td.dh-rc-hide { display: none; }
+  .dh-table--cards td.dh-rc-title a::after { content: ""; position: absolute; inset: 0; }
+  .dh-table--cards td:not(.dh-rc-title) :is(a, button, input, select, textarea, label, summary, [tabindex], dashhq-hash) { position: relative; z-index: 1; }
+  .dh-table--cards tbody tr:hover td { background: none; }
+  .dh-table--cards tbody tr:hover { background: var(--dh-hover); }
+  .dh-table--cards tbody tr[aria-selected="true"] td { background: none; }
+  .dh-table--cards tbody tr[aria-selected="true"] { background: var(--dh-select-soft); }
+}
+/* Phone, record tables (keys, checks, settings): each row becomes a block of "label  value" lines. */
+@media (max-width: 640px) {
+  .dh-table--stack, .dh-table--stack tbody, .dh-table--stack tr { display: block; }
+  .dh-table--stack thead { display: none; }
+  .dh-table--stack tr { padding: 10px 14px; border-bottom: 1px solid var(--dh-line); }
+  .dh-table--stack tr:last-child { border-bottom: 0; }
+  .dh-table--stack td { display: table; table-layout: fixed; width: 100%; padding: 3px 0; border: 0;
+    text-align: right; white-space: normal; overflow-wrap: anywhere; min-width: 0; }
+  .dh-table--stack td::before { content: attr(data-label); display: table-cell; width: 32%; padding-inline-end: 12px; text-align: left; vertical-align: baseline;
+    font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
+  .dh-table--stack td.dh-rc-title { display: block; text-align: left; font-weight: var(--dh-w-strong); padding-bottom: 4px; }
+  .dh-table--stack td.dh-rc-title::before { content: none; }
+  .dh-table--stack td.dh-rc-hide { display: none; }
+  .dh-table--stack tbody tr:hover td { background: none; }
+}
+
+/* ================================================================ key/value records
+   <dl class="dh-kv"><div><dt>Status</dt><dd>…</dd></div>…</dl>, or dt/dd pairs without the div. */
+.dh-kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 20px; margin: 0; font-size: var(--dh-fs-ui); }
+.dh-kv > div { display: contents; }
+.dh-kv dt { color: var(--dh-ink-2); }
+.dh-kv dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.dh-kv--ruled { gap: 0; }
+.dh-kv--ruled dt, .dh-kv--ruled dd { padding: 9px 0; border-bottom: 1px solid var(--dh-line); }
+.dh-kv--ruled dt { padding-right: 20px; }
+.dh-kv--ruled > :nth-last-child(-n+2):is(dt, dd), .dh-kv--ruled > div:last-child > * { border-bottom: 0; }
+/* Facts in tiles across the record header: label over value. */
+.dh-kv--grid { grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr)); gap: var(--dh-4) var(--dh-5); }
+.dh-kv--grid > div { display: grid; gap: 2px; align-content: start; }
+.dh-kv--grid dt { font-size: var(--dh-fs-sm); }
+.dh-kv--grid dd { font-weight: var(--dh-w-ui); }
+@media (max-width: 480px) {
+  .dh-kv:not(.dh-kv--grid) { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .dh-kv:not(.dh-kv--grid) dt { font-size: var(--dh-fs-sm); }
+  .dh-kv:not(.dh-kv--grid):not(.dh-kv--ruled) dd { margin-bottom: 10px; }
+  .dh-kv--ruled dt { padding-bottom: 0; border-bottom: 0; }
+  .dh-kv--ruled dd { padding-top: 2px; }
+  .dh-kv--grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--dh-3) var(--dh-4); }
+}
+
+/* ================================================================ badges and status
+   Status, never actions: never clickable. Always a word, never colour alone. .dh-pill is the same thing. */
+.dh-badge, .dh-pill {
+  box-sizing: border-box; display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 7px; border-radius: var(--dh-r1);
+  font: var(--dh-w-ui) var(--dh-fs-xs)/1 var(--dh-font); text-transform: none; letter-spacing: 0; white-space: nowrap; vertical-align: middle;
+  background: var(--dh-chip); color: var(--dh-ink-2); box-shadow: inset 0 0 0 1px var(--dh-chip-line);
+}
+.dh-badge::before, .dh-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: none; flex: none; }
+.dh-badge--dot::before, .dh-pill--dot::before { display: block; }
+.dh-badge--good, .dh-pill--good { background: var(--dh-good-soft); color: var(--dh-good); }
+.dh-badge--warn, .dh-pill--warn { background: var(--dh-warn-soft); color: var(--dh-warn); }
+.dh-badge--bad,  .dh-pill--bad  { background: var(--dh-bad-soft);  color: var(--dh-bad); }
+.dh-badge--info, .dh-pill--info { background: var(--dh-info-soft); color: var(--dh-info); }
+.dh-badge--outline { background: transparent; box-shadow: inset 0 0 0 1px var(--dh-line-2); }
+/* Inline status without a box, for dense tables: "● Reachable". */
+.dh-status { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.dh-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--dh-ink-3); flex: none; }
+.dh-status--good::before { background: var(--dh-good); }
+.dh-status--warn::before { background: var(--dh-warn); }
+.dh-status--bad::before { background: var(--dh-bad); }
+.dh-status--info::before { background: var(--dh-brand); }
+
+/* ---------- proof badge: "Verified" means a cryptographic check passed in this browser, nothing else ---------- */
+.dh-proof {
+  box-sizing: border-box; display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 9px 0 7px;
+  border: 1px solid var(--dh-line); border-radius: var(--dh-r2); background: var(--dh-raised);
+  font: var(--dh-w-ui) var(--dh-fs-sm)/1 var(--dh-font); color: var(--dh-ink-2); white-space: nowrap; text-decoration: none;
+}
+.dh-proof::before { content: ""; width: 10px; height: 10px; flex: none; border-radius: 50%; border: 1.5px solid currentColor; box-sizing: border-box; }
+.dh-proof:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
+.dh-proof--ok { color: var(--dh-good); border-color: color-mix(in srgb, var(--dh-good) 40%, transparent); }
+.dh-proof--ok::before { width: 5px; height: 9px; margin: -2px 3px 0 2px; border-radius: 0; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.dh-proof--checking::before { border-color: var(--dh-line-2); border-top-color: var(--dh-brand); animation: dh-rot .8s linear infinite; }
+.dh-proof--reported { color: var(--dh-ink-2); }
+.dh-proof--reported { border-style: dashed; }
+:root[data-theme="dark"] .dh-proof--reported { background: var(--dh-raised); box-shadow: inset 0 0 0 1px var(--dh-chip-line); }
+.dh-proof--reported::before, .dh-proof--unverified::before { display: none; }
+.dh-proof--unverified { color: var(--dh-warn); border-style: dashed; border-color: currentColor; }
+.dh-proof--unverified::before { border-style: dashed; }
+.dh-proof--failed { color: var(--dh-bad); border-color: currentColor; }
+.dh-proof--failed::before { background: currentColor; }
+
+/* ---------- sources beside figures: a source or check label never sits inside a sentence ----------
+   .dh-src: a quiet tag after a space at the end of a label line, in a table header, or after a complete value:
+     Asked for <span class="dh-src">Platform records</span>. Dotted = reported; --ok (solid green) = checked in this
+     browser (say so to screen readers too: <span class="dh-sr">, checked in this browser</span>); --warn (dashed) =
+     stale or not checked. It wraps inside its tile when long. Like a badge it is a label, never a link: the detail
+     goes in a numbered line or the proof badge.
+   .dh-ref + .dh-sources: a superscript number after the sentence's full stop, and a numbered line under the block.
+     <p>… largest first.<sup class="dh-ref"><a href="#src-1" aria-label="Source 1">1</a></sup></p>
+     <ol class="dh-sources" role="list" aria-label="Sources"><li id="src-1">Standings: …</li></ol>
+   Many figures with one source: one plain <p class="dh-sources">Sources: …</p> under the block, and no markers. */
+.dh-src {
+  box-sizing: border-box; display: inline-flex; align-items: center; min-height: 20px; max-width: 100%; padding: 2px 6px;
+  vertical-align: 1px; border: 1px dotted var(--dh-line-2); border-radius: var(--dh-r1);
+  font: var(--dh-w-ui) var(--dh-fs-xs)/1.25 var(--dh-font); letter-spacing: 0; text-transform: none; color: var(--dh-ink-2);
+  overflow-wrap: anywhere; text-decoration: none; }
+.dh-src--ok { color: var(--dh-good); border-style: solid; border-color: color-mix(in srgb, var(--dh-good) 45%, transparent); }
+.dh-src--warn { color: var(--dh-warn); border-style: dashed; border-color: currentColor; }
+.dh-ref { font-size: .72em; line-height: 0; vertical-align: super; font-weight: var(--dh-w-strong); font-variant-numeric: tabular-nums; }
+.dh-ref a { padding: 0 1px; border-radius: var(--dh-r1); text-decoration: none; }
+.dh-ref a, .dh-sources a { color: var(--dh-brand-ink); }
+.dh-ref a:hover { text-decoration: underline; text-underline-offset: 2px; }
+.dh-sources { box-sizing: border-box; display: block; max-width: 80ch; margin: var(--dh-3) 0 0; padding: var(--dh-2) 0 0;
+  border-top: 1px solid var(--dh-line); font-size: var(--dh-fs-xs); line-height: 1.45; color: var(--dh-ink-2); }
+ol.dh-sources { display: grid; gap: 3px; list-style: none; counter-reset: dh-src; }
+/* The number hangs in its own column; the line stays inline text, so a link or <time> inside it flows with it. */
+ol.dh-sources > li { counter-increment: dh-src; position: relative; padding-left: 1.6em;
+  scroll-margin-top: calc(var(--dh-bar-h) + var(--dh-4)); }
+ol.dh-sources > li::before { content: counter(dh-src); position: absolute; left: 0; font-weight: var(--dh-w-strong);
+  font-variant-numeric: tabular-nums; }
+ol.dh-sources > li:target { color: var(--dh-ink); background: var(--dh-brand-soft); border-radius: var(--dh-r1);
+  box-shadow: 0 0 0 4px var(--dh-brand-soft); }
+
+/* ================================================================ notices
+   Page context, in four tones. Errors that replace content use .dh-error (below) instead.
+   <div class="dh-notice dh-notice--warn" role="status"> <p class="dh-notice__title">…</p> <p>…</p>
+   <div class="dh-notice__actions">…</div> </div> */
+.dh-notice { --dh-tone: var(--dh-info); --dh-tone-soft: var(--dh-info-soft);
+  box-sizing: border-box; display: grid; gap: 4px; padding: var(--dh-3) var(--dh-4); border-radius: var(--dh-r2);
+  border-left: 3px solid var(--dh-tone); background: var(--dh-tone-soft); color: var(--dh-ink); font-size: var(--dh-fs-ui); }
+.dh-notice p { margin: 0; }
+.dh-notice strong, .dh-notice__title { font-weight: var(--dh-w-strong); color: var(--dh-ink); }
+.dh-notice :where(a:not(.dh-btn)) { color: var(--dh-ink); text-decoration: underline; text-underline-offset: 3px; }
+.dh-notice__actions { display: flex; flex-wrap: wrap; gap: var(--dh-2); margin-top: 6px; }
+.dh-notice--info { --dh-tone: var(--dh-info); --dh-tone-soft: var(--dh-info-soft); }
+.dh-notice--success { --dh-tone: var(--dh-good); --dh-tone-soft: var(--dh-good-soft); }
+.dh-notice--warn { --dh-tone: var(--dh-warn); --dh-tone-soft: var(--dh-warn-soft); }
+.dh-notice--error { --dh-tone: var(--dh-bad); --dh-tone-soft: var(--dh-bad-soft); }
+
+/* ================================================================ states: empty, loading, error */
+/* Empty: say what would be here and offer the one next step. Dashed = nothing real yet. */
+.dh-empty { box-sizing: border-box; padding: var(--dh-6) var(--dh-5); border: 1px dashed var(--dh-line-2); border-radius: var(--dh-r3);
+  text-align: center; color: var(--dh-ink-2); font-size: var(--dh-fs-ui); }
+.dh-empty > p { margin: 0 auto; max-width: 52ch; }
+.dh-empty strong, .dh-empty__title { display: block; color: var(--dh-ink); font-size: var(--dh-fs-body); font-weight: var(--dh-w-strong); margin: 0 0 4px; }
+.dh-empty .dh-btn, .dh-empty .dh-actions { margin-top: var(--dh-3); }
+.dh-empty .dh-actions { justify-content: center; }
+/* Inside a table or card that already has a frame: no second border, left-aligned. */
+.dh-empty--inline { padding: var(--dh-4) 0; border: 0; text-align: left; }
+.dh-empty--inline > p { margin: 0; }
+.dh-empty--inline .dh-actions { justify-content: flex-start; }
+
+/* Loading: name what is loading; spinner for the first second, skeletons where the layout is known. */
+.dh-loading { display: flex; align-items: center; gap: 10px; color: var(--dh-ink-2); font-size: var(--dh-fs-ui); padding: var(--dh-4) 0; }
+.dh-loading--block { justify-content: center; flex-wrap: wrap; min-height: 160px; text-align: center; }
+.dh-loading__note { flex-basis: 100%; font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
+.dh-spin { box-sizing: border-box; width: 14px; height: 14px; flex: none; border-radius: 50%; border: 2px solid var(--dh-line); border-top-color: var(--dh-brand);
+  animation: dh-rot .8s linear infinite; }
+.dh-skel { display: block; height: 12px; border-radius: 3px; background: var(--dh-line); }
+.dh-skel--text { width: 60%; }
+.dh-skel--title { width: 40%; height: 24px; }
+.dh-skel--num { width: 4em; height: 22px; }
+.dh-skel--row { height: 40px; border-radius: var(--dh-r2); }
+.dh-skel--block { height: 120px; border-radius: var(--dh-r3); }
+.dh-skel-group { display: grid; gap: 8px; }
+@media (prefers-reduced-motion: no-preference) {
+  .dh-skel { background: linear-gradient(90deg, var(--dh-line) 0 40%, var(--dh-sunken) 50%, var(--dh-line) 60% 100%) 0 0 / 300% 100%;
+    animation: dh-shimmer 1.4s linear infinite; }
+}
+/* Progress for long checks: "Checking 300 of 1,044 older masternode entries". */
+.dh-progress { display: block; width: 100%; height: 6px; border: 0; border-radius: 3px; background: var(--dh-sunken); color: var(--dh-brand);
+  -webkit-appearance: none; appearance: none; overflow: hidden; }
+.dh-progress::-webkit-progress-bar { background: var(--dh-sunken); }
+.dh-progress::-webkit-progress-value { background: var(--dh-brand); border-radius: 3px; }
+.dh-progress::-moz-progress-bar { background: var(--dh-brand); border-radius: 3px; }
+
+/* Error: a sentence a user can act on, what is not affected, a retry, and the raw detail folded away. */
+.dh-error { box-sizing: border-box; display: grid; gap: 6px; padding: var(--dh-3) var(--dh-4); border: 1px solid var(--dh-line);
+  border-left: 3px solid var(--dh-bad); border-radius: var(--dh-r2); background: var(--dh-surface); font-size: var(--dh-fs-ui); }
+.dh-error p { margin: 0; }
+.dh-error strong, .dh-error__title { color: var(--dh-ink); font-weight: var(--dh-w-strong); }
+.dh-error details { color: var(--dh-ink-2); font-size: var(--dh-fs-sm); }
+.dh-error summary { cursor: pointer; width: fit-content; }
+.dh-error pre { margin: 6px 0 0; padding: 8px 10px; background: var(--dh-sunken); border-radius: var(--dh-r1);
+  font: 12px/1.45 var(--dh-mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+.dh-error .dh-btn { justify-self: start; margin-top: 4px; }
+.dh-error .dh-actions { margin-top: 4px; }
+.dh-error .dh-actions .dh-btn { margin-top: 0; }
+/* Part of a page failed but older data is still shown: say how old, offer a retry, keep the data. */
+.dh-error--stale { border-left-color: var(--dh-warn); }
+
+/* ================================================================ stepper
+   The Start journey (Address → Testnet DASH → Identity → Username), and any short ordered flow.
+   <ol class="dh-steps" aria-label="Start on Testnet"> <li><a href=…>Address</a></li> <li aria-current="step">Testnet DASH</li>
+   <li>Identity</li> <li>Username</li> </ol>
+   Numbers come from the list. Steps before the current one are done (or mark them data-state="done"). An earlier step
+   that isn't done (Bridge's username step opened without an identity) says so with data-state="todo": a dashed ring. */
+.dh-steps { display: flex; align-items: center; gap: 0; margin: 0 0 var(--dh-5); padding: 0; list-style: none; counter-reset: dh-step;
+  font-size: var(--dh-fs-ui); color: var(--dh-ink-2); }
+.dh-steps > li { counter-increment: dh-step; display: flex; align-items: center; gap: 8px; flex: 1 1 auto; min-width: 0; white-space: nowrap; }
+.dh-steps > li:last-child { flex: none; }
+.dh-steps > li::before {
+  content: counter(dh-step); box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--dh-line-2); background: var(--dh-surface);
+  font: var(--dh-w-strong) 12px/1 var(--dh-font); font-variant-numeric: tabular-nums; color: var(--dh-ink-2);
+}
+.dh-steps > li:not(:last-child)::after { content: ""; flex: 1 1 auto; min-width: 12px; height: 1px; margin: 0 4px; background: var(--dh-line-2); }
+.dh-steps > li > :where(a:not(.dh-btn)) { color: inherit; text-decoration: none; border-radius: var(--dh-r1); }
+.dh-steps > li > :where(a:not(.dh-btn)):hover { color: var(--dh-brand-ink); text-decoration: underline; text-underline-offset: 3px; }
+.dh-steps > li > a:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
+.dh-steps > li[aria-current="step"] { color: var(--dh-ink); font-weight: var(--dh-w-strong); }
+.dh-steps > li[aria-current="step"]::before { background: var(--dh-brand-fill); border-color: var(--dh-brand-fill); color: #FFFFFF; }
+/* :is() is forgiving, so a browser without :has() still honours data-state. */
+.dh-steps > li:is([data-state="done"], :has(~ li[aria-current="step"])):not([data-state="todo"]) { color: var(--dh-ink); }
+.dh-steps > li:is([data-state="done"], :has(~ li[aria-current="step"])):not([data-state="todo"])::before {
+  background: var(--dh-brand-soft); border-color: var(--dh-brand); color: var(--dh-brand-ink); }
+.dh-steps > li:is([data-state="done"], :has(~ li[aria-current="step"])):not([data-state="todo"])::after { background: var(--dh-brand); }
+.dh-steps > li[data-state="todo"]::before { border-style: dashed; background: var(--dh-sunken); }
+@media (max-width: 720px) {
+  .dh-steps { align-items: flex-start; font-size: var(--dh-fs-xs); }
+  .dh-steps > li, .dh-steps > li:last-child { position: relative; flex: 1 1 0; flex-direction: column; gap: 6px; text-align: center; white-space: normal; }
+  .dh-steps > li:not(:last-child)::after { position: absolute; top: 12px; left: calc(50% + 16px); right: calc(-50% + 16px); min-width: 0; margin: 0; }
+  /* A done step's link covers its disc and its label: a 46px target whose text lines up with the other labels. */
+  .dh-steps > li > a:where(:not(.dh-btn)) { display: block; min-height: 0; margin-top: -30px; padding: 30px 2px 0; }
+}
+
+/* ================================================================ misc */
+/* Raw data (JSON, schemas): scrolls inside its own box. */
+.dh-code { box-sizing: border-box; margin: 0; padding: var(--dh-3); max-width: 100%; overflow: auto; max-height: 480px;
+  background: var(--dh-sunken); border-radius: var(--dh-r2); color: var(--dh-ink);
+  font: 12.5px/1.5 var(--dh-mono); font-variant-ligatures: none; tab-size: 2; white-space: pre; }
+/* A filter row above a table: search grows, selects keep their size; stacks on phones. */
+.dh-toolbar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--dh-3); margin-bottom: var(--dh-4); }
+.dh-toolbar > .dh-grow { flex: 1 1 260px; }
+.dh-toolbar > .dh-field:not(.dh-grow) { flex: 0 1 180px; }
+@media (max-width: 480px) { .dh-toolbar > .dh-field:not(.dh-grow) { flex: 1 1 140px; } }
+/* Paging under a table. */
+.dh-pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--dh-2) var(--dh-4);
+  padding-top: var(--dh-3); font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
+/* "Elsewhere": the line at the end of a record linking its facets in other tools. */
+.dh-elsewhere { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; margin: var(--dh-4) 0; font-size: var(--dh-fs-ui); }
+.dh-elsewhere > span { color: var(--dh-ink-2); }
+.dh-elsewhere :where(a:not(.dh-btn)) { display: inline-flex; align-items: center; min-height: 32px; color: var(--dh-brand-ink); border-radius: var(--dh-r1); }
+
+/* ================================================================ shared behaviour */
+/* Inline components keep their own width when they sit in a grid (stacks, fields, notices, page headers). */
+.dh-seg:not(.dh-seg--block), .dh-badge, .dh-pill, .dh-proof, .dh-src, .dh-status, .dh-btn:not(.dh-btn--block) { justify-self: start; }
+/* The one focus ring, on the layer's link-like pieces too. */
+.dh-link:focus-visible, .dh-link--go:focus-visible, .dh-crumbs a:focus-visible, .dh-elsewhere a:focus-visible, .dh-table a:focus-visible,
+.dh-ref a:focus-visible, .dh-sources a:focus-visible,
+.dh-error summary:focus-visible, .dh-empty a:focus-visible, .dh-notice a:focus-visible {
+  outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); border-radius: var(--dh-r1); }
+/* Touch screens: every target the layer draws is at least 40px tall. Links inside running text are exempt. */
+@media (pointer: coarse) {
+  .dh-seg > button, .dh-seg > a { height: 40px; }
+  .dh-btn--link { min-height: 40px; }
+  .dh-link--go { display: inline-flex; align-items: center; min-height: 40px; }
+  .dh-proof { height: 40px; padding-inline: 12px 14px; }
+  .dh-crumbs :where(a:not(.dh-btn)), .dh-steps > li > :where(a:not(.dh-btn)), .dh-elsewhere :where(a:not(.dh-btn)),
+  :is(.dh-card__foot, .dh-actions, .dh-pager, .dh-notice__actions) > :where(a:not(.dh-btn)) {
+    display: inline-flex; align-items: center; min-height: 40px; }
+  .dh-error summary { padding-block: 10px; }
+}
+
+/* ---------- the blueprint plate (hub map, architecture diagrams) ---------- */
+.dh-plate { position: relative; background: var(--dh-plate); color: var(--dh-plate-line); border: 1px solid var(--dh-plate-edge);
+  border-radius: 4px; overflow: hidden; }
+.dh-plate::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .08;
+  background-image: radial-gradient(var(--dh-plate-line) 1px, transparent 1px); background-size: 16px 16px; }
+.dh-plate__label { font: 600 13px/1.2 var(--dh-font); font-stretch: var(--dh-stretch-dense); color: var(--dh-plate-ink); }
+
+@keyframes dh-rot { to { transform: rotate(360deg); } }
+@keyframes dh-shimmer { to { background-position: -150% 0; } }
+
+/* Disclosures and freshness */
+.dh-disclosure > summary { display: flex; flex-wrap: nowrap; align-items: center; gap: 8px; list-style: none; padding-block: 10px;
+  font: 560 15px/1.5 var(--dh-font); color: var(--dh-brand-ink); cursor: pointer; }
+.dh-disclosure > summary::marker { content: ""; }
+.dh-disclosure > summary::-webkit-details-marker { display: none; }
+.dh-disclosure > summary::before { content: ""; display: inline-block; vertical-align: middle; flex: none; width: 16px; height: 16px;
+  background: currentColor; clip-path: polygon(35% 15%, 70% 50%, 35% 85%, 28% 78%, 56% 50%, 28% 22%);
+  transition: transform var(--dh-dur-2) var(--dh-ease); }
+.dh-disclosure[open] > summary::before { transform: rotate(90deg); }
+.dh-disclosure > summary:focus-visible { outline: 2px solid var(--dh-focus); outline-offset: 2px; border-radius: var(--dh-r2); }
+.dh-time { font-variant-numeric: tabular-nums; color: var(--dh-ink-2); white-space: nowrap; }
+.dh-chip--test { display: inline-flex; align-items: center; padding: 2px 7px; border: 1px dashed var(--dh-line-2);
+  border-radius: var(--dh-r1); font-size: 12.5px; line-height: 1.4; color: var(--dh-ink-2); background: var(--dh-chip); }
+.dh-chip--test::before { content: none; display: none; }
+
+/* Keep each separator with the preceding metadata item when the row wraps. */
+.dh-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; min-width: 0;
+  margin: 0; padding: 0; list-style: none; color: var(--dh-ink-2); font-size: var(--dh-fs-sm); }
+.dh-meta > * { display: inline-flex; align-items: baseline; min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+.dh-meta > :not(:last-child)::after { content: "·"; flex: none; margin-inline-start: 8px; color: var(--dh-ink-3); }

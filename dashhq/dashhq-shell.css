@@ -1,0 +1,78 @@
+/* dashhq-shell.css: document-level rules for the shell elements.
+   Covers (1) the look before dashhq-shell.js upgrades the elements, or if it never runs,
+   and (2) the product's own links slotted into <dashhq-bar>. Element internals live in the JS.
+   Requires dashhq-tokens.css. */
+
+/* Only before upgrade: once defined, the elements style their own host (and honour [hidden]). */
+dashhq-footer:not(:defined) { display: block; }
+dashhq-bar[sticky]:not(:defined) { position: sticky; top: 0; z-index: 40; }
+
+/* Before upgrade: reserve the bar's height so nothing jumps, show a wordmark, and lay the slotted nav out in a row. */
+dashhq-bar:not(:defined) {
+  display: flex; align-items: center; gap: 14px; overflow: hidden;
+  min-height: var(--dh-bar-h); padding: 0 var(--dh-gutter);
+  background: var(--dh-surface); border-bottom: 1px solid var(--dh-line);
+  font-family: var(--dh-font); color: var(--dh-ink);
+}
+dashhq-bar:not(:defined)::before {
+  content: "dashhq"; font-weight: 650; font-stretch: 112%; font-size: 16px; letter-spacing: -.012em;
+}
+dashhq-bar:not(:defined) > [slot="logo"] { display: none; }
+dashhq-bar:not(:defined) > [slot="actions"] { margin-left: auto; }
+dashhq-footer:not(:defined) { min-height: 120px; margin-top: var(--dh-7); border-top: 1px solid var(--dh-line); }
+dashhq-hash:not(:defined) { display: inline; font-family: var(--dh-mono); font-size: .92em; overflow-wrap: anywhere; }
+dashhq-signin-help, dashhq-not-found, dashhq-moved { display: block; }
+dashhq-signin-help:not(:defined) { min-height: 44px; border-radius: var(--dh-r3); background: var(--dh-sunken); }
+/* <dashhq-moved>'s children are its version without JavaScript (the heading and a real link); once upgraded the element
+   draws its own. <dashhq-not-found>'s children are one extra line it shows under its own words, so keep them to that
+   (the full id, or one factual sentence). */
+dashhq-not-found:not(:defined) { padding: 20px 24px; border: 1px dashed var(--dh-line-2); border-radius: var(--dh-r3); }
+
+/* The product's nav in the bar: its sections, and the only section nav it has. Put your links in one element
+   with slot="nav" (a <nav>, <ul> or <div>); a <button> may stand in for a link that opens something (Post).
+   Mark the current one with aria-current="page". The bar sets the --dh-nav-* variables: a row on wide screens,
+   44px rows in the phone menu, or a bottom tab bar with phone-nav="tabs".
+   Inside an item, an element with class="dh-nav-icon" shows only in the tab bar.
+   data-dh-phone on an item shows it only in the phone layouts; data-dh-desktop only in the wide row. */
+dashhq-bar > [slot="nav"] {
+  display: flex; flex-direction: var(--dh-nav-dir, row); align-items: var(--dh-nav-align, center);
+  gap: var(--dh-nav-gap, 2px); margin: 0; padding: 0; list-style: none;
+}
+dashhq-bar > [slot="nav"] > * { flex: var(--dh-nav-item, none); min-width: 0; }
+dashhq-bar > [slot="nav"] :is(a, button) {
+  display: flex; flex-direction: var(--dh-nav-item-dir, row); align-items: center;
+  justify-content: var(--dh-nav-item-justify, flex-start); gap: var(--dh-nav-item-gap, 8px);
+  box-sizing: border-box; width: auto; height: var(--dh-nav-h, 32px); margin: 0; padding: 0 var(--dh-nav-pad, 10px);
+  border: 0; border-radius: var(--dh-nav-radius, var(--dh-r2)); background: none; cursor: pointer;
+  font-family: var(--dh-font); font-size: var(--dh-nav-fs, 14px); font-weight: var(--dh-nav-weight, 520); line-height: 1;
+  color: var(--dh-nav-ink, var(--dh-ink-2)); text-decoration: none; white-space: var(--dh-nav-ws, nowrap); text-align: center;
+  -webkit-tap-highlight-color: transparent;
+}
+@media (hover: hover) {
+  dashhq-bar > [slot="nav"] :is(a, button):hover { color: var(--dh-ink); background: var(--dh-hover); }
+}
+dashhq-bar > [slot="nav"] :is(a, button):is([aria-current="page"], [aria-current="true"]) {
+  color: var(--dh-nav-current-ink, var(--dh-ink)); background: var(--dh-nav-current-bg, var(--dh-chip));
+  box-shadow: var(--dh-nav-current-mark, none);
+}
+dashhq-bar > [slot="nav"] :is(a, button):focus-visible { outline: 2px solid var(--dh-focus); outline-offset: 2px; }
+dashhq-bar > [slot="nav"] .dh-nav-icon { display: var(--dh-nav-icon, none); width: 22px; height: 22px; flex: none; }
+dashhq-bar > [slot="nav"] :is([aria-current="page"], [aria-current="true"]) .dh-nav-icon { color: var(--dh-nav-current-icon, inherit); }
+dashhq-bar > [slot="nav"] [data-dh-phone] { display: var(--dh-nav-only-phone, none); }
+dashhq-bar > [slot="nav"] [data-dh-desktop] { display: var(--dh-nav-only-desk, flex); }
+/* The item rules above outrank [hidden] (and Tailwind's .hidden); hide an item with the attribute. */
+dashhq-bar > [slot="nav"] [hidden] { display: none !important; }
+
+dashhq-bar > [slot="actions"] { display: flex; align-items: center; gap: 6px; }
+dashhq-bar > [slot="logo"] { display: block; width: 22px; height: 22px; }
+
+/* Off-screen buffer used by the copy fallback on insecure origins. */
+.dh-copy-buffer { position: fixed; left: -9999px; top: 0; opacity: 0; }
+
+html[data-dh-sheet-open] { overflow: hidden; }
+@supports selector(:state(compact)) {
+  dashhq-bar:state(compact) > [slot="logo"] { width: 26px; height: 26px; }
+}
+/* Slots carry inline footer copy and links, never another layout. */
+dashhq-footer :is(p, div, nav, span) { display: inline; margin: 0; padding: 0; }
+dashhq-footer a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }

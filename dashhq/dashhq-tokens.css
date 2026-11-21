@@ -1,0 +1,224 @@
+/* dashhq family tokens. Vendor unchanged; override nothing here, map your own variables onto these.
+   Light is the default. Dark applies under prefers-color-scheme unless <html data-theme="light">,
+   and always under <html data-theme="dark">. dashhq-shell.js keeps data-theme set to the resolved theme. */
+
+@font-face {
+  font-family: "Archivo";
+  src: url("fonts/archivo-latin-var.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 700;
+  font-stretch: 75% 125%;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light dark;
+
+  /* surfaces */
+  --dh-page: #EDF2F5;          /* page background: cool plan paper */
+  --dh-surface: #FFFFFF;       /* panels, cards, inputs, the bar */
+  --dh-sunken: #E2E9EE;        /* wells, segmented-control track, table header, code */
+  --dh-hover: rgba(12, 29, 43, .045);
+  --dh-raised: var(--dh-surface);
+  --dh-raised-hover: var(--dh-sunken);
+  --dh-raised-line: var(--dh-line-2);
+  --dh-chip: var(--dh-sunken);
+  --dh-chip-line: transparent;
+  --dh-disabled: var(--dh-sunken);
+
+  /* ink */
+  --dh-ink: #0C1D2B;           /* text */
+  --dh-ink-2: #4A5D6B;         /* secondary text, labels (AA on page, surface and sunken) */
+  --dh-ink-3: #6B7E8C;         /* disabled and decorative only, never for text a user must read */
+
+  /* lines */
+  --dh-line: #D3DDE4;          /* hairlines, panel borders, table rules */
+  --dh-line-2: #7A8B98;        /* control borders (3:1 on surface and page) */
+
+  /* brand: Dash blue. Where you are, where you can go. */
+  --dh-brand: #008DE4;         /* fills and indicators only (selected tab rule, mark, chart series) */
+  --dh-brand-ink: #0067AD;     /* links and brand-coloured text */
+  --dh-brand-fill: #0070C4;    /* the rare blue fill that carries white text */
+  --dh-brand-soft: #E0EFFA;    /* selected rows, info pills */
+
+  /* action: amber. The one thing you act on. Fill only, never text. */
+  --dh-act: #F5A73C;
+  --dh-act-hover: #EA9727;
+  --dh-act-ink: #0A2A3D;       /* text on amber */
+
+  /* selection: the current tab's rule, a chosen card's ring, checked boxes (--dh-select, 3:1 on page and surface),
+     and selected or highlighted rows (--dh-select-soft). Dash blue, unless an app sets its accent below. */
+  --dh-select: var(--dh-brand);
+  --dh-select-soft: var(--dh-brand-soft);
+
+  /* accent: an app's own colour (Forge ember, Pollr teal, Yappr sky), for its brand mark, selection and highlights.
+     Never the committing button (always amber, --dh-act, at the family height) and never text. An app turns it on
+     with one attribute, <html data-dh-accent="forge|pollr|yappr">; core tools leave it off. */
+  --dh-accent: var(--dh-act);            /* the app's colour as a fill: its glyph, a highlight rule */
+  --dh-accent-ink: var(--dh-act-ink);    /* text on an accent fill (6:1 or better on every accent) */
+  --dh-accent-forge: #F58A4F;  --dh-accent-forge-select: #C67040;  --dh-accent-forge-soft: #FDECE3;  /* ember */
+  --dh-accent-pollr: #25B8A6;  --dh-accent-pollr-select: #1E9586;  --dh-accent-pollr-soft: #DCF4F1;  /* teal */
+  --dh-accent-yappr: #38BDF8;  --dh-accent-yappr-select: #2B90BC;  --dh-accent-yappr-soft: #DFF4FE;  /* sky */
+  --dh-shade-1: rgba(6, 19, 27, .08);   /* hover and press overlays on filled buttons */
+  --dh-shade-2: rgba(6, 19, 27, .14);
+
+  /* status */
+  --dh-good: #167A46;  --dh-good-soft: #E1F2E8;
+  --dh-warn: #94500A;  --dh-warn-soft: #FCEEDB;
+  --dh-bad:  #B4302A;  --dh-bad-soft:  #FBE6E4;
+  --dh-info: var(--dh-brand-ink); --dh-info-soft: var(--dh-brand-soft);
+
+  /* the blueprint plate (hub map, architecture diagrams, the mark) */
+  --dh-plate: #0A2A3D;
+  --dh-plate-edge: #062032;
+  --dh-plate-line: #A6D8F7;
+  --dh-plate-ink: #E4F3FC;
+  --dh-plate-ink-2: #8DB4CC;
+  --dh-plate-hair: rgba(166, 216, 247, .22);
+  --dh-mark-edge: transparent;  /* the mark gets a hairline edge on dark pages */
+
+  /* chart ramp for ordered categories (versions, epochs): 1 = newest or largest. Unordered sets: top 4 + "Other" in --dh-line-2. */
+  --dh-ramp-1: #005A96; --dh-ramp-2: #0080D0; --dh-ramp-3: #39A2E8; --dh-ramp-4: #86C4F0; --dh-ramp-5: #C2E0F7;
+
+  --dh-focus: #0067AD;
+  --dh-shadow-pop: 0 12px 32px -14px rgba(8, 24, 36, .38), 0 0 0 1px var(--dh-line);
+
+  /* type */
+  --dh-font: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --dh-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --dh-fs-xs: 12px;            /* pills, footnotes */
+  --dh-fs-sm: 13px;            /* labels, captions, table headers */
+  --dh-fs-ui: 14px;            /* controls, tables, dense UI */
+  --dh-fs-body: 15px;          /* body */
+  --dh-fs-lead: 17px;          /* intro paragraph under a page title */
+  --dh-fs-h3: 17px;
+  --dh-fs-h2: 21px;
+  --dh-fs-h1: 30px;
+  --dh-fs-display: clamp(30px, 4.2vw, 46px);
+  --dh-fs-stat: 26px;
+  --dh-lh-body: 1.5;
+  --dh-lh-head: 1.2;
+  --dh-lh-display: 1.06;
+  --dh-w-body: 400;
+  --dh-w-ui: 520;
+  --dh-w-strong: 620;
+  --dh-w-head: 660;
+  --dh-stretch-display: 116%;
+  --dh-stretch-head: 110%;
+  --dh-stretch-stat: 108%;
+  --dh-stretch-dense: 88%;
+
+  /* space (4px base) */
+  --dh-1: 4px;  --dh-2: 8px;  --dh-3: 12px; --dh-4: 16px;
+  --dh-5: 24px; --dh-6: 32px; --dh-7: 48px; --dh-8: 64px;
+  --dh-gutter: clamp(16px, 4vw, 40px);
+  --dh-max: 1200px;            /* the bar's row and .dh-container: border-box, so content starts one gutter in */
+  --dh-w-narrow: 760px;        /* forms and reading columns, left-aligned inside the container */
+
+  /* shape */
+  --dh-r1: 3px;   /* pills, kbd */
+  --dh-r2: 6px;   /* buttons, inputs, segmented controls */
+  --dh-r3: 10px;  /* panels, cards, popovers */
+
+  /* controls: one height scale; touch screens step every size up */
+  --dh-ctl-h-sm: 28px;
+  --dh-ctl-h: 34px;
+  --dh-ctl-h-lg: 42px;
+  --dh-bar-h: 52px;
+
+  /* focus: one ring for everything. --dh-ring-shadow is the same ring as a box-shadow, for frameworks
+     that draw focus with shadows (Chakra's shadows.outline). */
+  --dh-ring-w: 2px;
+  --dh-ring-offset: 2px;
+  --dh-ring-shadow: 0 0 0 2px var(--dh-surface), 0 0 0 4px var(--dh-focus);
+
+  /* motion */
+  --dh-ease: cubic-bezier(.2, .7, .2, 1);
+  --dh-dur-1: 90ms;
+  --dh-dur-2: 160ms;
+}
+
+@media (pointer: coarse) {
+  :root { --dh-ctl-h-sm: 40px; --dh-ctl-h: 42px; --dh-ctl-h-lg: 48px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dh-dur-1: 0ms; --dh-dur-2: 0ms; }
+}
+
+/* An app's accent: <html data-dh-accent="forge|pollr|yappr">. The shades follow the theme by themselves. */
+:root[data-dh-accent="forge"] { --dh-accent: var(--dh-accent-forge); --dh-select: var(--dh-accent-forge-select); --dh-select-soft: var(--dh-accent-forge-soft); }
+:root[data-dh-accent="pollr"] { --dh-accent: var(--dh-accent-pollr); --dh-select: var(--dh-accent-pollr-select); --dh-select-soft: var(--dh-accent-pollr-soft); }
+:root[data-dh-accent="yappr"] { --dh-accent: var(--dh-accent-yappr); --dh-select: var(--dh-accent-yappr-select); --dh-select-soft: var(--dh-accent-yappr-soft); }
+
+:root[data-theme="light"] { color-scheme: light; }
+
+/* The dark set is written twice: once for the system setting, once for an explicit choice. Keep them identical. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --dh-page: #06131B;
+    --dh-surface: #0C1E2A;
+    --dh-sunken: #030C12;
+    --dh-raised: #193342;
+    --dh-raised-hover: #234353;
+    --dh-raised-line: #557384;
+    --dh-chip: var(--dh-raised);
+    --dh-chip-line: var(--dh-line);
+    --dh-disabled: var(--dh-surface);
+    --dh-hover: rgba(220, 232, 240, .05);
+    --dh-ink: #DCE8F0;
+    --dh-ink-2: #8FA7B6;
+    --dh-ink-3: #6A8292;
+    --dh-line: #1B3242;
+    --dh-line-2: #557384;
+    --dh-brand: #1A9CF0;
+    --dh-brand-ink: #5EC2F6;
+    --dh-brand-soft: #0D2B40;
+    --dh-good: #4CC38A;  --dh-good-soft: #0D2A1E;
+    --dh-warn: #F29C5F;  --dh-warn-soft: #33210C;
+    --dh-bad:  #F2786E;  --dh-bad-soft:  #3A1614;
+    --dh-plate: #0D3149;
+    --dh-plate-edge: #123A52;
+    --dh-ramp-1: #A9D9FA; --dh-ramp-2: #62B8F3; --dh-ramp-3: #2B90DA; --dh-ramp-4: #1F6CA3; --dh-ramp-5: #1A4A6E;
+    --dh-mark-edge: rgba(166, 216, 247, .38);
+    --dh-accent-forge-select: #F58A4F; --dh-accent-forge-soft: #363131;
+    --dh-accent-pollr-select: #25B8A6; --dh-accent-pollr-soft: #103A40;
+    --dh-accent-yappr-select: #38BDF8; --dh-accent-yappr-soft: #143B4F;
+    --dh-focus: #5EC2F6;
+    --dh-shadow-pop: 0 14px 36px -12px rgba(0, 0, 0, .7), 0 0 0 1px var(--dh-line);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --dh-page: #06131B;
+  --dh-surface: #0C1E2A;
+  --dh-sunken: #030C12;
+  --dh-raised: #193342;
+  --dh-raised-hover: #234353;
+  --dh-raised-line: #557384;
+  --dh-chip: var(--dh-raised);
+  --dh-chip-line: var(--dh-line);
+  --dh-disabled: var(--dh-surface);
+  --dh-hover: rgba(220, 232, 240, .05);
+  --dh-ink: #DCE8F0;
+  --dh-ink-2: #8FA7B6;
+  --dh-ink-3: #6A8292;
+  --dh-line: #1B3242;
+  --dh-line-2: #557384;
+  --dh-brand: #1A9CF0;
+  --dh-brand-ink: #5EC2F6;
+  --dh-brand-soft: #0D2B40;
+  --dh-good: #4CC38A;  --dh-good-soft: #0D2A1E;
+  --dh-warn: #F29C5F;  --dh-warn-soft: #33210C;
+  --dh-bad:  #F2786E;  --dh-bad-soft:  #3A1614;
+  --dh-plate: #0D3149;
+  --dh-plate-edge: #123A52;
+  --dh-ramp-1: #A9D9FA; --dh-ramp-2: #62B8F3; --dh-ramp-3: #2B90DA; --dh-ramp-4: #1F6CA3; --dh-ramp-5: #1A4A6E;
+  --dh-mark-edge: rgba(166, 216, 247, .38);
+  --dh-accent-forge-select: #F58A4F; --dh-accent-forge-soft: #363131;
+  --dh-accent-pollr-select: #25B8A6; --dh-accent-pollr-soft: #103A40;
+  --dh-accent-yappr-select: #38BDF8; --dh-accent-yappr-soft: #143B4F;
+  --dh-focus: #5EC2F6;
+  --dh-shadow-pop: 0 14px 36px -12px rgba(0, 0, 0, .7), 0 0 0 1px var(--dh-line);
+}
