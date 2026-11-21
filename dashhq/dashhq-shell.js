@@ -1,4 +1,4 @@
-/*! dashhq-shell 1.9.3 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
+/*! dashhq-shell 1.9.4 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
 /* Load as a classic, blocking script in <head>, before any stylesheet that depends on [data-theme]:
      <script src="/dashhq/dashhq-shell.js"></script>
    CSP: needs only script-src 'self'. No inline script, no eval, no innerHTML, no style attributes,
@@ -7,7 +7,7 @@
   'use strict';
   if (window.dashhq && window.dashhq.version) return;
 
-  const VERSION = '1.9.3';
+  const VERSION = '1.9.4';
   const doc = document;
   const root = doc.documentElement;
   const host = location.hostname;
@@ -24,7 +24,7 @@
     faucet:   { name: 'Faucet',        url: 'https://faucet.dashhq.org',   door: 'start',      net: true },
     bridge:   { name: 'Bridge',        url: 'https://bridge.thepasta.org', door: 'start',      net: true },
     arch:     { name: 'Architecture',  url: 'https://arch.dashhq.org',     door: 'platform' },
-    fees:     { name: 'Fee estimator', url: 'https://explorer.dashhq.org',     door: 'platform',   net: true },
+    fees:     { name: 'Fee estimator', url: 'https://fees.dashhq.org',    door: 'platform',   net: true },
     dapi:     { name: 'DAPI console',  url: 'https://dapi.dashhq.org',     door: 'platform',   net: true },
     vote:     { name: 'EvoVote',       url: 'https://vote.dashhq.org',     door: 'governance', net: true },
     basics:   { name: 'Basics',        url: 'https://basics.dashhq.org',   door: 'platform' },
@@ -43,14 +43,12 @@
   const DESCRIPTIONS = {
     arch: 'How Platform works', dapi: 'Raw node responses', faucet: 'Testnet DASH for your address'
   };
-  const MOVED = { fees: ['explorer', '/tools/fees/'] };
   // Retired products: the address people have bookmarked, and the product that is its new home. <dashhq-moved>
   // forwards there at once with ?moved-from=<key>, and the new home's bar says so once.
   // paths: where its forward can land, the only pages that show the notice (trailing slashes don't matter).
   const RETIRED = {
     pollr: { to: 'gov', was: 'pollr.dashhq.org', paths: ['/polls'] },
     vote: { to: 'gov', was: 'vote.dashhq.org', paths: ['/names'] },
-    fees: { to: MOVED.fees[0], was: 'fees.dashhq.org', paths: [MOVED.fees[1]] },
     basics: { to: 'explorer', was: 'basics.dashhq.org', paths: ['/', '/identity/', '/dpns/'] }
   };
   const ARRIVAL_PARAM = 'moved-from';
@@ -62,7 +60,6 @@
   const LAB = host === 'dashhq.localhost' || host.endsWith('.dashhq.localhost');
 
   function origin(key) {
-    if (MOVED[key]) key = MOVED[key][0];
     if (key === 'nodes') key = 'radar';
     const p = PRODUCTS[key];
     if (!p) throw new Error(`dashhq: unknown product "${key}"`);
@@ -212,7 +209,6 @@
     const base = origin(key);
     const u = new URL(path || '/', base + '/');
     if (u.origin !== new URL(base).origin) throw new Error(`dashhq: href("${key}") must stay on ${base}`);
-    if (MOVED[key]) u.pathname = MOVED[key][1];
     const p = PRODUCTS[key];
     const fallback = p.door === 'start' ? parseNetwork(u.searchParams.get('network')) || 'testnet' : activeNetwork();
     const n = parseNetwork(opts && 'network' in opts ? opts.network : fallback);
@@ -224,7 +220,6 @@
   }
 
   function doorHref(key, network) {
-    if (MOVED[key]) return href(MOVED[key][0], MOVED[key][1], network ? { network } : undefined);
     if (PRODUCTS[key].door === 'start') {
       return href(key, key === 'bridge' ? '/?mode=create&journey=start' : '/?journey=start', { network: 'testnet' });
     }
@@ -904,7 +899,7 @@
       for (const list of this._pf.querySelectorAll('[data-list]')) list.hidden = !list.querySelector('[data-k]:not([hidden])');
     }
 
-    // After a retired product's forward: "fees.dashhq.org is now part of Explorer." Only the bar of the product it
+    // After a retired product's forward: "vote.dashhq.org is now part of Governance." Only the bar of the product it
     // moved into shows it (and only where that product's links land), so a hand-made link can't make another tool claim
     // the move. One node for its whole life, which a new bar of the product takes over if the page replaces its bar, so
     // nothing is announced twice; it goes when dismissed or when the visitor moves on.

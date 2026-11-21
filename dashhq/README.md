@@ -1,4 +1,9 @@
-# dashhq shell 1.9.3
+# dashhq shell 1.9.4
+
+1.9.4 puts the Fee estimator back on its own host: `href('fees', …)`, `doorHref('fees')` and `data-family="fees"`
+open `https://fees.dashhq.org` with the current network, no longer Explorer's `/tools/fees/`. `fees.dashhq.org` is no
+longer a retired product, so `?moved-from=fees` shows no arrival notice. Pollr, EvoVote and Basics keep their arrival
+notices; their links still open their own hosts. Same API. Everyone: re-vendor 1.9.4.
 
 1.9.3 keeps mixed text, emphasis, links and code together as one value beside the label in phone
 `.dh-table--stack` records. It uses anonymous table cells without requiring value wrappers or markup changes.
@@ -42,7 +47,7 @@ rules and `../ADOPTION-r6.md` for your site's changes this round (then `-r5`, `-
 
 - No shared glyph or favicon. Every product may supply its original icon in `slot="logo"`.
 - `All tools` is an unboxed destination picker: eight links, one name/description row pattern. The hub has no picker.
-  Fees stays under Explorer; Pollr retires into Governance `/polls/`. Yappr and Forge resolve via `href()` only.
+  The Fee estimator opens fees.dashhq.org (1.9.4); Pollr retires into Governance `/polls/`. Yappr and Forge resolve via `href()` only.
 - Theme has one control, in the bar at every width. It opens Light / Dark / Match device as `menuitemradio` rows.
   Enter/Space opens; Up/Down, Home/End move; Escape returns focus. `theme.toggle()` remains supported.
 - The phone sheet is one column, over a dismissible scrim; it locks page scroll. Pointer opening focuses the sheet;
@@ -451,7 +456,7 @@ The page a retired product leaves behind. One behaviour for the family, decided 
 | Attribute | Meaning |
 |---|---|
 | `to` | **Required.** The new home's product key (`gov`, `explorer`). |
-| `path` | The exact place there, with any query: `/names/a11ce`, `/tools/fees/`, `/dpns/search/`. Set it from a deferred script when the old URL maps to a deeper place (`moved.js` maps EvoVote's `#/c/<label>`); the forward waits for deferred scripts. Default `/`. |
+| `path` | The exact place there, with any query: `/names/a11ce`, `/polls/`, `/dpns/search/`. Set it from a deferred script when the old URL maps to a deeper place (`moved.js` maps EvoVote's `#/c/<label>`); the forward waits for deferred scripts. Default `/`. |
 | `heading` | The H1. Default "*Old* has moved to *New*". Say what moved if that's clearer: "Name contests moved to Governance". |
 | `lede` | One sentence: what the new home does for the visitor. |
 | `label` | The primary link's words. Default "Open *New*". |
@@ -467,7 +472,7 @@ it out of the address with `history.replaceState`, keeping every other byte of t
 copied link or your router never see it. The bar of the product the retired one moved into then shows one line under
 its row, on the info ground, with a Dismiss button:
 
-> **fees.dashhq.org** is now part of Explorer. Old links open the same place here.
+> **vote.dashhq.org** is now part of Governance. Old links open the same place here.
 
 - Phones show the first sentence only.
 - It shows only on the product that is the retired one's new home, and only on the pages its links land on: Governance's
