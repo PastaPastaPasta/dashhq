@@ -80,7 +80,7 @@
   function linkHref(link){
     return link.dataset.family ? dashhq.href(link.dataset.family, link.dataset.path || '/', link.dataset.network ? {network:link.dataset.network} : undefined) : link.href;
   }
-  var layers = {gov:['net','GV'], radar:['net','RA'], explorer:['platform','EX'], fees:['platform','FE'], arch:['platform','AR'], bridge:['platform','ST'], dapi:['platform','DA'], faucet:['platform','FA'], dashhq:['apps','ID']};
+  var layers = {gov:['net','GV'], radar:['net','RA'], explorer:['platform','EX'], fees:['platform','FE'], pollr:['apps','PO'], arch:['platform','AR'], bridge:['platform','ST'], dapi:['platform','DA'], faucet:['platform','FA'], dashhq:['apps','ID']};
   function destination(title, product, path, description){
     return {title:title, href:dashhq.href(product,path), site:product, description:description, tier:layers[product][0], mono:layers[product][1]};
   }
@@ -118,7 +118,7 @@
       {terms:/my masternode|my node|masternode vote|voting key/, title:'My masternodes', product:'gov', path:'/masternodes', description:'Review your masternodes’ governance votes.'},
       {terms:/fee|contract cost|estimate/, title:'Estimate contract fees', product:'fees', path:'/', description:'Estimate what registering a data contract costs.'},
       {terms:/name contest|contested|username vote/, title:'Name contests', product:'gov', path:'/names', description:'Inspect contested usernames and their votes.'},
-      {terms:/pollr|polls?/, title:'Polls in Governance', product:'gov', path:'/polls', description:'Read and answer community polls.'}
+      {terms:/pollr|polls?/, title:'Pollr', product:'pollr', path:'/', description:'Create a poll and collect answers on Testnet.'}
     ];
     tasks.filter(function(task){return task.terms.test(text);}).reverse().forEach(function(task){destinations.unshift(destination(task.title,task.product,task.path,task.description));});
     var seen = new Set();
@@ -136,7 +136,7 @@
       var external = !item.site && url.origin !== location.origin;
       var tile = document.createElement('span');tile.className='result-tile';tile.dataset.tier=item.tier;tile.textContent=item.mono;tile.setAttribute('aria-hidden','true');
       var title = document.createElement('span');title.className='result-title';title.textContent=item.title+(external?' ↗':' →');
-      var site = document.createElement('span');site.className='result-site';site.textContent=item.site ? ({gov:'Governance',radar:'Radar',explorer:'Radar Explorer',fees:'Fee estimator',arch:'Architecture',bridge:'Bridge',dapi:'DAPI',faucet:'Faucet',dashhq:'dashhq'}[item.site] || item.site) : url.host;
+      var site = document.createElement('span');site.className='result-site';site.textContent=item.site ? ({gov:'Governance',radar:'Radar',explorer:'Radar Explorer',fees:'Fee estimator',pollr:'Pollr',arch:'Architecture',bridge:'Bridge',dapi:'DAPI',faucet:'Faucet',dashhq:'dashhq'}[item.site] || item.site) : url.host;
       var description = document.createElement('span');description.className='result-description';description.textContent=item.description;
       link.append(tile,title,site,description);row.append(link);
       if(item.links && item.links.length){
