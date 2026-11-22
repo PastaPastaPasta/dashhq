@@ -23,8 +23,9 @@ declare module 'react' {
         sticky?: On;
       };
       'dashhq-footer': ShellAttrs & { product: DashhqProduct; source?: string };
+      /** The value is `value`, or the element's text when `value` is absent. */
       'dashhq-hash': ShellAttrs & {
-        value: string; href?: string; label?: string; head?: number | string; tail?: number | string;
+        value?: string; href?: string; label?: string; head?: number | string; tail?: number | string;
         full?: On; 'no-copy'?: On;
       };
       'dashhq-signin-help': ShellAttrs & {

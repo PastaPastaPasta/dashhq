@@ -1,4 +1,4 @@
-/*! dashhq-shell 1.9.4 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
+/*! dashhq-shell 1.9.5 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
 /* Load as a classic, blocking script in <head>, before any stylesheet that depends on [data-theme]:
      <script src="/dashhq/dashhq-shell.js"></script>
    CSP: needs only script-src 'self'. No inline script, no eval, no innerHTML, no style attributes,
@@ -7,7 +7,7 @@
   'use strict';
   if (window.dashhq && window.dashhq.version) return;
 
-  const VERSION = '1.9.4';
+  const VERSION = '1.9.5';
   const doc = document;
   const root = doc.documentElement;
   const host = location.hostname;
@@ -15,7 +15,7 @@
   /* ---------------------------------------------------------------- family registry */
   // door: home | network | governance | platform | start | apps
   // net: the product accepts ?network=, so family links carry the current network into it
-  // only: the one network the product runs on, shown next to it in the family menus
+  // only: the one network the product runs on
   const PRODUCTS = {
     home:     { name: 'dashhq',        url: 'https://dashhq.org',          door: 'home' },
     radar:    { name: 'Radar',         url: 'https://radar.dashhq.org',    door: 'network',    net: true },
@@ -30,7 +30,8 @@
     basics:   { name: 'Basics',        url: 'https://basics.dashhq.org',   door: 'platform' },
     forge:    { name: 'Forge',         url: 'https://forge.dashhq.org',    door: 'apps',       only: 'Testnet' },
     pollr:    { name: 'Pollr',         url: 'https://pollr.dashhq.org',    door: 'apps',       only: 'Testnet' },
-    yappr:    { name: 'Yappr',         url: 'https://yap.pr',              door: 'apps',       only: 'Testnet' }
+    yappr:    { name: 'Yappr',         url: 'https://yap.pr',              door: 'apps',       only: 'Testnet' },
+    multisig: { name: 'Multisig',      url: 'https://new-multisig.dashhq.org', door: 'apps',   only: 'Testnet' }
   };
   PRODUCTS.nodes = PRODUCTS.radar;
   const DOORS = [
@@ -39,17 +40,26 @@
     { door: 'platform', key: 'explorer', label: 'Explorer', desc: 'Identities, names, contracts, fees' },
     { door: 'start', key: 'bridge', label: 'Start on Testnet', desc: 'Address, tDASH, identity, username' }
   ];
-  const ALSO = ['arch', 'dapi', 'faucet'];
+  const ALSO = ['arch', 'dapi', 'fees', 'faucet', 'multisig'];
   const DESCRIPTIONS = {
-    arch: 'How Platform works', dapi: 'Raw node responses', faucet: 'Testnet DASH for your address'
+    arch: 'How Platform works', dapi: 'Raw node responses', fees: 'Platform contract and document fees',
+    faucet: 'Testnet DASH for your address', multisig: 'Threshold identities · testnet preview'
   };
+  // A product still in preview carries this tag beside its name in the phone menu, where descriptions don't show.
+  const PREVIEW = { multisig: 'Testnet preview' };
   // Retired products: the address people have bookmarked, and the product that is its new home. <dashhq-moved>
   // forwards there at once with ?moved-from=<key>, and the new home's bar says so once.
-  // paths: where its forward can land, the only pages that show the notice (trailing slashes don't matter).
+  // lands: the products whose bar shows the notice, each with the paths its forward can land on (trailing slashes
+  // don't matter). now: a home's name in the notice, where it isn't the product's own.
+  // hashRoutes: the old product used "#/…" routes, which its route map turns into the forward's path.
   const RETIRED = {
-    pollr: { to: 'gov', was: 'pollr.dashhq.org', paths: ['/polls'] },
-    vote: { to: 'gov', was: 'vote.dashhq.org', paths: ['/names'] },
-    basics: { to: 'explorer', was: 'basics.dashhq.org', paths: ['/', '/identity/', '/dpns/'] }
+    pollr: { to: 'gov', was: 'pollr.dashhq.org', lands: { gov: ['/polls'] } },
+    vote: { to: 'gov', was: 'vote.dashhq.org', lands: { gov: ['/names'] }, hashRoutes: true },
+    // explorer.dashhq.org is Radar, whose bar is product="radar"; its redirects land old Explorer paths on its own.
+    basics: { to: 'explorer', was: 'basics.dashhq.org', now: { radar: 'Radar Explorer' }, lands: {
+      explorer: ['/', '/identity/', '/dpns/'],
+      radar: ['/', '/names', '/name/', '/identities', '/identity/']
+    } }
   };
   const ARRIVAL_PARAM = 'moved-from';
   // The hub's page that explains identities, keys and each app's sign-in (linked from <dashhq-signin-help>).
@@ -107,7 +117,7 @@
   function canonicalizeNetworkParam() {
     const sp = new URL(location.href).searchParams;
     if (!sp.has('net') && !sp.has('network')) return;
-    if (!parseNetwork(sp.get('network') ?? sp.get('net'))) return;
+    if (!parseNetwork(sp.get('network')) && !parseNetwork(sp.get('net'))) return;
     const next = withNetwork(location.href, networkFromUrl());
     if (next !== location.href) history.replaceState(history.state, '', next);
   }
@@ -130,7 +140,8 @@
       return false;
     });
     if (kept.length === parts.length) return null;
-    forwarded = true;
+    // Only a family product's forward counts: a stray or hand-made marker never stops a retired page forwarding.
+    forwarded = Object.hasOwn(PRODUCTS, from) && from !== 'home';
     const href = location.href, cut = href.search(/[?#]/), hash = href.indexOf('#');
     try {
       history.replaceState(history.state, '', href.slice(0, cut) + (kept.some(Boolean) ? '?' + kept.join('&') : '') +
@@ -140,9 +151,12 @@
     const r = Object.hasOwn(RETIRED, from) && RETIRED[from];
     const norm = (x) => (x.length > 1 ? x.replace(/\/+$/, '') : x);
     const here = norm(location.pathname);
-    const lands = r && r.paths.map(norm).some((p) => (p === '/' ? here === '/' : here === p || here.startsWith(p + '/')));
-    return lands ? { from, bar: null, el: null, ro: null, done: false } : null;
+    const homes = r ? Object.keys(r.lands).filter((k) => r.lands[k].map(norm)
+      .some((p) => (p === '/' ? here === '/' : here === p || here.startsWith(p + '/')))) : [];
+    return homes.length ? { from, homes, bar: null, el: null, ro: null, done: false } : null;
   })();
+  // Which of the retired product's new homes a bar's product is, if any ("nodes" is Radar).
+  const arrivalHome = (key) => (arrival ? arrival.homes.find((k) => PRODUCTS[k] === PRODUCTS[key]) || null : null);
   // While the notice shows, a sticky bar is taller: pad the page's scroll by its height so anchors and
   // scrollIntoView (sized for the bar alone) still land clear of it. The page's own value (read once, when the padding
   // starts) comes back after. null restores.
@@ -426,7 +440,8 @@
     /* popovers */
     '.pop{position:absolute;top:calc(100% + 6px);z-index:2;background:var(--dh-surface);border-radius:var(--dh-r3);' +
     'box-shadow:var(--dh-shadow-pop);padding:6px}' +
-    '.doorpop{left:0;width:420px;padding:8px}' +
+    '.doorpop{left:0;width:420px;padding:8px;max-height:calc(100vh - var(--dh-bar-h) - 12px);' +
+    'max-height:calc(100dvh - var(--dh-bar-h) - 12px);overflow:auto;overscroll-behavior:contain}' +
     '.netpop{right:0;width:max-content;min-width:200px;max-width:min(300px,calc(100vw - 2 * var(--dh-gutter)))}' +
     '.nnote{margin:4px 0 0;padding:8px 10px 4px;border-top:1px solid var(--dh-line);font-size:13px;line-height:1.4;' +
     'color:var(--dh-ink-2)}' +
@@ -497,6 +512,8 @@
     '@media (hover:hover){.pd a:hover,.hm:hover{background:var(--dh-hover)}}' +
     '.pd a[aria-current]{background:var(--dh-chip);box-shadow:inset 3px 0 var(--dh-brand)}' +
     '.hm{color:var(--dh-brand-ink)}' +
+    '.tag{margin-left:8px;padding:1px 6px;border:1px dashed var(--dh-line-2);border-radius:var(--dh-r1);background:var(--dh-chip);' +
+    'font-size:12.5px;font-weight:520;line-height:1.4;color:var(--dh-ink-2);white-space:nowrap}' +
     '[hidden]{display:none!important}' +
     /* phone-nav="tabs": the product's sections become a bottom tab bar; the menu then holds only the family */
     '.bar.compact.tabs .nav{position:fixed;left:0;right:0;bottom:0;z-index:3;margin:0;' +
@@ -553,6 +570,9 @@
     'align-self:center}' +
     '.cp:hover{background:var(--dh-hover);color:var(--dh-ink)}' +
     '.cp.done{color:var(--dh-good)}' +
+    '.buf{position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0}' +
+    '.man{min-width:0;flex:1 1 auto;width:min(100%,72ch);padding:2px 6px;border:1px solid var(--dh-line-2);' +
+    'border-radius:var(--dh-r1);background:var(--dh-surface);color:var(--dh-ink);font:inherit}' +
     '@media (pointer:coarse){.cp{width:40px;height:40px;margin:-8px -8px -8px 0}}';
 
   // A well (sunken, no border) so it sits inside a dialog or card without becoming a card in a card.
@@ -618,7 +638,7 @@
     '.ar{margin-left:.3em}' +
     '.spin{width:14px;height:14px;flex:none;border-radius:50%;border:2px solid var(--dh-line);border-top-color:var(--dh-brand);' +
     'animation:dh-rot .8s linear infinite}' +
-    '@media (prefers-reduced-motion:reduce){.spin{animation-duration:2.4s}}' +
+    '@media (prefers-reduced-motion:reduce){.spin{animation:none}}' +
     '@keyframes dh-rot{to{transform:rotate(360deg)}}';
 
   // Not on this network: a dashed well (dashed = nothing real here) that says where the record is instead.
@@ -749,13 +769,13 @@
       this.close();
       if (arrival && arrival.bar === this && !arrival.done) {
         queueMicrotask(() => {
-          const next = arrival.bar === this && [...bars].find((b) => productOf(b) === RETIRED[arrival.from].to);
+          const next = arrival.bar === this && [...bars].find((b) => arrivalHome(productOf(b)));
           if (next) next.render();
         });
       }
       tabBars.delete(this);
       syncTabs();
-      if (this._net) { this._net = null; netChanged(); }
+      if (this._page) { this._page = null; netChanged(); }
     }
 
     render() {
@@ -822,7 +842,9 @@
       [this, this._nav, end, lockup].forEach((el) => el && this._ro.observe(el));
       this._fit();
       if (focused) { const f = this.shadowRoot.querySelector(`[data-f="${focused}"]`); if (f) f.focus(); }
-      if (net !== this._net) { this._net = net; queueMicrotask(netChanged); }
+      // What the page's bar says (its product and network) feeds sign-in help and notices that follow it.
+      const said = `${key} ${net || ''}`;
+      if (said !== this._page) { this._page = said; queueMicrotask(netChanged); }
     }
 
     _family(key, net) {
@@ -839,7 +861,8 @@
     _phoneFamily(key, net) {
       if (key === 'home') return null;
       const list = (items) => h('ul', { class: 'pd' }, items.map(([k, label]) =>
-        h('li', { 'data-k': k }, h('a', { href: doorHref(k, net), 'aria-current': current(PRODUCTS[k] === PRODUCTS[key], 'page') }, label))));
+        h('li', { 'data-k': k }, h('a', { href: doorHref(k, net), 'aria-current': current(PRODUCTS[k] === PRODUCTS[key], 'page') }, label,
+          PREVIEW[k] && [h('span', { class: 'sr' }, ', '), h('span', { class: 'tag' }, PREVIEW[k])]))));
       return [h('div', { 'data-list': '' }, h('p', { class: 'fl' }, 'dashhq tools'),
         list(DOORS.map(d => [d.key, d.label]))),
         h('div', { 'data-list': '' }, h('div', { class: 'sep', role: 'separator' }),
@@ -880,21 +903,23 @@
     }
 
     // Deduplicate sibling destinations already in local navigation, keeping the current product in the family list.
+    // The Start door is a Testnet journey: a local link into the same product on another network doesn't replace it.
     _dedupe() {
       const place = (u) => { try { const x = new URL(u, location.href); return x.origin + x.pathname; } catch { return ''; } };
-      const keys = new Set(), places = new Set();
+      const netOf = (u) => { try { const sp = new URL(u, location.href).searchParams; return parseNetwork(sp.get('network')) || parseNetwork(sp.get('net')); } catch { return null; } };
+      const local = [];
       for (const el of this._navSlot.assignedElements()) {
         for (const a of el.matches('a') ? [el] : el.querySelectorAll('a')) {
           if (!a.getClientRects().length) continue; // an item hidden in this layout doesn't count
           const k = a.dataset.family;
-          if (k && Object.hasOwn(PRODUCTS, k)) keys.add(PRODUCTS[k] === PRODUCTS.radar ? 'radar' : k);
-          places.add(place(a.href));
+          local.push({ k: k && Object.hasOwn(PRODUCTS, k) ? PRODUCTS[k] : null, place: place(a.href), net: netOf(a.href) });
         }
       }
       for (const item of this._pf.querySelectorAll('[data-k]')) {
         const a = item.matches('a') ? item : item.querySelector('a');
-        item.hidden = PRODUCTS[item.dataset.k] !== PRODUCTS[productOf(this)] &&
-          (keys.has(item.dataset.k) || places.has(place(a.href)));
+        const p = PRODUCTS[item.dataset.k], start = p.door === 'start';
+        item.hidden = p !== PRODUCTS[productOf(this)] && local.some((l) => (l.k === p || l.place === place(a.href)) &&
+          (!start || l.net === 'testnet'));
       }
       for (const list of this._pf.querySelectorAll('[data-list]')) list.hidden = !list.querySelector('[data-k]:not([hidden])');
     }
@@ -905,7 +930,8 @@
     // nothing is announced twice; it goes when dismissed or when the visitor moves on.
     _arrival(key) {
       const a = arrival;
-      if (!a || a.done || RETIRED[a.from].to !== key) return null;
+      const home = arrivalHome(key);
+      if (!a || a.done || !home) return null;
       if (a.bar && a.bar !== this && a.bar.isConnected) return null;
       a.bar = this;
       if (!a.el) {
@@ -914,7 +940,8 @@
         const x = h('button', { class: 'ax', type: 'button', 'aria-label': 'Dismiss', 'aria-describedby': 'dh-arrive-said',
           title: 'Dismiss', 'data-f': 'arrive-x' }, icon('close', 16));
         x.addEventListener('click', () => endArrival(true));
-        const said = h('p', { class: 'at', 'aria-hidden': 'true' }, h('b', null, r.was), ` is now part of ${PRODUCTS[r.to].name}.`,
+        const name = (r.now && r.now[home]) || PRODUCTS[home].name;
+        const said = h('p', { class: 'at', 'aria-hidden': 'true' }, h('b', null, r.was), ` is now part of ${name}.`,
           h('span', { class: 'am' }, ' Old links open the same place here.'));
         a.el = h('div', { class: 'arrive', part: 'arrival' }, h('div', { class: 'ain' }, icon('info', 18), said, x), live);
         // Said once, while someone is looking: a tab opened in the background waits until it is shown.
@@ -1155,15 +1182,34 @@
         btn.replaceChildren(icon(done ? 'check' : 'copy', 15));
         live.textContent = msg;
       };
+      const copied = () => {
+        show(true, 'Copied');
+        clearTimeout(this._t);
+        this._t = setTimeout(() => show(false, ''), 1400);
+      };
+      // Without the Clipboard API (an insecure page) or when it refuses, copy from a selected field; failing that,
+      // show the whole value, selected, so it can be copied by hand.
+      const fallback = () => {
+        const buf = h('textarea', { class: 'buf', readonly: true, 'aria-hidden': 'true', tabindex: '-1' });
+        buf.value = value;
+        this.shadowRoot.append(buf);
+        buf.select();
+        let ok = false;
+        try { ok = doc.execCommand('copy'); } catch { ok = false; }
+        buf.remove();
+        btn.focus({ preventScroll: true });
+        if (ok) return copied();
+        const field = h('input', { class: 'man', type: 'text', readonly: true, 'aria-label': label, value });
+        v.replaceWith(field);
+        field.focus();
+        field.select();
+        show(false, `Copy failed. The full ${label} is selected: copy it from the field.`);
+      };
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (!navigator.clipboard) return show(false, 'Copy needs a secure page. Select the text instead.');
-        navigator.clipboard.writeText(value).then(() => {
-          show(true, 'Copied');
-          clearTimeout(this._t);
-          this._t = setTimeout(() => show(false, ''), 1400);
-        }, () => show(false, 'Copy failed. Select the text instead.'));
+        if (!navigator.clipboard) return fallback();
+        navigator.clipboard.writeText(value).then(copied, fallback);
       });
       this._paint(v, btn, live);
     }
@@ -1319,12 +1365,22 @@
       if (!el && this._box.firstElementChild) { el = this._box.firstElementChild; el.tabIndex = -1; }
       if (el) el.focus({ preventScroll: true });
     }
-    // Say it once, a moment after the region exists, so it is announced rather than read as part of the page.
-    _say(text) {
-      if (text === this._said) return;
-      this._said = text;
+    // Say it once per question, a moment after the region exists, so it is announced rather than read as part of the
+    // page. A new question cancels anything still waiting to be said about the last one.
+    _say(text, question = '') {
+      const said = question + '\n' + text;
+      if (said === this._said || said === this._due) return;
       clearTimeout(this._sayT);
-      this._sayT = setTimeout(() => { if (this._live) this._live.textContent = text; }, 60);
+      this._due = said;
+      this._sayT = setTimeout(() => {
+        this._due = null;
+        this._said = said;
+        if (this._live) this._live.textContent = text;
+      }, 60);
+    }
+    _hush() {
+      clearTimeout(this._sayT);
+      this._due = null;
     }
   }
 
@@ -1338,12 +1394,14 @@
     }
     static css = NOTFOUND_CSS;
 
-    // Which question is being asked: this network, and either the `record` attribute or, without one, this lookup
-    // function. A new question shows "Checking" at once and never an earlier answer. With `record` set, a new lookup
-    // function for the same record (a framework re-rendering) is the same question: its answer stays.
+    // Which question is being asked: this network, the networks to look on, and either the `record` attribute or,
+    // without one, this lookup function. A new question shows "Checking" at once and never an earlier answer. With
+    // `record` set, a new lookup function for the same record (a framework re-rendering) is the same question: its
+    // answer stays.
+    _here() { return parseNetwork(this.getAttribute('network')) || activeNetwork(); }
     _key(here) {
       const own = this.getAttribute('record');
-      return here + ' ' + (own != null ? 'record:' + own : 'lookup:' + (this._fnId || 0));
+      return here + ' ' + this._nets().join(',') + ' ' + (own != null ? 'record:' + own : 'lookup:' + (this._fnId || 0));
     }
     get lookup() { return this._lookup || null; }
     set lookup(fn) {
@@ -1364,12 +1422,14 @@
       this._ranKey = null;
     }
     _nets() { return sortNetworks((this.getAttribute('networks') || 'mainnet testnet').split(/[\s,]+/)); }
-    // A check already running for the same question is left to finish; later ones use the newest lookup.
+    // A check already running for the same question is left to finish with the lookup it started with; later checks
+    // use the newest lookup.
     _run(here, key) {
       if (this._ac) this._ac.abort();
       const ac = this._ac = new AbortController();
       this._ranKey = key;
-      findElsewhere((n, signal) => this._lookup(n, signal), { network: here, networks: this._nets(), signal: ac.signal }).then((found) => {
+      const fn = this._lookup;
+      findElsewhere((n, signal) => fn(n, signal), { network: here, networks: this._nets(), signal: ac.signal }).then((found) => {
         if (ac.signal.aborted) return;
         this._ac = null;
         if (found === this._found && key === this._foundKey) return;
@@ -1395,10 +1455,11 @@
     render() {
       this._drop();
       if (!this.hasAttribute('network')) this._on(netListeners, () => this.render());
-      const here = parseNetwork(this.getAttribute('network')) || activeNetwork();
+      const here = this._here();
       // Start a new question a microtask later, so a record and its lookup set in the same step are asked together.
-      const due = () => this._lookup && !this.hasAttribute('found') && this.isConnected && this._ranKey !== this._key(here);
-      if (due()) queueMicrotask(() => { if (due()) this._run(here, this._key(here)); });
+      // The microtask asks whatever the question is by then, so a superseded state never replaces the current check.
+      const due = (n) => this._lookup && !this.hasAttribute('found') && this.isConnected && this._ranKey !== this._key(n);
+      if (due(here)) queueMicrotask(() => { const n = this._here(); if (due(n)) this._run(n, this._key(n)); });
       const found = this._answer(here);
       const thing = (this.getAttribute('thing') || 'record').trim();
       const idLabel = (this.getAttribute('id-label') || 'ID').trim();
@@ -1437,7 +1498,8 @@
       this._show(h('div', { class: 'nf' }, h('h2', null, title),
         h('p', null, line || h('span', { class: 'chk' }, h('span', { class: 'spin', 'aria-hidden': 'true' }), `Checking ${othersL}…`)),
         h('slot'), (action || list) && h('div', { class: 'acts' }, action, list)));
-      if (line) this._say(`${title}. ${line}`); // checking says nothing, so a re-check doesn't repeat the same answer
+      if (line) this._say(`${title}. ${line}`, this._key(here));
+      else this._hush(); // checking says nothing, and nothing still due from the last question
     }
   }
 
@@ -1456,8 +1518,10 @@
         this._going = !(nav && nav.type === 'back_forward');
         if (this._going) {
           const stay = () => { this._going = false; this.render(); };
-          const go = () => {
-            if (!this.isConnected || !this._going) return;
+          // A forward due while the element is detached waits for it to come back.
+          const go = this._go = () => {
+            if (!this._going) return;
+            if (!this.isConnected) { this._held = true; return; }
             const to = new URL(this._dest());
             // A map pointing back at this page, or a retired page reached by another one's forward, would bounce the
             // visitor forever: stay, and show the way on.
@@ -1480,6 +1544,9 @@
           // Restored from the back-forward cache: show the way on rather than "Opening…" forever.
           addEventListener('pageshow', (e) => { if (e.persisted && this._going) stay(); });
         }
+      } else if (this._held) {
+        this._held = false;
+        setTimeout(this._go, 0);
       }
       super.connectedCallback();
     }
@@ -1492,11 +1559,12 @@
     }
     _net() {
       const sp = new URL(location.href).searchParams;
-      return parseNetwork(sp.get('network') || sp.get('net')) || parseNetwork(this.getAttribute('network')) || 'mainnet';
+      return parseNetwork(sp.get('network')) || parseNetwork(sp.get('net')) || parseNetwork(this.getAttribute('network')) ||
+        'mainnet';
     }
     // The new home, with the old link's network, its query (contract, id, filters, every value of a repeated key) unless
-    // the new path sets that key, its hash unless the path has one or the old hash was a hash route ("#/c/german":
-    // the site maps that into path), and where it came from.
+    // the new path sets that key, its hash unless the path has one or the old product used hash routes and this is one
+    // ("#/c/german" on EvoVote: the site maps that into path), and where it came from.
     _dest() {
       const { to, from } = this._names();
       let u;
@@ -1506,7 +1574,8 @@
         if (k !== 'network' && k !== 'net' && k !== ARRIVAL_PARAM && !own.has(k)) u.searchParams.append(k, v);
       }
       if (from) u.searchParams.set(ARRIVAL_PARAM, from);
-      if (!u.hash && location.hash && !location.hash.startsWith('#/')) u.hash = location.hash;
+      const route = from && Object.hasOwn(RETIRED, from) && RETIRED[from].hashRoutes && location.hash.startsWith('#/');
+      if (!u.hash && location.hash && !route) u.hash = location.hash;
       return u.href;
     }
 

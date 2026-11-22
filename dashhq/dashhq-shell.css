@@ -18,10 +18,14 @@ dashhq-bar:not(:defined)::before {
   content: "dashhq"; font-weight: 650; font-stretch: 112%; font-size: 16px; letter-spacing: -.012em;
 }
 dashhq-bar:not(:defined) > [slot="logo"] { display: none; }
+/* Without JavaScript there is no phone menu: the product's links scroll sideways rather than being cut off. */
+dashhq-bar:not(:defined) > [slot="nav"] { flex: 0 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: thin; }
 dashhq-bar:not(:defined) > [slot="actions"] { margin-left: auto; }
 dashhq-footer:not(:defined) { min-height: 120px; margin-top: var(--dh-7); border-top: 1px solid var(--dh-line); }
 dashhq-hash:not(:defined) { display: inline; font-family: var(--dh-mono); font-size: .92em; overflow-wrap: anywhere; }
 dashhq-signin-help, dashhq-not-found, dashhq-moved { display: block; }
+/* The display rules above outrank the browser's [hidden]; an element the page hides stays hidden, upgraded or not. */
+:is(dashhq-bar, dashhq-footer, dashhq-hash, dashhq-signin-help, dashhq-not-found, dashhq-moved)[hidden] { display: none !important; }
 dashhq-signin-help:not(:defined) { min-height: 44px; border-radius: var(--dh-r3); background: var(--dh-sunken); }
 /* <dashhq-moved>'s children are its version without JavaScript (the heading and a real link); once upgraded the element
    draws its own. <dashhq-not-found>'s children are one extra line it shows under its own words, so keep them to that
