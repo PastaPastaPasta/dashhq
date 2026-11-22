@@ -30,4 +30,8 @@ The font name is unchanged ("Archivo"). The OFL Reserved Font Name clause does n
 Reserved Font Name. Text outside the subset (Vietnamese, Cyrillic, CJK) falls back to the system stack in
 `--dh-font`.
 
-Reproduce with `design/tools/build-font.sh`.
+The four steps above are the whole recipe, and the output sha256 is the check. `tools/build-font.sh` in the dashhq
+design repository (the `design/` checkout that publishes this shell, added in its commit `e620ef1`; vendored copies
+don't include it) runs them: from that checkout's root, `tools/build-font.sh`. It fetches the upstream file from
+google/fonts `main`; if that file has changed since the commit above, fetch it at `6c70c829f09ea345d3590406693220ea35c6553f`
+instead and compare the upstream sha256.

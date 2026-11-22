@@ -1,4 +1,4 @@
-// dashhq Tailwind preset (Tailwind 3.4). Maps theme colours, radii, heights, fonts and shadows onto the --dh-* tokens,
+// dashhq Tailwind preset (Tailwind 3.4.1 or later in 3.x: 3.4.0 has no `selector` dark mode). Maps theme colours, radii, heights, fonts and shadows onto the --dh-* tokens,
 // so utilities and dashhq-components.css draw from one source. Load dashhq-tokens.css (and dashhq-components.css if you
 // use its classes) in the page; this file only names the variables.
 //

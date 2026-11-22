@@ -453,8 +453,8 @@
   .dh-table--cards td:not(.dh-rc-title) :is(a, button, input, select, textarea, label, summary, [tabindex], dashhq-hash) { position: relative; z-index: 1; }
   .dh-table--cards tbody tr:hover td { background: none; }
   .dh-table--cards tbody tr:hover { background: var(--dh-hover); }
-  .dh-table--cards tbody tr[aria-selected="true"] td { background: none; }
-  .dh-table--cards tbody tr[aria-selected="true"] { background: var(--dh-select-soft); }
+  .dh-table--cards tbody tr:is([aria-selected="true"], .is-selected) td { background: none; }
+  .dh-table--cards tbody tr:is([aria-selected="true"], .is-selected) { background: var(--dh-select-soft); }
 }
 /* Phone, record tables (keys, checks, settings): each row becomes a block of "label  value" lines. */
 @media (max-width: 640px) {
@@ -719,6 +719,10 @@ ol.dh-sources > li:target { color: var(--dh-ink); background: var(--dh-brand-sof
 .dh-plate__label { font: 600 13px/1.2 var(--dh-font); font-stretch: var(--dh-stretch-dense); color: var(--dh-plate-ink); }
 
 @keyframes dh-rot { to { transform: rotate(360deg); } }
+/* Reduced motion: spinners hold still; the words beside them ("Checking…", "Sending…") say it is working. */
+@media (prefers-reduced-motion: reduce) {
+  .dh-spin, .dh-btn[aria-busy="true"]::before, .dh-proof--checking::before { animation: none; }
+}
 @keyframes dh-shimmer { to { background-position: -150% 0; } }
 
 /* Disclosures and freshness */

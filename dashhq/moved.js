@@ -5,12 +5,13 @@
 // is <dashhq-moved>'s.
 (() => {
   const moved = document.querySelector('dashhq-moved');
-  const route = location.hash.replace(/^#\/?/, '') || location.pathname.replace(/^\//, '');
-  const match = /^(?:c|names)\/([^/?#]+)\/?$/.exec(route);
+  // A hash route ("#/c/Alice") wins; an ordinary fragment ("/c/Alice#votes") leaves the path to name the contest.
+  const contest = (route) => /^(?:c|names)\/([^/?#]+)\/?$/.exec(route);
+  const match = contest(location.hash.replace(/^#\/?/, '')) || contest(location.pathname.replace(/^\//, ''));
   let label = '';
   try { label = match ? decodeURIComponent(match[1]).trim().replace(/\.dash$/i, '').toLowerCase() : ''; } catch { /* the list */ }
   const key = label.replace(/o/g, '0').replace(/[il]/g, '1');
-  if (!/^[a-z01-]{3,19}$/.test(key)) return;
+  if (!/^[a-z01][a-z01-]{1,17}[a-z01]$/.test(key)) return;
   moved.setAttribute('path', '/names/' + key);
   moved.setAttribute('label', `Open ${label}.dash in Governance`);
 })();

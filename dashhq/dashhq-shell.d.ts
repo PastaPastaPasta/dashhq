@@ -2,7 +2,18 @@
 
 export type DashhqProduct =
   | 'home' | 'radar' | 'nodes' | 'gov' | 'explorer' | 'faucet' | 'bridge' | 'arch' | 'fees' | 'dapi'
-  | 'vote' | 'basics' | 'forge' | 'pollr' | 'yappr';
+  | 'vote' | 'basics' | 'forge' | 'pollr' | 'yappr' | 'multisig';
+
+/** One family product. Frozen at runtime. */
+export interface DashhqProductEntry {
+  readonly name: string;
+  readonly url: string;
+  readonly door: 'home' | 'network' | 'governance' | 'platform' | 'start' | 'apps';
+  /** Family links carry ?network= into it. */
+  readonly net?: boolean;
+  /** The one network it runs on: 'Testnet'. */
+  readonly only?: string;
+}
 
 /** 'mainnet' | 'testnet' | `devnet-${name}` */
 export type DashhqNetwork = 'mainnet' | 'testnet' | `devnet-${string}`;
@@ -16,7 +27,7 @@ export interface DashhqApi {
   readonly version: string;
   /** true on *.dashhq.localhost: every family link stays in the local lab */
   readonly lab: boolean;
-  readonly products: Readonly<Record<DashhqProduct, { name: string; url: string; door: string; net?: boolean }>>;
+  readonly products: Readonly<Record<DashhqProduct, DashhqProductEntry>>;
   /** Origin of a family product, production or lab. Legacy Pollr links use its route-aware forwarder. */
   origin(product: DashhqProduct): string;
   /** URL of a page in another family product. Carries an explicit ?network= for every network-aware product. Bridge/Faucet default to Testnet unless a network is explicit. Throws if path would leave the product's origin (e.g. "//evil.example"). */
