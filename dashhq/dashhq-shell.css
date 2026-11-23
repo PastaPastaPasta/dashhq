@@ -88,8 +88,6 @@ html[data-dh-tabs] { scroll-padding-bottom: var(--dh-tabs-h); }
 /* Slots carry inline footer copy and links, never another layout. */
 dashhq-footer :is(p, div, nav, span) { display: inline; margin: 0; padding: 0; }
 dashhq-footer a { color: var(--dh-foot-link); text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 45%, transparent); text-underline-offset: 3px; }
-/* Links a product writes in a row inside its footer copy keep a real gap between them. */
-dashhq-footer a + a, dashhq-footer span + a { margin-inline-start: 1.1em; }
 dashhq-footer a { white-space: nowrap; }
 /* The page ends at the footer: below it the canvas is the footer's colour, not page colour. Zero specificity, so a product's own html or body background and margin always win. */
 :where(html:has(dashhq-footer)) { background-color: var(--dh-foot); }

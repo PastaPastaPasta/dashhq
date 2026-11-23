@@ -545,6 +545,22 @@
 .dh-badge--info, .dh-pill--info { background: var(--dh-info-soft); color: var(--dh-info); }
 .dh-badge--real, .dh-pill--real { background: var(--dh-real-soft); color: var(--dh-real); }
 .dh-badge--outline { background: transparent; box-shadow: inset 0 0 0 1px var(--dh-line-2); }
+/* Network marks, one system everywhere: Mainnet a filled gold dot (real funds), Testnet a hollow ring, both
+   networks both marks, a devnet a dashed ring, a preview a dashed chip. This is the display mark; the bar's network
+   switch is the only selector (bordered, with a chevron).
+   <span class="dh-net dh-net--mainnet|--testnet|--both|--devnet|--preview">Mainnet · Testnet</span> */
+.dh-net { box-sizing: border-box; display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 1px 8px 0;
+  border: 1px solid transparent; border-radius: var(--dh-r1); background: var(--dh-chip); color: var(--dh-ink);
+  font: var(--dh-w-ui) var(--dh-fs-xs)/1 var(--dh-font); white-space: nowrap; vertical-align: middle; }
+.dh-net::before, .dh-net::after { content: ""; display: none; flex: none; box-sizing: border-box; width: 8px; height: 8px;
+  margin-top: -1px; border-radius: 50%; }
+.dh-net:is(.dh-net--mainnet, .dh-net--both)::before { display: block; order: -2; background: var(--dh-real); }
+.dh-net:is(.dh-net--testnet, .dh-net--preview)::before, .dh-net--both::after { display: block; order: -1;
+  border: 1.5px solid var(--dh-ink-2); }
+.dh-net--both::after { margin-inline-start: -3px; }
+.dh-net--devnet::before { display: block; border: 1.5px dashed var(--dh-ink-2); }
+.dh-net--preview { background: none; border: 1px dashed var(--dh-line-2); }
+
 /* Inline status without a box, for dense tables: "● Reachable". */
 .dh-status { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .dh-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--dh-ink-3); flex: none; }
@@ -598,7 +614,7 @@
 .dh-ref a, .dh-sources a { color: var(--dh-brand-ink); }
 .dh-ref a:hover { text-decoration: underline; text-underline-offset: 2px; }
 .dh-sources { box-sizing: border-box; display: block; max-width: 80ch; margin: var(--dh-3) 0 0; padding: var(--dh-2) 0 0;
-  border-top: 1px solid var(--dh-line); font-size: var(--dh-fs-xs); line-height: 1.45; color: var(--dh-ink-2); }
+  border-top: 1px solid var(--dh-line); font-size: var(--dh-fs-sm); line-height: 1.5; color: var(--dh-ink-2); }
 ol.dh-sources { display: grid; gap: 3px; list-style: none; counter-reset: dh-src; }
 /* The number hangs in its own column; the line stays inline text, so a link or <time> inside it flows with it. */
 ol.dh-sources > li { counter-increment: dh-src; position: relative; padding-left: 1.6em;
@@ -784,8 +800,13 @@ ol.dh-sources > li:target { color: var(--dh-ink); background: var(--dh-brand-sof
   border-radius: var(--dh-r1); font-size: var(--dh-fs-xs); line-height: 1.4; color: var(--dh-ink-2); background: var(--dh-chip); }
 .dh-chip--test::before { content: none; display: none; }
 
-/* Keep each separator with the preceding metadata item when the row wraps. */
-.dh-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; min-width: 0;
-  margin: 0; padding: 0; list-style: none; color: var(--dh-ink-2); font-size: var(--dh-fs-sm); }
-.dh-meta > * { display: inline-flex; align-items: baseline; min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
-.dh-meta > :not(:last-child)::after { content: "·"; flex: none; margin-inline-start: 8px; color: var(--dh-ink-3); }
+/* Metadata items separated by dots that never dangle: each item's dot sits in the gap before it, and the row clips
+   its first gap, where the dot before each line's first item sits. */
+.dh-meta { --dh-meta-gap: 18px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 0; min-width: 0;
+  margin: 0 0 0 calc(-1 * var(--dh-meta-gap)); padding: 0; list-style: none; overflow-x: clip;
+  clip-path: inset(-100vh 0 -100vh var(--dh-meta-gap));
+  color: var(--dh-ink-2); font-size: var(--dh-fs-sm); }
+.dh-meta > * { position: relative; display: inline-flex; align-items: baseline; min-width: 0; max-width: 100%;
+  margin-inline-start: var(--dh-meta-gap); overflow-wrap: anywhere; }
+.dh-meta > *::before { content: "·"; position: absolute; right: 100%; width: var(--dh-meta-gap); text-align: center;
+  color: var(--dh-ink-3); }

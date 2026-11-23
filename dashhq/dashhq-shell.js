@@ -409,8 +409,7 @@
     ':host{display:block;position:relative;z-index:40}' +
     ':host([sticky]){position:sticky;top:0}' +
     `.bar{position:relative;background:var(--dh-chrome);color:var(--dh-chrome-ink);${CHROME_SAVE};` +
-    'background-image:radial-gradient(rgba(166,211,247,.07) 1px,transparent 1.2px);background-size:14px 14px;' +
-    'box-shadow:inset 0 -2px 0 var(--dh-brand);' +
+    'box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--dh-brand) 55%,var(--dh-chrome));' +
     '--dh-nav-dir:row;--dh-nav-h:32px;--dh-nav-fs:14px;--dh-nav-pad:10px;--dh-nav-align:center;' +
     '--dh-nav-only-phone:none;--dh-nav-only-desk:flex}' +
     `.row{${CHROME_ON};--dh-nav-ink:var(--dh-chrome-ink-2);--dh-nav-current-ink:var(--dh-chrome-ink);` +
@@ -452,10 +451,10 @@
     /* One pill everywhere. A switch (more than one network) is a bordered button with a chevron; a site with one
        network shows the same dot and name as a plain label. Mainnet's dot is the real-funds caution colour, Testnet's
        a hollow ring, a devnet's a dashed ring. */
-    '.net{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 10px;border:1px solid var(--dh-line-2);' +
-    'border-radius:var(--dh-r2);background:transparent;font-size:14px;font-weight:560;white-space:nowrap;' +
+    '.net{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 10px;border:1px solid transparent;' +
+    'border-radius:var(--dh-r2);background:var(--dh-chip);font-size:14px;font-weight:560;white-space:nowrap;' +
     'color:var(--dh-ink)}' +
-    'button.net{padding:0 6px 0 10px}' +
+    'button.net{padding:0 6px 0 10px;border-color:var(--dh-line-2);background:transparent}' +
     'button.net:hover{background:var(--dh-hover)}' +
     '.net .dot{box-sizing:border-box;width:8px;height:8px;border-radius:50%;background:var(--dh-chrome-real);flex:none}' +
     '.net.test .dot,.net.dev .dot{background:transparent;border:1.5px solid var(--dh-ink-2)}' +
@@ -555,9 +554,6 @@
     '.bar.compact.tabs .nav.scrolls{--dh-nav-mask:linear-gradient(90deg,#000 calc(100% - 32px),transparent)}' +
     '.bar.compact.tabs .nav.scrolls.at-end{--dh-nav-mask:linear-gradient(270deg,#000 calc(100% - 32px),transparent)}' +
     '.bar.compact.tabs .nav.empty,.bar.compact.tabs.typing .nav{display:none}' +
-    /* content fades out above the tab bar instead of being cut by it */
-    '.bar.compact.tabs .nav::before{content:"";position:absolute;left:0;right:0;bottom:calc(100% + 1px);height:24px;' +
-    'background:linear-gradient(to top,var(--dh-page),transparent);pointer-events:none}' +
     '.bar.compact.tabs .family{border-top:0;padding-top:0}' +
     '.bar.compact .net{height:36px}' +
 
@@ -584,9 +580,8 @@
   // under it (border-image outset paints without adding scroll height), so a short page never ends on a strip of page
   // colour. Two rows: the wordmark and sentence, then the links, all on one left edge.
   const FOOT_CSS = BASE_CSS +
-    ':host{display:block;margin-top:var(--dh-6)}' +
+    ':host{display:block;margin-top:var(--dh-5)}' +
     '.f{background-color:var(--dh-foot);color:var(--dh-foot-ink-2);font-size:14px;line-height:1.55;' +
-    'background-image:radial-gradient(var(--dh-foot-grid) 1px,transparent 1.2px);background-size:14px 14px;' +
     'border-top:1px solid var(--dh-foot-line);padding-bottom:var(--dh-tabs-h,0px);' +
     'border-image:linear-gradient(var(--dh-foot),var(--dh-foot)) fill 0/0/0 0 100vh 0;' +
     '--dh-focus:var(--dh-foot-link)}' +
@@ -600,6 +595,9 @@
     'text-underline-offset:3px}' +
     '.links a:hover{text-decoration-color:currentColor}' +
     '::slotted(*){display:inline!important;margin:0!important;padding:0!important;font:inherit!important;color:inherit!important}' +
+    /* A product's wrapper (a div or p of links and a lead-in) dissolves, so every link and lead-in is an item of the same
+       wrapping row with even gaps: nothing hangs on an indented second line. */
+    '::slotted(:is(div,p,nav,ul,span)){display:contents!important}' +
     '::slotted(a){color:var(--dh-foot-link)!important;text-decoration:underline!important;' +
     'text-decoration-color:color-mix(in srgb,currentColor 45%,transparent)!important;text-underline-offset:3px!important}' +
     /* Phone: one left-aligned column: the wordmark, the sentence, then the links. */
