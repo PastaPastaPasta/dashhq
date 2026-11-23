@@ -119,7 +119,7 @@
       {terms:/fee|contract cost|estimate/, title:'Estimate contract fees', product:'fees', path:'/', description:'Estimate what registering a data contract costs.'},
       {terms:/name contest|contested|username vote/, title:'Name contests', product:'gov', path:'/names', description:'Inspect contested usernames and their votes.'},
       {terms:/pollr|polls?/, title:'Pollr', product:'pollr', path:'/', description:'Create a poll and collect answers on Testnet.'},
-      {terms:/multi-?sig|threshold|t-of-n/, title:'Multisig', product:'multisig', path:'/', href:'https://new-multisig.dashhq.org/', description:'Testnet preview: threshold (t-of-n) BLS keys for Dash Platform identities.'}
+      {terms:/multi-?sig|threshold|t-of-n/, title:'Multisig', product:'multisig', path:'/', href:'https://multisig.dashhq.org/', description:'Testnet preview: threshold (t-of-n) BLS keys for Dash Platform identities.'}
     ];
     tasks.filter(function(task){return task.terms.test(text);}).reverse().forEach(function(task){var item=destination(task.title,task.product,task.path,task.description);if(task.href) item.href=task.href;destinations.unshift(item);});
     var seen = new Set();
