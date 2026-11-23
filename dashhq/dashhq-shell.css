@@ -88,3 +88,7 @@ html[data-dh-tabs] { scroll-padding-bottom: var(--dh-tabs-h); }
 /* Slots carry inline footer copy and links, never another layout. */
 dashhq-footer :is(p, div, nav, span) { display: inline; margin: 0; padding: 0; }
 dashhq-footer a { color: inherit; text-decoration: underline; text-decoration-color: var(--dh-chrome-line-2); text-underline-offset: 3px; }
+/* The page ends at the footer: below it (and above the bar, on overscroll) the canvas is the chrome's navy, not page
+   colour. Zero specificity, so a product's own html or body background and margin always win. */
+:where(html:has(dashhq-footer)) { background-color: var(--dh-chrome); }
+:where(body:has(dashhq-footer)) { margin: 0; background-color: var(--dh-page); }
