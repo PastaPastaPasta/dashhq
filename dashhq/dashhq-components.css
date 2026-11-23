@@ -11,8 +11,11 @@
    - Focus: 2px --dh-focus outline, 2px offset, on every interactive element (--dh-ring-shadow for shadow systems).
    - Casing: sentence case. Components reset text-transform and letter-spacing so framework defaults can't
      uppercase a label; the words themselves must be written in sentence case ("Create identity", "Sign in").
-   - Primary: the one committing action in view, filled amber (--dh-act) everywhere, apps included.
+   - Primary: the one committing action in view, filled Dash blue with white text (--dh-act) everywhere, apps
+     included. One per view.
    - Selection: --dh-select and --dh-select-soft (Dash blue; an app's accent with <html data-dh-accent>). Links stay blue.
+   - Status colour marks the exception. A state that is the same on every row ("Answering", "Success") gets no colour:
+     use the neutral variants (.dh-badge, .dh-badge--neutral, .dh-status--neutral) and colour only the row that differs.
 
    Contents: layout · page header · section · buttons · fields · segmented control · tabs · cards · choices · stats ·
    tables (+ phone row cards) · key/value · badges · notices · states · stepper · misc */
@@ -20,7 +23,7 @@
 /* ================================================================ layout */
 /* Short pages keep the footer at the bottom of the screen: put .dh-fill on <body> (or the element that holds the bar,
    <main> and the footer). <main>, or a child marked .dh-fill__main, takes the spare height. */
-.dh-fill { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; margin: 0; }
+.dh-fill { box-sizing: border-box; display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; margin: 0; }
 .dh-fill > main, .dh-fill > .dh-fill__main { flex: 1 0 auto; }
 /* The container lines up with the bar: same max width, same gutter, border-box, so the page's left edge is the
    bar's left edge on every site. Put all page content inside one; full-bleed bands sit outside it. */
@@ -79,13 +82,14 @@
 .dh-page-header { display: grid; gap: var(--dh-3); margin-block: 0 var(--dh-6); min-width: 0; }
 .dh-page-header__row { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: var(--dh-4) var(--dh-6); }
 .dh-page-header__text { display: grid; gap: var(--dh-2); flex: 1 1 420px; min-width: 0; }
+.dh-page-header__title-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dh-2) var(--dh-3); min-width: 0; }
 .dh-page-header__kicker { margin: 0; font-size: var(--dh-fs-sm); font-weight: var(--dh-w-ui); color: var(--dh-ink-2);
   text-transform: none; letter-spacing: 0; }
 .dh-page-header__title { margin: 0; font: var(--dh-w-head) var(--dh-fs-h1)/var(--dh-lh-head) var(--dh-font);
   font-stretch: var(--dh-stretch-head); letter-spacing: -.015em; text-wrap: balance; overflow-wrap: anywhere; }
 .dh-page-header--home .dh-page-header__title { font-size: var(--dh-fs-display); line-height: var(--dh-lh-display);
   font-stretch: var(--dh-stretch-display); letter-spacing: -.02em; }
-.dh-page-header__lede { margin: 0; max-width: 64ch; font-size: var(--dh-fs-lead); line-height: 1.55; color: var(--dh-ink-2); }
+.dh-page-header__lede { margin: 0; max-width: 72ch; font-size: var(--dh-fs-lead); line-height: 1.55; color: var(--dh-ink-2); }
 .dh-page-header__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dh-2); flex: none; max-width: 100%; }
 .dh-page-header__meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dh-2) var(--dh-3);
   font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
@@ -110,7 +114,7 @@
   gap: var(--dh-2) var(--dh-4); margin-bottom: var(--dh-4); }
 .dh-section__title { grid-column: 1; margin: 0; font: var(--dh-w-head) var(--dh-fs-h2)/var(--dh-lh-head) var(--dh-font);
   font-stretch: var(--dh-stretch-head); letter-spacing: -.008em; text-wrap: balance; }
-.dh-section__desc { grid-column: 1 / -1; grid-row: 2; margin: 0; max-width: 72ch; font-size: var(--dh-fs-ui); color: var(--dh-ink-2); }
+.dh-section__desc { grid-column: 1 / -1; grid-row: 2; margin: 0; max-width: 80ch; font-size: var(--dh-fs-ui); line-height: 1.55; color: var(--dh-ink-2); }
 .dh-section__actions { grid-column: 2; grid-row: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--dh-2); }
 @media (max-width: 640px) {
   .dh-section { margin-bottom: var(--dh-6); } .dh-section--rule { padding-top: var(--dh-5); }
@@ -120,7 +124,10 @@
 
 /* ================================================================ buttons
    .dh-btn                    secondary (the default): navigation and everything that doesn't commit
-   .dh-btn--primary           the one committing action in view: Vote, Get tDASH, Create identity, Send (--act: alias)
+   .dh-btn--primary           the one committing action in view: Vote, Get tDASH, Create identity, Send (--act: alias).
+                              Dash blue fill, white text, in every product.
+   .dh-btn--lead              "go here first" navigation (Open the map, Start): Dash blue outline, so it never reads
+                              as a second primary
    .dh-btn--quiet             toolbars, Cancel, icon buttons
    .dh-btn--link              an action that reads as a link ("Show all 25", "Copy")
    .dh-btn--destructive       remove, revoke, delete; always behind a confirm that names the thing (--danger: alias)
@@ -143,15 +150,17 @@
 .dh-btn:active { background-color: var(--dh-line); }
 .dh-btn:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
 
-/* The committing action is amber in every product, apps included: an app's accent marks its brand and selection, never
-   this button. */
+/* The committing action is Dash blue in every product, apps included: an app's accent marks its brand and selection,
+   never this button. --act is an alias. */
 .dh-btn--primary, .dh-btn--act { border-color: transparent; background-color: var(--dh-act); color: var(--dh-act-ink);
   font-weight: var(--dh-w-strong); }
-.dh-btn--primary:hover, .dh-btn--act:hover {
-  background-color: var(--dh-act); color: var(--dh-act-ink);
-  background-image: linear-gradient(var(--dh-shade-1), var(--dh-shade-1));
-}
-.dh-btn--primary:active, .dh-btn--act:active { background-color: var(--dh-act); background-image: linear-gradient(var(--dh-shade-2), var(--dh-shade-2)); }
+.dh-btn--primary:hover, .dh-btn--act:hover { background-color: var(--dh-act-hover); color: var(--dh-act-ink); background-image: none; }
+.dh-btn--primary:active, .dh-btn--act:active { background-color: var(--dh-act-hover); color: var(--dh-act-ink);
+  background-image: linear-gradient(var(--dh-shade-2), var(--dh-shade-2)); }
+/* "go here first" navigation (Open the map, Start): outlined in Dash blue, never a second fill */
+.dh-btn--lead { border-color: var(--dh-brand); background-color: transparent; color: var(--dh-brand-ink); font-weight: var(--dh-w-strong); }
+.dh-btn--lead:hover { border-color: var(--dh-brand); background-color: var(--dh-brand-soft); color: var(--dh-brand-ink); }
+.dh-btn--lead:active { background-color: var(--dh-brand-soft); color: var(--dh-brand-ink); box-shadow: inset 0 0 0 1px var(--dh-brand); }
 
 .dh-btn--secondary { /* the default; the name exists so markup can say what it means */ }
 
@@ -222,7 +231,7 @@
   transition: border-color var(--dh-dur-1) var(--dh-ease);
 }
 .dh-textarea, textarea.dh-input { height: auto; min-height: 96px; padding: 8px 10px; line-height: 1.45; resize: vertical; }
-.dh-input--mono { font-family: var(--dh-mono); font-size: 13px; font-variant-ligatures: none; }
+.dh-input--mono { font-family: var(--dh-mono); font-size: var(--dh-fs-code); font-variant-ligatures: none; }
 .dh-input--sm, .dh-select--sm { height: var(--dh-ctl-h-sm); font-size: var(--dh-fs-sm); }
 .dh-input::placeholder, .dh-textarea::placeholder { color: var(--dh-ink-2); opacity: 1; }
 .dh-input:hover, .dh-select:hover, .dh-textarea:hover { border-color: var(--dh-ink-2); }
@@ -263,7 +272,7 @@
 
 /* ================================================================ segmented control
    2 to 5 mutually exclusive views of the same data. Buttons with aria-pressed, or links with aria-current. */
-.dh-seg { box-sizing: border-box; display: inline-flex; gap: 2px; padding: 2px; border-radius: var(--dh-r2); background: var(--dh-sunken);
+.dh-seg { box-sizing: border-box; display: inline-flex; gap: 2px; padding: 2px; border-radius: var(--dh-r2); background: var(--dh-track);
   max-width: 100%; overflow-x: auto; scrollbar-width: none; }
 .dh-seg > button, .dh-seg > a {
   box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -273,8 +282,9 @@
 }
 .dh-seg > :hover { color: var(--dh-ink); }
 .dh-seg > [aria-pressed="true"], .dh-seg > [aria-current="page"], .dh-seg > [aria-current="true"], .dh-seg > [aria-selected="true"] {
-  background: var(--dh-surface); color: var(--dh-ink); box-shadow: 0 0 0 1px var(--dh-line), 0 1px 2px rgba(8, 24, 36, .08);
+  background: var(--dh-seg-on); color: var(--dh-seg-on-ink); font-weight: var(--dh-w-strong); box-shadow: none;
 }
+.dh-seg > :is([aria-pressed="true"], [aria-current="page"], [aria-current="true"], [aria-selected="true"]) .dh-count { color: inherit; opacity: .8; }
 .dh-seg > :focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: 0; }
 .dh-seg .dh-count { color: var(--dh-ink-2); font-weight: 400; }
 .dh-seg--block { display: flex; width: 100%; }
@@ -301,7 +311,9 @@
 /* ================================================================ cards and panels
    Surface, 1px line, radius 10, no shadow. Never a card inside a card: nest with hairlines instead. */
 .dh-panel, .dh-card { box-sizing: border-box; min-width: 0; background: var(--dh-surface); border: 1px solid var(--dh-line);
-  border-radius: var(--dh-r3); padding: var(--dh-4) var(--dh-5); }
+  border-radius: var(--dh-r3); padding: var(--dh-4) var(--dh-5); box-shadow: var(--dh-shadow-card); }
+/* The one card a view leans on (the form, the answer): a heavier edge rather than another box around it. */
+.dh-card--key { border-color: var(--dh-line-2); }
 .dh-panel__head, .dh-card__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
   gap: var(--dh-2) var(--dh-3); margin-bottom: var(--dh-3); }
 .dh-card__title { margin: 0; font: var(--dh-w-strong) var(--dh-fs-h3)/var(--dh-lh-head) var(--dh-font); letter-spacing: 0; }
@@ -363,7 +375,7 @@
 .dh-dialog { box-sizing: border-box; width: min(520px, calc(100vw - 2 * var(--dh-gutter))); max-height: calc(100dvh - 32px);
   margin: auto; padding: var(--dh-5); overflow: auto; background: var(--dh-surface); color: var(--dh-ink);
   border: 0; border-radius: var(--dh-r3); box-shadow: var(--dh-shadow-pop); font: var(--dh-w-body) var(--dh-fs-body)/var(--dh-lh-body) var(--dh-font); }
-.dh-dialog::backdrop { background: rgba(6, 19, 27, .52); }
+.dh-dialog::backdrop { background: rgba(6, 14, 36, .55); }
 .dh-dialog__head { display: flex; align-items: flex-start; gap: var(--dh-3); margin-bottom: var(--dh-2); }
 .dh-dialog__title { flex: 1; margin: 0; font: var(--dh-w-head) var(--dh-fs-h2)/var(--dh-lh-head) var(--dh-font);
   font-stretch: var(--dh-stretch-head); letter-spacing: -.015em; text-transform: none; }
@@ -373,26 +385,35 @@
 @media (max-width: 640px) { .dh-dialog { padding: var(--dh-4); } }
 
 /* ================================================================ stats */
-.dh-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-.dh-stat { display: grid; gap: 2px; align-content: start; padding: 18px; border: 1px solid var(--dh-line); border-radius: 10px; background: var(--dh-surface); min-width: 0; }
-.dh-stat--key { border-left: 3px solid var(--dh-select); padding-left: 16px; }
-.dh-stat--good { border-left: 3px solid var(--dh-good); padding-left: 16px; }
-.dh-stat--warn { border-left: 3px solid var(--dh-warn); padding-left: 16px; }
+.dh-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 16px; }
+.dh-stat { display: grid; gap: 6px; align-content: start; padding: 20px; border: 1px solid var(--dh-line); border-radius: 10px; background: var(--dh-surface); min-width: 0; }
+/* tone is carried by the value, never a coloured edge; a value that is simply fine stays ink (--good is kept as ink) */
+.dh-stat--key .dh-stat__value { color: var(--dh-brand-ink); }
+.dh-stat--good .dh-stat__value { color: var(--dh-ink); }
+.dh-stat--warn .dh-stat__value { color: var(--dh-warn); }
+.dh-stat--bad .dh-stat__value { color: var(--dh-bad); }
+/* Figures in a row without boxes: a 1px rule above each, for a KPI strip under a page header. */
+.dh-stats--ruled { gap: var(--dh-4) var(--dh-5); }
+.dh-stats--ruled > .dh-stat { padding: var(--dh-3) 0 0; border: 0; border-top: 1px solid var(--dh-line); border-radius: 0; background: none; box-shadow: none; }
 .dh-stat__label { font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
 .dh-stat__value { font: var(--dh-w-head) var(--dh-fs-stat)/1.15 var(--dh-font); font-stretch: var(--dh-stretch-stat);
   letter-spacing: -.015em; font-variant-numeric: tabular-nums; }
-.dh-stat__value small { font-size: 14px; font-weight: var(--dh-w-ui); font-stretch: 100%; color: var(--dh-ink-2); letter-spacing: 0; }
-.dh-stat__note { font-size: 12.5px; color: var(--dh-ink-2); }
+.dh-stat__value small { font-size: var(--dh-fs-ui); font-weight: var(--dh-w-ui); font-stretch: 100%; color: var(--dh-ink-2); letter-spacing: 0; }
+.dh-stat__note { font-size: var(--dh-fs-sm); line-height: 1.4; color: var(--dh-ink-2); overflow-wrap: anywhere; }
 @media (max-width: 480px) {
   .dh-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .dh-stat__value { font-size: 22px; }
+  .dh-stat__value { font-size: 26px; }
 }
 
 /* ================================================================ tables */
 .dh-table-wrap { overflow-x: auto; }
+/* A table on its own card: the wrap carries the edge, so it never clips the sort buttons' focus rings. */
+.dh-table-wrap--card { background: var(--dh-surface); border: 1px solid var(--dh-line); border-radius: var(--dh-r3); }
+.dh-table-wrap--card > .dh-table th:first-child, .dh-table-wrap--card > .dh-table td:first-child { padding-left: var(--dh-4); }
+.dh-table-wrap--card > .dh-table th:last-child, .dh-table-wrap--card > .dh-table td:last-child { padding-right: var(--dh-4); }
 .dh-table { width: 100%; border-collapse: collapse; font-size: var(--dh-fs-ui); font-variant-numeric: tabular-nums; }
 .dh-table caption { padding: 0 0 var(--dh-2); text-align: left; font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
-.dh-table th { text-align: left; font-size: var(--dh-fs-sm); font-weight: var(--dh-w-ui); color: var(--dh-ink-2);
+.dh-table th { text-align: left; font-size: var(--dh-fs-sm); font-weight: var(--dh-w-strong); color: var(--dh-ink-2);
   text-transform: none; letter-spacing: 0; padding: 8px 12px; border-bottom: 1px solid var(--dh-line); white-space: nowrap;
   background: var(--dh-surface); vertical-align: bottom; }
 .dh-table td { padding: 9px 12px; border-bottom: 1px solid var(--dh-line); vertical-align: middle; }
@@ -400,13 +421,13 @@
 .dh-table tbody tr[aria-selected="true"] td, .dh-table tbody tr.is-selected td { background: var(--dh-select-soft); }
 .dh-table tbody tr:last-child td { border-bottom: 0; }
 .dh-table .dh-r, .dh-table th.dh-r { text-align: right; }
-.dh-table td .dh-sub { display: block; font-size: 12.5px; color: var(--dh-ink-2); }
+.dh-table td .dh-sub { display: block; font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
 .dh-table th[aria-sort] { color: var(--dh-ink); }
 .dh-table th[aria-sort="ascending"]::after { content: " ↑"; }
 .dh-table th[aria-sort="descending"]::after { content: " ↓"; }
 .dh-table th > button { all: unset; cursor: pointer; border-radius: var(--dh-r1); }
 .dh-table th > button:hover { color: var(--dh-ink); }
-.dh-table th > button:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
+.dh-table th > button:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: -2px; }
 .dh-table :where(a:not(.dh-btn)) { color: var(--dh-brand-ink); text-decoration: none; }
 .dh-table :where(a:not(.dh-btn)):hover { text-decoration: underline; text-underline-offset: 3px; }
 .dh-table--compact th { padding: 6px 10px; } .dh-table--compact td { padding: 6px 10px; }
@@ -497,26 +518,33 @@
 }
 
 /* ================================================================ badges and status
-   Status, never actions: never clickable. Always a word, never colour alone. .dh-pill is the same thing. */
+   Status, never actions: never clickable. Always a word, never colour alone. .dh-pill is the same thing.
+   Colour only the exception: a state every row shares ("Answering", "Success", "Enabled") is the plain badge or
+   .dh-badge--neutral, and only the row that differs gets --warn or --bad. --good is Dash blue, for the rare state
+   that is good news worth seeing (a payout sent), not for the normal case. --real marks real mainnet funds. */
 .dh-badge, .dh-pill {
-  box-sizing: border-box; display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 7px; border-radius: var(--dh-r1);
+  box-sizing: border-box; display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 8px; border-radius: var(--dh-r1);
   font: var(--dh-w-ui) var(--dh-fs-xs)/1 var(--dh-font); text-transform: none; letter-spacing: 0; white-space: nowrap; vertical-align: middle;
   background: var(--dh-chip); color: var(--dh-ink-2); box-shadow: inset 0 0 0 1px var(--dh-chip-line);
 }
 .dh-badge::before, .dh-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: none; flex: none; }
 .dh-badge--dot::before, .dh-pill--dot::before { display: block; }
+.dh-badge--neutral, .dh-pill--neutral { background: var(--dh-neutral-soft); color: var(--dh-neutral); }
 .dh-badge--good, .dh-pill--good { background: var(--dh-good-soft); color: var(--dh-good); }
 .dh-badge--warn, .dh-pill--warn { background: var(--dh-warn-soft); color: var(--dh-warn); }
 .dh-badge--bad,  .dh-pill--bad  { background: var(--dh-bad-soft);  color: var(--dh-bad); }
 .dh-badge--info, .dh-pill--info { background: var(--dh-info-soft); color: var(--dh-info); }
+.dh-badge--real, .dh-pill--real { background: var(--dh-real-soft); color: var(--dh-real); }
 .dh-badge--outline { background: transparent; box-shadow: inset 0 0 0 1px var(--dh-line-2); }
 /* Inline status without a box, for dense tables: "● Reachable". */
 .dh-status { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .dh-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--dh-ink-3); flex: none; }
+.dh-status--neutral::before { background: transparent; box-shadow: inset 0 0 0 1.5px var(--dh-line-2); }
 .dh-status--good::before { background: var(--dh-good); }
 .dh-status--warn::before { background: var(--dh-warn); }
 .dh-status--bad::before { background: var(--dh-bad); }
 .dh-status--info::before { background: var(--dh-brand); }
+.dh-status--real::before { background: var(--dh-real); }
 
 /* ---------- proof badge: "Verified" means a cryptographic check passed in this browser, nothing else ---------- */
 .dh-proof {
@@ -526,8 +554,9 @@
 }
 .dh-proof::before { content: ""; width: 10px; height: 10px; flex: none; border-radius: 50%; border: 1.5px solid currentColor; box-sizing: border-box; }
 .dh-proof:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
-.dh-proof--ok { color: var(--dh-good); border-color: color-mix(in srgb, var(--dh-good) 40%, transparent); }
-.dh-proof--ok::before { width: 5px; height: 9px; margin: -2px 3px 0 2px; border-radius: 0; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+/* Checked is not a colour: the tick says it, in ink. */
+.dh-proof--ok { color: var(--dh-ink); border-color: var(--dh-line-2); }
+.dh-proof--ok::before { width: 5px; height: 9px; margin: -2px 3px 0 2px; border-radius: 0; border-width: 0 2px 2px 0; transform: rotate(45deg); color: var(--dh-brand-ink); }
 .dh-proof--checking::before { border-color: var(--dh-line-2); border-top-color: var(--dh-brand); animation: dh-rot .8s linear infinite; }
 .dh-proof--reported { color: var(--dh-ink-2); }
 .dh-proof--reported { border-style: dashed; }
@@ -540,7 +569,7 @@
 
 /* ---------- sources beside figures: a source or check label never sits inside a sentence ----------
    .dh-src: a quiet tag after a space at the end of a label line, in a table header, or after a complete value:
-     Asked for <span class="dh-src">Platform records</span>. Dotted = reported; --ok (solid green) = checked in this
+     Asked for <span class="dh-src">Platform records</span>. Dotted = reported; --ok (solid, ink) = checked in this
      browser (say so to screen readers too: <span class="dh-sr">, checked in this browser</span>); --warn (dashed) =
      stale or not checked. It wraps inside its tile when long. Like a badge it is a label, never a link: the detail
      goes in a numbered line or the proof badge.
@@ -553,7 +582,7 @@
   vertical-align: 1px; border: 1px dotted var(--dh-line-2); border-radius: var(--dh-r1);
   font: var(--dh-w-ui) var(--dh-fs-xs)/1.25 var(--dh-font); letter-spacing: 0; text-transform: none; color: var(--dh-ink-2);
   overflow-wrap: anywhere; text-decoration: none; }
-.dh-src--ok { color: var(--dh-good); border-style: solid; border-color: color-mix(in srgb, var(--dh-good) 45%, transparent); }
+.dh-src--ok { color: var(--dh-ink); border-style: solid; border-color: var(--dh-line-2); }
 .dh-src--warn { color: var(--dh-warn); border-style: dashed; border-color: currentColor; }
 .dh-ref { font-size: .72em; line-height: 0; vertical-align: super; font-weight: var(--dh-w-strong); font-variant-numeric: tabular-nums; }
 .dh-ref a { padding: 0 1px; border-radius: var(--dh-r1); text-decoration: none; }
@@ -576,15 +605,20 @@ ol.dh-sources > li:target { color: var(--dh-ink); background: var(--dh-brand-sof
    <div class="dh-notice__actions">…</div> </div> */
 .dh-notice { --dh-tone: var(--dh-info); --dh-tone-soft: var(--dh-info-soft);
   box-sizing: border-box; display: grid; gap: 4px; padding: var(--dh-3) var(--dh-4); border-radius: var(--dh-r2);
-  border-left: 3px solid var(--dh-tone); background: var(--dh-tone-soft); color: var(--dh-ink); font-size: var(--dh-fs-ui); }
+  border: 1px solid color-mix(in srgb, var(--dh-tone) 45%, transparent); background: var(--dh-tone-soft); color: var(--dh-ink); font-size: var(--dh-fs-ui); }
 .dh-notice p { margin: 0; }
 .dh-notice strong, .dh-notice__title { font-weight: var(--dh-w-strong); color: var(--dh-ink); }
 .dh-notice :where(a:not(.dh-btn)) { color: var(--dh-ink); text-decoration: underline; text-underline-offset: 3px; }
 .dh-notice__actions { display: flex; flex-wrap: wrap; gap: var(--dh-2); margin-top: 6px; }
 .dh-notice--info { --dh-tone: var(--dh-info); --dh-tone-soft: var(--dh-info-soft); }
-.dh-notice--success { --dh-tone: var(--dh-good); --dh-tone-soft: var(--dh-good-soft); }
+.dh-notice--success { --dh-tone: var(--dh-brand); --dh-tone-soft: var(--dh-brand-soft); }
+.dh-notice--real { --dh-tone: var(--dh-real); --dh-tone-soft: var(--dh-real-soft); }
 .dh-notice--warn { --dh-tone: var(--dh-warn); --dh-tone-soft: var(--dh-warn-soft); }
 .dh-notice--error { --dh-tone: var(--dh-bad); --dh-tone-soft: var(--dh-bad-soft); }
+/* a partial-data note: one quiet line, not a box (some data couldn't refresh; the rest is fine) */
+.dh-notice--inline { display: block; position: relative; padding: 0 0 0 16px; border: 0; background: none;
+  color: var(--dh-ink-2); font-size: var(--dh-fs-sm); }
+.dh-notice--inline::before { content: ""; position: absolute; left: 0; top: .5em; width: 8px; height: 8px; border-radius: 50%; background: var(--dh-tone); }
 
 /* ================================================================ states: empty, loading, error */
 /* Empty: say what would be here and offer the one next step. Dashed = nothing real yet. */
@@ -617,9 +651,9 @@ ol.dh-sources > li:target { color: var(--dh-ink); background: var(--dh-brand-sof
     animation: dh-shimmer 1.4s linear infinite; }
 }
 /* Progress for long checks: "Checking 300 of 1,044 older masternode entries". */
-.dh-progress { display: block; width: 100%; height: 6px; border: 0; border-radius: 3px; background: var(--dh-sunken); color: var(--dh-brand);
+.dh-progress { display: block; width: 100%; height: 6px; border: 0; border-radius: 3px; background: var(--dh-track); color: var(--dh-brand);
   -webkit-appearance: none; appearance: none; overflow: hidden; }
-.dh-progress::-webkit-progress-bar { background: var(--dh-sunken); }
+.dh-progress::-webkit-progress-bar { background: var(--dh-track); }
 .dh-progress::-webkit-progress-value { background: var(--dh-brand); border-radius: 3px; }
 .dh-progress::-moz-progress-bar { background: var(--dh-brand); border-radius: 3px; }
 
@@ -631,7 +665,7 @@ ol.dh-sources > li:target { color: var(--dh-ink); background: var(--dh-brand-sof
 .dh-error details { color: var(--dh-ink-2); font-size: var(--dh-fs-sm); }
 .dh-error summary { cursor: pointer; width: fit-content; }
 .dh-error pre { margin: 6px 0 0; padding: 8px 10px; background: var(--dh-sunken); border-radius: var(--dh-r1);
-  font: 12px/1.45 var(--dh-mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+  font: var(--dh-fs-code)/1.45 var(--dh-mono); white-space: pre-wrap; overflow-wrap: anywhere; }
 .dh-error .dh-btn { justify-self: start; margin-top: 4px; }
 .dh-error .dh-actions { margin-top: 4px; }
 .dh-error .dh-actions .dh-btn { margin-top: 0; }
@@ -651,7 +685,7 @@ ol.dh-sources > li:target { color: var(--dh-ink); background: var(--dh-brand-sof
 .dh-steps > li::before {
   content: counter(dh-step); box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; flex: none;
   width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--dh-line-2); background: var(--dh-surface);
-  font: var(--dh-w-strong) 12px/1 var(--dh-font); font-variant-numeric: tabular-nums; color: var(--dh-ink-2);
+  font: var(--dh-w-strong) var(--dh-fs-xs)/1 var(--dh-font); font-variant-numeric: tabular-nums; color: var(--dh-ink-2);
 }
 .dh-steps > li:not(:last-child)::after { content: ""; flex: 1 1 auto; min-width: 12px; height: 1px; margin: 0 4px; background: var(--dh-line-2); }
 .dh-steps > li > :where(a:not(.dh-btn)) { color: inherit; text-decoration: none; border-radius: var(--dh-r1); }
@@ -677,7 +711,7 @@ ol.dh-sources > li:target { color: var(--dh-ink); background: var(--dh-brand-sof
 /* Raw data (JSON, schemas): scrolls inside its own box. */
 .dh-code { box-sizing: border-box; margin: 0; padding: var(--dh-3); max-width: 100%; overflow: auto; max-height: 480px;
   background: var(--dh-sunken); border-radius: var(--dh-r2); color: var(--dh-ink);
-  font: 12.5px/1.5 var(--dh-mono); font-variant-ligatures: none; tab-size: 2; white-space: pre; }
+  font: var(--dh-fs-code)/1.5 var(--dh-mono); font-variant-ligatures: none; tab-size: 2; white-space: pre; }
 /* A filter row above a table: search grows, selects keep their size; stacks on phones. */
 .dh-toolbar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--dh-3); margin-bottom: var(--dh-4); }
 .dh-toolbar > .dh-grow { flex: 1 1 260px; }
@@ -712,11 +746,12 @@ ol.dh-sources > li:target { color: var(--dh-ink); background: var(--dh-brand-sof
 }
 
 /* ---------- the blueprint plate (hub map, architecture diagrams) ---------- */
+/* Paper with blue linework in light, navy in dark: a figure, at most one per view. */
 .dh-plate { position: relative; background: var(--dh-plate); color: var(--dh-plate-line); border: 1px solid var(--dh-plate-edge);
-  border-radius: 4px; overflow: hidden; }
-.dh-plate::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .08;
+  border-radius: var(--dh-r3); overflow: hidden; }
+.dh-plate::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .06;
   background-image: radial-gradient(var(--dh-plate-line) 1px, transparent 1px); background-size: 16px 16px; }
-.dh-plate__label { font: 600 13px/1.2 var(--dh-font); font-stretch: var(--dh-stretch-dense); color: var(--dh-plate-ink); }
+.dh-plate__label { font: 600 var(--dh-fs-sm)/1.2 var(--dh-font); font-stretch: var(--dh-stretch-dense); color: var(--dh-plate-ink); }
 
 @keyframes dh-rot { to { transform: rotate(360deg); } }
 /* Reduced motion: spinners hold still; the words beside them ("Checking…", "Sending…") say it is working. */
@@ -727,7 +762,7 @@ ol.dh-sources > li:target { color: var(--dh-ink); background: var(--dh-brand-sof
 
 /* Disclosures and freshness */
 .dh-disclosure > summary { display: flex; flex-wrap: nowrap; align-items: center; gap: 8px; list-style: none; padding-block: 10px;
-  font: 560 15px/1.5 var(--dh-font); color: var(--dh-brand-ink); cursor: pointer; }
+  font: 560 var(--dh-fs-ui)/1.5 var(--dh-font); color: var(--dh-brand-ink); cursor: pointer; }
 .dh-disclosure > summary::marker { content: ""; }
 .dh-disclosure > summary::-webkit-details-marker { display: none; }
 .dh-disclosure > summary::before { content: ""; display: inline-block; vertical-align: middle; flex: none; width: 16px; height: 16px;
@@ -737,7 +772,7 @@ ol.dh-sources > li:target { color: var(--dh-ink); background: var(--dh-brand-sof
 .dh-disclosure > summary:focus-visible { outline: 2px solid var(--dh-focus); outline-offset: 2px; border-radius: var(--dh-r2); }
 .dh-time { font-variant-numeric: tabular-nums; color: var(--dh-ink-2); white-space: nowrap; }
 .dh-chip--test { display: inline-flex; align-items: center; padding: 2px 7px; border: 1px dashed var(--dh-line-2);
-  border-radius: var(--dh-r1); font-size: 12.5px; line-height: 1.4; color: var(--dh-ink-2); background: var(--dh-chip); }
+  border-radius: var(--dh-r1); font-size: var(--dh-fs-xs); line-height: 1.4; color: var(--dh-ink-2); background: var(--dh-chip); }
 .dh-chip--test::before { content: none; display: none; }
 
 /* Keep each separator with the preceding metadata item when the row wraps. */
