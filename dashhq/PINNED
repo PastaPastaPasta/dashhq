@@ -1,3 +1,4 @@
 Shell 1.9.5
 Design revision ca49a31cedb71a593a81a21fac9938979c1499a7
-sha256 dashhq-shell.js 1f298d9f46f8ea0b68f5b927597f4a8e312768bcf47ddc94fd9d7cf161d835ce
+sha256 dashhq-shell.js de250b99a1c0710a741dda7cd36911fd09425edc17b56f1aba1391c92c7c203c
+Local change: Multisig registry URL is https://multisig.dashhq.org (see SHELL.md)
