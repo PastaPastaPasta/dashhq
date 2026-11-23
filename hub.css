@@ -14,7 +14,7 @@ code{font-family:var(--dh-mono);font-size:max(13px,.9em)}
 :focus-visible{outline:2px solid var(--dh-focus);outline-offset:3px}
 .skip{position:absolute;left:-9999px;top:8px;padding:12px 18px;z-index:100;background:var(--dh-surface);color:var(--dh-brand-ink)}
 .skip:focus{left:12px}
-.hub-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);grid-template-areas:"title title" "lede find" "doors doors" "map map";column-gap:48px;align-items:start;padding-block:32px 40px}
+.hub-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);grid-template-areas:"title title" "lede find" "map map" "doors doors";column-gap:48px;align-items:start;padding-block:32px 40px}
 .hub-intro{display:contents}
 .hub-top h1{grid-area:title}
 .hub-top .lede{grid-area:lede}
