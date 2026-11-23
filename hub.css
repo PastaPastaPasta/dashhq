@@ -146,8 +146,7 @@ dashhq-footer{display:block;margin-top:24px}
  .eco{margin:20px -16px 0;padding:14px 16px 12px;border-inline:0;border-radius:0}
  .tier ul{grid-template-columns:repeat(2,minmax(0,1fr))}
  .fund>ul>li{flex-basis:calc(50% - 4px)}
- .map-node{height:auto;min-height:48px;padding:7px 10px}
- .map-node small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .map-node{padding-inline:10px}
  .map-key{gap:4px 16px}
  .dgroup :is(h2,h3){font-size:19px;padding:8px 12px}
  .group-lede{margin-left:16px}
