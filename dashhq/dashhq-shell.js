@@ -31,7 +31,7 @@
     forge:    { name: 'Forge',         url: 'https://forge.dashhq.org',    door: 'apps',       only: 'Testnet' },
     pollr:    { name: 'Pollr',         url: 'https://pollr.dashhq.org',    door: 'apps',       only: 'Testnet' },
     yappr:    { name: 'Yappr',         url: 'https://yap.pr',              door: 'apps',       only: 'Testnet' },
-    multisig: { name: 'Multisig',      url: 'https://new-multisig.dashhq.org', door: 'apps',   only: 'Testnet' }
+    multisig: { name: 'Multisig',      url: 'https://multisig.dashhq.org', door: 'apps',   only: 'Testnet' }
   };
   PRODUCTS.nodes = PRODUCTS.radar;
   const DOORS = [
@@ -581,10 +581,11 @@
     'border-image:linear-gradient(var(--dh-chrome),var(--dh-chrome)) fill 0/0/0 0 100vh 0;' +
     '--dh-focus:var(--dh-chrome-accent)}' +
     '.in{max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;padding:28px var(--dh-gutter) 32px;' +
-    'display:grid;grid-template-columns:auto minmax(240px,1fr) minmax(0,auto);align-items:baseline;gap:8px 28px}' +
-    '.home{color:var(--dh-chrome-ink);font-weight:650;font-stretch:112%;font-size:16px;letter-spacing:-.012em}' +
-    '.sentence{margin:0;min-width:0}' +
-    '.links{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:flex-end;gap:6px 18px;color:var(--dh-chrome-ink)}' +
+    'display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 28px}' +
+    '.home{flex:none;color:var(--dh-chrome-ink);font-weight:650;font-stretch:112%;font-size:16px;letter-spacing:-.012em}' +
+    '.sentence{flex:1 1 320px;margin:0;min-width:0}' +
+    '.links{flex:0 1 auto;margin-left:auto;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:flex-end;gap:6px 18px;' +
+    'color:var(--dh-chrome-ink)}' +
     '.links a{color:var(--dh-chrome-ink);text-decoration:underline;text-decoration-color:var(--dh-chrome-line-2);' +
     'text-underline-offset:3px}' +
     '.links a:hover{color:var(--dh-chrome-accent);text-decoration-color:currentColor}' +
@@ -593,8 +594,8 @@
     'text-underline-offset:3px!important}' +
     '::slotted(a:hover){color:var(--dh-chrome-accent)!important}' +
     /* Phone: the wordmark, then the sentence, then one row of links. */
-    '@media(max-width:720px){.in{grid-template-columns:minmax(0,1fr);gap:6px;padding:24px var(--dh-gutter) 28px}' +
-    '.links{justify-content:flex-start;gap:4px 18px;margin-top:8px}}' +
+    '@media(max-width:720px){.in{flex-direction:column;align-items:flex-start;gap:6px;padding:24px var(--dh-gutter) 28px}' +
+    '.sentence{flex:none}.links{margin-left:0;justify-content:flex-start;gap:4px 18px;margin-top:8px}}' +
     '@media (pointer:coarse){.links a,::slotted(a){display:inline-flex!important;align-items:center;min-height:40px}}';
 
   const HASH_CSS = BASE_CSS +
