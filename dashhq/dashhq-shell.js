@@ -31,7 +31,7 @@
     forge:    { name: 'Forge',         url: 'https://forge.dashhq.org',    door: 'apps',       only: 'Testnet' },
     pollr:    { name: 'Pollr',         url: 'https://pollr.dashhq.org',    door: 'apps',       only: 'Testnet' },
     yappr:    { name: 'Yappr',         url: 'https://yap.pr',              door: 'apps',       only: 'Testnet' },
-    multisig: { name: 'Multisig',      url: 'https://new-multisig.dashhq.org', door: 'apps',   only: 'Testnet' }
+    multisig: { name: 'Multisig',      url: 'https://multisig.dashhq.org', door: 'apps',   only: 'Testnet' }
   };
   PRODUCTS.nodes = PRODUCTS.radar;
   const DOORS = [
