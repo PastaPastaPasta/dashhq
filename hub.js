@@ -73,16 +73,20 @@
   var entries = indexRows.flatMap(function(row){
     return Array.from(row.querySelectorAll('.catalog-name > a')).map(function(link){
       return {title:link.textContent.replace('↗','').trim(), description:row.querySelector('.dd').textContent,
-        href:linkHref(link), site:link.dataset.family, text:searchText(row), tier:row.closest('.dgroup').dataset.tier, mono:row.dataset.mono,
+        href:linkHref(link), site:link.dataset.family, text:searchText(row), tier:row.closest('.dgroup').dataset.tier, mono:row.dataset.mono, icon:row.querySelector('.tile > *'),
         links:Array.from(row.querySelectorAll('.dby a,.resource-links a')).map(function(extra){return {title:extra.textContent.trim(),href:linkHref(extra)};})};
     });
   });
   function linkHref(link){
     return link.dataset.family ? dashhq.href(link.dataset.family, link.dataset.path || '/', link.dataset.network ? {network:link.dataset.network} : undefined) : link.href;
   }
-  var layers = {gov:['net','GV'], radar:['net','RA'], explorer:['platform','EX'], fees:['platform','FE'], pollr:['apps','PO'], arch:['platform','AR'], bridge:['platform','ST'], dapi:['platform','DA'], faucet:['platform','FA'], multisig:['apps','MS'], dashhq:['apps','ID']};
+  var layers = {gov:['net','GV','govhub'], radar:['net','RA','radar'], explorer:['platform','EX','explorer'], fees:['platform','FE','fees'], pollr:['apps','PO','pollr'], arch:['platform','AR','arch'], bridge:['platform','ST','bridge'], dapi:['platform','DA','dapi'], faucet:['platform','FA','faucet'], multisig:['apps','MS','multisig'], dashhq:['apps','ID','resource-0-0']};
+  function tile(product){
+    var row = rowById.get(layers[product][2]);
+    return {tier:row ? row.closest('.dgroup').dataset.tier : layers[product][0], mono:layers[product][1], icon:row ? row.querySelector('.tile > *') : null};
+  }
   function destination(title, product, path, description){
-    return {title:title, href:dashhq.href(product,path), site:product, description:description, tier:layers[product][0], mono:layers[product][1]};
+    return Object.assign({title:title, href:dashhq.href(product,path), site:product, description:description}, tile(product));
   }
   function run(){
     var raw = q.value.trim();
@@ -102,7 +106,7 @@
       return Number(b.title.toLowerCase() === text) - Number(a.title.toLowerCase() === text) || Number(matches(b.title.toLowerCase(),terms)) - Number(matches(a.title.toLowerCase(),terms));
     }) : [];
     if (/^wallets?$/.test(text)) destinations = destinations.filter(function(item){return item.site !== 'faucet';});
-    if (/identity|identities|sign in|login|key|recovery phrase|passkey|wallet/.test(text)) destinations.unshift({title:'Your Dash identity', href:'/identity/',site:'dashhq',description:'Sign-ins, keys, and where each app keeps them.', tier:layers.dashhq[0], mono:layers.dashhq[1]});
+    if (/identity|identities|sign in|login|key|recovery phrase|passkey|wallet/.test(text)) destinations.unshift(Object.assign({title:'Your Dash identity', href:'/identity/',site:'dashhq',description:'Sign-ins, keys, and where each app keeps them.'}, tile('dashhq')));
     if (/platform|identity|identities|username|learn|beginner/.test(text)) destinations.unshift(destination('What is Platform?', 'arch', '/', 'A plain-language walkthrough of the data layer.'));
     if (/masternode|evonode|my node/.test(text)) destinations.unshift(destination('Find your masternode', 'radar', '/masternodes', 'Reachability, earnings and Platform health.'));
     if (/^[a-f0-9]{64}$/i.test(raw)) destinations.unshift(destination('Inspect this masternode', 'radar', '/mn/'+raw, 'Open the public ProTx record in Radar.'));
@@ -135,7 +139,7 @@
       link.href = item.href;
       var url = new URL(item.href,location.href);
       var external = !item.site && url.origin !== location.origin;
-      var tile = document.createElement('span');tile.className='result-tile';tile.dataset.tier=item.tier;tile.textContent=item.mono;tile.setAttribute('aria-hidden','true');
+      var tile = document.createElement('span');tile.className='result-tile';tile.dataset.tier=item.tier;if(item.icon)tile.append(document.importNode(item.icon,true));else tile.textContent=item.mono;tile.setAttribute('aria-hidden','true');
       var title = document.createElement('span');title.className='result-title';title.textContent=item.title+(external?' ↗':' →');
       var site = document.createElement('span');site.className='result-site';site.textContent=item.site ? ({gov:'Governance',radar:'Radar',explorer:'Radar Explorer',fees:'Fee estimator',pollr:'Pollr',arch:'Architecture',bridge:'Bridge',dapi:'DAPI',faucet:'Faucet',multisig:'Multisig',dashhq:'dashhq'}[item.site] || item.site) : url.host;
       var description = document.createElement('span');description.className='result-description';description.textContent=item.description;
