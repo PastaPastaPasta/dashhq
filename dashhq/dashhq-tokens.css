@@ -70,13 +70,21 @@
   --dh-chrome-accent: #5CB9F8;  /* the current section on the chrome */
   --dh-chrome-real: #F2BE62;    /* the Mainnet dot on the chrome: real funds */
 
-  /* accent: an app's own colour (Forge ember, Pollr teal, Yappr sky), for its brand mark, selection and highlights,
+  /* footer: a light blueprint band in light, the navy chrome in dark */
+  --dh-foot: #E6ECF6;
+  --dh-foot-ink: #0A1A3F;
+  --dh-foot-ink-2: #3F4C66;
+  --dh-foot-line: #C3CBDA;
+  --dh-foot-link: #0061AE;
+  --dh-foot-grid: rgba(0, 97, 174, .10);
+
+  /* accent: an app's own colour (Forge ember, Pollr rose, Yappr sky), for its brand mark, selection and highlights,
      inside that app only. Never the committing button, never text, and never borrowed by a core tool. An app turns
      it on with one attribute, <html data-dh-accent="forge|pollr|yappr">; core tools leave it off. */
   --dh-accent: var(--dh-brand);          /* the app's colour as a fill: its glyph, a highlight rule */
   --dh-accent-ink: #FFFFFF;              /* text on an accent fill */
   --dh-accent-forge: #F58A4F;  --dh-accent-forge-select: #C67040;  --dh-accent-forge-soft: #FDECE3;  /* ember */
-  --dh-accent-pollr: #25B8A6;  --dh-accent-pollr-select: #1E9586;  --dh-accent-pollr-soft: #DCF4F1;  /* teal, Pollr only */
+  --dh-accent-pollr: #C4446F;  --dh-accent-pollr-select: #B23F69;  --dh-accent-pollr-soft: #FBE8EF;  /* rose (was teal before 2.0) */
   --dh-accent-yappr: #38BDF8;  --dh-accent-yappr-select: #2B90BC;  --dh-accent-yappr-soft: #DFF4FE;  /* sky */
   --dh-shade-1: rgba(6, 14, 36, .10);   /* hover and press overlays on filled buttons */
   --dh-shade-2: rgba(6, 14, 36, .18);
@@ -98,11 +106,11 @@
   --dh-plate-hair: rgba(0, 97, 174, .16);
   --dh-mark-edge: transparent;  /* the mark gets a hairline edge on dark pages */
 
-  /* layers of the stack (hub map, architecture): steps of navy and Dash blue, never a second hue.
-     Core and Platform are told apart by their label, not by colour. Grounds and tiles only. */
+  /* layers of the stack (hub map, architecture): navy for apps, Dash blue for the network, indigo for Platform and
+     the client side, grey for reference. Grounds, tiles and swatches only; always with the layer's name beside them. */
   --dh-tier-apps: #0B1C4B;      --dh-tier-apps-ink: #FFFFFF;      --dh-tier-apps-soft: #E6EAF3;
   --dh-tier-net: #006CC4;       --dh-tier-net-ink: #FFFFFF;       --dh-tier-net-soft: #E5F0FC;
-  --dh-tier-platform: #7DBEF2;  --dh-tier-platform-ink: #0A1A3F;  --dh-tier-platform-soft: #EEF5FD;
+  --dh-tier-platform: #7C8CEC;  --dh-tier-platform-ink: #0A1A3F;  --dh-tier-platform-soft: #EDF0FD;
   --dh-tier-ref: #C3CBDA;       --dh-tier-ref-ink: #0A1A3F;       --dh-tier-ref-soft: #EEF1F6;
 
   /* categorical series (unordered sets: providers, countries, networks); --dh-ramp-* stays for ordered data.
@@ -111,6 +119,11 @@
 
   /* chart ramp for ordered categories (versions, epochs): 1 = newest or largest. Unordered sets: top 4 + "Other" in --dh-line-2. */
   --dh-ramp-1: #005A96; --dh-ramp-2: #0080D0; --dh-ramp-3: #39A2E8; --dh-ramp-4: #86C4F0; --dh-ramp-5: #C2E0F7;
+
+  /* flow: what moves between layers (funding paths, sequence arrows, proof paths). The one warm accent. */
+  --dh-flow: #B26A00;
+  /* a tile nested in a card: a step away from the card's own fill */
+  --dh-inset: var(--dh-page);
 
   --dh-focus: #0061AE;
   --dh-shadow-pop: 0 12px 32px -14px rgba(6, 14, 36, .38), 0 0 0 1px var(--dh-line);
@@ -182,7 +195,7 @@
 
 /* An app's accent: <html data-dh-accent="forge|pollr|yappr">. The shades follow the theme by themselves. */
 :root[data-dh-accent="forge"] { --dh-accent: var(--dh-accent-forge); --dh-accent-ink: #0A1A3F; --dh-select: var(--dh-accent-forge-select); --dh-select-soft: var(--dh-accent-forge-soft); }
-:root[data-dh-accent="pollr"] { --dh-accent: var(--dh-accent-pollr); --dh-accent-ink: #0A1A3F; --dh-select: var(--dh-accent-pollr-select); --dh-select-soft: var(--dh-accent-pollr-soft); }
+:root[data-dh-accent="pollr"] { --dh-accent: var(--dh-accent-pollr); --dh-accent-ink: #FFFFFF; --dh-select: var(--dh-accent-pollr-select); --dh-select-soft: var(--dh-accent-pollr-soft); }
 :root[data-dh-accent="yappr"] { --dh-accent: var(--dh-accent-yappr); --dh-accent-ink: #0A1A3F; --dh-select: var(--dh-accent-yappr-select); --dh-select-soft: var(--dh-accent-yappr-soft); }
 
 :root[data-theme="light"] { color-scheme: light; }
@@ -192,13 +205,13 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --dh-page: #070D1D;
-    --dh-surface: #0F192F;
-    --dh-sunken: #050A15;
-    --dh-track: #1D2843;
-    --dh-raised: #1A2641;
-    --dh-raised-hover: #243353;
-    --dh-raised-line: #55678E;
+    --dh-page: #050A16;
+    --dh-surface: #111C35;
+    --dh-sunken: #070D1B;
+    --dh-track: #22304F;
+    --dh-raised: #1D2A48;
+    --dh-raised-hover: #27365A;
+    --dh-raised-line: #5A6D96;
     --dh-chip: var(--dh-raised);
     --dh-chip-line: var(--dh-line);
     --dh-disabled: var(--dh-surface);
@@ -206,16 +219,23 @@
     --dh-ink: #EAF0F8;
     --dh-ink-2: #B0BDD3;
     --dh-ink-3: #7F8CA6;
-    --dh-line: #33415F;
-    --dh-line-2: #64769C;
+    --dh-line: #36456A;
+    --dh-line-2: #6779A2;
     --dh-brand: #2E9BF0;
     --dh-brand-ink: #7DC1F7;
     --dh-brand-fill: #1A6CC2;
     --dh-brand-soft: #14294B;
     --dh-act-hover: #155FAC;
-    --dh-seg-on: #3C4F7A;
+    --dh-seg-on: #465C8E;
     --dh-seg-on-ink: #FFFFFF;
     --dh-chrome: #0C1C4A;
+    --dh-foot: #0C1C4A;
+    --dh-foot-ink: #FFFFFF;
+    --dh-foot-ink-2: #B9C6E4;
+    --dh-foot-line: #34477D;
+    --dh-foot-link: #FFFFFF;
+    --dh-foot-grid: rgba(166, 211, 247, .07);
+    --dh-flow: #F0B44C;
     --dh-chrome-raised: #172B66;
     --dh-chrome-line: #34477D;
     --dh-warn: #F2BE62;  --dh-warn-soft: #2B2314;
@@ -227,14 +247,14 @@
     --dh-plate-ink-2: #A3B7D8;
     --dh-plate-hair: rgba(166, 211, 247, .2);
     --dh-mark-edge: rgba(125, 193, 247, .38);
-    --dh-tier-apps: #C2D2F2;      --dh-tier-apps-ink: #0A1A3F;      --dh-tier-apps-soft: #131E37;
-    --dh-tier-net: #2E9BF0;       --dh-tier-net-ink: #06122B;       --dh-tier-net-soft: #14294B;
-    --dh-tier-platform: #7DC1F7;  --dh-tier-platform-ink: #06122B;  --dh-tier-platform-soft: #10223F;
-    --dh-tier-ref: #3A4868;       --dh-tier-ref-ink: #DCE5F3;       --dh-tier-ref-soft: #111A2E;
+    --dh-tier-apps: #C2D2F2;      --dh-tier-apps-ink: #0A1A3F;      --dh-tier-apps-soft: #16223E;
+    --dh-tier-net: #2E9BF0;       --dh-tier-net-ink: #06122B;       --dh-tier-net-soft: #102A52;
+    --dh-tier-platform: #A7B3F7;  --dh-tier-platform-ink: #0A1A3F;  --dh-tier-platform-soft: #18224A;
+    --dh-tier-ref: #4A5878;       --dh-tier-ref-ink: #EAF0F8;       --dh-tier-ref-soft: #151D30;
     --dh-cat-1: #4C93EC; --dh-cat-2: #EB7746; --dh-cat-3: #8C85F2; --dh-cat-4: #D9A21C; --dh-cat-5: #E46F9A;
     --dh-ramp-1: #A9D9FA; --dh-ramp-2: #62B8F3; --dh-ramp-3: #2B90DA; --dh-ramp-4: #1F6CA3; --dh-ramp-5: #1A4A6E;
     --dh-accent-forge-select: #F58A4F; --dh-accent-forge-soft: #363131;
-    --dh-accent-pollr-select: #25B8A6; --dh-accent-pollr-soft: #103A40;
+    --dh-accent-pollr-select: #E46F9A; --dh-accent-pollr-soft: #3A1A27;
     --dh-accent-yappr-select: #38BDF8; --dh-accent-yappr-soft: #143B4F;
     --dh-focus: #7DC1F7;
     --dh-shade-1: rgba(255, 255, 255, .08);
@@ -245,13 +265,13 @@
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --dh-page: #070D1D;
-  --dh-surface: #0F192F;
-  --dh-sunken: #050A15;
-  --dh-track: #1D2843;
-  --dh-raised: #1A2641;
-  --dh-raised-hover: #243353;
-  --dh-raised-line: #55678E;
+  --dh-page: #050A16;
+  --dh-surface: #111C35;
+  --dh-sunken: #070D1B;
+  --dh-track: #22304F;
+  --dh-raised: #1D2A48;
+  --dh-raised-hover: #27365A;
+  --dh-raised-line: #5A6D96;
   --dh-chip: var(--dh-raised);
   --dh-chip-line: var(--dh-line);
   --dh-disabled: var(--dh-surface);
@@ -259,16 +279,23 @@
   --dh-ink: #EAF0F8;
   --dh-ink-2: #B0BDD3;
   --dh-ink-3: #7F8CA6;
-  --dh-line: #33415F;
-  --dh-line-2: #64769C;
+  --dh-line: #36456A;
+  --dh-line-2: #6779A2;
   --dh-brand: #2E9BF0;
   --dh-brand-ink: #7DC1F7;
   --dh-brand-fill: #1A6CC2;
   --dh-brand-soft: #14294B;
   --dh-act-hover: #155FAC;
-  --dh-seg-on: #3C4F7A;
+  --dh-seg-on: #465C8E;
   --dh-seg-on-ink: #FFFFFF;
   --dh-chrome: #0C1C4A;
+  --dh-foot: #0C1C4A;
+  --dh-foot-ink: #FFFFFF;
+  --dh-foot-ink-2: #B9C6E4;
+  --dh-foot-line: #34477D;
+  --dh-foot-link: #FFFFFF;
+  --dh-foot-grid: rgba(166, 211, 247, .07);
+  --dh-flow: #F0B44C;
   --dh-chrome-raised: #172B66;
   --dh-chrome-line: #34477D;
   --dh-warn: #F2BE62;  --dh-warn-soft: #2B2314;
@@ -280,14 +307,14 @@
   --dh-plate-ink-2: #A3B7D8;
   --dh-plate-hair: rgba(166, 211, 247, .2);
   --dh-mark-edge: rgba(125, 193, 247, .38);
-  --dh-tier-apps: #C2D2F2;      --dh-tier-apps-ink: #0A1A3F;      --dh-tier-apps-soft: #131E37;
-  --dh-tier-net: #2E9BF0;       --dh-tier-net-ink: #06122B;       --dh-tier-net-soft: #14294B;
-  --dh-tier-platform: #7DC1F7;  --dh-tier-platform-ink: #06122B;  --dh-tier-platform-soft: #10223F;
-  --dh-tier-ref: #3A4868;       --dh-tier-ref-ink: #DCE5F3;       --dh-tier-ref-soft: #111A2E;
+  --dh-tier-apps: #C2D2F2;      --dh-tier-apps-ink: #0A1A3F;      --dh-tier-apps-soft: #16223E;
+  --dh-tier-net: #2E9BF0;       --dh-tier-net-ink: #06122B;       --dh-tier-net-soft: #102A52;
+  --dh-tier-platform: #A7B3F7;  --dh-tier-platform-ink: #0A1A3F;  --dh-tier-platform-soft: #18224A;
+  --dh-tier-ref: #4A5878;       --dh-tier-ref-ink: #EAF0F8;       --dh-tier-ref-soft: #151D30;
   --dh-cat-1: #4C93EC; --dh-cat-2: #EB7746; --dh-cat-3: #8C85F2; --dh-cat-4: #D9A21C; --dh-cat-5: #E46F9A;
   --dh-ramp-1: #A9D9FA; --dh-ramp-2: #62B8F3; --dh-ramp-3: #2B90DA; --dh-ramp-4: #1F6CA3; --dh-ramp-5: #1A4A6E;
   --dh-accent-forge-select: #F58A4F; --dh-accent-forge-soft: #363131;
-  --dh-accent-pollr-select: #25B8A6; --dh-accent-pollr-soft: #103A40;
+  --dh-accent-pollr-select: #E46F9A; --dh-accent-pollr-soft: #3A1A27;
   --dh-accent-yappr-select: #38BDF8; --dh-accent-yappr-soft: #143B4F;
   --dh-focus: #7DC1F7;
   --dh-shade-1: rgba(255, 255, 255, .08);

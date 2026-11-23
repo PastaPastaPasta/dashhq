@@ -400,7 +400,7 @@
   };
   const tokenSet = (from) => Object.keys(CHROME).map((k) => `--dh-${k}:var(${from(k)})`).join(';');
   const CHROME_SAVE = tokenSet((k) => `--dh-${k}`).replace(/--dh-([a-z0-9-]+):/g, '--dhp-$1:');
-  const CHROME_ON = tokenSet((k) => `--dh-${CHROME[k]}`) +
+  const CHROME_ON = tokenSet((k) => `--dh-${CHROME[k]}, var(--dhp-${k})`) +
     ';--dh-ring-shadow:0 0 0 2px var(--dh-chrome),0 0 0 4px var(--dh-chrome-accent)';
   const CHROME_OFF = tokenSet((k) => `--dhp-${k}`) +
     ';--dh-ring-shadow:0 0 0 2px var(--dhp-surface),0 0 0 4px var(--dhp-focus)';
@@ -409,10 +409,12 @@
     ':host{display:block;position:relative;z-index:40}' +
     ':host([sticky]){position:sticky;top:0}' +
     `.bar{position:relative;background:var(--dh-chrome);color:var(--dh-chrome-ink);${CHROME_SAVE};` +
+    'background-image:radial-gradient(rgba(166,211,247,.07) 1px,transparent 1.2px);background-size:14px 14px;' +
+    'box-shadow:inset 0 -2px 0 var(--dh-brand);' +
     '--dh-nav-dir:row;--dh-nav-h:32px;--dh-nav-fs:14px;--dh-nav-pad:10px;--dh-nav-align:center;' +
     '--dh-nav-only-phone:none;--dh-nav-only-desk:flex}' +
-    `.row{${CHROME_ON};--dh-nav-ink:var(--dh-chrome-ink);--dh-nav-current-ink:var(--dh-chrome-accent);` +
-    '--dh-nav-current-bg:var(--dh-chrome-raised)}' +
+    `.row{${CHROME_ON};--dh-nav-ink:var(--dh-chrome-ink-2);--dh-nav-current-ink:var(--dh-chrome-ink);` +
+    '--dh-nav-current-bg:var(--dh-chrome-raised);--dh-nav-current-mark:inset 0 -2px 0 var(--dh-chrome-accent)}' +
     `.pop,.bar.compact .sheet,.bar.compact.tabs .nav{${CHROME_OFF};color:var(--dh-ink)}` +
     '.bar.compact{--dh-nav-only-phone:flex;--dh-nav-only-desk:none}' +
     '.row{position:relative;color:var(--dh-ink);max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;' +
@@ -420,7 +422,8 @@
     '.bar.popping .row,.bar.open .row{overflow:visible}' +
     '.lockup{display:flex;align-items:center;flex:none;gap:0}' +
     '.home{display:flex;align-items:center;height:36px;border-radius:var(--dh-r2);flex:none}' +
-    '.wm{font-weight:650;font-stretch:112%;font-size:17px;letter-spacing:-.012em;line-height:1}' +
+    '.wm{font-weight:680;font-stretch:116%;font-size:17px;letter-spacing:-.015em;line-height:1}' +
+    '.wm b{font-weight:inherit;color:var(--dh-chrome-accent)}' +
     '.is-home .wm{font-size:19px}' +
     '.slash{color:var(--dh-chrome-accent);font-size:19px;font-weight:300;margin:0 7px;flex:none;line-height:1}' +
     '.product{display:flex;align-items:center;font-weight:580;font-size:15.5px;height:34px;' +
@@ -449,10 +452,10 @@
     /* One pill everywhere. A switch (more than one network) is a bordered button with a chevron; a site with one
        network shows the same dot and name as a plain label. Mainnet's dot is the real-funds caution colour, Testnet's
        a hollow ring, a devnet's a dashed ring. */
-    '.net{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 4px;border:1px solid transparent;' +
+    '.net{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 10px;border:1px solid var(--dh-line-2);' +
     'border-radius:var(--dh-r2);background:transparent;font-size:14px;font-weight:560;white-space:nowrap;' +
     'color:var(--dh-ink)}' +
-    'button.net{padding:0 6px 0 10px;border-color:var(--dh-line-2)}' +
+    'button.net{padding:0 6px 0 10px}' +
     'button.net:hover{background:var(--dh-hover)}' +
     '.net .dot{box-sizing:border-box;width:8px;height:8px;border-radius:50%;background:var(--dh-chrome-real);flex:none}' +
     '.net.test .dot,.net.dev .dot{background:transparent;border:1.5px solid var(--dh-ink-2)}' +
@@ -500,14 +503,14 @@
     '.bar.compact ::slotted([slot=logo]){width:26px;height:26px}' +
     '.bar.compact .home{height:auto;grid-row:1;justify-self:start}' +
     '.bar.compact.has-logo .home,.bar.compact.has-logo .product{grid-column:2}' +
-    '.bar.compact .wm{font-size:13px;color:var(--dh-ink-2)}' +
+    '.bar.compact .wm{font-size:13px;color:var(--dh-chrome-ink)}' +
     '.bar.compact .slash{display:none}' +
     '.bar.compact .product{grid-row:2;height:auto;font-size:15px;line-height:1.15}' +
     '.bar.compact .pn{overflow:hidden;text-overflow:ellipsis}' +
     '.bar.compact.is-home .lockup{display:flex}' +
     '.bar.compact.is-home .wm{font-size:19px;color:var(--dh-ink)}' +
     '.bar.compact .end{padding-left:6px;gap:4px}' +
-    '.bar.compact .net{gap:6px}.bar.compact button.net{padding:0 5px 0 9px}' +
+    '.bar.compact .net{gap:6px;padding:0 9px}.bar.compact button.net{padding:0 5px 0 9px}' +
     '.bar.squeeze .nl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}' +
     '.bar.squeeze .net{gap:4px}.bar.squeeze button.net{padding:0 6px 0 10px}' +
     '.bar.compact .menu{display:grid}' +
@@ -544,7 +547,7 @@
     'padding:0 env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);' +
     'background:var(--dh-surface);border-top:1px solid var(--dh-line);box-shadow:0 -6px 18px -12px rgba(6,14,36,.35);' +
     '--dh-nav-dir:row;--dh-nav-h:56px;--dh-nav-fs:13px;--dh-nav-pad:8px;--dh-nav-align:stretch;--dh-nav-gap:0;' +
-    '--dh-nav-item:1 0 auto;--dh-nav-item-min:64px;--dh-nav-item-dir:column;--dh-nav-item-gap:4px;' +
+    '--dh-nav-item:1 1 0;--dh-nav-item-min:max-content;--dh-nav-item-dir:column;--dh-nav-item-gap:4px;' +
     '--dh-nav-item-justify:center;--dh-nav-ws:nowrap;--dh-nav-overflow:auto;--dh-nav-weight:560;' +
     '--dh-nav-icon:block;--dh-nav-radius:0;--dh-nav-current-bg:transparent;--dh-nav-ink:var(--dh-ink);' +
     '--dh-nav-current-ink:var(--dh-brand-ink);' +
@@ -552,6 +555,9 @@
     '.bar.compact.tabs .nav.scrolls{--dh-nav-mask:linear-gradient(90deg,#000 calc(100% - 32px),transparent)}' +
     '.bar.compact.tabs .nav.scrolls.at-end{--dh-nav-mask:linear-gradient(270deg,#000 calc(100% - 32px),transparent)}' +
     '.bar.compact.tabs .nav.empty,.bar.compact.tabs.typing .nav{display:none}' +
+    /* content fades out above the tab bar instead of being cut by it */
+    '.bar.compact.tabs .nav::before{content:"";position:absolute;left:0;right:0;bottom:calc(100% + 1px);height:24px;' +
+    'background:linear-gradient(to top,var(--dh-page),transparent);pointer-events:none}' +
     '.bar.compact.tabs .family{border-top:0;padding-top:0}' +
     '.bar.compact .net{height:36px}' +
 
@@ -574,28 +580,31 @@
 
   // The footer is the same navy chrome as the bar and ends the page: its colour runs on under it (border-image
   // outset paints without adding scroll height), so a short page never shows a strip of page colour below it.
+  // The footer closes the page: a light blueprint band in light, the navy chrome in dark (--dh-foot*). Its colour runs on
+  // under it (border-image outset paints without adding scroll height), so a short page never ends on a strip of page
+  // colour. Two rows: the wordmark and sentence, then the links, all on one left edge.
   const FOOT_CSS = BASE_CSS +
-    ':host{display:block;margin-top:var(--dh-7)}' +
-    '.f{background:var(--dh-chrome);color:var(--dh-chrome-ink-2);font-size:14px;line-height:1.55;' +
-    'padding-bottom:var(--dh-tabs-h,0px);' +
-    'border-image:linear-gradient(var(--dh-chrome),var(--dh-chrome)) fill 0/0/0 0 100vh 0;' +
-    '--dh-focus:var(--dh-chrome-accent)}' +
-    '.in{max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;padding:28px var(--dh-gutter) 32px;' +
-    'display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 28px}' +
-    '.home{flex:none;color:var(--dh-chrome-ink);font-weight:650;font-stretch:112%;font-size:16px;letter-spacing:-.012em}' +
-    '.sentence{flex:1 1 320px;margin:0;min-width:0}' +
-    '.links{flex:0 1 auto;margin-left:auto;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:flex-end;gap:6px 18px;' +
-    'color:var(--dh-chrome-ink)}' +
-    '.links a{color:var(--dh-chrome-ink);text-decoration:underline;text-decoration-color:var(--dh-chrome-line-2);' +
+    ':host{display:block;margin-top:var(--dh-6)}' +
+    '.f{background-color:var(--dh-foot);color:var(--dh-foot-ink-2);font-size:14px;line-height:1.55;' +
+    'background-image:radial-gradient(var(--dh-foot-grid) 1px,transparent 1.2px);background-size:14px 14px;' +
+    'border-top:1px solid var(--dh-foot-line);padding-bottom:var(--dh-tabs-h,0px);' +
+    'border-image:linear-gradient(var(--dh-foot),var(--dh-foot)) fill 0/0/0 0 100vh 0;' +
+    '--dh-focus:var(--dh-foot-link)}' +
+    '.in{max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;padding:24px var(--dh-gutter) 28px;' +
+    'display:grid;grid-template-columns:auto minmax(0,1fr);align-items:baseline;gap:10px 24px}' +
+    '.home{color:var(--dh-foot-ink);font-weight:680;font-stretch:116%;font-size:16px;letter-spacing:-.015em}' +
+    '.home b{font-weight:inherit;color:var(--dh-brand)}' +
+    '.sentence{margin:0;min-width:0}' +
+    '.links{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 20px;color:var(--dh-foot-ink)}' +
+    '.links a{color:var(--dh-foot-link);text-decoration:underline;text-decoration-color:color-mix(in srgb,currentColor 45%,transparent);' +
     'text-underline-offset:3px}' +
-    '.links a:hover{color:var(--dh-chrome-accent);text-decoration-color:currentColor}' +
+    '.links a:hover{text-decoration-color:currentColor}' +
     '::slotted(*){display:inline!important;margin:0!important;padding:0!important;font:inherit!important;color:inherit!important}' +
-    '::slotted(a){text-decoration:underline!important;text-decoration-color:var(--dh-chrome-line-2)!important;' +
-    'text-underline-offset:3px!important}' +
-    '::slotted(a:hover){color:var(--dh-chrome-accent)!important}' +
-    /* Phone: the wordmark, then the sentence, then one row of links. */
-    '@media(max-width:720px){.in{flex-direction:column;align-items:flex-start;gap:6px;padding:24px var(--dh-gutter) 28px}' +
-    '.sentence{flex:none}.links{margin-left:0;justify-content:flex-start;gap:4px 18px;margin-top:8px}}' +
+    '::slotted(a){color:var(--dh-foot-link)!important;text-decoration:underline!important;' +
+    'text-decoration-color:color-mix(in srgb,currentColor 45%,transparent)!important;text-underline-offset:3px!important}' +
+    /* Phone: one left-aligned column: the wordmark, the sentence, then the links. */
+    '@media(max-width:720px){.in{grid-template-columns:minmax(0,1fr);gap:6px;padding:20px var(--dh-gutter) 24px}' +
+    '.links{gap:4px 18px;margin-top:6px}}' +
     '@media (pointer:coarse){.links a,::slotted(a){display:inline-flex!important;align-items:center;min-height:40px}}';
 
   const HASH_CSS = BASE_CSS +
@@ -609,7 +618,7 @@
     '.cp{display:grid;place-items:center;width:24px;height:24px;border-radius:4px;color:var(--dh-ink-2);flex:none;' +
     'align-self:center}' +
     '.cp:hover{background:var(--dh-hover);color:var(--dh-ink)}' +
-    '.cp.done{color:var(--dh-good)}' +
+    '.cp.done{color:var(--dh-brand-ink)}' +
     '.buf{position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0}' +
     '.man{min-width:0;flex:1 1 auto;width:min(100%,72ch);padding:2px 6px;border:1px solid var(--dh-line-2);' +
     'border-radius:var(--dh-r1);background:var(--dh-surface);color:var(--dh-ink);font:inherit}' +
@@ -873,7 +882,7 @@
       this._product = product || null;
       const lockup = h('div', { class: 'lockup' },
         h('a', { class: 'home', href: href('home'), 'aria-label': 'dashhq.org home' },
-          h('span', { class: 'wm', 'aria-hidden': 'true' }, 'dashhq')),
+          h('span', { class: 'wm', 'aria-hidden': 'true' }, 'dash', h('b', null, 'hq'))),
         product && [h('span', { class: 'slash', 'aria-hidden': 'true' }, '/'),
           h('span', { class: 'logo' }, logo), product]);
       this._row = h('div', { class: 'row' }, lockup,
@@ -1213,7 +1222,7 @@
       const src = this.getAttribute('source');
       this._paint(h('footer', { class: 'f', part: 'footer' },
         h('div', { class: 'in' },
-          h('a', { class: 'home', href: href('home') }, 'dashhq'),
+          h('a', { class: 'home', href: href('home'), 'aria-label': 'dashhq.org home' }, 'dash', h('b', null, 'hq')),
           h('div', { class: 'sentence' }, key === 'home' ? h('slot', { name: 'sentence' }, h('slot')) :
             `${PRODUCTS[key].name} is one of the dashhq tools for the Dash network.`),
           h('div', { class: 'links' }, key === 'home' ? h('slot', { name: 'links' }) : h('slot'),

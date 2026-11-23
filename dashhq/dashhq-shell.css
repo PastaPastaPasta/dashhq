@@ -22,7 +22,7 @@ dashhq-bar:not(:defined) > [slot="logo"] { display: none; }
 /* Without JavaScript there is no phone menu: the product's links scroll sideways rather than being cut off. */
 dashhq-bar:not(:defined) > [slot="nav"] { flex: 0 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: thin; }
 dashhq-bar:not(:defined) > [slot="actions"] { margin-left: auto; }
-dashhq-footer:not(:defined) { min-height: 120px; margin-top: var(--dh-7); background: var(--dh-chrome); color: var(--dh-chrome-ink-2); }
+dashhq-footer:not(:defined) { min-height: 120px; margin-top: var(--dh-6); background: var(--dh-foot); color: var(--dh-foot-ink-2); border-top: 1px solid var(--dh-foot-line); }
 dashhq-hash:not(:defined) { display: inline; font-family: var(--dh-mono); font-size: .92em; overflow-wrap: anywhere; }
 dashhq-signin-help, dashhq-not-found, dashhq-moved { display: block; }
 /* The display rules above outrank the browser's [hidden]; an element the page hides stays hidden, upgraded or not. */
@@ -87,8 +87,10 @@ html[data-dh-tabs] { scroll-padding-bottom: var(--dh-tabs-h); }
 }
 /* Slots carry inline footer copy and links, never another layout. */
 dashhq-footer :is(p, div, nav, span) { display: inline; margin: 0; padding: 0; }
-dashhq-footer a { color: inherit; text-decoration: underline; text-decoration-color: var(--dh-chrome-line-2); text-underline-offset: 3px; }
-/* The page ends at the footer: below it (and above the bar, on overscroll) the canvas is the chrome's navy, not page
-   colour. Zero specificity, so a product's own html or body background and margin always win. */
-:where(html:has(dashhq-footer)) { background-color: var(--dh-chrome); }
+dashhq-footer a { color: var(--dh-foot-link); text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 45%, transparent); text-underline-offset: 3px; }
+/* Links a product writes in a row inside its footer copy keep a real gap between them. */
+dashhq-footer a + a, dashhq-footer span + a { margin-inline-start: 1.1em; }
+dashhq-footer a { white-space: nowrap; }
+/* The page ends at the footer: below it the canvas is the footer's colour, not page colour. Zero specificity, so a product's own html or body background and margin always win. */
+:where(html:has(dashhq-footer)) { background-color: var(--dh-foot); }
 :where(body:has(dashhq-footer)) { margin: 0; background-color: var(--dh-page); }
