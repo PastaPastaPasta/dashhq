@@ -95,7 +95,7 @@
   font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
 .dh-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin: 0; padding: 0; list-style: none;
   font-size: var(--dh-fs-sm); color: var(--dh-ink-2); }
-.dh-crumbs > * + *::before { content: "/"; margin-right: 8px; color: var(--dh-line-2); }
+.dh-crumbs > * + *::before { content: "/"; content: "/" / ""; margin-right: 8px; color: var(--dh-line-2); }
 .dh-crumbs :where(a:not(.dh-btn)) { color: var(--dh-brand-ink); text-decoration: none; border-radius: var(--dh-r1); }
 .dh-crumbs :where(a:not(.dh-btn)):hover { text-decoration: underline; text-underline-offset: 3px; }
 .dh-crumbs [aria-current] { color: var(--dh-ink-2); }
@@ -808,5 +808,5 @@ ol.dh-sources > li:target { color: var(--dh-ink); background: var(--dh-brand-sof
   color: var(--dh-ink-2); font-size: var(--dh-fs-sm); }
 .dh-meta > * { position: relative; display: inline-flex; align-items: baseline; min-width: 0; max-width: 100%;
   margin-inline-start: var(--dh-meta-gap); overflow-wrap: anywhere; }
-.dh-meta > *::before { content: "·"; position: absolute; right: 100%; width: var(--dh-meta-gap); text-align: center;
+.dh-meta > *::before { content: "·"; content: "·" / ""; position: absolute; right: 100%; width: var(--dh-meta-gap); text-align: center;
   color: var(--dh-ink-3); }
