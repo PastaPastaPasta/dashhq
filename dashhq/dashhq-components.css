@@ -31,7 +31,7 @@
   box-sizing: border-box; width: 100%; max-width: var(--dh-shell-max, var(--dh-max));
   margin-inline: auto; padding-inline: var(--dh-gutter);
 }
-.dh-page { padding-block: var(--dh-6) var(--dh-8); }
+.dh-page { padding-block: var(--dh-6) var(--dh-7); }
 .dh-narrow { max-width: var(--dh-w-narrow); }        /* forms and reading columns: left-aligned, never centred */
 .dh-measure { max-width: 64ch; }
 .dh-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--dh-4); }
@@ -529,8 +529,8 @@
 /* ================================================================ badges and status
    Status, never actions: never clickable. Always a word, never colour alone. .dh-pill is the same thing.
    Colour only the exception: a state every row shares ("Answering", "Success", "Enabled") is the plain badge or
-   .dh-badge--neutral, and only the row that differs gets --warn or --bad. --good is Dash blue, for the rare state
-   that is good news worth seeing (a payout sent), not for the normal case. --real marks real mainnet funds. */
+   .dh-badge--neutral, and only the row that differs gets --warn or --bad. --good is ink with a tick: passing,
+   funded or sent is the normal outcome, not a colour. Blue is for what you can press. --real marks real mainnet funds. */
 .dh-badge, .dh-pill {
   box-sizing: border-box; display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 1px 8px 0; border-radius: var(--dh-r1);
   font: var(--dh-w-ui) var(--dh-fs-xs)/1 var(--dh-font); text-transform: none; letter-spacing: 0; white-space: nowrap; vertical-align: middle;
@@ -540,6 +540,9 @@
 .dh-badge--dot::before, .dh-pill--dot::before { display: block; }
 .dh-badge--neutral, .dh-pill--neutral { background: var(--dh-neutral-soft); color: var(--dh-neutral); }
 .dh-badge--good, .dh-pill--good { background: var(--dh-good-soft); color: var(--dh-good); }
+.dh-badge--good::before, .dh-pill--good::before { display: block; box-sizing: content-box; width: 3px; height: 7px;
+  margin: -3px 2px 0 1px; border: solid currentColor; border-width: 0 1.75px 1.75px 0; border-radius: 0; background: none;
+  transform: rotate(45deg); }
 .dh-badge--warn, .dh-pill--warn { background: var(--dh-warn-soft); color: var(--dh-warn); }
 .dh-badge--bad,  .dh-pill--bad  { background: var(--dh-bad-soft);  color: var(--dh-bad); }
 .dh-badge--info, .dh-pill--info { background: var(--dh-info-soft); color: var(--dh-info); }
@@ -565,7 +568,8 @@
 .dh-status { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .dh-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--dh-ink-3); flex: none; }
 .dh-status--neutral::before { background: transparent; box-shadow: inset 0 0 0 1.5px var(--dh-line-2); }
-.dh-status--good::before { background: var(--dh-good); }
+.dh-status--good::before { box-sizing: content-box; width: 3px; height: 7px; margin: -3px 2px 0 1px; border: solid var(--dh-good);
+  border-width: 0 1.75px 1.75px 0; border-radius: 0; background: none; transform: rotate(45deg); }
 .dh-status--warn::before { background: var(--dh-warn); }
 .dh-status--bad::before { background: var(--dh-bad); }
 .dh-status--info::before { background: var(--dh-brand); }
@@ -581,7 +585,7 @@
 .dh-proof:focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: var(--dh-ring-offset); }
 /* Checked is not a colour: the tick says it, in ink. */
 .dh-proof--ok { color: var(--dh-ink); border-color: var(--dh-line-2); }
-.dh-proof--ok::before { width: 5px; height: 9px; margin: -2px 3px 0 2px; border-radius: 0; border-width: 0 2px 2px 0; transform: rotate(45deg); color: var(--dh-brand-ink); }
+.dh-proof--ok::before { width: 5px; height: 9px; margin: -2px 3px 0 2px; border-radius: 0; border-width: 0 2px 2px 0; transform: rotate(45deg); color: var(--dh-ink); }
 .dh-proof--checking::before { border-color: var(--dh-line-2); border-top-color: var(--dh-brand); animation: dh-rot .8s linear infinite; }
 .dh-proof--reported { color: var(--dh-ink-2); }
 .dh-proof--reported { border-style: dashed; }
@@ -636,7 +640,7 @@ ol.dh-sources > li:target { color: var(--dh-ink); background: var(--dh-brand-sof
 .dh-notice :where(a:not(.dh-btn)) { color: var(--dh-ink); text-decoration: underline; text-underline-offset: 3px; }
 .dh-notice__actions { display: flex; flex-wrap: wrap; gap: var(--dh-2); margin-top: 6px; }
 .dh-notice--info { --dh-tone: var(--dh-info); --dh-tone-soft: var(--dh-info-soft); }
-.dh-notice--success { --dh-tone: var(--dh-brand); --dh-tone-soft: var(--dh-brand-soft); }
+.dh-notice--success { --dh-tone: var(--dh-line-2); --dh-tone-soft: var(--dh-surface); }
 .dh-notice--real { --dh-tone: var(--dh-real); --dh-tone-soft: var(--dh-real-soft); }
 .dh-notice--warn { --dh-tone: var(--dh-warn); --dh-tone-soft: var(--dh-warn-soft); }
 .dh-notice--error { --dh-tone: var(--dh-bad); --dh-tone-soft: var(--dh-bad-soft); }
@@ -808,5 +812,6 @@ ol.dh-sources > li:target { color: var(--dh-ink); background: var(--dh-brand-sof
   color: var(--dh-ink-2); font-size: var(--dh-fs-sm); }
 .dh-meta > * { position: relative; display: inline-flex; align-items: baseline; min-width: 0; max-width: 100%;
   margin-inline-start: var(--dh-meta-gap); overflow-wrap: anywhere; }
+.dh-meta:not(:has(> *)) { margin-inline-start: 0; clip-path: none; }
 .dh-meta > *::before { content: "·"; content: "·" / ""; position: absolute; right: 100%; width: var(--dh-meta-gap); text-align: center;
   color: var(--dh-ink-3); }

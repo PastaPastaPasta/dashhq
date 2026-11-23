@@ -396,7 +396,7 @@
     hover: 'chrome-hover', disabled: 'chrome-raised', ink: 'chrome-ink', 'ink-2': 'chrome-ink-2', 'ink-3': 'chrome-ink-2',
     line: 'chrome-line', 'line-2': 'chrome-line-2', brand: 'chrome-accent', 'brand-ink': 'chrome-accent',
     'brand-soft': 'chrome-raised', select: 'chrome-accent', 'select-soft': 'chrome-raised', focus: 'chrome-accent',
-    info: 'chrome-accent', 'info-soft': 'chrome-raised', good: 'chrome-accent', 'good-soft': 'chrome-raised'
+    info: 'chrome-accent', 'info-soft': 'chrome-raised', good: 'chrome-ink', 'good-soft': 'chrome-raised'
   };
   const tokenSet = (from) => Object.keys(CHROME).map((k) => `--dh-${k}:var(${from(k)})`).join(';');
   const CHROME_SAVE = tokenSet((k) => `--dh-${k}`).replace(/--dh-([a-z0-9-]+):/g, '--dhp-$1:');
@@ -580,13 +580,13 @@
   // under it (border-image outset paints without adding scroll height), so a short page never ends on a strip of page
   // colour. Two rows: the wordmark and sentence, then the links, all on one left edge.
   const FOOT_CSS = BASE_CSS +
-    ':host{display:block;margin-top:var(--dh-5)}' +
+    ':host{display:block;margin-top:0}' +
     '.f{background-color:var(--dh-foot);color:var(--dh-foot-ink-2);font-size:14px;line-height:1.55;' +
     'border-top:1px solid var(--dh-foot-line);padding-bottom:var(--dh-tabs-h,0px);' +
     'border-image:linear-gradient(var(--dh-foot),var(--dh-foot)) fill 0/0/0 0 100vh 0;' +
     '--dh-focus:var(--dh-foot-link)}' +
-    '.in{max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;padding:24px var(--dh-gutter) 28px;' +
-    'display:grid;grid-template-columns:auto minmax(0,1fr);align-items:baseline;gap:10px 24px}' +
+    '.in{max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;padding:16px var(--dh-gutter) 18px;' +
+    'display:grid;grid-template-columns:auto minmax(0,1fr);align-items:baseline;gap:6px 24px}' +
     '.home{color:var(--dh-foot-ink);font-weight:680;font-stretch:116%;font-size:16px;letter-spacing:-.015em}' +
     '.home b{font-weight:inherit;color:var(--dh-brand)}' +
     '.sentence{margin:0;min-width:0}' +
@@ -601,9 +601,9 @@
     '::slotted(a){color:var(--dh-foot-link)!important;text-decoration:underline!important;' +
     'text-decoration-color:color-mix(in srgb,currentColor 45%,transparent)!important;text-underline-offset:3px!important}' +
     /* Phone: one left-aligned column: the wordmark, the sentence, then the links. */
-    '@media(max-width:720px){.in{grid-template-columns:minmax(0,1fr);gap:6px;padding:20px var(--dh-gutter) 24px}' +
-    '.links{gap:4px 18px;margin-top:6px}}' +
-    '@media (pointer:coarse){.links a,::slotted(a){display:inline-flex!important;align-items:center;min-height:40px}}';
+    '@media(max-width:720px){.in{grid-template-columns:minmax(0,1fr);gap:4px;padding:16px var(--dh-gutter) 16px}' +
+    '.links{gap:0 18px;margin-top:2px}}' +
+    '@media (pointer:coarse){.links a,::slotted(a){display:inline-flex!important;align-items:center;min-height:36px}}';
 
   const HASH_CSS = BASE_CSS +
     ':host{display:inline-flex;align-items:center;gap:2px;max-width:100%;vertical-align:baseline;' +

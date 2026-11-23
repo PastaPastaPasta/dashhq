@@ -90,7 +90,7 @@
   --dh-shade-2: rgba(6, 14, 36, .18);
 
   /* status: for the exception only. A state that is the same on every row gets no colour. */
-  --dh-good: var(--dh-brand-ink);  --dh-good-soft: var(--dh-brand-soft);   /* no green: "ok" reads as Dash blue */
+  --dh-good: var(--dh-ink);  --dh-good-soft: var(--dh-chip);             /* the normal state is not a colour: ink, with a tick */
   --dh-warn: #8A5300;  --dh-warn-soft: #FBF0DA;                            /* amber-gold, not orange */
   --dh-bad:  #B4302A;  --dh-bad-soft:  #FBE6E4;
   --dh-info: var(--dh-brand-ink); --dh-info-soft: var(--dh-brand-soft);
