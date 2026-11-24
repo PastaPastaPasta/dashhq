@@ -78,9 +78,10 @@ code{font-family:var(--dh-mono);font-size:max(13px,.9em)}
 .map-node.own{--own:color-mix(in srgb,var(--dh-brand) 28%,var(--map-bg));background:var(--own);color:var(--map-ink);border-color:var(--dh-brand);box-shadow:inset 4px 0 0 var(--dh-brand)}
 .map-node.own small{color:var(--map-ink)}
 .map-node.own::after{content:"";position:absolute;top:7px;right:7px;width:8px;height:8px;border-radius:2px;background:var(--dh-brand)}
-:root[data-theme="dark"] .map-node.own{--own:color-mix(in srgb,var(--dh-brand) 46%,var(--map-bg));color:#FFFFFF}
-:root[data-theme="dark"] .map-node.own small{color:color-mix(in srgb,#FFFFFF 82%,transparent)}
-:root[data-theme="dark"] .map-node.own::after{background:#FFFFFF}
+:root[data-theme="dark"] .map-node.own:not(.hit){--own:var(--dh-raised-hover);color:var(--dh-ink);border-color:var(--dh-raised-line);box-shadow:inset 4px 0 0 var(--dh-ink)}
+:root[data-theme="dark"] .map-node.own:not(.hit):hover{border-color:var(--dh-plate-line)}
+:root[data-theme="dark"] .map-node.own:not(.hit) small{color:var(--dh-plate-ink-2)}
+:root[data-theme="dark"] .map-node.own:not(.hit)::after{background:var(--dh-ink)}
 .map-node:hover{border-color:var(--dh-plate-line);text-decoration:underline}
 .fund{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--map-gap);align-items:center;padding-block:12px}
 .fund>p{grid-column:1/4;align-self:stretch;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;background:var(--map-bg);font-size:13px;color:var(--map-muted)}
@@ -92,7 +93,7 @@ code{font-family:var(--dh-mono);font-size:max(13px,.9em)}
 .map-key>span{display:flex;align-items:center;gap:6px}
 .map-key i{display:inline-block;width:14px;height:10px;border:1px solid var(--map-line);border-radius:2px}
 .map-key i.own{background:color-mix(in srgb,var(--dh-brand) 28%,var(--map-bg));border-color:var(--dh-brand);box-shadow:inset 3px 0 0 var(--dh-brand)}
-:root[data-theme="dark"] .map-key i.own{background:color-mix(in srgb,var(--dh-brand) 46%,var(--map-bg))}
+:root[data-theme="dark"] .map-key i.own{background:var(--dh-raised-hover);border-color:var(--dh-raised-line);box-shadow:inset 3px 0 0 var(--dh-ink)}
 .map-key i.wire{border:0;height:3px;background:var(--dh-flow)}
 .eco.searching .map-node:not(.hit){opacity:.4}
 .map-node.hit{border-color:var(--dh-plate-line);background:var(--dh-plate-line);color:var(--dh-plate)}

@@ -1,4 +1,4 @@
-/*! dashhq-shell 2.0.0 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
+/*! dashhq-shell 2.0.1 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
 /* Load as a classic, blocking script in <head>, before any stylesheet that depends on [data-theme]:
      <script src="/dashhq/dashhq-shell.js"></script>
    CSP: needs only script-src 'self'. No inline script, no eval, no innerHTML, no style attributes,
@@ -7,7 +7,7 @@
   'use strict';
   if (window.dashhq && window.dashhq.version) return;
 
-  const VERSION = '2.0.0';
+  const VERSION = '2.0.1';
   const doc = document;
   const root = doc.documentElement;
   const host = location.hostname;
@@ -388,7 +388,7 @@
     '.ic{display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}' +
     '.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}';
 
-  // The bar is Dash navy chrome in both themes. Its row (and what a product slots into it) draws with the chrome's
+  // The bar is the chrome: Dash navy in light, Radar's card surface in dark. Its row (and what a product slots into it) draws with the chrome's
   // values under the usual token names; menus, the phone sheet and the tab bar get the page's values back.
   const CHROME = {
     page: 'chrome', surface: 'chrome', sunken: 'chrome', raised: 'chrome-raised',
@@ -409,11 +409,11 @@
     ':host{display:block;position:relative;z-index:40}' +
     ':host([sticky]){position:sticky;top:0}' +
     `.bar{position:relative;background:var(--dh-chrome);color:var(--dh-chrome-ink);${CHROME_SAVE};` +
-    'box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--dh-brand) 55%,var(--dh-chrome));' +
+    'box-shadow:inset 0 -1px 0 var(--dh-chrome-edge,color-mix(in srgb,var(--dh-brand) 55%,var(--dh-chrome)));' +
     '--dh-nav-dir:row;--dh-nav-h:32px;--dh-nav-fs:14px;--dh-nav-pad:10px;--dh-nav-align:center;' +
     '--dh-nav-only-phone:none;--dh-nav-only-desk:flex}' +
     `.row{${CHROME_ON};--dh-nav-ink:var(--dh-chrome-ink-2);--dh-nav-current-ink:var(--dh-chrome-ink);` +
-    '--dh-nav-current-bg:var(--dh-chrome-raised);--dh-nav-current-mark:inset 0 -2px 0 var(--dh-chrome-accent)}' +
+    '--dh-nav-current-bg:var(--dh-chrome-raised);--dh-nav-current-mark:inset 0 -2px 0 var(--dh-chrome-current,var(--dh-chrome-accent))}' +
     `.pop,.bar.compact .sheet,.bar.compact.tabs .nav{${CHROME_OFF};color:var(--dh-ink)}` +
     '.bar.compact{--dh-nav-only-phone:flex;--dh-nav-only-desk:none}' +
     '.row{position:relative;color:var(--dh-ink);max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;' +
@@ -482,7 +482,7 @@
     '.door{display:grid;grid-template-columns:150px minmax(0,1fr);align-items:center;min-height:40px;' +
     'padding:9px 12px;border-radius:var(--dh-r2);line-height:22px}' +
     '.door:hover{background:var(--dh-hover)}' +
-    '.door[aria-current]{background:var(--dh-chip);box-shadow:inset 3px 0 var(--dh-brand)}' +
+    '.door[aria-current]{background:var(--dh-chip);box-shadow:inset 3px 0 var(--dh-current,var(--dh-brand))}' +
     '.dn{font-weight:580;font-size:15px;white-space:nowrap}' +
     '.dd{font-size:13.5px;color:var(--dh-ink-2);white-space:nowrap}' +
     '.sep{height:1px;background:var(--dh-line);margin:8px 12px}' +
@@ -514,8 +514,8 @@
     '.bar.squeeze .net{gap:4px}.bar.squeeze button.net{padding:0 6px 0 10px}' +
     '.bar.compact .menu{display:grid}' +
     '.bar.compact .sheet{display:none;--dh-nav-dir:column;--dh-nav-h:44px;--dh-nav-fs:15px;--dh-nav-pad:12px;' +
-    '--dh-nav-align:stretch;--dh-nav-weight:580;--dh-nav-ink:var(--dh-ink);--dh-nav-current-ink:var(--dh-brand-ink);' +
-    '--dh-nav-current-bg:var(--dh-chip);--dh-nav-current-mark:inset 3px 0 var(--dh-brand)}' +
+    '--dh-nav-align:stretch;--dh-nav-weight:580;--dh-nav-ink:var(--dh-ink);--dh-nav-current-ink:var(--dh-current-ink,var(--dh-brand-ink));' +
+    '--dh-nav-current-bg:var(--dh-chip);--dh-nav-current-mark:inset 3px 0 var(--dh-current,var(--dh-brand))}' +
     '.sheet:focus{outline:none}' +
     '.scrim{display:none}' +
     '.bar.open .scrim{display:block;position:absolute;left:0;right:0;top:100%;height:100dvh;' +
@@ -534,7 +534,7 @@
     '.pd a,.hm{display:flex;align-items:center;min-height:44px;padding:0 12px;' +
     'border-radius:var(--dh-r2);font-size:15px;font-weight:540}' +
     '@media (hover:hover){.pd a:hover,.hm:hover{background:var(--dh-hover)}}' +
-    '.pd a[aria-current]{background:var(--dh-chip);box-shadow:inset 3px 0 var(--dh-brand)}' +
+    '.pd a[aria-current]{background:var(--dh-chip);box-shadow:inset 3px 0 var(--dh-current,var(--dh-brand))}' +
     '.hm{color:var(--dh-brand-ink)}' +
     '.tag{margin-left:8px;padding:1px 6px;border:1px dashed var(--dh-line-2);border-radius:var(--dh-r1);background:var(--dh-chip);' +
     'font-size:13px;font-weight:520;line-height:1.4;color:var(--dh-ink-2);white-space:nowrap}' +
@@ -548,9 +548,9 @@
     '--dh-nav-dir:row;--dh-nav-h:56px;--dh-nav-fs:13px;--dh-nav-pad:8px;--dh-nav-align:stretch;--dh-nav-gap:0;' +
     '--dh-nav-item:1 1 0;--dh-nav-item-min:max-content;--dh-nav-item-dir:column;--dh-nav-item-gap:4px;' +
     '--dh-nav-item-justify:center;--dh-nav-ws:nowrap;--dh-nav-overflow:auto;--dh-nav-weight:560;' +
-    '--dh-nav-icon:block;--dh-nav-radius:0;--dh-nav-current-bg:transparent;--dh-nav-ink:var(--dh-ink);' +
-    '--dh-nav-current-ink:var(--dh-brand-ink);' +
-    '--dh-nav-current-mark:inset 0 2px 0 var(--dh-select);--dh-nav-current-icon:var(--dh-select)}' +
+    '--dh-nav-icon:block;--dh-nav-radius:0;--dh-nav-current-bg:transparent;--dh-nav-ink:var(--dh-tab-ink,var(--dh-ink));' +
+    '--dh-nav-current-ink:var(--dh-current-ink,var(--dh-brand-ink));' +
+    '--dh-nav-current-mark:inset 0 2px 0 var(--dh-current,var(--dh-select));--dh-nav-current-icon:var(--dh-current,var(--dh-select))}' +
     '.bar.compact.tabs .nav.scrolls{--dh-nav-mask:linear-gradient(90deg,#000 calc(100% - 32px),transparent)}' +
     '.bar.compact.tabs .nav.scrolls.at-end{--dh-nav-mask:linear-gradient(270deg,#000 calc(100% - 32px),transparent)}' +
     '.bar.compact.tabs .nav.empty,.bar.compact.tabs.typing .nav{display:none}' +
@@ -574,9 +574,7 @@
     'animation:dh-in var(--dh-dur-2) var(--dh-ease)}}' +
     '@keyframes dh-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}';
 
-  // The footer is the same navy chrome as the bar and ends the page: its colour runs on under it (border-image
-  // outset paints without adding scroll height), so a short page never shows a strip of page colour below it.
-  // The footer closes the page: a light blueprint band in light, the navy chrome in dark (--dh-foot*). Its colour runs on
+  // The footer closes the page: a light blueprint band in light, the card surface in dark (--dh-foot*). Its colour runs on
   // under it (border-image outset paints without adding scroll height), so a short page never ends on a strip of page
   // colour. Two rows: the wordmark and sentence, then the links, all on one left edge.
   const FOOT_CSS = BASE_CSS +

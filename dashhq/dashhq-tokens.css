@@ -1,9 +1,9 @@
-/* dashhq family tokens 2.0. Vendor unchanged; override nothing here, map your own variables onto these.
+/* dashhq family tokens 2.0.1. Vendor unchanged; override nothing here, map your own variables onto these.
    Light is the default. Dark applies under prefers-color-scheme unless <html data-theme="light">,
    and always under <html data-theme="dark">. dashhq-shell.js keeps data-theme set to the resolved theme.
 
    The palette is Dash's own: Dash blue (#008DE4) is the one accent and the committing action, Dash navy is the
-   chrome (the bar and the footer, in both themes) and the ink. Nothing is green, teal or purple. "OK" is not a
+   light chrome (the bar) and the ink, and dark uses Radar's navy-slate surfaces. Nothing is green, teal or purple. "OK" is not a
    colour: status colour marks the exception (a warning, a failure, real mainnet funds), never the normal state. */
 
 @font-face {
@@ -36,7 +36,7 @@
   --dh-ink-2: #435069;         /* secondary text, labels (AA on every surface, track and chip) */
   --dh-ink-3: #6C7891;         /* disabled and decorative only, never for text a user must read */
 
-  /* lines: visible edges (1.6:1 on the surface in light, 1.5:1 in dark; contrast.test.mjs holds the floor) */
+  /* lines: visible edges (1.6:1 on the surface in light; in dark, Radar's quieter 1.25:1; contrast.test.mjs holds the floor) */
   --dh-line: #C3CBDA;          /* hairlines, panel borders, table rules */
   --dh-line-2: #78849C;        /* control borders (3:1 on surface and page) */
 
@@ -59,7 +59,7 @@
   --dh-seg-on: #0A1A3F;
   --dh-seg-on-ink: #FFFFFF;
 
-  /* chrome: the bar and the footer are Dash navy in both themes, so every product opens and closes the same way */
+  /* chrome: the bar is Dash navy in light; in dark it sits on Radar's card surface, as Radar's does */
   --dh-chrome: #0B1C4B;
   --dh-chrome-raised: #15296A;  /* a control on the chrome */
   --dh-chrome-ink: #FFFFFF;
@@ -67,7 +67,7 @@
   --dh-chrome-line: #34477D;    /* hairlines on the chrome */
   --dh-chrome-line-2: #7487BD;  /* control borders on the chrome (3:1) */
   --dh-chrome-hover: rgba(255, 255, 255, .09);
-  --dh-chrome-accent: #5CB9F8;  /* the current section on the chrome */
+  --dh-chrome-accent: #5CB9F8;  /* the wordmark accent, and the current section on the chrome in light */
   --dh-chrome-real: #F2BE62;    /* the Mainnet dot on the chrome: real funds */
 
   /* footer: one step off the page in both themes; the bar alone carries the navy */
@@ -205,58 +205,68 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --dh-page: #08090D;
-    --dh-surface: #1E222C;
-    --dh-sunken: #050608;
-    --dh-track: #2C323E;
-    --dh-raised: #272C38;
-    --dh-raised-hover: #313745;
-    --dh-raised-line: #646E80;
+    --dh-page: #06131B;
+    --dh-surface: #0C1E2A;
+    --dh-sunken: #030C12;
+    --dh-track: #193342;
+    --dh-raised: #193342;
+    --dh-raised-hover: #234353;
+    --dh-raised-line: #557384;
     --dh-chip: var(--dh-raised);
     --dh-chip-line: var(--dh-line);
     --dh-disabled: var(--dh-surface);
-    --dh-hover: rgba(230, 236, 245, .06);
-    --dh-ink: #EDF0F5;
-    --dh-ink-2: #B6BDCA;
-    --dh-ink-3: #808999;
-    --dh-line: #3E4555;
-    --dh-line-2: #6A7385;
-    --dh-brand: #2E9BF0;
-    --dh-brand-ink: #7DC1F7;
-    --dh-brand-fill: #1A6CC2;
-    --dh-brand-soft: #132943;
-    --dh-act-hover: #155FAC;
-    --dh-seg-on: #3F5279;
-    --dh-seg-on-ink: #FFFFFF;
-    --dh-chrome: #0C1C4A;
-    --dh-foot: #12151C;
-    --dh-foot-ink: #EDF0F5;
-    --dh-foot-ink-2: #B6BDCA;
-    --dh-foot-line: #2E3440;
-    --dh-foot-link: #7DC1F7;
+    --dh-hover: rgba(220, 232, 240, .05);
+    --dh-ink: #DCE8F0;
+    --dh-ink-2: #8FA7B6;
+    --dh-ink-3: #6A8292;
+    --dh-line: #1B3242;
+    --dh-line-2: #557384;
+    --dh-brand: #1A9CF0;
+    --dh-brand-ink: #5EC2F6;
+    --dh-brand-fill: #0070C4;
+    --dh-brand-soft: #0D2B40;
+    --dh-act-hover: #005DAA;
+    --dh-seg-on: #305567;
+    --dh-seg-on-ink: #DCE8F0;
+    --dh-chrome: #0C1E2A;
+    --dh-foot: #0C1E2A;
+    --dh-foot-ink: #DCE8F0;
+    --dh-foot-ink-2: #8FA7B6;
+    --dh-foot-line: #1B3242;
+    --dh-foot-link: #5EC2F6;
     --dh-foot-grid: transparent;
     --dh-flow: #F0B44C;
-    --dh-chrome-raised: #172B66;
-    --dh-chrome-line: #34477D;
+    --dh-chrome-raised: #193342;
+    --dh-chrome-line: #1B3242;
+    --dh-chrome-ink: #DCE8F0;
+    --dh-chrome-ink-2: #8FA7B6;
+    --dh-chrome-line-2: #557384;
+    --dh-chrome-accent: #5EC2F6;
+    --dh-chrome-hover: rgba(220, 232, 240, .05);
+    --dh-chrome-edge: var(--dh-chrome-line);
+    --dh-chrome-current: var(--dh-chrome-ink);
+    --dh-current: var(--dh-ink);
+    --dh-current-ink: var(--dh-ink);
+    --dh-tab-ink: var(--dh-ink-2);
     --dh-warn: #F2BE62;  --dh-warn-soft: #2B2314;
     --dh-bad:  #F48A80;  --dh-bad-soft:  #3A1818;
-    --dh-plate: #0E2050;
-    --dh-plate-edge: #2B4683;
-    --dh-plate-line: #A6D3F7;
-    --dh-plate-ink: #E6F0FC;
-    --dh-plate-ink-2: #A3B7D8;
-    --dh-plate-hair: rgba(166, 211, 247, .2);
-    --dh-mark-edge: rgba(125, 193, 247, .38);
-    --dh-tier-apps: #C2D2F2;      --dh-tier-apps-ink: #0A1A3F;      --dh-tier-apps-soft: #1C2233;
+    --dh-plate: #0D3149;
+    --dh-plate-edge: #123A52;
+    --dh-plate-line: #A6D8F7;
+    --dh-plate-ink: #E4F3FC;
+    --dh-plate-ink-2: #8DB4CC;
+    --dh-plate-hair: rgba(166, 216, 247, .22);
+    --dh-mark-edge: rgba(166, 216, 247, .38);
+    --dh-tier-apps: #C2D2F2;      --dh-tier-apps-ink: #0A1A3F;      --dh-tier-apps-soft: #172844;
     --dh-tier-net: #2E9BF0;       --dh-tier-net-ink: #06122B;       --dh-tier-net-soft: #102846;
     --dh-tier-platform: #A7B3F7;  --dh-tier-platform-ink: #0A1A3F;  --dh-tier-platform-soft: #1E2347;
-    --dh-tier-ref: #5B6476;       --dh-tier-ref-ink: #EDF0F5;       --dh-tier-ref-soft: #22262F;
+    --dh-tier-ref: #52697A;       --dh-tier-ref-ink: #EDF0F5;       --dh-tier-ref-soft: #152B3A;
     --dh-cat-1: #4C93EC; --dh-cat-2: #EB7746; --dh-cat-3: #8C85F2; --dh-cat-4: #D9A21C; --dh-cat-5: #E46F9A;
     --dh-ramp-1: #A9D9FA; --dh-ramp-2: #62B8F3; --dh-ramp-3: #2B90DA; --dh-ramp-4: #1F6CA3; --dh-ramp-5: #1A4A6E;
     --dh-accent-forge-select: #F58A4F; --dh-accent-forge-soft: #363131;
     --dh-accent-pollr-select: #E46F9A; --dh-accent-pollr-soft: #3A1A27;
     --dh-accent-yappr-select: #38BDF8; --dh-accent-yappr-soft: #143B4F;
-    --dh-focus: #7DC1F7;
+    --dh-focus: #5EC2F6;
     --dh-shade-1: rgba(255, 255, 255, .08);
     --dh-shade-2: rgba(0, 0, 0, .18);
     --dh-shadow-pop: 0 14px 36px -12px rgba(0, 0, 0, .7), 0 0 0 1px var(--dh-line);
@@ -265,58 +275,68 @@
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --dh-page: #08090D;
-  --dh-surface: #1E222C;
-  --dh-sunken: #050608;
-  --dh-track: #2C323E;
-  --dh-raised: #272C38;
-  --dh-raised-hover: #313745;
-  --dh-raised-line: #646E80;
+  --dh-page: #06131B;
+  --dh-surface: #0C1E2A;
+  --dh-sunken: #030C12;
+  --dh-track: #193342;
+  --dh-raised: #193342;
+  --dh-raised-hover: #234353;
+  --dh-raised-line: #557384;
   --dh-chip: var(--dh-raised);
   --dh-chip-line: var(--dh-line);
   --dh-disabled: var(--dh-surface);
-  --dh-hover: rgba(230, 236, 245, .06);
-  --dh-ink: #EDF0F5;
-  --dh-ink-2: #B6BDCA;
-  --dh-ink-3: #808999;
-  --dh-line: #3E4555;
-  --dh-line-2: #6A7385;
-  --dh-brand: #2E9BF0;
-  --dh-brand-ink: #7DC1F7;
-  --dh-brand-fill: #1A6CC2;
-  --dh-brand-soft: #132943;
-  --dh-act-hover: #155FAC;
-  --dh-seg-on: #3F5279;
-  --dh-seg-on-ink: #FFFFFF;
-  --dh-chrome: #0C1C4A;
-  --dh-foot: #12151C;
-  --dh-foot-ink: #EDF0F5;
-  --dh-foot-ink-2: #B6BDCA;
-  --dh-foot-line: #2E3440;
-  --dh-foot-link: #7DC1F7;
+  --dh-hover: rgba(220, 232, 240, .05);
+  --dh-ink: #DCE8F0;
+  --dh-ink-2: #8FA7B6;
+  --dh-ink-3: #6A8292;
+  --dh-line: #1B3242;
+  --dh-line-2: #557384;
+  --dh-brand: #1A9CF0;
+  --dh-brand-ink: #5EC2F6;
+  --dh-brand-fill: #0070C4;
+  --dh-brand-soft: #0D2B40;
+  --dh-act-hover: #005DAA;
+  --dh-seg-on: #305567;
+  --dh-seg-on-ink: #DCE8F0;
+  --dh-chrome: #0C1E2A;
+  --dh-foot: #0C1E2A;
+  --dh-foot-ink: #DCE8F0;
+  --dh-foot-ink-2: #8FA7B6;
+  --dh-foot-line: #1B3242;
+  --dh-foot-link: #5EC2F6;
   --dh-foot-grid: transparent;
   --dh-flow: #F0B44C;
-  --dh-chrome-raised: #172B66;
-  --dh-chrome-line: #34477D;
+  --dh-chrome-raised: #193342;
+  --dh-chrome-line: #1B3242;
+  --dh-chrome-ink: #DCE8F0;
+  --dh-chrome-ink-2: #8FA7B6;
+  --dh-chrome-line-2: #557384;
+  --dh-chrome-accent: #5EC2F6;
+  --dh-chrome-hover: rgba(220, 232, 240, .05);
+  --dh-chrome-edge: var(--dh-chrome-line);
+  --dh-chrome-current: var(--dh-chrome-ink);
+  --dh-current: var(--dh-ink);
+  --dh-current-ink: var(--dh-ink);
+  --dh-tab-ink: var(--dh-ink-2);
   --dh-warn: #F2BE62;  --dh-warn-soft: #2B2314;
   --dh-bad:  #F48A80;  --dh-bad-soft:  #3A1818;
-  --dh-plate: #0E2050;
-  --dh-plate-edge: #2B4683;
-  --dh-plate-line: #A6D3F7;
-  --dh-plate-ink: #E6F0FC;
-  --dh-plate-ink-2: #A3B7D8;
-  --dh-plate-hair: rgba(166, 211, 247, .2);
-  --dh-mark-edge: rgba(125, 193, 247, .38);
-  --dh-tier-apps: #C2D2F2;      --dh-tier-apps-ink: #0A1A3F;      --dh-tier-apps-soft: #1C2233;
+  --dh-plate: #0D3149;
+  --dh-plate-edge: #123A52;
+  --dh-plate-line: #A6D8F7;
+  --dh-plate-ink: #E4F3FC;
+  --dh-plate-ink-2: #8DB4CC;
+  --dh-plate-hair: rgba(166, 216, 247, .22);
+  --dh-mark-edge: rgba(166, 216, 247, .38);
+  --dh-tier-apps: #C2D2F2;      --dh-tier-apps-ink: #0A1A3F;      --dh-tier-apps-soft: #172844;
   --dh-tier-net: #2E9BF0;       --dh-tier-net-ink: #06122B;       --dh-tier-net-soft: #102846;
   --dh-tier-platform: #A7B3F7;  --dh-tier-platform-ink: #0A1A3F;  --dh-tier-platform-soft: #1E2347;
-  --dh-tier-ref: #5B6476;       --dh-tier-ref-ink: #EDF0F5;       --dh-tier-ref-soft: #22262F;
+  --dh-tier-ref: #52697A;       --dh-tier-ref-ink: #EDF0F5;       --dh-tier-ref-soft: #152B3A;
   --dh-cat-1: #4C93EC; --dh-cat-2: #EB7746; --dh-cat-3: #8C85F2; --dh-cat-4: #D9A21C; --dh-cat-5: #E46F9A;
   --dh-ramp-1: #A9D9FA; --dh-ramp-2: #62B8F3; --dh-ramp-3: #2B90DA; --dh-ramp-4: #1F6CA3; --dh-ramp-5: #1A4A6E;
   --dh-accent-forge-select: #F58A4F; --dh-accent-forge-soft: #363131;
   --dh-accent-pollr-select: #E46F9A; --dh-accent-pollr-soft: #3A1A27;
   --dh-accent-yappr-select: #38BDF8; --dh-accent-yappr-soft: #143B4F;
-  --dh-focus: #7DC1F7;
+  --dh-focus: #5EC2F6;
   --dh-shade-1: rgba(255, 255, 255, .08);
   --dh-shade-2: rgba(0, 0, 0, .18);
   --dh-shadow-pop: 0 14px 36px -12px rgba(0, 0, 0, .7), 0 0 0 1px var(--dh-line);

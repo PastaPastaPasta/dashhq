@@ -62,7 +62,7 @@ dashhq-bar > [slot="nav"] :is(a, button) {
   dashhq-bar > [slot="nav"] :is(a, button):hover { color: var(--dh-ink); background: var(--dh-hover); }
 }
 dashhq-bar > [slot="nav"] :is(a, button):is([aria-current="page"], [aria-current="true"]) {
-  color: var(--dh-nav-current-ink, var(--dh-brand-ink)); background: var(--dh-nav-current-bg, var(--dh-chip));
+  color: var(--dh-nav-current-ink, var(--dh-current-ink, var(--dh-brand-ink))); background: var(--dh-nav-current-bg, var(--dh-chip));
   box-shadow: var(--dh-nav-current-mark, none);
 }
 dashhq-bar > [slot="nav"] :is(a, button):focus-visible { outline: 2px solid var(--dh-focus); outline-offset: 2px; }
