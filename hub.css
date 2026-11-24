@@ -138,7 +138,8 @@ dashhq-footer{display:block}
 .dir>.dgroup:last-child{margin-bottom:0}
 @media(min-width:1400px){.dgroup ul{grid-template-columns:repeat(4,minmax(0,1fr))}.dgroup li{padding:12px 14px 10px}.catalog-url code{font-size:13px}}
 @media(max-width:1099px){.hub-top{grid-template-columns:1fr;grid-template-areas:"title" "lede" "find" "doors" "map"}.hub-top .finder{margin-top:20px}.network-pulse{flex-direction:row;flex-wrap:wrap;gap:2px 12px}}
-@media(max-width:999px){.map-node{height:62px}.map-node small{white-space:normal;overflow:visible}.risers{background:none}.tier ul{grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:8px;padding-top:8px}.link-band{height:12px}.fund{display:flex;flex-wrap:wrap;gap:8px;padding-block:8px 10px}.fund>ul{display:flex;flex-wrap:wrap;gap:8px;flex:1 1 100%}.fund>ul>li{flex:1 1 168px}.fund>p{order:3;flex-basis:100%;justify-content:flex-start;padding:0}.fund-wire::before{display:none}.fund .map-node{box-shadow:inset 4px 0 0 var(--dh-flow)}}
+@media(max-width:999px){.map-node{height:62px}.map-node small{white-space:normal;overflow:visible}.risers{background:none}.tier ul{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding-top:8px}.link-band{height:12px}.fund{display:flex;flex-wrap:wrap;gap:8px;padding-block:8px 10px}.fund>ul{display:flex;flex-wrap:wrap;gap:8px;flex:1 1 100%}.fund>ul>li{flex:1 1 168px}.fund>p{order:3;flex-basis:100%;justify-content:flex-start;padding:0}.fund-wire::before{display:none}.fund .map-node{box-shadow:inset 4px 0 0 var(--dh-flow)}}
+@media(max-width:679px){.tier ul{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:1000px){.doors{grid-template-columns:repeat(2,minmax(0,1fr))}.dgroup ul{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:599px){
  .hub-top{padding-block:24px 28px;grid-template-areas:"title" "lede" "find" "doors" "map"}
