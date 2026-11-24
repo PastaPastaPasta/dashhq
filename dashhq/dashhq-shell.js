@@ -1,4 +1,4 @@
-/*! dashhq-shell 1.9.5 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
+/*! dashhq-shell 2.0.0 | family bar, footer, hash display, sign-in help, not-found and moved notices, and theme for dashhq.org tools | MIT */
 /* Load as a classic, blocking script in <head>, before any stylesheet that depends on [data-theme]:
      <script src="/dashhq/dashhq-shell.js"></script>
    CSP: needs only script-src 'self'. No inline script, no eval, no innerHTML, no style attributes,
@@ -7,7 +7,7 @@
   'use strict';
   if (window.dashhq && window.dashhq.version) return;
 
-  const VERSION = '1.9.5';
+  const VERSION = '2.0.0';
   const doc = document;
   const root = doc.documentElement;
   const host = location.hostname;
@@ -336,7 +336,7 @@
     if (root.getAttribute('data-theme') !== t || root.getAttribute('data-theme-pref') !== pref ||
       root.style.colorScheme !== t) applyTheme(false);
     syncTabs();
-  }).observe(root, { attributes: true, attributeFilter: ['data-theme', 'data-theme-pref', 'style'] });
+  }).observe(root, { attributes: true, attributeFilter: ['data-theme', 'data-theme-pref', 'style', 'data-dh-tabs'] });
   mq.addEventListener('change', () => { if (pref === 'system') applyTheme(true); });
   // Another subdomain may have changed the shared cookie while this tab sat in the background.
   doc.addEventListener('visibilitychange', () => {
@@ -388,22 +388,43 @@
     '.ic{display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}' +
     '.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}';
 
+  // The bar is Dash navy chrome in both themes. Its row (and what a product slots into it) draws with the chrome's
+  // values under the usual token names; menus, the phone sheet and the tab bar get the page's values back.
+  const CHROME = {
+    page: 'chrome', surface: 'chrome', sunken: 'chrome', raised: 'chrome-raised',
+    'raised-hover': 'chrome-raised', 'raised-line': 'chrome-line-2', chip: 'chrome-raised', 'chip-line': 'chrome-line',
+    hover: 'chrome-hover', disabled: 'chrome-raised', ink: 'chrome-ink', 'ink-2': 'chrome-ink-2', 'ink-3': 'chrome-ink-2',
+    line: 'chrome-line', 'line-2': 'chrome-line-2', brand: 'chrome-accent', 'brand-ink': 'chrome-accent',
+    'brand-soft': 'chrome-raised', select: 'chrome-accent', 'select-soft': 'chrome-raised', focus: 'chrome-accent',
+    info: 'chrome-accent', 'info-soft': 'chrome-raised', good: 'chrome-ink', 'good-soft': 'chrome-raised'
+  };
+  const tokenSet = (from) => Object.keys(CHROME).map((k) => `--dh-${k}:var(${from(k)})`).join(';');
+  const CHROME_SAVE = tokenSet((k) => `--dh-${k}`).replace(/--dh-([a-z0-9-]+):/g, '--dhp-$1:');
+  const CHROME_ON = tokenSet((k) => `--dh-${CHROME[k]}, var(--dhp-${k})`) +
+    ';--dh-ring-shadow:0 0 0 2px var(--dh-chrome),0 0 0 4px var(--dh-chrome-accent)';
+  const CHROME_OFF = tokenSet((k) => `--dhp-${k}`) +
+    ';--dh-ring-shadow:0 0 0 2px var(--dhp-surface),0 0 0 4px var(--dhp-focus)';
+
   const BAR_CSS = BASE_CSS +
     ':host{display:block;position:relative;z-index:40}' +
     ':host([sticky]){position:sticky;top:0}' +
-    '.bar{position:relative;background:var(--dh-surface);border-bottom:1px solid var(--dh-line);' +
+    `.bar{position:relative;background:var(--dh-chrome);color:var(--dh-chrome-ink);${CHROME_SAVE};` +
+    'box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--dh-brand) 55%,var(--dh-chrome));' +
     '--dh-nav-dir:row;--dh-nav-h:32px;--dh-nav-fs:14px;--dh-nav-pad:10px;--dh-nav-align:center;' +
     '--dh-nav-only-phone:none;--dh-nav-only-desk:flex}' +
+    `.row{${CHROME_ON};--dh-nav-ink:var(--dh-chrome-ink-2);--dh-nav-current-ink:var(--dh-chrome-ink);` +
+    '--dh-nav-current-bg:var(--dh-chrome-raised);--dh-nav-current-mark:inset 0 -2px 0 var(--dh-chrome-accent)}' +
+    `.pop,.bar.compact .sheet,.bar.compact.tabs .nav{${CHROME_OFF};color:var(--dh-ink)}` +
     '.bar.compact{--dh-nav-only-phone:flex;--dh-nav-only-desk:none}' +
-    '.bar.test,.bar.dev{border-bottom:1px dashed var(--dh-line-2)}' +
-    '.row{position:relative;max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;' +
+    '.row{position:relative;color:var(--dh-ink);max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;' +
     'padding:0 var(--dh-gutter);height:var(--dh-bar-h);display:flex;align-items:center;gap:2px;overflow:hidden}' +
     '.bar.popping .row,.bar.open .row{overflow:visible}' +
     '.lockup{display:flex;align-items:center;flex:none;gap:0}' +
     '.home{display:flex;align-items:center;height:36px;border-radius:var(--dh-r2);flex:none}' +
-    '.wm{font-weight:650;font-stretch:112%;font-size:17px;letter-spacing:-.012em;line-height:1}' +
+    '.wm{font-weight:680;font-stretch:116%;font-size:17px;letter-spacing:-.015em;line-height:1}' +
+    '.wm b{font-weight:inherit;color:var(--dh-chrome-accent)}' +
     '.is-home .wm{font-size:19px}' +
-    '.slash{color:var(--dh-line-2);font-size:19px;font-weight:300;margin:0 7px;flex:none;line-height:1}' +
+    '.slash{color:var(--dh-chrome-accent);font-size:19px;font-weight:300;margin:0 7px;flex:none;line-height:1}' +
     '.product{display:flex;align-items:center;font-weight:580;font-size:15.5px;height:34px;' +
     'border-radius:var(--dh-r2);white-space:nowrap;min-width:0}' +
     '.pn{min-width:0}' +
@@ -413,7 +434,7 @@
     '.product:hover .pn{text-decoration:underline;text-decoration-color:var(--dh-line-2);text-underline-offset:4px}' +
     '.doorwrap{position:relative;flex:none;margin-left:10px}' +
     '.switch{display:flex;align-items:center;gap:4px;padding:6px 8px;' +
-    'border-radius:var(--dh-r2);color:var(--dh-ink-2);font-size:14.5px;font-weight:520;white-space:nowrap}' +
+    'border-radius:var(--dh-r2);color:var(--dh-ink);font-size:14.5px;font-weight:520;white-space:nowrap}' +
     '.switch:hover,.switch[aria-expanded=true]{background:var(--dh-hover);color:var(--dh-ink)}' +
     '.bar.nolabel .swl{display:none}' +
     '.switch .ic{transition:transform var(--dh-dur-2) var(--dh-ease)}' +
@@ -422,20 +443,22 @@
     '.nav{display:flex;align-items:center;flex:none;margin-left:14px}' +
     '.family{display:none}' +
     '.end{display:flex;align-items:center;gap:6px;margin-left:auto;padding-left:12px;flex:none}' +
-    '.tbtn,.menu{width:36px;height:36px;display:grid;place-items:center;border-radius:var(--dh-r2);color:var(--dh-ink-2)}' +
+    '.tbtn,.menu{width:36px;height:36px;display:grid;place-items:center;border-radius:var(--dh-r2);color:var(--dh-ink)}' +
     '.tbtn:hover,.tbtn[aria-expanded=true],.menu:hover,.menu[aria-expanded=true]{background:var(--dh-hover);color:var(--dh-ink)}' +
     '.menu{display:none}' +
     /* Network names distinguish live funds from practice funds. */
     '.netwrap{position:relative;flex:none}' +
-    '.net{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 10px;border:1px solid var(--dh-line-2);' +
-    'border-radius:var(--dh-r2);background:var(--dh-surface);font-size:13px;font-weight:540;white-space:nowrap;' +
+    /* One pill everywhere. A switch (more than one network) is a bordered button with a chevron; a site with one
+       network shows the same dot and name as a plain label. Mainnet's dot is the real-funds caution colour, Testnet's
+       a hollow ring, a devnet's a dashed ring. */
+    '.net{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 10px;border:1px solid transparent;' +
+    'border-radius:var(--dh-r2);background:var(--dh-chip);font-size:14px;font-weight:560;white-space:nowrap;' +
     'color:var(--dh-ink)}' +
-    'button.net{padding-right:6px}' +
+    'button.net{padding:0 6px 0 10px;border-color:var(--dh-line-2);background:transparent}' +
     'button.net:hover{background:var(--dh-hover)}' +
-    '.net .dot{width:7px;height:7px;border-radius:50%;background:var(--dh-good);flex:none}' +
-    '.net.test,.net.dev{background:var(--dh-chip)}' +
-    '.net.dev{border-style:dotted;border-width:1.5px}' +
+    '.net .dot{box-sizing:border-box;width:8px;height:8px;border-radius:50%;background:var(--dh-chrome-real);flex:none}' +
     '.net.test .dot,.net.dev .dot{background:transparent;border:1.5px solid var(--dh-ink-2)}' +
+    '.net.dev .dot{border-style:dashed}' +
     '.net .ic{color:var(--dh-ink-2)}' +
     /* popovers */
     '.pop{position:absolute;top:calc(100% + 6px);z-index:2;background:var(--dh-surface);border-radius:var(--dh-r3);' +
@@ -479,25 +502,26 @@
     '.bar.compact ::slotted([slot=logo]){width:26px;height:26px}' +
     '.bar.compact .home{height:auto;grid-row:1;justify-self:start}' +
     '.bar.compact.has-logo .home,.bar.compact.has-logo .product{grid-column:2}' +
-    '.bar.compact .wm{font-size:11.5px;color:var(--dh-ink-2)}' +
+    '.bar.compact .wm{font-size:13px;color:var(--dh-chrome-ink)}' +
     '.bar.compact .slash{display:none}' +
     '.bar.compact .product{grid-row:2;height:auto;font-size:15px;line-height:1.15}' +
     '.bar.compact .pn{overflow:hidden;text-overflow:ellipsis}' +
     '.bar.compact.is-home .lockup{display:flex}' +
     '.bar.compact.is-home .wm{font-size:19px;color:var(--dh-ink)}' +
     '.bar.compact .end{padding-left:6px;gap:4px}' +
-    '.bar.compact .net{padding:0 9px;gap:6px}.bar.compact button.net{padding-right:5px}' +
+    '.bar.compact .net{gap:6px;padding:0 9px}.bar.compact button.net{padding:0 5px 0 9px}' +
     '.bar.squeeze .nl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}' +
-    '.bar.squeeze .net{gap:4px;padding:0 10px}.bar.squeeze button.net{padding-right:6px}' +
+    '.bar.squeeze .net{gap:4px}.bar.squeeze button.net{padding:0 6px 0 10px}' +
     '.bar.compact .menu{display:grid}' +
     '.bar.compact .sheet{display:none;--dh-nav-dir:column;--dh-nav-h:44px;--dh-nav-fs:15px;--dh-nav-pad:12px;' +
-    '--dh-nav-align:stretch;--dh-nav-weight:580;--dh-nav-ink:var(--dh-ink);--dh-nav-current-mark:inset 3px 0 var(--dh-brand)}' +
+    '--dh-nav-align:stretch;--dh-nav-weight:580;--dh-nav-ink:var(--dh-ink);--dh-nav-current-ink:var(--dh-brand-ink);' +
+    '--dh-nav-current-bg:var(--dh-chip);--dh-nav-current-mark:inset 3px 0 var(--dh-brand)}' +
     '.sheet:focus{outline:none}' +
     '.scrim{display:none}' +
     '.bar.open .scrim{display:block;position:absolute;left:0;right:0;top:100%;height:100dvh;' +
-    'background:rgba(6,19,27,.38);touch-action:none}' +
+    'background:rgba(6,14,36,.42);touch-action:none}' +
     '.bar.compact.open .sheet{display:block;position:absolute;left:0;right:0;top:100%;z-index:2;' +
-    'background:var(--dh-surface);border-bottom:1px solid var(--dh-line);box-shadow:0 18px 30px -18px rgba(8,24,36,.45);' +
+    'background:var(--dh-surface);border-bottom:1px solid var(--dh-line);box-shadow:0 18px 30px -18px rgba(6,14,36,.45);' +
     'max-height:calc(100vh - var(--dh-bar-h) - var(--dh-tabs-h, 0px));' +
     'max-height:calc(100dvh - var(--dh-bar-h) - var(--dh-tabs-h, 0px));overflow:auto;' +
     'overscroll-behavior:contain;padding:8px var(--dh-gutter) 16px}' +
@@ -505,7 +529,7 @@
     '.bar.compact .nav.empty{display:none}' +
     '.bar.compact .family{display:block;border-top:1px solid var(--dh-line);padding-top:8px}' +
     '.bar.compact .nav.empty+.family{border-top:0;padding-top:0}' +
-    '.fl{margin:0;padding:6px 12px;font-size:12.5px;color:var(--dh-ink-2)}' +
+    '.fl{margin:0;padding:6px 12px;font-size:13px;color:var(--dh-ink-2)}' +
     '.pd{list-style:none;margin:0;padding:0}' +
     '.pd a,.hm{display:flex;align-items:center;min-height:44px;padding:0 12px;' +
     'border-radius:var(--dh-r2);font-size:15px;font-weight:540}' +
@@ -513,17 +537,23 @@
     '.pd a[aria-current]{background:var(--dh-chip);box-shadow:inset 3px 0 var(--dh-brand)}' +
     '.hm{color:var(--dh-brand-ink)}' +
     '.tag{margin-left:8px;padding:1px 6px;border:1px dashed var(--dh-line-2);border-radius:var(--dh-r1);background:var(--dh-chip);' +
-    'font-size:12.5px;font-weight:520;line-height:1.4;color:var(--dh-ink-2);white-space:nowrap}' +
+    'font-size:13px;font-weight:520;line-height:1.4;color:var(--dh-ink-2);white-space:nowrap}' +
     '[hidden]{display:none!important}' +
-    /* phone-nav="tabs": the product's sections become a bottom tab bar; the menu then holds only the family */
+    /* phone-nav="tabs": the product's sections become a bottom tab bar; the menu then holds only the family.
+       Labels are never cut: each tab keeps its whole label on one line, and a row too long for the screen scrolls
+       sideways behind a fade instead of squeezing its neighbours. */
     '.bar.compact.tabs .nav{position:fixed;left:0;right:0;bottom:0;z-index:3;margin:0;' +
-    'padding:0 max(env(safe-area-inset-right,0px),4px) env(safe-area-inset-bottom,0px) max(env(safe-area-inset-left,0px),4px);' +
-    'background:var(--dh-surface);border-top:1px solid var(--dh-line);' +
-    '--dh-nav-dir:row;--dh-nav-h:56px;--dh-nav-fs:12px;--dh-nav-pad:4px;--dh-nav-align:stretch;--dh-nav-gap:0;' +
-    '--dh-nav-item:1 1 0;--dh-nav-item-dir:column;--dh-nav-item-gap:4px;--dh-nav-item-justify:center;--dh-nav-ws:normal;' +
-    '--dh-nav-icon:block;--dh-nav-radius:0;--dh-nav-current-bg:transparent;--dh-nav-current-ink:var(--dh-ink);' +
+    'padding:0 env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);' +
+    'background:var(--dh-surface);border-top:1px solid var(--dh-line);box-shadow:0 -6px 18px -12px rgba(6,14,36,.35);' +
+    '--dh-nav-dir:row;--dh-nav-h:56px;--dh-nav-fs:13px;--dh-nav-pad:8px;--dh-nav-align:stretch;--dh-nav-gap:0;' +
+    '--dh-nav-item:1 1 0;--dh-nav-item-min:max-content;--dh-nav-item-dir:column;--dh-nav-item-gap:4px;' +
+    '--dh-nav-item-justify:center;--dh-nav-ws:nowrap;--dh-nav-overflow:auto;--dh-nav-weight:560;' +
+    '--dh-nav-icon:block;--dh-nav-radius:0;--dh-nav-current-bg:transparent;--dh-nav-ink:var(--dh-ink);' +
+    '--dh-nav-current-ink:var(--dh-brand-ink);' +
     '--dh-nav-current-mark:inset 0 2px 0 var(--dh-select);--dh-nav-current-icon:var(--dh-select)}' +
-    '.bar.compact.tabs .nav.empty{display:none}' +
+    '.bar.compact.tabs .nav.scrolls{--dh-nav-mask:linear-gradient(90deg,#000 calc(100% - 32px),transparent)}' +
+    '.bar.compact.tabs .nav.scrolls.at-end{--dh-nav-mask:linear-gradient(270deg,#000 calc(100% - 32px),transparent)}' +
+    '.bar.compact.tabs .nav.empty,.bar.compact.tabs.typing .nav{display:none}' +
     '.bar.compact.tabs .family{border-top:0;padding-top:0}' +
     '.bar.compact .net{height:36px}' +
 
@@ -544,19 +574,36 @@
     'animation:dh-in var(--dh-dur-2) var(--dh-ease)}}' +
     '@keyframes dh-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}';
 
+  // The footer is the same navy chrome as the bar and ends the page: its colour runs on under it (border-image
+  // outset paints without adding scroll height), so a short page never shows a strip of page colour below it.
+  // The footer closes the page: a light blueprint band in light, the navy chrome in dark (--dh-foot*). Its colour runs on
+  // under it (border-image outset paints without adding scroll height), so a short page never ends on a strip of page
+  // colour. Two rows: the wordmark and sentence, then the links, all on one left edge.
   const FOOT_CSS = BASE_CSS +
-    ':host{display:block;margin-top:var(--dh-7);padding-bottom:var(--dh-tabs-h,0px)}' +
-    '.f{border-top:1px solid var(--dh-line);font-size:14px;line-height:1.5;color:var(--dh-ink-2)}' +
-    '.in{max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;padding:22px var(--dh-gutter) 26px;' +
-    'display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 24px}' +
-    '.home{color:var(--dh-ink);font-weight:650;font-stretch:112%;font-size:15px;flex:none}' +
-    '.sentence{flex:1 1 360px;margin:0;min-width:0}' +
-    '.links{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}' +
-    '.links a{color:var(--dh-ink-2);text-decoration:underline;text-decoration-color:var(--dh-line-2);text-underline-offset:3px}' +
-    '.links a:hover{color:var(--dh-brand-ink)}' +
+    ':host{display:block;margin-top:0}' +
+    '.f{background-color:var(--dh-foot);color:var(--dh-foot-ink-2);font-size:14px;line-height:1.55;' +
+    'border-top:1px solid var(--dh-foot-line);padding-bottom:var(--dh-tabs-h,0px);' +
+    'border-image:linear-gradient(var(--dh-foot),var(--dh-foot)) fill 0/0/0 0 100vh 0;' +
+    '--dh-focus:var(--dh-foot-link)}' +
+    '.in{max-width:var(--dh-shell-max,var(--dh-max));margin:0 auto;padding:16px var(--dh-gutter) 18px;' +
+    'display:grid;grid-template-columns:auto minmax(0,1fr);align-items:baseline;gap:6px 24px}' +
+    '.home{color:var(--dh-foot-ink);font-weight:680;font-stretch:116%;font-size:16px;letter-spacing:-.015em}' +
+    '.home b{font-weight:inherit;color:var(--dh-brand)}' +
+    '.sentence{margin:0;min-width:0}' +
+    '.links{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 20px;color:var(--dh-foot-ink)}' +
+    '.links a{color:var(--dh-foot-link);text-decoration:underline;text-decoration-color:color-mix(in srgb,currentColor 45%,transparent);' +
+    'text-underline-offset:3px}' +
+    '.links a:hover{text-decoration-color:currentColor}' +
     '::slotted(*){display:inline!important;margin:0!important;padding:0!important;font:inherit!important;color:inherit!important}' +
-    '::slotted(a){text-decoration:underline;text-decoration-color:var(--dh-line-2);text-underline-offset:3px}' +
-    '@media(max-width:600px){.in{gap:10px 16px}.sentence{flex-basis:calc(100% - 100px)}.links{width:100%}}';
+    /* A product's wrapper (a div or p of links and a lead-in) dissolves, so every link and lead-in is an item of the same
+       wrapping row with even gaps: nothing hangs on an indented second line. */
+    '::slotted(:is(div,p,nav,ul,span)){display:contents!important}' +
+    '::slotted(a){color:var(--dh-foot-link)!important;text-decoration:underline!important;' +
+    'text-decoration-color:color-mix(in srgb,currentColor 45%,transparent)!important;text-underline-offset:3px!important}' +
+    /* Phone: one left-aligned column: the wordmark, the sentence, then the links. */
+    '@media(max-width:720px){.in{grid-template-columns:minmax(0,1fr);gap:4px;padding:16px var(--dh-gutter) 16px}' +
+    '.links{gap:0 18px;margin-top:2px}}' +
+    '@media (pointer:coarse){.links a,::slotted(a){display:inline-flex!important;align-items:center;min-height:36px}}';
 
   const HASH_CSS = BASE_CSS +
     ':host{display:inline-flex;align-items:center;gap:2px;max-width:100%;vertical-align:baseline;' +
@@ -569,7 +616,7 @@
     '.cp{display:grid;place-items:center;width:24px;height:24px;border-radius:4px;color:var(--dh-ink-2);flex:none;' +
     'align-self:center}' +
     '.cp:hover{background:var(--dh-hover);color:var(--dh-ink)}' +
-    '.cp.done{color:var(--dh-good)}' +
+    '.cp.done{color:var(--dh-brand-ink)}' +
     '.buf{position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0}' +
     '.man{min-width:0;flex:1 1 auto;width:min(100%,72ch);padding:2px 6px;border:1px solid var(--dh-line-2);' +
     'border-radius:var(--dh-r1);background:var(--dh-surface);color:var(--dh-ink);font:inherit}' +
@@ -628,7 +675,7 @@
     '@container (max-width:299.98px){.tg .tt .sh{display:inline}}' +
     '@media (pointer:coarse){.tg{min-height:44px}}';
 
-  // The buttons and action row the notices share. Navigation is a bordered button; .pri is the amber committing one.
+  // The buttons and action row the notices share. Navigation is a bordered button; .pri is the Dash blue committing one.
   const ACT_CSS =
     '.acts{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}' +
     '.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:var(--dh-ctl-h);padding:0 14px;' +
@@ -666,7 +713,7 @@
     '.nt{display:flex;align-items:center;gap:10px;margin:0;font-weight:620}' +
     '.nb{margin:0;color:var(--dh-ink)}' +
     '.pri{border-color:transparent;background:var(--dh-act);color:var(--dh-act-ink);font-weight:620}' +
-    '.pri:hover{background:var(--dh-act);background-image:linear-gradient(var(--dh-shade-1),var(--dh-shade-1))}' +
+    '.pri:hover{background:var(--dh-act-hover)}' +
     '@media (max-width:480px){h1{font-size:26px}.l{font-size:var(--dh-fs-body)}.btn{width:100%}}';
 
   /* ---------------------------------------------------------------- base element */
@@ -716,7 +763,15 @@
     const has = root.style.getPropertyValue('--dh-tabs-h') !== '';
     if (tabBars.size && !has) root.style.setProperty('--dh-tabs-h', TABS_H);
     else if (!tabBars.size && has) root.style.removeProperty('--dh-tabs-h');
+    if (root.hasAttribute('data-dh-tabs') !== !!tabBars.size) root.toggleAttribute('data-dh-tabs', !!tabBars.size);
   }
+  // While someone types into the page, the tab bar steps aside so it never sits over the field or its form's buttons
+  // (on phones the keyboard pushes fixed bars up over the form).
+  const typing = (el) => !!el && el.matches && el.matches('input:not([type=checkbox],[type=radio],[type=button],[type=submit],' +
+    '[type=reset],[type=range],[type=color],[type=file]),textarea,select,[contenteditable]:not([contenteditable=false])');
+  const setTyping = (on) => tabBars.forEach((b) => b._bar && b._bar.classList.toggle('typing', on));
+  doc.addEventListener('focusin', (e) => setTyping(typing(e.target)));
+  doc.addEventListener('focusout', () => setTyping(false));
 
   // Custom states let product CSS follow the bar's layout without the element writing attributes on itself:
   // dashhq-bar:state(compact) { … }. Older engines spell custom states with a leading "--".
@@ -825,7 +880,7 @@
       this._product = product || null;
       const lockup = h('div', { class: 'lockup' },
         h('a', { class: 'home', href: href('home'), 'aria-label': 'dashhq.org home' },
-          h('span', { class: 'wm', 'aria-hidden': 'true' }, 'dashhq')),
+          h('span', { class: 'wm', 'aria-hidden': 'true' }, 'dash', h('b', null, 'hq'))),
         product && [h('span', { class: 'slash', 'aria-hidden': 'true' }, '/'),
           h('span', { class: 'logo' }, logo), product]);
       this._row = h('div', { class: 'row' }, lockup,
@@ -1097,6 +1152,29 @@
       if (o.which === 'sheet' && this.contains(to)) return; // the product's slotted nav lives in the sheet
       this.close();
     }
+    // A tab row longer than the screen scrolls; the fade sits on the side that has more tabs.
+    _tabFade() {
+      const list = this._navSlot.assignedElements().find((el) => getComputedStyle(el).display !== 'none');
+      if (!list) return;
+      const update = () => {
+        const over = list.scrollWidth > list.clientWidth + 1;
+        this._nav.classList.toggle('scrolls', over);
+        this._nav.classList.toggle('at-end', over && list.scrollLeft + list.clientWidth >= list.scrollWidth - 1);
+      };
+      if (this._scrollList !== list) {
+        if (this._scrollList) this._scrollList.removeEventListener('scroll', this._onTabScroll);
+        this._onTabScroll = update;
+        list.addEventListener('scroll', update, { passive: true });
+        this._scrollList = list;
+        const cur = list.querySelector('[aria-current="page"],[aria-current="true"]');
+        if (cur && list.scrollWidth > list.clientWidth + 1) {
+          const item = cur.getBoundingClientRect(), box = list.getBoundingClientRect();
+          if (item.right > box.right) list.scrollLeft += item.right - box.right + 32;
+          else if (item.left < box.left) list.scrollLeft -= box.left - item.left + 32;
+        }
+      }
+      update();
+    }
     // Collapse to the phone layout whenever the full row does not fit. Runs inside ResizeObserver, before paint.
     _fit() {
       const bar = this._bar, row = this._row;
@@ -1126,6 +1204,7 @@
       }
       if (compact && this._tabs && shown) tabBars.add(this); else tabBars.delete(this);
       syncTabs();
+      if (compact && this._tabs && shown) this._tabFade();
       if (this._open && was !== compact && (this._open.which === 'sheet') !== compact) this.close();
     }
   }
@@ -1141,7 +1220,7 @@
       const src = this.getAttribute('source');
       this._paint(h('footer', { class: 'f', part: 'footer' },
         h('div', { class: 'in' },
-          h('a', { class: 'home', href: href('home') }, 'dashhq'),
+          h('a', { class: 'home', href: href('home'), 'aria-label': 'dashhq.org home' }, 'dash', h('b', null, 'hq')),
           h('div', { class: 'sentence' }, key === 'home' ? h('slot', { name: 'sentence' }, h('slot')) :
             `${PRODUCTS[key].name} is one of the dashhq tools for the Dash network.`),
           h('div', { class: 'links' }, key === 'home' ? h('slot', { name: 'links' }) : h('slot'),

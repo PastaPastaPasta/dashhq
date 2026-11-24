@@ -1,7 +1,7 @@
 # Family shell
 
-Vendored dashhq shell **1.9.5** from design revision `ca49a31cedb71a593a81a21fac9938979c1499a7`.
+Vendored dashhq shell **2.0.0** from design revision `ec94ac4096bde7f3501deae99672a2acd54e3893`.
 
-`dashhq/dashhq-shell.js` SHA-256: `de250b99a1c0710a741dda7cd36911fd09425edc17b56f1aba1391c92c7c203c`.
+`dashhq/dashhq-shell.js` SHA-256: `50ce06677bb4465641cdbd1ae9ff1fd02dd4b4b6b531dbb2b9f79c5168b1a6f5`.
 
-Only the runtime files are vendored. One local change: the Multisig registry URL is `https://multisig.dashhq.org` (the 1.9.5 release still names the old preview host `new-multisig.dashhq.org`, which now redirects). The API is documented in the shell release (`design/shell/README.md`).
+Only the runtime files are vendored, unchanged. The API is documented in the shell release (`design/shell/README.md`).
