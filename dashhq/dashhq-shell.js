@@ -388,7 +388,7 @@
     '.ic{display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}' +
     '.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}';
 
-  // The bar is Dash navy chrome in both themes. Its row (and what a product slots into it) draws with the chrome's
+  // The bar is the chrome: Dash navy in light, Radar's card surface in dark. Its row (and what a product slots into it) draws with the chrome's
   // values under the usual token names; menus, the phone sheet and the tab bar get the page's values back.
   const CHROME = {
     page: 'chrome', surface: 'chrome', sunken: 'chrome', raised: 'chrome-raised',
@@ -574,9 +574,7 @@
     'animation:dh-in var(--dh-dur-2) var(--dh-ease)}}' +
     '@keyframes dh-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}';
 
-  // The footer is the same navy chrome as the bar and ends the page: its colour runs on under it (border-image
-  // outset paints without adding scroll height), so a short page never shows a strip of page colour below it.
-  // The footer closes the page: a light blueprint band in light, the navy chrome in dark (--dh-foot*). Its colour runs on
+  // The footer closes the page: a light blueprint band in light, the card surface in dark (--dh-foot*). Its colour runs on
   // under it (border-image outset paints without adding scroll height), so a short page never ends on a strip of page
   // colour. Two rows: the wordmark and sentence, then the links, all on one left edge.
   const FOOT_CSS = BASE_CSS +

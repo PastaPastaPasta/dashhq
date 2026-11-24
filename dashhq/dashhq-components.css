@@ -306,7 +306,7 @@
 .dh-tabs > :hover { color: var(--dh-ink); }
 .dh-tabs > [aria-current="page"], .dh-tabs > [aria-current="true"], .dh-tabs > [aria-selected="true"] { color: var(--dh-ink); }
 .dh-tabs > [aria-current="page"]::after, .dh-tabs > [aria-current="true"]::after, .dh-tabs > [aria-selected="true"]::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 2px; background: var(--dh-select);
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 2px; background: var(--dh-current, var(--dh-select));
 }
 .dh-tabs > :focus-visible { outline: var(--dh-ring-w) solid var(--dh-focus); outline-offset: -2px; border-radius: var(--dh-r1); }
 .dh-tabs .dh-count { color: var(--dh-ink-2); font-weight: 400; }
