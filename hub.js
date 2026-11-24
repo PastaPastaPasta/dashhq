@@ -98,8 +98,8 @@
       chip.node.classList.toggle('hit',hit);
       if(hit) chipCount++;
     });
-    eco.classList.toggle('searching',!!raw);
-    ecoCount.textContent = (raw ? chipCount+' of ' : '')+chips.length+' on the map';
+    eco.classList.toggle('searching',chipCount > 0);
+    ecoCount.textContent = (chipCount ? chipCount+' of ' : '')+chips.length+' on the map';
     qclear.hidden = !raw;
     results.replaceChildren();
     var destinations = raw && terms.length ? entries.filter(function(item){return matches(item.text,terms);}).sort(function(a,b){
