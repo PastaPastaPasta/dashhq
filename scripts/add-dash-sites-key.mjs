@@ -18,7 +18,7 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createInterface } from 'node:readline/promises';
-import { args, CREDITS_PER_DASH, formatDash, loadDashSites, parseDash } from './dash-site/lib.mjs';
+import { args, CREDITS_PER_DASH, DASH_SITES_CONTRACTS, formatDash, loadDashSites, parseDash } from './dash-site/lib.mjs';
 
 const REPO = 'PastaPastaPasta/dashhq';
 const SECRET = 'DASH_SITES_PUBLISH_KEY';
@@ -99,7 +99,8 @@ async function main() {
 
   const ds = await loadDashSites();
   const { sdk: wasm, core, evo } = ds;
-  const contractId = core.networkConfig(network).contractId;
+  const contractId = DASH_SITES_CONTRACTS[network];
+  if (core.networkConfig(network).contractId !== contractId) throw new Error(`this dash-sites checkout uses contract ${core.networkConfig(network).contractId} on ${network}, not ${contractId}`);
   const sdk = await evo.connectSdk(core.readerConfig(network));
   const identity = await sdk.identities.fetch(record.identityId);
   if (!identity) throw new Error(`identity ${record.identityId} does not exist on ${network}`);

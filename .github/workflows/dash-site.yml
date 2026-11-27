@@ -64,8 +64,10 @@ jobs:
       - name: Check this is still the head of main
         id: head
         if: steps.key.outputs.present == 'true' && steps.build.outputs.up_to_date != 'true'
+        shell: bash
         run: |
           head=$(git ls-remote "https://github.com/$GITHUB_REPOSITORY" refs/heads/main | cut -f1)
+          if [ -z "$head" ]; then echo "::error::could not read the head of main"; exit 1; fi
           if [ "$head" = "$GITHUB_SHA" ]; then
             echo "current=true" >> "$GITHUB_OUTPUT"
           else
