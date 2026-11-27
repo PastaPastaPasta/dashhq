@@ -1,0 +1,12 @@
+{
+  "name": "dashhq-dash-site-tools",
+  "private": true,
+  "type": "module",
+  "description": "Build tools for the Dash Sites copy of dashhq.org; not used by GitHub Pages",
+  "engines": { "node": ">=22" },
+  "devDependencies": {
+    "esbuild": "0.28.1",
+    "html-minifier-terser": "7.2.0",
+    "svgo": "4.0.0"
+  }
+}
