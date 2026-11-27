@@ -10,6 +10,6 @@ The front door and directory for the Dash ecosystem. Static HTML, CSS and JavaSc
 
 The shell is pinned under `dashhq/`; see `SHELL.md`. The hub has a text wordmark and a local lowercase d favicon. Yappr, Forge, EvoVote and Pollr are outbound links; the Fee estimator opens fees.dashhq.org, and explorer.dashhq.org is Radar Explorer.
 
-Local checks: `node --check hub.js` and `node --check pulse.js`. The browser checks live with the family lab (`lab/hub-qa.mjs`). Pages serves this directory as it is, so keep lab notes and scripts out of it. There is no package-managed lint, typecheck or unit-test suite. Build with `lab/build.sh hub` from the lab root, then use the guarded screenshot runner.
+Local checks: `node --check hub.js` and `node --check pulse.js`. The browser checks live with the family lab (`lab/hub-qa.mjs`). Pages serves this directory as it is, so keep lab notes and scripts out of it; the one exception is the Dash Sites deploy tooling (`scripts/`, `DEPLOY.md`), which holds nothing secret. There is no package-managed lint, typecheck or unit-test suite. Build with `lab/build.sh hub` from the lab root, then use the guarded screenshot runner.
 
 A compact copy of the site is also published to the Dash Platform name `d4shhq` (https://d4shhq.dash.site) by `.github/workflows/dash-site.yml`. Pages is unaffected. See `DEPLOY.md`.

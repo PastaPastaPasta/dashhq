@@ -6,7 +6,7 @@
 //     --plan <plan.json> --site <dir> --identity <id> [--check-only]
 import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
-import { args, formatDash, loadDashSites, notice, parseDash, refuseKey, summary, table } from './lib.mjs';
+import { args, DASH_SITES_CONTRACTS, formatDash, loadDashSites, notice, parseDash, refuseKey, summary, table } from './lib.mjs';
 
 function cli(ds, argv) {
   const run = spawnSync(process.execPath, [ds.cli, ...argv], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'], env: process.env, maxBuffer: 64 * 1024 * 1024 });
@@ -38,7 +38,10 @@ async function main() {
   }
   const ds = await loadDashSites();
   const network = plan.network;
-  const contractId = ds.core.networkConfig(network).contractId;
+  const contractId = DASH_SITES_CONTRACTS[network];
+  if (!contractId || ds.core.networkConfig(network).contractId !== contractId) {
+    throw new Error(`dash-sites at DASH_SITES_REF uses contract ${ds.core.networkConfig(network).contractId} on ${network}, not ${contractId}; check the pin before publishing`);
+  }
   const whoami = cli(ds, ['whoami', '--network', network, '--identity', opts.identity]);
   const estimate = BigInt(plan.estimate);
   const reasons = refuseKey(whoami, {
@@ -83,7 +86,7 @@ async function main() {
       ['Key budget left before', whoami.remainingBudget],
     ])}\n\nhttps://${plan.name}.dash.site/\n`,
   );
-  if (parseDash(result.spent) > estimate) notice(`spent ${result.spent}, more than the estimate of ${formatDash(estimate)}`, 'warning');
+  if (!String(result.spent).startsWith('-') && parseDash(result.spent) > estimate) notice(`spent ${result.spent}, more than the estimate of ${formatDash(estimate)}`, 'warning');
 }
 
 main().then(

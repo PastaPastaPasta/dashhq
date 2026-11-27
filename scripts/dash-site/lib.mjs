@@ -5,6 +5,8 @@ import { pathToFileURL } from 'node:url';
 import { brotliCompressSync, constants as zlib } from 'node:zlib';
 
 export const CREDITS_PER_DASH = 100_000_000_000n;
+/** The dash-sites contract a publishing key must be bound to, pinned here so a dash-sites bump cannot move it. */
+export const DASH_SITES_CONTRACTS = { mainnet: 'GCSi8NkjXyRpLC7FsEnCfx5ntmWZ16bD2t9zc4JiT4X3', testnet: 'CjzpdgCPJdLgVZdUu8SNacWVnrhDv34LstjPdBeJ4dT' };
 /** A key must stay valid at least this long past the check, so it cannot expire mid-publish. */
 export const EXPIRY_MARGIN_MS = 60 * 60 * 1000;
 

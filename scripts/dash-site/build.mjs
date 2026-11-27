@@ -5,7 +5,8 @@
 // --raw stages the same files unminified, to compare against.
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 import { dirname, join, posix } from 'node:path';
 import { deflateSync, inflateSync } from 'node:zlib';
 
@@ -201,7 +202,7 @@ export async function build(out, { raw = false } = {}) {
   return { files: built.size, before, after };
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
   const [out, flag] = process.argv.slice(2);
   if (!out || (flag && flag !== '--raw')) {
     console.error('usage: build.mjs <out-dir> [--raw]');

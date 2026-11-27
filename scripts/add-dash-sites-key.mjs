@@ -4,6 +4,7 @@
 //
 //   DASH_SITES_DIR=~/workspace/dash-sites node scripts/add-dash-sites-key.mjs <identity.json> \
 //     --budget 0.25 --expires 2027-11-27 [--network mainnet|testnet] [--out <file>]
+// <file> defaults to ~/dash-sites-publish-key.<network>.wif, outside the repository.
 //
 // The new key is an ECDSA_HASH160 AUTHENTICATION key of level HIGH, bound to the dash-sites contract
 // only, with the total budget and expiry you choose, added in an identity update signed by the
@@ -12,7 +13,10 @@
 //   node scripts/add-dash-sites-key.mjs <identity.json> --disable <keyId> [--network ...]
 // disables a key instead (revocation), signed by the MASTER key.
 import { randomBytes } from 'node:crypto';
-import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { createInterface } from 'node:readline/promises';
 import { args, CREDITS_PER_DASH, formatDash, loadDashSites, parseDash } from './dash-site/lib.mjs';
 
@@ -119,7 +123,7 @@ async function main() {
 
   const totalBudget = parseBudget(opts.budget);
   const expiresAt = parseExpiry(opts.expires);
-  const out = opts.out ?? `./dash-sites-publish-key.${network}.wif`;
+  const out = opts.out ?? join(homedir(), `dash-sites-publish-key.${network}.wif`);
   if (existsSync(out)) throw new Error(`${out} exists; pass another --out or remove it`);
   const keyId = Math.max(...identity.publicKeys.map((key) => key.keyId)) + 1;
   const { key, privateKey } = newPublishingKey(wasm, { network, keyId, contractId, totalBudget, expiresAt });
@@ -145,8 +149,7 @@ async function main() {
   try {
     await sdk.identities.update({ identity, addPublicKeys: [key], signer });
   } catch (error) {
-    unlinkSync(out);
-    throw error;
+    throw new Error(`${error?.message ?? error}. The update may still have reached Platform, so ${out} is kept: check whether key ${keyId} exists, and disable it with --disable ${keyId} if it does; otherwise shred the file`);
   }
   const after = await sdk.identities.fetch(record.identityId);
   const added = after?.publicKeys.find((k) => k.keyId === keyId);
@@ -165,7 +168,7 @@ async function main() {
   );
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
   main().then(
     () => process.exit(0),
     (error) => {

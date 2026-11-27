@@ -11,7 +11,7 @@ GitHub Pages serves this repository as it is at dashhq.org. Separately, `.github
   - expires more than an hour from now,
   - belongs to `8z8H5MvrnC2917Qpmu3sGWRCXLbUKHC6LR7zbtadyDv5`, which owns `d4shhq`, and that identity holds enough for the estimate.
 
-  The publish runs without `--prune`, so old chunks stay until a manual `gc` (see below). The summary shows the revision, chunks uploaded and reused, and what it spent. Publishes never overlap (`concurrency: dash-site-publish`).
+  The publish runs without `--prune`, so old chunks stay until a manual `gc` (see below). The summary shows the revision, chunks uploaded and reused, and what it spent. Publishes never overlap (`concurrency: dash-site-publish`), and a run whose commit is no longer the head of `main` (a re-run of an old push) publishes nothing, so it cannot roll the site back.
 
 The workflow pins dash-sites to a commit (`DASH_SITES_REF`) and Node to an exact version (`NODE_VERSION`). Node's bundled brotli decides the chunks, so a different Node version can change every chunk and make the next publish a full one. Bump either on purpose, and check the PR summary.
 
@@ -70,12 +70,12 @@ The fees come from the identity's balance and count against the key's budget. At
      --network mainnet --budget 0.25 --expires 2027-11-27
    ```
 
-   The script prints the key it will add (AUTHENTICATION, HIGH, ECDSA_HASH160, bound to the dash-sites contract, with that budget and expiry), the fee (under 0.001 DASH; 0.00043 on testnet), and where the WIF goes. It asks before broadcasting and signs with the MASTER key. The WIF is written only to `./dash-sites-publish-key.mainnet.wif` (mode 0600) and is never printed. A key bound to one contract cannot register names, transfer credits or withdraw.
+   The script prints the key it will add (AUTHENTICATION, HIGH, ECDSA_HASH160, bound to the dash-sites contract, with that budget and expiry), the fee (under 0.001 DASH; 0.00043 on testnet), and where the WIF goes. It asks before broadcasting and signs with the MASTER key. The WIF is written only to `~/dash-sites-publish-key.mainnet.wif` (mode 0600, outside the repository; `*.wif` is also gitignored) and is never printed. A key bound to one contract cannot register names, transfer credits or withdraw.
 3. **Store it as the secret, then delete the file:**
 
    ```sh
-   gh secret set DASH_SITES_PUBLISH_KEY -R PastaPastaPasta/dashhq < dash-sites-publish-key.mainnet.wif
-   shred -u dash-sites-publish-key.mainnet.wif
+   gh secret set DASH_SITES_PUBLISH_KEY -R PastaPastaPasta/dashhq < ~/dash-sites-publish-key.mainnet.wif
+   shred -u ~/dash-sites-publish-key.mainnet.wif
    ```
 
 4. Re-run the latest **Dash Sites** workflow on `main` (Actions → Dash Sites → Run workflow), or push to `main`.

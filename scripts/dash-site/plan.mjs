@@ -4,7 +4,8 @@
 // publishing would cost. Writes plan.json and the job summary. Needs no key.
 //   DASH_SITES_DIR=<checkout> node scripts/dash-site/plan.mjs --site <dir> --name <name> \
 //     --network mainnet --dry-run <dry-run.json> --out <plan.json> [--brotli]
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 import { args, formatDash, loadDashSites, output, summary, table } from './lib.mjs';
 
 const QUERY_BATCH = 100;
@@ -78,7 +79,7 @@ export function describe(result) {
   ]);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
   try {
     const opts = args(process.argv.slice(2), { site: 'required', name: 'required', network: 'required', 'dry-run': 'optional', out: 'required', brotli: 'flag' });
     const dryRun = opts['dry-run'] ? JSON.parse(readFileSync(opts['dry-run'], 'utf8')) : undefined;

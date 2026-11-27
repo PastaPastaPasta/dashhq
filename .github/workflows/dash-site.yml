@@ -61,8 +61,19 @@ jobs:
         id: build
         uses: ./.github/actions/dash-site-build
 
-      - name: Check the key and publish
+      - name: Check this is still the head of main
+        id: head
         if: steps.key.outputs.present == 'true' && steps.build.outputs.up_to_date != 'true'
+        run: |
+          head=$(git ls-remote "https://github.com/$GITHUB_REPOSITORY" refs/heads/main | cut -f1)
+          if [ "$head" = "$GITHUB_SHA" ]; then
+            echo "current=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::main is at $head, not $GITHUB_SHA; not publishing an older build"
+          fi
+
+      - name: Check the key and publish
+        if: steps.head.outputs.current == 'true'
         env:
           DASH_SITES_KEY: ${{ secrets.DASH_SITES_PUBLISH_KEY }}
         run: node scripts/dash-site/publish.mjs --plan "$RUNNER_TEMP/plan.json" --site "$RUNNER_TEMP/site" --identity "$IDENTITY"
