@@ -1,0 +1,55 @@
+name: Build the Dash Sites copy
+description: Builds the pinned dash-sites CLI and the compact copy of the site, then plans the publish against what the name serves (read-only, no key).
+outputs:
+  up_to_date:
+    description: '"true" when the name already serves this build'
+    value: ${{ steps.plan.outputs.up_to_date }}
+runs:
+  using: composite
+  steps:
+    - name: Check out dash-sites at the pinned commit
+      uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+      with:
+        repository: PastaPastaPasta/dash-sites
+        ref: ${{ env.DASH_SITES_REF }}
+        path: .dash-sites
+        persist-credentials: false
+
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: npm
+        cache-dependency-path: |
+          .dash-sites/package-lock.json
+          scripts/dash-site/package-lock.json
+
+    - name: Build the dash-sites CLI
+      shell: bash
+      working-directory: .dash-sites
+      env:
+        PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      run: |
+        npm ci --no-audit --no-fund
+        npx tsc -b
+        npm run bundle -w @dash-sites/cli
+
+    - name: Install the minifiers
+      shell: bash
+      run: npm ci --ignore-scripts --no-audit --no-fund --prefix scripts/dash-site
+
+    - name: Test the deploy scripts
+      shell: bash
+      run: node --test 'scripts/**/*.test.mjs'
+
+    - name: Build the site copy
+      shell: bash
+      run: node scripts/dash-site/build.mjs "$RUNNER_TEMP/site"
+
+    - name: Dry run
+      shell: bash
+      run: node "$DASH_SITES_DIR/packages/cli/bundle/dash-sites.mjs" publish "$RUNNER_TEMP/site" --name "$SITE_NAME" --network "$NETWORK" --dry-run --brotli > "$RUNNER_TEMP/dry-run.json"
+
+    - name: Plan against the live site
+      id: plan
+      shell: bash
+      run: node scripts/dash-site/plan.mjs --site "$RUNNER_TEMP/site" --name "$SITE_NAME" --network "$NETWORK" --dry-run "$RUNNER_TEMP/dry-run.json" --out "$RUNNER_TEMP/plan.json" --brotli

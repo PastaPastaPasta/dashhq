@@ -1,0 +1,72 @@
+# Publishes a compact copy of this site to the Dash Platform name d4shhq (https://d4shhq.dash.site).
+# GitHub Pages keeps serving the repository as it is; this workflow does not touch it. See DEPLOY.md.
+name: Dash Sites
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DASH_SITES_REF: f807eb1dd0e7dc98370a4908baa44bd0332a0c69
+  DASH_SITES_DIR: ${{ github.workspace }}/.dash-sites
+  # Exact, so brotli (Node's bundled encoder) gives the same chunks on every run.
+  NODE_VERSION: 22.23.5
+  NETWORK: mainnet
+  SITE_NAME: d4shhq
+  IDENTITY: 8z8H5MvrnC2917Qpmu3sGWRCXLbUKHC6LR7zbtadyDv5
+
+jobs:
+  dry-run:
+    name: Dry run
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/dash-site-build
+
+  publish:
+    name: Publish
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: dash-site-publish
+      cancel-in-progress: false
+    steps:
+      - name: Look for the publishing key
+        id: key
+        env:
+          HAS_KEY: ${{ secrets.DASH_SITES_PUBLISH_KEY != '' }}
+        run: |
+          echo "present=$HAS_KEY" >> "$GITHUB_OUTPUT"
+          if [ "$HAS_KEY" != true ]; then
+            echo "::notice::DASH_SITES_PUBLISH_KEY is not set, so nothing is published. DEPLOY.md says how to add it."
+            echo "Nothing published: the repository secret DASH_SITES_PUBLISH_KEY is not set (see DEPLOY.md)." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - if: steps.key.outputs.present == 'true'
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        with:
+          persist-credentials: false
+
+      - if: steps.key.outputs.present == 'true'
+        id: build
+        uses: ./.github/actions/dash-site-build
+
+      - name: Check the key and publish
+        if: steps.key.outputs.present == 'true' && steps.build.outputs.up_to_date != 'true'
+        env:
+          DASH_SITES_KEY: ${{ secrets.DASH_SITES_PUBLISH_KEY }}
+        run: node scripts/dash-site/publish.mjs --plan "$RUNNER_TEMP/plan.json" --site "$RUNNER_TEMP/site" --identity "$IDENTITY"
+
+      - name: Nothing to publish
+        if: steps.key.outputs.present == 'true' && steps.build.outputs.up_to_date == 'true'
+        run: echo "::notice::$SITE_NAME.dash.site already serves this build"
